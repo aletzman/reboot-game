@@ -1,0 +1,281 @@
+// ------------------------------------------------------------
+// NIVEL
+// ------------------------------------------------------------
+
+export type LevelType =
+  | 'cinematic'
+  | 'lightbot'
+  | 'scratch'
+  | 'puzzle-sort'
+  | 'puzzle-fill'
+  | 'puzzle-bug'
+  | 'puzzle-match'
+  | 'speedtyping'
+  | 'codeeditor'
+  | 'decision'
+  | 'review'
+
+export interface ReviewFailRedirect {
+  [concept: string]: string // concepto → id del nivel donde se vio
+}
+
+export interface Level {
+  id: string
+  act: number
+  actName: string
+  type: LevelType
+  title: string
+  description: string
+  narrative: string
+  mechanic?: string
+  concept?: string
+  codeExample?: string
+  fragAvailable: boolean
+  fragHint?: string
+  optional: boolean
+  isReview: boolean
+  reviewOf: string[]
+  requiredObjects: string[]
+  rewardObjects: string[]
+  rewardCards: string[]
+  failRedirectTo: string | null
+  reviewFailRedirect?: ReviewFailRedirect
+  hintObjects?: string[]   // objetos consultables durante el nivel
+  maxStars?: 1 | 2 | 3
+  note?: string
+}
+
+// ------------------------------------------------------------
+// CARTA
+// ------------------------------------------------------------
+
+export type CardRarity = 'common' | 'rare' | 'epic' | 'legendary'
+
+export interface Card {
+  id: string
+  name: string
+  rarity: CardRarity
+  concept: string
+  unlockedBy: string       // id del nivel donde se obtiene
+  actName: string
+  frontArt: string         // clave del arte geométrico del frente
+  description: string      // qué es este concepto
+  humanExplanation: string // analogía en lenguaje humano
+  codeExample: string | null // null en actos 1-3, código real en acto 4+
+  tip: string              // consejo profesional
+}
+
+// ------------------------------------------------------------
+// OBJETO
+// ------------------------------------------------------------
+
+export type ObjectType = 'key' | 'hint' | 'lore' | 'final'
+
+export interface GameObject {
+  id: string
+  name: string
+  icon: string
+  obtainedIn: string       // id del nivel donde se obtiene
+  description: string
+  lore: string
+  type: ObjectType
+  required: boolean        // si true, bloquea niveles sin él
+  usedIn: string[]         // ids de niveles donde tiene efecto
+  effect: string           // qué hace cuando se usa
+  inventoryNote: string    // texto visible en el inventario
+  obtainCondition?: string // ej: "3 estrellas en nivel 1-R"
+}
+
+// ------------------------------------------------------------
+// PROGRESO DEL JUGADOR
+// ------------------------------------------------------------
+
+export interface LevelProgress {
+  completed: boolean
+  stars: 0 | 1 | 2 | 3
+  usedFrag: boolean
+  attempts: number         // cuántas veces intentó el nivel
+  completedAt?: string     // ISO date string
+}
+
+export interface GameSave {
+  version: number          // para migraciones futuras del save
+  player: {
+    name: string
+    gender: 'él' | 'ella' | 'elle'
+  }
+  progress: {
+    [levelId: string]: LevelProgress
+  }
+  cards: string[]          // ids de cartas desbloqueadas
+  objects: string[]        // ids de objetos recogidos
+  fragUsedTotal: number    // para la carta secreta (nunca usar FRAG)
+  currentLevelId: string   // último nivel visitado
+  createdAt: string        // ISO date string
+  updatedAt: string        // ISO date string
+}
+
+// ------------------------------------------------------------
+// ESTADO DE LA UI DEL NIVEL
+// ------------------------------------------------------------
+
+export interface LevelState {
+  level: Level
+  status: 'idle' | 'playing' | 'success' | 'failed' | 'reviewing'
+  stars: 0 | 1 | 2 | 3
+  fragUsed: boolean
+  fragAvailableThisRun: boolean
+  unlockedCards: Card[]
+  unlockedObjects: GameObject[]
+  hintsUsed: number        // cuántas veces consultó objetos de pista
+}
+
+// ------------------------------------------------------------
+// MAPA DEL MUNDO
+// ------------------------------------------------------------
+
+export type SectorStatus = 'locked' | 'available' | 'active' | 'completed'
+
+export interface Sector {
+  id: number
+  name: string
+  levels: string[]         // ids de niveles en orden
+  status: SectorStatus
+  requiredSector?: number  // sector que debe completarse antes
+}
+
+// ------------------------------------------------------------
+// MOTOR DE LIGHTBOT
+// ------------------------------------------------------------
+
+export type CommandType =
+  | 'move'
+  | 'turn-left'
+  | 'turn-right'
+  | 'jump'
+  | 'activate'
+  | 'repeat'
+  | 'call-fn'
+
+export interface Command {
+  type: CommandType
+  times?: number           // para repeat
+  fnName?: string          // para call-fn
+  children?: Command[]     // para repeat
+}
+
+export type Direction = 'north' | 'south' | 'east' | 'west'
+
+export type TileType =
+  | 'floor'
+  | 'wall'
+  | 'target'
+  | 'active'
+  | 'broken'
+  | 'generator'
+  | 'empty'
+
+export interface MapTile {
+  type: TileType
+  x: number
+  y: number
+  activated?: boolean
+}
+
+export interface RobotState {
+  x: number
+  y: number
+  direction: Direction
+  isMoving: boolean
+}
+
+export interface LightbotLevelData {
+  map: MapTile[][]
+  robotStart: { x: number; y: number; direction: Direction }
+  targets: { x: number; y: number }[]
+  maxCommands?: number     // límite de comandos para 3 estrellas
+}
+
+// ------------------------------------------------------------
+// MOTOR DE SCRATCH
+// ------------------------------------------------------------
+
+export type ScratchBlockType =
+  | 'MOVER'
+  | 'GIRAR'
+  | 'REPETIR'
+  | 'SI'
+  | 'SI_NO'
+  | 'FUNCION'
+  | 'LLAMAR'
+  | 'ACTIVAR'
+
+export interface ScratchBlock {
+  id: string
+  type: ScratchBlockType
+  value?: number | string   // para MOVER(n), REPETIR(n), GIRAR('izquierda')
+  condition?: string        // para SI
+  children?: ScratchBlock[] // bloques anidados dentro de REPETIR, SI, etc
+  fnName?: string           // para FUNCION y LLAMAR
+}
+
+// ------------------------------------------------------------
+// SPEED TYPING
+// ------------------------------------------------------------
+
+export interface TypingLine {
+  text: string             // línea a tipear
+  typed: string            // lo que el jugador ha escrito
+  correct: boolean | null  // null = no evaluado aún
+}
+
+export interface SpeedTypingState {
+  lines: TypingLine[]
+  currentLineIndex: number
+  timeLeft: number         // segundos restantes
+  started: boolean
+  finished: boolean
+  wpm: number              // palabras por minuto al terminar
+}
+
+// ------------------------------------------------------------
+// CODE EDITOR
+// ------------------------------------------------------------
+
+export interface TestCase {
+  id: string
+  description: string      // qué verifica este test
+  input?: unknown          // input para la función del jugador
+  expected: unknown        // resultado esperado
+  passed: boolean | null   // null = no ejecutado
+}
+
+export interface CodeEditorState {
+  code: string             // código actual del jugador
+  running: boolean
+  output: string[]         // líneas de console.log
+  error: string | null     // error de ejecución si hay
+  tests: TestCase[]        // para niveles con tests automáticos
+  allTestsPassed: boolean
+}
+
+// ------------------------------------------------------------
+// HELPERS DE TIPO
+// ------------------------------------------------------------
+
+export type ActNumber = 0 | 1 | 2 | 3 | 4 | 5
+
+export interface ActSummary {
+  number: ActNumber
+  name: string
+  levelIds: string[]
+  reviewLevelId: string | null
+  completed: boolean
+  totalStars: number
+}
+
+// Resultado de intentar acceder a un nivel
+export type LevelAccessResult =
+  | { allowed: true }
+  | { allowed: false; reason: 'missing-objects'; objects: string[] }
+  | { allowed: false; reason: 'locked'; requiredAct: number }

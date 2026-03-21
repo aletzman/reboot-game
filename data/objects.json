@@ -1,0 +1,315 @@
+{
+  "objects": [
+    {
+      "id": "linterna_rota",
+      "name": "Linterna rota",
+      "icon": "flashlight",
+      "obtainedIn": "P-00",
+      "description": "Una linterna que encontraste entre los escombros. La batería está casi muerta — da una luz débil pero suficiente para ver en espacios cerrados.",
+      "lore": "Tiene una etiqueta desgastada: 'Laboratorio de Sistemas — Piso 3'. Alguien la dejó aquí antes de El Silencio.",
+      "type": "lore",
+      "required": false,
+      "usedIn": [],
+      "effect": "Revela texto oculto en el diario del ingeniero (nivel 2-04). Sin ella, algunas páginas aparecen ilegibles.",
+      "inventoryNote": "Úsala en zonas oscuras para revelar información oculta."
+    },
+    {
+      "id": "credencial_acceso",
+      "name": "Credencial de acceso",
+      "icon": "id_card",
+      "obtainedIn": "P-02",
+      "description": "Una tarjeta de identificación del sistema. Tiene un chip que el sistema reconoce como humano verificado. Sin ella, ciertos terminales no responden.",
+      "lore": "El chip almacena tu verificación biométrica. FRAG la generó durante la prueba de humanidad. Es la prueba de que no eres una IA.",
+      "type": "key",
+      "required": true,
+      "usedIn": [
+        "1-01",
+        "3-01"
+      ],
+      "effect": "Requerida para activar terminales de acceso restringido. Sin ella, los terminales del sector norte muestran: 'Identidad no verificada — acceso denegado'.",
+      "inventoryNote": "Requerida. Sin esta credencial no puedes interactuar con terminales de seguridad."
+    },
+    {
+      "id": "plano_bunker_parcial",
+      "name": "Plano parcial del bunker",
+      "icon": "blueprint",
+      "obtainedIn": "1-04",
+      "description": "Un fragmento de plano arquitectónico del bunker GÉNESIS. Muestra la distribución del sector sur y una ruta marcada a mano con tinta roja.",
+      "lore": "Alguien marcó esta ruta antes de El Silencio. La tinta roja tiene prisa — trazos irregulares, como si lo hicieran corriendo.",
+      "type": "hint",
+      "required": false,
+      "usedIn": [
+        "2-07",
+        "5-01"
+      ],
+      "effect": "En 2-07 revela la posición de los generadores ocultos del sector 2, reduciendo el área de búsqueda. En 5-01 muestra parte del layout del bunker GÉNESIS antes de entrar.",
+      "inventoryNote": "Consulta este plano antes de niveles con mapas grandes — puede revelarte atajos."
+    },
+    {
+      "id": "llave_sector_2",
+      "name": "Llave del sector 2",
+      "icon": "key_mechanical",
+      "obtainedIn": "1-05",
+      "description": "Una llave física con el grabado 'S2-NORTE'. Abre la compuerta principal del sector 2. Sin ella, la compuerta permanece sellada.",
+      "lore": "Las compuertas físicas fueron diseñadas para resistir hackeos. Solo una llave mecánica las abre — una decisión deliberada de los ingenieros que sabían que las IAs no podían fabricar llaves.",
+      "type": "key",
+      "required": true,
+      "usedIn": [
+        "2-01"
+      ],
+      "effect": "Requerida para acceder al Acto II. El juego bloquea el inicio del sector 2 hasta que el jugador tenga esta llave.",
+      "inventoryNote": "Requerida para abrir el sector 2. Obtenla completando el nivel 1-05."
+    },
+    {
+      "id": "diario_ingeniero",
+      "name": "Diario del ingeniero",
+      "icon": "notebook",
+      "obtainedIn": "2-04",
+      "description": "Un cuaderno desgastado. Contiene notas técnicas, bocetos de código y — en las últimas páginas — mensajes personales que se vuelven más desesperados con el tiempo.",
+      "lore": "Escrito por Dr. Ariel Voss, arquitecto del Proyecto GÉNESIS. Las primeras páginas son técnicas y precisas. Las últimas son casi ilegibles. La última entrada dice solo: 'Si alguien llega hasta aquí, el código de activación está en el manual. Confío en que lo sabrás leer.'",
+      "type": "hint",
+      "required": false,
+      "usedIn": [
+        "4-07",
+        "5-02"
+      ],
+      "effect": "En 4-07 revela la estructura de objetos que usan las máquinas del bunker, dando al jugador una ventaja para el ejercicio. En 5-02 (nivel final) desbloquea una pista extra sobre uno de los 8 tests de activación.",
+      "inventoryNote": "Lee este diario antes del Acto IV — contiene pistas técnicas valiosas para los niveles de código."
+    },
+    {
+      "id": "plano_diagrama_flujo",
+      "name": "Diagrama de flujo antiguo",
+      "icon": "flowchart",
+      "obtainedIn": "2-02",
+      "description": "Un diagrama impreso en papel térmico, ya amarillento. Muestra el flujo de decisiones del sistema de seguridad del sector 3.",
+      "lore": "Tiene sello de 'CONFIDENCIAL — PROYECTO GÉNESIS'. Alguien lo sacó del archivo y lo dejó aquí. ¿Por accidente o a propósito?",
+      "type": "hint",
+      "required": false,
+      "usedIn": [
+        "4-10"
+      ],
+      "effect": "En 4-10 (boss del Acto IV) revela la lógica de dos de los generadores del sector 3, reduciendo el problema a resolver.",
+      "inventoryNote": "Guárdalo para el sector 3. Será útil cuando el mapa se vuelva más complejo."
+    },
+    {
+      "id": "coordenadas_laboratorio",
+      "name": "Coordenadas del laboratorio",
+      "icon": "coordinates",
+      "obtainedIn": "2-06",
+      "description": "Un fragmento de transmisión que lograste transcribir. Contiene las coordenadas exactas del Laboratorio de Lenguajes y un código de acceso de 4 dígitos.",
+      "lore": "La transmisión venía de algún lugar dentro del bunker. Alguien la programó para enviarse automáticamente si detectaba actividad humana. Los científicos dejaron migas de pan.",
+      "type": "key",
+      "required": true,
+      "usedIn": [
+        "3-01"
+      ],
+      "effect": "Requeridas para localizar y acceder al Laboratorio de Lenguajes. Sin ellas, el mapa del mundo no muestra la ubicación del laboratorio.",
+      "inventoryNote": "Requeridas para encontrar el Laboratorio de Lenguajes. No las pierdas."
+    },
+    {
+      "id": "tarjeta_acceso_laboratorio",
+      "name": "Tarjeta de acceso al laboratorio",
+      "icon": "keycard",
+      "obtainedIn": "2-07",
+      "description": "Una tarjeta magnética con franja dorada. Abre las puertas del Laboratorio de Lenguajes. Solo funciona en combinación con las coordenadas.",
+      "lore": "Estaba guardada en el núcleo del sector 2, como si los ingenieros supieran que quien llegara hasta aquí estaría listo para el siguiente paso.",
+      "type": "key",
+      "required": true,
+      "usedIn": [
+        "3-01"
+      ],
+      "effect": "Requerida junto con las coordenadas para acceder al Laboratorio de Lenguajes y desbloquear el Acto III.",
+      "inventoryNote": "Requerida. Completa el Acto II para obtenerla."
+    },
+    {
+      "id": "mapa_laboratorio",
+      "name": "Mapa del laboratorio",
+      "icon": "map",
+      "obtainedIn": "3-01",
+      "description": "El layout interno del Laboratorio de Lenguajes. Muestra dónde está cada terminal de lenguaje y — marcado con una X — la terminal de JavaScript.",
+      "lore": "Generado automáticamente por FRAG al entrar al laboratorio. 'Te lo doy para que sepas dónde ir. El tiempo es limitado.'",
+      "type": "hint",
+      "required": false,
+      "usedIn": [
+        "3-02"
+      ],
+      "effect": "Muestra visualmente las terminales disponibles en la pantalla de selección de lenguaje, con sus estados (activo/dañado).",
+      "inventoryNote": "Úsalo en la pantalla de selección de lenguaje para ver qué está disponible."
+    },
+    {
+      "id": "plano_sintaxis_js",
+      "name": "Guía de sintaxis JavaScript",
+      "icon": "syntax_guide",
+      "obtainedIn": "3-03",
+      "description": "Una referencia rápida de la sintaxis básica de JavaScript: cómo declarar variables, escribir funciones, usar loops y condicionales. Una hoja de trucos.",
+      "lore": "La generó FRAG con la información que tiene almacenada. 'Es todo lo que pude extraer del sistema antes de que se dañara. Debería ser suficiente para empezar.'",
+      "type": "hint",
+      "required": false,
+      "usedIn": [
+        "4-01",
+        "4-02",
+        "4-03"
+      ],
+      "effect": "En los primeros niveles del Acto IV, aparece un botón 'Consultar guía' que muestra este plano como referencia sin salir del nivel.",
+      "inventoryNote": "Tu cheat sheet de JavaScript. Consúltala en cualquier momento desde el inventario."
+    },
+    {
+      "id": "plano_funciones_js",
+      "name": "Manual de funciones JS",
+      "icon": "function_manual",
+      "obtainedIn": "4-03",
+      "description": "Una guía más detallada sobre funciones en JavaScript: parámetros, return, funciones anónimas, arrow functions. Con ejemplos reales del sistema del bunker.",
+      "lore": "Encontrada en la memoria caché de la terminal de JavaScript. Alguien la escribió como documentación interna del Proyecto GÉNESIS.",
+      "type": "hint",
+      "required": false,
+      "usedIn": [
+        "4-04",
+        "4-08",
+        "5-02"
+      ],
+      "effect": "Disponible como referencia en niveles de funciones y callbacks. En 5-02 puede consultarse una vez durante el nivel final.",
+      "inventoryNote": "Referencia avanzada de funciones. Muy útil antes del nivel final."
+    },
+    {
+      "id": "componente_repuesto",
+      "name": "Componente de repuesto",
+      "icon": "circuit_part",
+      "obtainedIn": "4-06",
+      "description": "Un circuito integrado en perfecto estado. Encontrado en el inventario del bunker después de corregir el sistema. Sirve para reparar uno de los terminales dañados del sector 3.",
+      "lore": "Etiquetado como 'GÉNESIS-CORE-07'. Es una pieza de repuesto para las máquinas de ADN sintético. Los ingenieros dejaron componentes extra por si algo fallaba.",
+      "type": "key",
+      "required": true,
+      "usedIn": [
+        "4-10"
+      ],
+      "effect": "Requerido para reparar un generador dañado en el nivel boss del Acto IV. Sin él, uno de los generadores no puede activarse y el nivel es imposible de completar.",
+      "inventoryNote": "Requerido. Guárdalo para el último nivel del sector 3."
+    },
+    {
+      "id": "plano_estructura_genesis",
+      "name": "Plano del Proyecto GÉNESIS",
+      "icon": "genesis_blueprint",
+      "obtainedIn": "4-07",
+      "description": "El plano completo del Proyecto GÉNESIS: cuántas máquinas hay, qué tipo, cómo están conectadas y cuál es el protocolo de activación en orden correcto.",
+      "lore": "Dr. Voss lo guardó en el objeto central del sistema — sabía que quien llegara hasta aquí ya sabría leer objetos JSON. Era su forma de asegurarse de que el activador estuviera listo.",
+      "type": "hint",
+      "required": false,
+      "usedIn": [
+        "5-01",
+        "5-02"
+      ],
+      "effect": "En 5-01 revela el layout completo del bunker antes de entrar. En 5-02 muestra la estructura de datos de las máquinas GÉNESIS, dando al jugador una ventaja para escribir el código de activación.",
+      "inventoryNote": "Crítico para el nivel final. Léelo antes de entrar al bunker GÉNESIS."
+    },
+    {
+      "id": "llave_bunker_genesis",
+      "name": "Llave maestra del bunker GÉNESIS",
+      "icon": "master_key",
+      "obtainedIn": "4-10",
+      "description": "Una llave electromecánica con 3 chips integrados. Abre la compuerta principal del bunker GÉNESIS. Es la última barrera antes de las máquinas.",
+      "lore": "Estaba en el núcleo del sector 3, protegida por todos los sistemas que acabas de reactivar. Como si el bunker mismo estuviera probando que merecías entrar.",
+      "type": "key",
+      "required": true,
+      "usedIn": [
+        "5-01"
+      ],
+      "effect": "Requerida para acceder al Acto V y al bunker GÉNESIS. Sin ella, la compuerta final permanece sellada y el juego no puede completarse.",
+      "inventoryNote": "La llave final. Con esto y el conocimiento que tienes, el camino está abierto."
+    },
+    {
+      "id": "manual_activacion_genesis",
+      "name": "Manual de activación GÉNESIS",
+      "icon": "activation_manual",
+      "obtainedIn": "5-01",
+      "description": "El manual oficial del Proyecto GÉNESIS. Describe exactamente qué hace cada máquina, qué código necesita para activarse y en qué orden deben encenderse.",
+      "lore": "Última página: 'Si estás leyendo esto, lo lograste. El código de activación no es un secreto — es todo lo que aprendiste. Confía en ti. — Dr. A. Voss'",
+      "type": "hint",
+      "required": false,
+      "usedIn": [
+        "5-02"
+      ],
+      "effect": "En 5-02 puede consultarse hasta 2 veces durante el nivel final. Muestra la descripción de cada test de activación sin revelar la solución exacta.",
+      "inventoryNote": "Consúltalo en el nivel final si te atascas. Describe qué necesita cada máquina."
+    },
+    {
+      "id": "genesis_activado",
+      "name": "GÉNESIS — activado",
+      "icon": "genesis_active",
+      "obtainedIn": "5-02",
+      "description": "No es un objeto que puedas tocar. Es el resultado de todo lo que hiciste. Las máquinas están activas. El proceso ha comenzado. El mundo puede volver a tener vida.",
+      "lore": "FRAG, reconectándose: 'Lo lograste. Las 12 máquinas están activas. El proceso de gestación tardará tiempo — pero comenzó. Tú lo comenzaste. No estás solo en este mundo ya.'",
+      "type": "final",
+      "required": false,
+      "usedIn": [],
+      "effect": "Desbloquea la secuencia de cierre del juego. Activa la animación final de las máquinas encendiéndose una a una.",
+      "inventoryNote": "Lo conseguiste."
+    },
+    {
+      "id": "manual_logica",
+      "name": "Manual de lógica básica",
+      "icon": "logic_manual",
+      "obtainedIn": "1-R",
+      "description": "Un manual condensado sobre lógica computacional: secuencias, loops, condicionales y orden de ejecución. Con ejemplos visuales y diagramas simples.",
+      "lore": "Generado por FRAG al verificar que dominas los fundamentos. 'Lo compilé con todo lo que tienes en tu cabeza ahora. Úsalo si necesitas refrescar algo.'",
+      "type": "hint",
+      "required": false,
+      "usedIn": [
+        "2-02",
+        "2-03"
+      ],
+      "effect": "Disponible como referencia en niveles del Acto II. Muestra ejemplos visuales de cada concepto del Acto I cuando el jugador lo consulta desde el inventario.",
+      "inventoryNote": "Solo disponible con 3 estrellas en el repaso del Acto I. Úsalo en el Acto II si necesitas recordar conceptos básicos.",
+      "obtainCondition": "3 estrellas en nivel 1-R"
+    },
+    {
+      "id": "guia_pseudocodigo",
+      "name": "Guía de pseudocódigo avanzado",
+      "icon": "pseudocode_guide",
+      "obtainedIn": "2-R",
+      "description": "Una guía completa de pseudocódigo: funciones, variables, estructuras de control y patrones comunes. Con equivalencias hacia código real.",
+      "lore": "FRAG la generó después de verificar tu dominio del Acto II. 'Esta guía conecta lo que sabes con lo que aprenderás. Guárdala — te será útil en la transición.'",
+      "type": "hint",
+      "required": false,
+      "usedIn": [
+        "3-03",
+        "4-01"
+      ],
+      "effect": "En 3-03 enriquece el puzzle de emparejamiento con más ejemplos. En 4-01 muestra la equivalencia directa entre el bloque FUNCIÓN que ya conoces y function() en JavaScript.",
+      "inventoryNote": "Solo disponible con 3 estrellas en el repaso del Acto II. Puente entre pseudocódigo y JavaScript real.",
+      "obtainCondition": "3 estrellas en nivel 2-R"
+    },
+    {
+      "id": "referencia_lenguajes",
+      "name": "Referencia comparativa de lenguajes",
+      "icon": "lang_reference",
+      "obtainedIn": "3-R",
+      "description": "Un documento que compara cómo el mismo concepto se escribe en diferentes lenguajes. Refuerza que la lógica es universal — solo cambia la sintaxis.",
+      "lore": "Encontrada en el archivo del laboratorio de lenguajes. Fue escrita para que los científicos pudieran cambiar de lenguaje rápidamente si uno fallaba. Ahora te sirve a ti.",
+      "type": "hint",
+      "required": false,
+      "usedIn": [
+        "4-01",
+        "4-03"
+      ],
+      "effect": "En los primeros niveles del Acto IV muestra la equivalencia entre el pseudocódigo conocido y la sintaxis JS específica, reduciendo la curva de aprendizaje.",
+      "inventoryNote": "Solo disponible con 3 estrellas en el repaso del Acto III. Muy útil al inicio del Acto IV.",
+      "obtainCondition": "3 estrellas en nivel 3-R"
+    },
+    {
+      "id": "cheatsheet_js",
+      "name": "Cheatsheet de JavaScript",
+      "icon": "cheatsheet",
+      "obtainedIn": "4-R",
+      "description": "Una hoja de referencia rápida con toda la sintaxis JavaScript aprendida: variables, tipos, funciones, arrays, objetos, callbacks. Con ejemplos reales del bunker.",
+      "lore": "FRAG la compiló después de verificar tu dominio de JavaScript. 'Es todo lo que sabes, condensado en una página. Llévala al nivel final — puedes consultarla dos veces.'",
+      "type": "hint",
+      "required": false,
+      "usedIn": [
+        "5-02"
+      ],
+      "effect": "En el nivel final (5-02) puede consultarse hasta 2 veces. Muestra sintaxis y ejemplos de cada concepto JS sin revelar la solución de los tests.",
+      "inventoryNote": "Solo disponible con 3 estrellas en el repaso del Acto IV. Tu mejor aliado en el nivel final si FRAG no puede ayudarte.",
+      "obtainCondition": "3 estrellas en nivel 4-R"
+    }
+  ]
+}
