@@ -1,23 +1,71 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* 🌑 EL MUNDO DESTRUIDO (Fondos y Superficies) */
+  --background: #030202;
+  /* Tu negro original. El vacío absoluto. */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --surface-a: #09090b;
+  /* +1 Nivel de luz: Perfecto para el fondo del editor Monaco */
+  --surface-b: #0f0f11;
+  /* +2 Nivel de luz: Barras laterales y menús */
+  --surface-c: #151518;
+  /* +3 Nivel de luz: Fondo de las tarjetas de los niveles */
+  --surface-d: #1b1b1f;
+  /* +4 Nivel de luz: Hover en tarjetas o botones secundarios */
+  --surface-e: #222226;
+  /* +5 Nivel de luz: Modales flotantes (como los diálogos de FRAG) */
+  --surface-f: #28282d;
+  /* Gris muy oscuro para el fondo del editor Monaco y paneles */
+  --border-color: #27272a;
+  --border-muted-color: #0c0c0d;
+
+
+  /* Para los bordes de tus cartas y modales */
+
+  /* 📝 LA INFORMACIÓN (Textos) */
+  --foreground: #e4e4e7;
+  /* Gris súper claro, más suave para los ojos que el #ededed */
+  --muted: #a1a1aa;
+  /* Gris apagado para comentarios de código (//) y textos secundarios */
+
+  /* 🟢 LA ENERGÍA (Acentos Principales) */
+  /* 🟢 LA ENERGÍA (Tu nuevo verde ácido tóxico) */
+  --terminal-green: #55e200;
+  /* Base: El neón radiactivo puro */
+  --terminal-green-hover: #44b400;
+  /* -20% luz: Perfecto para cuando pasas el ratón */
+  --terminal-green-active: #338800;
+  /* -40% luz: El feedback de cuando haces clic */
+  --terminal-green-muted: #225b00;
+  /* -60% luz: Para bordes sutiles o textos desactivados */
+  --terminal-green-opacity: #55e20015;
+  /* Base + 8% de opacidad: Brutal para el fondo de las terminales */
+  /* Verde radiactivo puro: Para botones de "Ejecutar", código OK y logs */
+  --ai-frag: #8b5cf6;
+  /* Morado cibernético: El color exclusivo de los diálogos de tu IA "FRAG" */
+
+  /* 🚨 ESTADOS DEL SISTEMA (Feedback del código) */
+  --error-color: #ff3366;
+  --success-color: #00ff66;
+  --info-color: #3b82f6;
+  --warning-color: #fbbf24;
+  --accent-color: #12b0bb;
+
+  /* 🎴 RAREZA DE CARTAS (El sistema de looteo) */
+  --card-common: #3f3f46;
+  /* Gris plomo para cartas de sintaxis básica */
+  --card-rare: #3b82f6;
+  /* Azul eléctrico para cartas de bucles/funciones */
+  --card-legendary: #f59e0b;
+  /* Naranja fuego para el código final del Acto 5 */
+
+  /* Tipografías por defecto de Next.js (Geist es hermosa para este proyecto) */
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-data-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+
 
 body {
   background: var(--background);
