@@ -12,7 +12,7 @@ interface RadioButtonProps {
     onChange: (value: string) => void;
 }
 
-export default function RadioButton({ title, options, checked, onChange }: RadioButtonProps) {
+export function RadioButton({ title, options, checked, onChange }: RadioButtonProps) {
     const [selected, setSelected] = useState(checked);
 
     useEffect(() => {

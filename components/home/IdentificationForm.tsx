@@ -1,7 +1,7 @@
 "use client";
-import Input from "../ui/Input";
-import Button from "../ui/Button";
-import RadioButton from "../ui/RadioButton";
+import { Input } from "../ui/Input";
+import { Button } from "../ui/Button";
+import { RadioButton } from "../ui/RadioButton";
 
 export default function IdentificationForm() {
     return (
@@ -19,6 +19,12 @@ export default function IdentificationForm() {
                 ]}
                 checked="male" onChange={(value) => console.log(value)} />
             <Button type="button" variant="solid">INICIALIZAR SISTEMA</Button>
+
+            <div className="flex items-center justify-between gap-2 text-[10px] font-medium font-mono text-(--green-muted)">
+                <span className="text-(--green-dark)">SYS_AUTH_LEVEL: 1</span>
+                <span className="text-(--green-dark)">KERNEL_REV: 0.0.1</span>
+            </div>
+
         </form>
     );
 }
