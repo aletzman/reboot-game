@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Monda } from "next/font/google";
+import { Geist, Monda, Orbitron, Share_Tech_Mono } from "next/font/google";
 import { Header } from "@/components/ui/Header";
 import CRTOverlay from "@/components/ui/CRTOverlay";
 import "./globals.css";
@@ -9,12 +9,15 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const dataMono = Monda({
+const dataMono = Share_Tech_Mono({
   variable: "--font-data-mono",
   subsets: ["latin"],
   weight: ["400"],
 });
 
+const fontTitle = Orbitron({
+  variable: "--font-data-title"
+})
 export const metadata: Metadata = {
   title: "Reboot",
   description: "Reboot is a game about the end of the world",
@@ -31,7 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${dataMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${dataMono.variable} ${fontTitle.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <CRTOverlay />

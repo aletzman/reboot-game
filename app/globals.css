@@ -37,6 +37,7 @@
   /* Tipografías por defecto de Next.js (Geist es hermosa para este proyecto) */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-data-mono);
+  --font-title: var(--font-data-title);
 }
 
 
@@ -174,5 +175,113 @@ body {
   100% {
     transform: translate(0);
     clip-path: inset(60% 0 0 0);
+  }
+}
+
+.animate-cursor {
+  animation: cursor 1s step-end infinite;
+}
+
+@keyframes cursor {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* BOTÓN CTA CON GLOW PULSE */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(85, 226, 0, 0.15),
+              0 0 30px rgba(85, 226, 0, 0.05);
+  animation: btn-glow-pulse 3s ease-in-out infinite;
+}
+
+.btn-glow::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -100%;
+  width: 60%;
+  height: calc(100% + 4px);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(85, 226, 0, 0.15),
+    rgba(85, 226, 0, 0.3),
+    rgba(85, 226, 0, 0.15),
+    transparent
+  );
+  animation: sweep-glow 4s ease-in-out infinite;
+}
+
+@keyframes btn-glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(85, 226, 0, 0.15),
+                0 0 30px rgba(85, 226, 0, 0.05);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(85, 226, 0, 0.3),
+                0 0 50px rgba(85, 226, 0, 0.1);
+  }
+}
+
+@keyframes sweep-glow {
+  0% {
+    left: -60%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* ANIMACIÓN FADE IN UP */
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* SEPARADOR CON GLOW */
+.separator-glow {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--green-dark),
+    var(--green-base),
+    var(--green-dark),
+    transparent
+  );
+  opacity: 0.6;
+}
+
+/* FLICKER SUTIL PARA TEXTOS */
+.text-flicker {
+  animation: text-flicker 8s linear infinite;
+}
+
+@keyframes text-flicker {
+  0%, 95%, 97%, 99%, 100% {
+    opacity: 1;
+  }
+  96%, 98% {
+    opacity: 0.7;
   }
 }

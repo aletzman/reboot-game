@@ -27,6 +27,9 @@ export function Header({ viewMenu }: HeaderProps) {
                 <ButtonOption onClick={() => { }} icon={<Settings className="size-5" />} color="blue" />
                 <ButtonOption onClick={() => { }} icon={<CirclePower className="size-5" />} color="red" />
             </div>}
+            <div>
+
+            </div>
         </header>
     );
 }
