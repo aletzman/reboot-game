@@ -8,12 +8,12 @@ interface ButtonOptionProps {
 
 export default function ButtonOption({ text, onClick, icon, color }: ButtonOptionProps) {
     const colorMap = {
-        red: "text-(--error-color)",
-        green: "text-(--success-color)",
-        blue: "text-(--info-color)",
-        yellow: "text-(--warning-color)",
+        red: "text-(--red)",
+        green: "text-(--green-light)",
+        blue: "text-(--blue)",
+        yellow: "text-(--yellow)",
     };
     return (
-        <button className={`text-xs font-medium font-mono text-(--muted) hover:${colorMap[color || "green"]} flex items-center gap-2 cursor-pointer transition-colors duration-200`} onClick={onClick}>{icon}{text}</button>
+        <button className={`text-xs font-medium font-mono text-(--text-muted) hover:${colorMap[color || "green"]} flex items-center gap-2 cursor-pointer transition-colors duration-200`} onClick={onClick}>{icon}{text}</button>
     );
 }

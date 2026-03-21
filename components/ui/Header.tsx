@@ -4,18 +4,18 @@ import ButtonOption from "./ButtonOption";
 
 export default function Header() {
     return (
-        <header className="flex items-center justify-between p-2 bg-(--surface-b) w-full">
-            <h1 className="text-sm font-medium font-mono text-(--terminal-green)">SURVIVAL_TERMINAL_V1.0</h1>
+        <header className="flex items-center justify-between p-2 bg-(--bg-surface) w-full">
+            <h1 className="text-sm font-medium font-mono text-(--green-light)">SURVIVAL_TERMINAL_V1.0</h1>
             <nav>
                 <ul className="flex items-center gap-2">
                     <li>
-                        <a href="#" className="text-xs font-medium font-mono text-(--muted) hover:text-(--terminal-green)">SYSTEM_MAP</a>
+                        <a href="#" className="text-xs font-medium font-mono text-(--text-muted) hover:text-(--green-light)">SYSTEM_MAP</a>
                     </li>
                     <li>
-                        <a href="#" className="text-xs font-medium font-mono text-(--muted) hover:text-(--terminal-green)">INVENTORY</a>
+                        <a href="#" className="text-xs font-medium font-mono text-(--text-muted) hover:text-(--green-light)">INVENTORY</a>
                     </li>
                     <li>
-                        <a href="#" className="text-xs font-medium font-mono text-(--muted) hover:text-(--terminal-green)">BIO_DATA</a>
+                        <a href="#" className="text-xs font-medium font-mono text-(--text-muted) hover:text-(--green-light)">BIO_DATA</a>
                     </li>
                 </ul>
             </nav>

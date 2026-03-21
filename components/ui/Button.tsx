@@ -5,9 +5,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export default function Button({ children, variant, ...props }: ButtonProps) {
     const variants = {
-        outline: "border-(--terminal-green) border text-(--terminal-green) hover:bg-(--terminal-green) hover:text-(--background) active:bg-(--terminal-green-active) active:text-(--background)",
-        solid: "bg-(--terminal-green-active) text-(--background) hover:bg-(--terminal-green-hover) hover:text-(--background) active:bg-(--terminal-green-active) active:text-(--background)",
-        ghost: "bg-(--terminal-green-opacity) text-(--terminal-green-active) hover:bg-(--terminal-green) hover:text-(--background) active:bg-(--terminal-green-active) active:text-(--background)",
+        outline: "border-(--green-light) border text-(--green-light) hover:bg-(--green-light) hover:text-(--bg-deep) active:bg-(--green-light) active:text-(--bg-deep)",
+        solid: "bg-(--green-base) text-(--bg-deep) hover:bg-(--green-light) hover:text-(--bg-deep) active:bg-(--green-light) active:text-(--bg-deep)",
+        ghost: "bg-(--green-light-opacity) text-(--green-light) hover:bg-(--green-light) hover:text-(--bg-deep) active:bg-(--green-light) active:text-(--bg-deep)",
     };
     return (
         <button {...props}
