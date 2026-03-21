@@ -1,14 +1,28 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useAudioStore } from "@/store/audio.store";
 
 export function BackgroundAudio({ src }: { src: string }) {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const [hasInteracted, setHasInteracted] = useState(false);
+    
+    // Obtener valores reactivos del store persistente
+    const { musicVolume, isMuted } = useAudioStore();
+
+    // Actualiza el volumen del elemento <audio> cuando cambian los ajustes
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.volume = isMuted ? 0 : musicVolume;
+        }
+    }, [musicVolume, isMuted]);
 
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
+        
+        // Volumen inicial
+        audio.volume = isMuted ? 0 : musicVolume;
 
         // Función que intenta reproducir el audio
         const playAudio = () => {
