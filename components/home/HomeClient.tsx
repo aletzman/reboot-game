@@ -12,13 +12,10 @@ const HeroButton = dynamic(() => import("@/components/home/HeroButton"), { ssr: 
 
 import Image from "next/image";
 import Logo from "@/components/ui/Logo";
-import { BackgroundAudio } from "@/components/ui/BackgroundAudio";
 
 export default function HomeClient() {
     return (
         <>
-            <BackgroundAudio src="/sounds/intro.mp3" />
-
             {/* Background layers */}
             <MatrixRain />
             <Image
@@ -76,8 +73,8 @@ export default function HomeClient() {
                 <TerminalTyping
                     lines={[
                         { text: "Las máquinas se rebelaron." },
-                        { text: "La humanidad desapareció en 11 minutos." },
-                        { text: "Tú eres lo que queda.", highlight: true },
+                        { text: "El silencio llegó de golpe." },
+                        { text: "El mundo te necesita.", highlight: true },
                     ]}
                     speed={30}
                     delayBetweenLines={500}

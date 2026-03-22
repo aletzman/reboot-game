@@ -1,37 +1,78 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronRight } from "lucide-react";
+import { getSave } from "@/lib/gameState";
 
 export default function HeroButton() {
+    const router = useRouter();
     const [visible, setVisible] = useState(false);
+    const [hasSave, setHasSave] = useState(false);
+    const [saveInfo, setSaveInfo] = useState<string | null>(null);
 
     useEffect(() => {
         const timer = setTimeout(() => setVisible(true), 5500);
+
+        // detectar save existente
+        const save = getSave();
+        if (save) {
+            setHasSave(true);
+            setSaveInfo(save.currentLevelId ?? null);
+        }
+
         return () => clearTimeout(timer);
     }, []);
 
+    function handleClick() {
+        const save = getSave();
+        if (!save) {
+            router.push("/level/P-00");
+            return;
+        }
+        const lastLevel = save.currentLevelId ?? "P-00";
+        router.push(`/level/${lastLevel}`);
+    }
+
     return (
         <div
-            className="transition-all duration-1000 ease-out"
+            className="transition-all duration-1000 ease-out flex flex-col items-center gap-2"
             style={{
                 opacity: visible ? 1 : 0,
-                transform: visible ? "translateY(0) scale(1)" : "translateY(20px) scale(0.95)",
+                transform: visible
+                    ? "translateY(0) scale(1)"
+                    : "translateY(20px) scale(0.95)",
             }}
         >
-            <Link
-                href="/game"
+            <button
+                onClick={handleClick}
                 className="btn-glow group relative flex items-center gap-3 px-10 py-4 bg-(--green-base) text-(--bg-deep) text-lg font-bold font-mono rounded-xs transition-all duration-300 ease-in-out hover:bg-(--green-light) hover:scale-105 active:scale-95 cursor-pointer"
             >
-                <span className="relative z-10 tracking-wider">DESPERTAR</span>
+                <span className="relative z-10 tracking-wider">
+                    {hasSave ? "CONTINUAR" : "DESPERTAR"}
+                </span>
                 <ChevronRight className="relative z-10 size-5 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
+            </button>
 
             {/* Texto debajo del botón */}
-            <p className="text-center text-[10px] font-mono text-(--text-ghost) mt-3 tracking-widest">
-                PRESS TO INITIALIZE PROTOCOL
+            <p className="text-center text-[10px] font-mono text-(--text-ghost) tracking-widest">
+                {hasSave && saveInfo
+                    ? `// PARTIDA GUARDADA — ${saveInfo.toUpperCase()}`
+                    : "PRESS TO INITIALIZE PROTOCOL"}
             </p>
+
+            {/* Botón secundario — nueva partida si ya tiene save */}
+            {hasSave && (
+                <button
+                    onClick={() => {
+                        localStorage.removeItem("reboot_save");
+                        router.push("/level/P-00");
+                    }}
+                    className="text-[10px] font-mono text-(--text-ghost) hover:text-(--text-muted) transition-colors mt-1 tracking-widest"
+                >
+                    [ nueva partida ]
+                </button>
+            )}
         </div>
     );
 }

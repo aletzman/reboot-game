@@ -2,6 +2,7 @@
 import { CirclePower, Settings } from "lucide-react";
 import { ButtonOption } from "./ButtonOption";
 import { AudioControls } from "./AudioControls";
+import { BackgroundAudio } from "./BackgroundAudio";
 
 interface HeaderProps {
     viewMenu?: boolean
@@ -10,6 +11,8 @@ interface HeaderProps {
 export function Header({ viewMenu }: HeaderProps) {
     return (
         <header className="flex items-center justify-between p-2 bg-(--bg-surface) w-full relative z-10 border-b border-(--border-muted-color)">
+            <BackgroundAudio src="/sounds/intro.mp3" />
+
             <div className="flex items-center gap-6">
                 <h1 className="text-sm font-medium font-mono text-(--green-light)">REBOOT_SYS_V1.0</h1>
                 {viewMenu && <nav>
@@ -29,7 +32,7 @@ export function Header({ viewMenu }: HeaderProps) {
 
             <div className="flex items-center gap-4">
                 <AudioControls />
-                
+
                 {viewMenu && <div className="flex items-center gap-2">
                     <ButtonOption onClick={() => { }} icon={<Settings className="size-5" />} color="blue" />
                     <ButtonOption onClick={() => { }} icon={<CirclePower className="size-5" />} color="red" />
