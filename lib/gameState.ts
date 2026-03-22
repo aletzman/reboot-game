@@ -163,14 +163,14 @@ export function getObjects(): string[] {
 // ACCESO A NIVELES
 // ------------------------------------------------------------
 
-export function canAccessLevel(levelId: string): LevelAccessResult {
+export function canAccessLevel(levelId: string): LevelAccessResult { 
   const save = getSave()
 
-  // niveles del prólogo siempre accesibles
-  if (FREE_LEVELS.includes(levelId)) return { allowed: true }
-
-  // sin save no hay acceso
-  if (!save) return { allowed: false, reason: 'locked', requiredAct: 0 }
+   const id = levelId.toUpperCase()  // ← normaliza aquí
+  
+  if (FREE_LEVELS.includes(id)) return { allowed: true }
+  
+  if (!getSave()) return { allowed: false, reason: 'locked', requiredAct: 0 }
 
   // buscar el nivel en los datos
   const level = (levelsData.levels as { id: string; requiredObjects: string[] }[])
@@ -180,7 +180,7 @@ export function canAccessLevel(levelId: string): LevelAccessResult {
 
   // verificar objetos requeridos
   const missingObjects = level.requiredObjects.filter(
-    objId => !save.objects.includes(objId)
+    objId => !save!.objects.includes(objId)
   )
 
   if (missingObjects.length > 0) {

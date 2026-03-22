@@ -21,8 +21,13 @@ import {
 // OBTENER NIVEL POR ID
 // ------------------------------------------------------------
 
+// después
 export function getLevelById(id: string): Level | null {
-  const level = (levelsData.levels as Level[]).find(l => l.id === id)
+  const normalized = id.toUpperCase().replace('%2F', '/')
+  const level = (levelsData.levels as Level[]).find(
+    l => l.id.toUpperCase() === normalized
+  )
+  console.log(level)
   return level ?? null
 }
 
