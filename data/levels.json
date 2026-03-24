@@ -1,6 +1,5 @@
 {
   "levels": [
-
     {
       "id": "P-00",
       "act": 0,
@@ -14,11 +13,12 @@
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
-      "rewardObjects": ["linterna_rota"],
+      "rewardObjects": [
+        "linterna_rota"
+      ],
       "rewardCards": [],
       "failRedirectTo": null
     },
-
     {
       "id": "P-01",
       "act": 0,
@@ -32,12 +32,13 @@
       "optional": false,
       "isReview": false,
       "reviewOf": [],
-      "requiredObjects": ["linterna_rota"],
+      "requiredObjects": [
+        "linterna_rota"
+      ],
       "rewardObjects": [],
       "rewardCards": [],
       "failRedirectTo": null
     },
-
     {
       "id": "P-02",
       "act": 0,
@@ -54,35 +55,85 @@
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
-      "rewardObjects": ["credencial_acceso"],
+      "rewardObjects": [
+        "credencial_acceso"
+      ],
       "rewardCards": [],
       "failRedirectTo": null
     },
-
     {
       "id": "1-01",
       "act": 1,
       "actName": "Boot.exe",
       "type": "lightbot",
-      "title": "Puerta sellada",
-      "description": "Un robot de mantenimiento espera instrucciones. Nadie le ha dicho qué hacer desde El Silencio. Tú puedes hacerlo.",
-      "narrative": "FRAG: 'Este robot puede abrir la puerta, pero necesita que le digas exactamente qué hacer. Paso por paso.'",
+      "title": "Primeros Pasos",
+      "description": "Un robot de mantenimiento espera instrucciones. Aprende a indicarle cómo moverse hacia el frente.",
+      "narrative": "FRAG: \"El robot reacciona a comandos de Secuencia. Ordena sus pasos para llegar al objetivo y activarlo.\"",
       "mechanic": "Arrastra flechas para mover el robot al panel. Introduce: secuencia, avanzar, girar.",
       "concept": "secuencia",
       "fragAvailable": true,
-      "fragHint": "Primero dile cuántos pasos adelante, luego en qué dirección girar.",
+      "fragHint": "Solo necesitas decirle que avance dos pasos y luego activar el panel.",
       "optional": false,
       "isReview": false,
       "reviewOf": [],
-      "requiredObjects": ["credencial_acceso"],
+      "requiredObjects": [
+        "credencial_acceso"
+      ],
       "rewardObjects": [],
-      "rewardCards": ["card-001"],
+      "rewardCards": [
+        "card-001"
+      ],
       "failRedirectTo": null,
       "maxStars": 3
     },
-
     {
       "id": "1-02",
+      "act": 1,
+      "actName": "Boot.exe",
+      "type": "lightbot",
+      "title": "Doblando la esquina",
+      "description": "El camino ya no es recto. Las direcciones son relativas a la perspectiva del robot.",
+      "narrative": "FRAG: \"Esquinas. Debes especificar hacia dónde girar basándote en hacia dónde mira el robot.\"",
+      "mechanic": "Arrastra flechas para mover el robot al panel. Introduce: secuencia, avanzar, girar.",
+      "concept": "secuencia",
+      "fragAvailable": true,
+      "fragHint": "Piensa en ti mismo como el robot. Tu izquierda o tu derecha.",
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [
+        "credencial_acceso"
+      ],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null,
+      "maxStars": 3
+    },
+    {
+      "id": "1-03",
+      "act": 1,
+      "actName": "Boot.exe",
+      "type": "lightbot",
+      "title": "Niveles de elevación",
+      "description": "El mapa tiene diferentes alturas. Usa saltar para subir a un escalón y bajar para descender.",
+      "narrative": "FRAG: \"El nivel del suelo oscila. Saltar te elevará un nivel. Bajar te hará descender.\"",
+      "mechanic": "Arrastra flechas para mover el robot al panel. Introduce: secuencia, avanzar, girar.",
+      "concept": "saltar",
+      "fragAvailable": true,
+      "fragHint": "Avanza subiendo el escalón, camina y vuelve a bajar al llegar al final.",
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [
+        "credencial_acceso"
+      ],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null,
+      "maxStars": 3
+    },
+    {
+      "id": "1-04",
       "act": 1,
       "actName": "Boot.exe",
       "type": "lightbot",
@@ -98,13 +149,14 @@
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": ["card-002"],
+      "rewardCards": [
+        "card-002"
+      ],
       "failRedirectTo": null,
       "maxStars": 3
     },
-
     {
-      "id": "1-03",
+      "id": "1-05",
       "act": 1,
       "actName": "Boot.exe",
       "type": "puzzle-match",
@@ -120,13 +172,14 @@
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": ["card-003"],
+      "rewardCards": [
+        "card-003"
+      ],
       "failRedirectTo": null,
       "maxStars": 2
     },
-
     {
-      "id": "1-04",
+      "id": "1-06",
       "act": 1,
       "actName": "Boot.exe",
       "type": "lightbot",
@@ -141,14 +194,17 @@
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
-      "rewardObjects": ["plano_bunker_parcial"],
-      "rewardCards": ["card-004"],
-      "failRedirectTo": "1-02",
+      "rewardObjects": [
+        "plano_bunker_parcial"
+      ],
+      "rewardCards": [
+        "card-004"
+      ],
+      "failRedirectTo": "1-04",
       "maxStars": 3
     },
-
     {
-      "id": "1-05",
+      "id": "1-07",
       "act": 1,
       "actName": "Boot.exe",
       "type": "lightbot",
@@ -163,12 +219,57 @@
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
-      "rewardObjects": ["llave_sector_2"],
-      "rewardCards": ["card-005"],
-      "failRedirectTo": "1-03",
+      "rewardObjects": [
+        "llave_sector_2"
+      ],
+      "rewardCards": [
+        "card-005"
+      ],
+      "failRedirectTo": "1-06",
       "maxStars": 3
     },
-
+    {
+      "id": "1-08",
+      "act": 1,
+      "actName": "Boot.exe",
+      "type": "lightbot",
+      "title": "La colina",
+      "description": "Un terreno escarpado requiere múltiples saltos y planeación cuidadosa para no chocar o caer incorrectamente.",
+      "narrative": "FRAG: 'El terreno se ha vuelto accidentado. Usa el bucle repetir e invoca múltiples saltos consecutivos.'",
+      "mechanic": "Subir una plataforma compleja aprovechando ciclos de saltos",
+      "concept": "algoritmos espaciales",
+      "fragAvailable": true,
+      "fragHint": "Aprovecha el comando repetir para subir una serie de escalones o saltarlos.",
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "1-07",
+      "maxStars": 3
+    },
+    {
+      "id": "1-09",
+      "act": 1,
+      "actName": "Boot.exe",
+      "type": "lightbot",
+      "title": "Caída vertical",
+      "description": "Bajar a gran velocidad usando saltos en serie para activar múltiples núcleos antes del sistema principal.",
+      "narrative": "FRAG: 'Este sumidero tiene caídas abruptas. Podemos saltar para bajar largos tramos, siempre y cuando activemos lo necesario.'",
+      "mechanic": "Múltiples bajadas en pirámide",
+      "concept": "Saltos avanzados",
+      "fragAvailable": true,
+      "fragHint": "Recuerda que puedes saltar para bajar tantos niveles de altura como sea necesario de un solo brinco.",
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "1-08",
+      "maxStars": 3
+    },
     {
       "id": "1-R",
       "act": 1,
@@ -182,21 +283,32 @@
       "fragAvailable": false,
       "optional": false,
       "isReview": true,
-      "reviewOf": ["1-01", "1-02", "1-03", "1-04", "1-05"],
+      "reviewOf": [
+        "1-01",
+        "1-02",
+        "1-03",
+        "1-04",
+        "1-05",
+        "1-06",
+        "1-07",
+        "1-08",
+        "1-09"
+      ],
       "requiredObjects": [],
-      "rewardObjects": ["manual_logica"],
+      "rewardObjects": [
+        "manual_logica"
+      ],
       "rewardCards": [],
       "failRedirectTo": null,
       "reviewFailRedirect": {
         "secuencia": "1-01",
-        "loop": "1-02",
-        "condicional": "1-03",
-        "orden": "1-04"
+        "loop": "1-04",
+        "condicional": "1-05",
+        "orden": "1-06"
       },
       "maxStars": 3,
       "note": "El objeto 'manual_logica' solo se otorga con 3 estrellas."
     },
-
     {
       "id": "2-01",
       "act": 2,
@@ -212,13 +324,16 @@
       "optional": false,
       "isReview": false,
       "reviewOf": [],
-      "requiredObjects": ["llave_sector_2"],
+      "requiredObjects": [
+        "llave_sector_2"
+      ],
       "rewardObjects": [],
-      "rewardCards": ["card-006"],
+      "rewardCards": [
+        "card-006"
+      ],
       "failRedirectTo": null,
       "maxStars": 3
     },
-
     {
       "id": "2-02",
       "act": 2,
@@ -235,12 +350,15 @@
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
-      "rewardObjects": ["plano_diagrama_flujo"],
-      "rewardCards": ["card-007"],
+      "rewardObjects": [
+        "plano_diagrama_flujo"
+      ],
+      "rewardCards": [
+        "card-007"
+      ],
       "failRedirectTo": "2-01",
       "maxStars": 2
     },
-
     {
       "id": "2-03",
       "act": 2,
@@ -258,11 +376,12 @@
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": ["card-008"],
+      "rewardCards": [
+        "card-008"
+      ],
       "failRedirectTo": "2-01",
       "maxStars": 3
     },
-
     {
       "id": "2-04",
       "act": 2,
@@ -278,14 +397,19 @@
       "optional": false,
       "isReview": false,
       "reviewOf": [],
-      "requiredObjects": ["linterna_rota"],
-      "rewardObjects": ["diario_ingeniero"],
-      "rewardCards": ["card-009"],
+      "requiredObjects": [
+        "linterna_rota"
+      ],
+      "rewardObjects": [
+        "diario_ingeniero"
+      ],
+      "rewardCards": [
+        "card-009"
+      ],
       "failRedirectTo": "2-02",
       "maxStars": 2,
       "note": "La linterna rota revela páginas ocultas del diario que dan contexto extra."
     },
-
     {
       "id": "2-05",
       "act": 2,
@@ -303,11 +427,12 @@
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": ["card-010"],
+      "rewardCards": [
+        "card-010"
+      ],
       "failRedirectTo": "2-03",
       "maxStars": 2
     },
-
     {
       "id": "2-06",
       "act": 2,
@@ -323,12 +448,15 @@
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
-      "rewardObjects": ["coordenadas_laboratorio"],
-      "rewardCards": ["card-011"],
+      "rewardObjects": [
+        "coordenadas_laboratorio"
+      ],
+      "rewardCards": [
+        "card-011"
+      ],
       "failRedirectTo": null,
       "maxStars": 3
     },
-
     {
       "id": "2-07",
       "act": 2,
@@ -345,12 +473,57 @@
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
-      "rewardObjects": ["tarjeta_acceso_laboratorio"],
-      "rewardCards": ["card-012"],
+      "rewardObjects": [
+        "tarjeta_acceso_laboratorio"
+      ],
+      "rewardCards": [
+        "card-012"
+      ],
       "failRedirectTo": "2-04",
       "maxStars": 3
     },
-
+    {
+      "id": "2-08",
+      "act": 2,
+      "actName": "Funciones",
+      "type": "lightbot",
+      "title": "La primera subrutina",
+      "description": "Patrón repetitivo detectado. Ensambla la secuencia en F1 y actívala múltiples veces desde el bloque principal.",
+      "narrative": "FRAG: 'El espacio principal es limitado. Usa el contenedor F1 para guardar un sub-comportamiento, y llámalo con el comando F1.'",
+      "mechanic": "Uso de contenedor F1 y comando llamar F1",
+      "concept": "funciones espaciales",
+      "fragAvailable": true,
+      "fragHint": "Primero resuelve un segmento del mapa. Guarda esos bloques en F1.",
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "2-07",
+      "maxStars": 3
+    },
+    {
+      "id": "2-09",
+      "act": 2,
+      "actName": "Funciones",
+      "type": "lightbot",
+      "title": "Escalera en espiral",
+      "description": "Una escalera compleja donde la secuencia central usa repeticiones y la función F1 puede llamarse a sí misma o repetirse.",
+      "narrative": "FRAG: 'Esa subrutina (F1) puede contener a su vez instrucciones complejas como girar, saltar y activar.'",
+      "mechanic": "Combinación de F1 con bloque repetidor",
+      "concept": "abstracción 3D interactiva",
+      "fragAvailable": true,
+      "fragHint": "Tu F1 ideal debería subir un nivel y girar para prepararse para el siguiente.",
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "2-08",
+      "maxStars": 3
+    },
     {
       "id": "2-R",
       "act": 2,
@@ -364,9 +537,21 @@
       "fragAvailable": false,
       "optional": false,
       "isReview": true,
-      "reviewOf": ["2-01", "2-02", "2-03", "2-04", "2-05", "2-06", "2-07"],
+      "reviewOf": [
+        "2-01",
+        "2-02",
+        "2-03",
+        "2-04",
+        "2-05",
+        "2-06",
+        "2-07",
+        "2-08",
+        "2-09"
+      ],
       "requiredObjects": [],
-      "rewardObjects": ["guia_pseudocodigo"],
+      "rewardObjects": [
+        "guia_pseudocodigo"
+      ],
       "rewardCards": [],
       "failRedirectTo": null,
       "reviewFailRedirect": {
@@ -378,7 +563,6 @@
       "maxStars": 3,
       "note": "El objeto 'guia_pseudocodigo' solo se otorga con 3 estrellas."
     },
-
     {
       "id": "3-01",
       "act": 3,
@@ -391,12 +575,16 @@
       "optional": false,
       "isReview": false,
       "reviewOf": [],
-      "requiredObjects": ["coordenadas_laboratorio", "tarjeta_acceso_laboratorio"],
-      "rewardObjects": ["mapa_laboratorio"],
+      "requiredObjects": [
+        "coordenadas_laboratorio",
+        "tarjeta_acceso_laboratorio"
+      ],
+      "rewardObjects": [
+        "mapa_laboratorio"
+      ],
       "rewardCards": [],
       "failRedirectTo": null
     },
-
     {
       "id": "3-02",
       "act": 3,
@@ -410,12 +598,15 @@
       "optional": false,
       "isReview": false,
       "reviewOf": [],
-      "requiredObjects": ["mapa_laboratorio"],
+      "requiredObjects": [
+        "mapa_laboratorio"
+      ],
       "rewardObjects": [],
-      "rewardCards": ["card-013"],
+      "rewardCards": [
+        "card-013"
+      ],
       "failRedirectTo": null
     },
-
     {
       "id": "3-03",
       "act": 3,
@@ -432,12 +623,15 @@
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
-      "rewardObjects": ["plano_sintaxis_js"],
-      "rewardCards": ["card-014"],
+      "rewardObjects": [
+        "plano_sintaxis_js"
+      ],
+      "rewardCards": [
+        "card-014"
+      ],
       "failRedirectTo": null,
       "maxStars": 2
     },
-
     {
       "id": "3-R",
       "act": 3,
@@ -451,9 +645,15 @@
       "fragAvailable": false,
       "optional": false,
       "isReview": true,
-      "reviewOf": ["3-01", "3-02", "3-03"],
+      "reviewOf": [
+        "3-01",
+        "3-02",
+        "3-03"
+      ],
       "requiredObjects": [],
-      "rewardObjects": ["referencia_lenguajes"],
+      "rewardObjects": [
+        "referencia_lenguajes"
+      ],
       "rewardCards": [],
       "failRedirectTo": null,
       "reviewFailRedirect": {
@@ -462,7 +662,6 @@
       "maxStars": 3,
       "note": "El objeto 'referencia_lenguajes' solo se otorga con 3 estrellas."
     },
-
     {
       "id": "4-01",
       "act": 4,
@@ -481,11 +680,12 @@
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": ["card-015"],
+      "rewardCards": [
+        "card-015"
+      ],
       "failRedirectTo": null,
       "maxStars": 3
     },
-
     {
       "id": "4-02",
       "act": 4,
@@ -503,11 +703,12 @@
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": ["card-016"],
+      "rewardCards": [
+        "card-016"
+      ],
       "failRedirectTo": "4-01",
       "maxStars": 2
     },
-
     {
       "id": "4-03",
       "act": 4,
@@ -525,12 +726,15 @@
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
-      "rewardObjects": ["plano_funciones_js"],
-      "rewardCards": ["card-017"],
+      "rewardObjects": [
+        "plano_funciones_js"
+      ],
+      "rewardCards": [
+        "card-017"
+      ],
       "failRedirectTo": "4-01",
       "maxStars": 3
     },
-
     {
       "id": "4-04",
       "act": 4,
@@ -547,11 +751,12 @@
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": ["card-018"],
+      "rewardCards": [
+        "card-018"
+      ],
       "failRedirectTo": null,
       "maxStars": 3
     },
-
     {
       "id": "4-05",
       "act": 4,
@@ -570,11 +775,12 @@
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": ["card-019"],
+      "rewardCards": [
+        "card-019"
+      ],
       "failRedirectTo": "4-03",
       "maxStars": 3
     },
-
     {
       "id": "4-06",
       "act": 4,
@@ -591,12 +797,15 @@
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
-      "rewardObjects": ["componente_repuesto"],
-      "rewardCards": ["card-020"],
+      "rewardObjects": [
+        "componente_repuesto"
+      ],
+      "rewardCards": [
+        "card-020"
+      ],
       "failRedirectTo": "4-05",
       "maxStars": 2
     },
-
     {
       "id": "4-07",
       "act": 4,
@@ -613,14 +822,19 @@
       "optional": false,
       "isReview": false,
       "reviewOf": [],
-      "requiredObjects": ["diario_ingeniero"],
-      "rewardObjects": ["plano_estructura_genesis"],
-      "rewardCards": ["card-021"],
+      "requiredObjects": [
+        "diario_ingeniero"
+      ],
+      "rewardObjects": [
+        "plano_estructura_genesis"
+      ],
+      "rewardCards": [
+        "card-021"
+      ],
       "failRedirectTo": "4-05",
       "maxStars": 3,
       "note": "El diario del ingeniero revela la estructura de objetos de las máquinas GÉNESIS dando ventaja en el ejercicio."
     },
-
     {
       "id": "4-08",
       "act": 4,
@@ -639,11 +853,12 @@
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": ["card-022"],
+      "rewardCards": [
+        "card-022"
+      ],
       "failRedirectTo": "4-06",
       "maxStars": 3
     },
-
     {
       "id": "4-09",
       "act": 4,
@@ -660,11 +875,12 @@
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": ["card-023"],
+      "rewardCards": [
+        "card-023"
+      ],
       "failRedirectTo": null,
       "maxStars": 3
     },
-
     {
       "id": "4-10",
       "act": 4,
@@ -680,13 +896,16 @@
       "optional": false,
       "isReview": false,
       "reviewOf": [],
-      "requiredObjects": ["componente_repuesto"],
-      "rewardObjects": ["llave_bunker_genesis"],
+      "requiredObjects": [
+        "componente_repuesto"
+      ],
+      "rewardObjects": [
+        "llave_bunker_genesis"
+      ],
       "rewardCards": [],
       "failRedirectTo": "4-07",
       "maxStars": 3
     },
-
     {
       "id": "4-R",
       "act": 4,
@@ -700,9 +919,19 @@
       "fragAvailable": false,
       "optional": false,
       "isReview": true,
-      "reviewOf": ["4-01", "4-02", "4-03", "4-05", "4-06", "4-07", "4-08"],
+      "reviewOf": [
+        "4-01",
+        "4-02",
+        "4-03",
+        "4-05",
+        "4-06",
+        "4-07",
+        "4-08"
+      ],
       "requiredObjects": [],
-      "rewardObjects": ["cheatsheet_js"],
+      "rewardObjects": [
+        "cheatsheet_js"
+      ],
       "rewardCards": [],
       "failRedirectTo": null,
       "reviewFailRedirect": {
@@ -716,7 +945,6 @@
       "maxStars": 3,
       "note": "El objeto 'cheatsheet_js' solo se otorga con 3 estrellas. Es consultable en el nivel final."
     },
-
     {
       "id": "5-01",
       "act": 5,
@@ -729,12 +957,15 @@
       "optional": false,
       "isReview": false,
       "reviewOf": [],
-      "requiredObjects": ["llave_bunker_genesis"],
-      "rewardObjects": ["manual_activacion_genesis"],
+      "requiredObjects": [
+        "llave_bunker_genesis"
+      ],
+      "rewardObjects": [
+        "manual_activacion_genesis"
+      ],
       "rewardCards": [],
       "failRedirectTo": null
     },
-
     {
       "id": "5-02",
       "act": 5,
@@ -749,14 +980,23 @@
       "optional": false,
       "isReview": false,
       "reviewOf": [],
-      "requiredObjects": ["llave_bunker_genesis"],
-      "rewardObjects": ["genesis_activado"],
-      "rewardCards": ["card-024"],
+      "requiredObjects": [
+        "llave_bunker_genesis"
+      ],
+      "rewardObjects": [
+        "genesis_activado"
+      ],
+      "rewardCards": [
+        "card-024"
+      ],
       "failRedirectTo": null,
-      "hintObjects": ["cheatsheet_js", "manual_activacion_genesis", "plano_estructura_genesis"],
+      "hintObjects": [
+        "cheatsheet_js",
+        "manual_activacion_genesis",
+        "plano_estructura_genesis"
+      ],
       "maxStars": 3,
       "note": "Los objetos hintObjects pueden consultarse hasta 2 veces durante el nivel final si el jugador los tiene en su inventario."
     }
-
   ]
 }

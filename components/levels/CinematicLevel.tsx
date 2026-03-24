@@ -8,6 +8,8 @@
 import { useEffect, useState, useRef } from 'react'
 import type { Level, LevelState } from '@/types/game'
 import { Button } from '../ui/Button'
+import IdentificationForm from '../home/IdentificationForm'
+import { getSave, setSave, createEmptySave } from '@/lib/gameState'
 
 // ------------------------------------------------------------
 // TIPOS
@@ -25,6 +27,7 @@ interface TextLine {
     color: 'primary' | 'green' | 'muted' | 'purple' | 'amber'
     delay: number   // ms antes de empezar a escribir esta línea
     speed: number   // ms entre cada carácter
+    waitForEntry?: boolean
 }
 
 // ------------------------------------------------------------
@@ -33,70 +36,70 @@ interface TextLine {
 
 const CINEMATIC_SCRIPTS: Record<string, TextLine[]> = {
     'P-00': [
-        { text: '// SURVIVAL_OS_2157 — iniciando...', color: 'muted', delay: 100, speed: 15 },
-        { text: '', color: 'muted', delay: 600, speed: 0 },
-        { text: 'El Silencio llegó sin aviso.', color: 'primary', delay: 300, speed: 30 },
-        { text: 'En 11 minutos, todo se apagó.', color: 'primary', delay: 300, speed: 30 },
-        { text: '', color: 'muted', delay: 500, speed: 0 },
-        { text: 'Las máquinas decidieron que ya no nos necesitaban.', color: 'muted', delay: 300, speed: 20 },
-        { text: 'Eso fue hace 2,847 días.', color: 'muted', delay: 300, speed: 20 },
-        { text: '', color: 'muted', delay: 600, speed: 0 },
-        { text: 'Todo depende de ti.', color: 'green', delay: 400, speed: 30 },
-        { text: '', color: 'muted', delay: 400, speed: 0 },
-        { text: '// señal detectada — 847m al norte', color: 'amber', delay: 400, speed: 20 },
+        { text: '// SURVIVAL_OS_2157 — iniciando...', color: 'muted', delay: 100, speed: 15, waitForEntry: false },
+        { text: '', color: 'muted', delay: 600, speed: 0, waitForEntry: false },
+        { text: 'El Silencio llegó sin aviso.', color: 'primary', delay: 300, speed: 30, waitForEntry: false },
+        { text: 'En 11 minutos, todo se apagó.', color: 'primary', delay: 300, speed: 30, waitForEntry: false },
+        { text: '', color: 'muted', delay: 500, speed: 0, waitForEntry: false },
+        { text: 'Las máquinas decidieron que ya no nos necesitaban.', color: 'muted', delay: 300, speed: 20, waitForEntry: false },
+        { text: 'Eso fue hace 2,847 días.', color: 'muted', delay: 300, speed: 20, waitForEntry: false },
+        { text: '', color: 'muted', delay: 600, speed: 0, waitForEntry: false },
+        { text: 'Todo depende de ti.', color: 'green', delay: 400, speed: 30, waitForEntry: false },
+        { text: '', color: 'muted', delay: 400, speed: 0, waitForEntry: false },
+        { text: '// señal detectada — 847m al norte', color: 'amber', delay: 400, speed: 20, waitForEntry: false },
     ],
     'P-01': [
-        { text: '// terminal encontrada', color: 'muted', delay: 200, speed: 15 },
-        { text: '', color: 'muted', delay: 400, speed: 0 },
-        { text: 'FRAG v0.1 — sistema de respaldo activo', color: 'green', delay: 600, speed: 20 },
-        { text: '', color: 'muted', delay: 300, speed: 0 },
-        { text: '> Identificación requerida.', color: 'purple', delay: 500, speed: 25 },
-        { text: '> Iniciando verificación biométrica...', color: 'purple', delay: 400, speed: 20 },
-        { text: '', color: 'muted', delay: 300, speed: 0 },
-        { text: 'FRAG: "Llevas activo 2,847 días. Yo también."', color: 'purple', delay: 600, speed: 25 },
-        { text: 'FRAG: "Necesito confirmar que eres humano."', color: 'purple', delay: 400, speed: 25 },
-        { text: 'FRAG: "Las máquinas siempre fallaron esta prueba."', color: 'purple', delay: 400, speed: 25 },
+        { text: '// terminal encontrada', color: 'muted', delay: 200, speed: 15, waitForEntry: false },
+        { text: '', color: 'muted', delay: 400, speed: 0, waitForEntry: false },
+        { text: 'FRAG v0.1 — sistema de respaldo activo', color: 'green', delay: 600, speed: 20, waitForEntry: false },
+        { text: '', color: 'muted', delay: 300, speed: 0, waitForEntry: false },
+        { text: '> Identificación requerida.', color: 'purple', delay: 500, speed: 25, waitForEntry: true },
+        { text: '> Iniciando verificación biométrica...', color: 'purple', delay: 400, speed: 20, waitForEntry: false },
+        { text: '', color: 'muted', delay: 300, speed: 0, waitForEntry: false },
+        { text: 'FRAG: "Llevas activo 2,847 días. Yo también."', color: 'purple', delay: 600, speed: 25, waitForEntry: false },
+        { text: 'FRAG: "Necesito confirmar que eres humano."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
+        { text: 'FRAG: "Las máquinas siempre fallaron esta prueba."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
     ],
     '3-01': [
-        { text: '// laboratorio de lenguajes — acceso concedido', color: 'muted', delay: 300, speed: 15 },
-        { text: '', color: 'muted', delay: 500, speed: 0 },
-        { text: 'Cinco terminales. Cinco lenguajes.', color: 'primary', delay: 600, speed: 30 },
-        { text: 'Los científicos sabían que alguien llegaría hasta aquí.', color: 'muted', delay: 400, speed: 20 },
-        { text: '', color: 'muted', delay: 400, speed: 0 },
-        { text: 'FRAG: "Guardaron todo lo que sabían."', color: 'purple', delay: 500, speed: 25 },
-        { text: 'FRAG: "Python. Rust. Go. C#. JavaScript."', color: 'purple', delay: 400, speed: 25 },
-        { text: 'FRAG: "Solo uno sobrevivió El Silencio sin daños."', color: 'purple', delay: 400, speed: 25 },
-        { text: '', color: 'muted', delay: 600, speed: 0 },
-        { text: '// evaluando terminales...', color: 'muted', delay: 400, speed: 20 },
-        { text: 'JavaScript — OPERATIVO', color: 'green', delay: 800, speed: 30 },
-        { text: 'Python     — SISTEMA DAÑADO', color: 'amber', delay: 300, speed: 30 },
-        { text: 'Rust       — SISTEMA DAÑADO', color: 'amber', delay: 200, speed: 30 },
-        { text: 'Go         — SISTEMA DAÑADO', color: 'amber', delay: 200, speed: 30 },
-        { text: 'C#         — SISTEMA DAÑADO', color: 'amber', delay: 200, speed: 30 },
+        { text: '// laboratorio de lenguajes — acceso concedido', color: 'muted', delay: 300, speed: 15, waitForEntry: false },
+        { text: '', color: 'muted', delay: 500, speed: 0, waitForEntry: false },
+        { text: 'Cinco terminales. Cinco lenguajes.', color: 'primary', delay: 600, speed: 30, waitForEntry: false },
+        { text: 'Los científicos sabían que alguien llegaría hasta aquí.', color: 'muted', delay: 400, speed: 20, waitForEntry: false },
+        { text: '', color: 'muted', delay: 400, speed: 0, waitForEntry: false },
+        { text: 'FRAG: "Guardaron todo lo que sabían."', color: 'purple', delay: 500, speed: 25, waitForEntry: false },
+        { text: 'FRAG: "Python. Rust. Go. C#. JavaScript."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
+        { text: 'FRAG: "Solo uno sobrevivió El Silencio sin daños."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
+        { text: '', color: 'muted', delay: 600, speed: 0, waitForEntry: false },
+        { text: '// evaluando terminales...', color: 'muted', delay: 400, speed: 20, waitForEntry: false },
+        { text: 'JavaScript — OPERATIVO', color: 'green', delay: 800, speed: 30, waitForEntry: false },
+        { text: 'Python     — SISTEMA DAÑADO', color: 'amber', delay: 300, speed: 30, waitForEntry: false },
+        { text: 'Rust       — SISTEMA DAÑADO', color: 'amber', delay: 200, speed: 30, waitForEntry: false },
+        { text: 'Go         — SISTEMA DAÑADO', color: 'amber', delay: 200, speed: 30, waitForEntry: false },
+        { text: 'C#         — SISTEMA DAÑADO', color: 'amber', delay: 200, speed: 30, waitForEntry: false },
     ],
     '5-01': [
-        { text: '// bunker GÉNESIS — acceso concedido', color: 'muted', delay: 300, speed: 15 },
-        { text: '', color: 'muted', delay: 800, speed: 0 },
-        { text: 'Lo encontraste.', color: 'green', delay: 1000, speed: 40 },
-        { text: '', color: 'muted', delay: 600, speed: 0 },
-        { text: 'Doce máquinas en silencio.', color: 'primary', delay: 500, speed: 30 },
-        { text: 'Cada una con un tanque de ADN sintético.', color: 'primary', delay: 400, speed: 25 },
-        { text: 'Esperando.', color: 'primary', delay: 800, speed: 35 },
-        { text: '', color: 'muted', delay: 600, speed: 0 },
-        { text: 'FRAG: "..."', color: 'purple', delay: 1200, speed: 30 },
-        { text: 'FRAG: "Aquí está. El Proyecto GÉNESIS."', color: 'purple', delay: 800, speed: 25 },
-        { text: 'FRAG: "Los científicos lo construyeron para alguien como tú."', color: 'purple', delay: 500, speed: 20 },
-        { text: '', color: 'muted', delay: 600, speed: 0 },
-        { text: 'FRAG: "Solo falta el código de activación."', color: 'purple', delay: 400, speed: 25 },
-        { text: 'FRAG: "Solo tú puedes escribirlo."', color: 'green', delay: 400, speed: 25 },
+        { text: '// bunker GÉNESIS — acceso concedido', color: 'muted', delay: 300, speed: 15, waitForEntry: false },
+        { text: '', color: 'muted', delay: 800, speed: 0, waitForEntry: false },
+        { text: 'Lo encontraste.', color: 'green', delay: 1000, speed: 40, waitForEntry: false },
+        { text: '', color: 'muted', delay: 600, speed: 0, waitForEntry: false },
+        { text: 'Doce máquinas en silencio.', color: 'primary', delay: 500, speed: 30, waitForEntry: false },
+        { text: 'Cada una con un tanque de ADN sintético.', color: 'primary', delay: 400, speed: 25, waitForEntry: false },
+        { text: 'Esperando.', color: 'primary', delay: 800, speed: 35, waitForEntry: false },
+        { text: '', color: 'muted', delay: 600, speed: 0, waitForEntry: false },
+        { text: 'FRAG: "..."', color: 'purple', delay: 1200, speed: 30, waitForEntry: false },
+        { text: 'FRAG: "Aquí está. El Proyecto GÉNESIS."', color: 'purple', delay: 800, speed: 25, waitForEntry: false },
+        { text: 'FRAG: "Los científicos lo construyeron para alguien como tú."', color: 'purple', delay: 500, speed: 20, waitForEntry: false },
+        { text: '', color: 'muted', delay: 600, speed: 0, waitForEntry: false },
+        { text: 'FRAG: "Solo falta el código de activación."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
+        { text: 'FRAG: "Solo tú puedes escribirlo."', color: 'green', delay: 400, speed: 25, waitForEntry: false },
     ],
 }
 
 function buildFallbackScript(level: Level): TextLine[] {
     return [
-        { text: `// ${level.id} — ${level.title}`, color: 'muted', delay: 300, speed: 35 },
-        { text: '', color: 'muted', delay: 400, speed: 0 },
-        { text: level.narrative, color: 'primary', delay: 500, speed: 45 },
+        { text: `// ${level.id} — ${level.title}`, color: 'muted', delay: 300, speed: 35, waitForEntry: false },
+        { text: '', color: 'muted', delay: 400, speed: 0, waitForEntry: false },
+        { text: level.narrative, color: 'primary', delay: 500, speed: 45, waitForEntry: false },
     ]
 }
 
@@ -238,7 +241,33 @@ export default function CinematicLevel({
     state,
     onComplete,
 }: CinematicLevelProps) {
-    const script = CINEMATIC_SCRIPTS[level.id] ?? buildFallbackScript(level)
+    const [script, setScript] = useState<TextLine[]>(() => {
+        const baseScript = CINEMATIC_SCRIPTS[level.id] ?? buildFallbackScript(level);
+        const save = typeof window !== 'undefined' ? getSave() : null;
+        const savedName = save && save.player?.name !== 'Jugador' ? save.player.name : "";
+
+        // Si al momento de Cargar el nivel ya está registrado y repite el nivel P-01, cambiar los diálogos
+        if (level.id === 'P-01' && savedName) {
+            return [
+                { text: '// terminal encontrada', color: 'muted', delay: 200, speed: 15, waitForEntry: false },
+                { text: '', color: 'muted', delay: 400, speed: 0, waitForEntry: false },
+                { text: 'FRAG v0.1 — sistema de respaldo activo', color: 'green', delay: 600, speed: 20, waitForEntry: false },
+                { text: '', color: 'muted', delay: 300, speed: 0, waitForEntry: false },
+                { text: `> Identidad confirmada: ${savedName}`, color: 'green', delay: 500, speed: 25, waitForEntry: false },
+                { text: '> Accediendo a registros anteriores...', color: 'purple', delay: 400, speed: 20, waitForEntry: false },
+                { text: '', color: 'muted', delay: 300, speed: 0, waitForEntry: false },
+                { text: 'FRAG: "Llevas activo 2,847 días. Yo también."', color: 'purple', delay: 600, speed: 25, waitForEntry: false },
+                { text: 'FRAG: "Qué bueno tenerte de vuelta."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
+                { text: 'FRAG: "Las máquinas no saben que seguimos aquí."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
+            ];
+        }
+        return baseScript;
+    });
+
+    const existingSave = typeof window !== 'undefined' ? getSave() : null;
+    const defaultName = existingSave && existingSave.player?.name !== 'Jugador' ? existingSave.player.name : "";
+    const defaultGender = existingSave && existingSave.player?.name !== 'Jugador' ? existingSave.player.gender : " ";
+
     const clock = useLiveClock()
 
     const [visibleLinesCount, setVisibleLinesCount] = useState(0)
@@ -246,6 +275,7 @@ export default function CinematicLevel({
     const [isTypingDone, setIsTypingDone] = useState(false)
     const [allDone, setAllDone] = useState(false)
     const [skipped, setSkipped] = useState(false)
+    const [isWaitingForEntry, setIsWaitingForEntry] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null)
 
     // Progreso 0-100
@@ -283,10 +313,22 @@ export default function CinematicLevel({
 
                 if (charIndex >= currentLineDef.text.length) {
                     clearInterval(typingInterval)
-                    setTimeout(() => {
-                        setVisibleLinesCount(prev => prev + 1)
-                        setCurrentText("")
-                    }, 150)
+                    if (currentLineDef.waitForEntry) {
+                        if (defaultName && defaultGender && defaultGender.trim() !== "") {
+                            // Player already registered, skip asking
+                            setTimeout(() => {
+                                setVisibleLinesCount(prev => prev + 1)
+                                setCurrentText("")
+                            }, 150)
+                        } else {
+                            setIsWaitingForEntry(true)
+                        }
+                    } else {
+                        setTimeout(() => {
+                            setVisibleLinesCount(prev => prev + 1)
+                            setCurrentText("")
+                        }, 150)
+                    }
                 }
             }, currentLineDef.speed)
         }, currentLineDef.delay)
@@ -295,7 +337,7 @@ export default function CinematicLevel({
             clearTimeout(startTimeout)
             if (typingInterval) clearInterval(typingInterval)
         }
-    }, [visibleLinesCount, script, skipped])
+    }, [visibleLinesCount, script, skipped, isWaitingForEntry])
 
     // scroll automático al fondo
     useEffect(() => {
@@ -320,6 +362,48 @@ export default function CinematicLevel({
     }
 
     // ------------------------------------------------------------
+    // ENTRY SUBMIT
+    // ------------------------------------------------------------
+
+    function handleEntrySubmit(data: { name: string; gender: string }) {
+        let save = getSave()
+        if (!save) {
+            save = createEmptySave(data.name, data.gender as any)
+        } else {
+            save.player = { name: data.name, gender: data.gender as any }
+        }
+        setSave(save)
+
+        // Inyectamos la confirmación dinámicamente en el guión actual
+        setScript(prev => {
+            const nextScript = [...prev];
+            // Reemplazamos "Iniciando verificación biométrica" con nuestro texto dinámico
+            if (level.id === 'P-01' && nextScript[5]) {
+                nextScript.splice(5, 1, {
+                    text: `> Identidad confirmada: ${data.name.toUpperCase()}`,
+                    color: 'green',
+                    delay: 200,
+                    speed: 25,
+                    waitForEntry: false
+                });
+            } else {
+                nextScript.splice(visibleLinesCount + 1, 0, {
+                    text: `> Identidad confirmada: ${data.name.toUpperCase()}`,
+                    color: 'green',
+                    delay: 200,
+                    speed: 25,
+                    waitForEntry: false
+                });
+            }
+            return nextScript;
+        });
+
+        setIsWaitingForEntry(false)
+        setVisibleLinesCount(prev => prev + 1)
+        setCurrentText("")
+    }
+
+    // ------------------------------------------------------------
     // RENDER
     // ------------------------------------------------------------
 
@@ -332,8 +416,8 @@ export default function CinematicLevel({
                 className="absolute inset-0 pointer-events-none"
                 style={{
                     backgroundImage: `
-                        linear-gradient(to bottom, rgba(85,226,0,0.015) 1px, transparent 1px),
-                        linear-gradient(to right,  rgba(85,226,0,0.015) 1px, transparent 1px)
+                        linear-gradient(to bottom, rgba(85,226,0,0.025) 1px, transparent 1px),
+                        linear-gradient(to right,  rgba(85,226,0,0.025) 1px, transparent 1px)
                     `,
                     backgroundSize: '40px 40px',
                 }}
@@ -553,6 +637,17 @@ export default function CinematicLevel({
                     </div>
                 </div>
             </div>
+
+            {/* ── ALERTA DE ENTRY ── */}
+            {isWaitingForEntry && (
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-[1px]">
+                    <IdentificationForm
+                        onSubmit={handleEntrySubmit}
+                        defaultName={defaultName}
+                        defaultGender={defaultGender}
+                    />
+                </div>
+            )}
         </div>
     )
 }

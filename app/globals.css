@@ -285,3 +285,77 @@ body {
     opacity: 0.7;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LEVEL COMPLETE — animaciones y estilos interactivos
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Shimmer horizontal que recorre cartas y paneles */
+@keyframes lc-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+/* Pulso de glow para estrellas activas */
+@keyframes lc-starPulse {
+  0%, 100% { opacity: .6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* Slide up con fade para entrada de secciones */
+@keyframes lc-slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Punto de indicación parpadeante */
+@keyframes lc-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .2; }
+}
+
+/* Entrada de carta con escala + fade */
+@keyframes lc-cardAppear {
+  from {
+    opacity: 0;
+    transform: scale(.85) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Partículas flotantes de fondo */
+@keyframes lc-float {
+  0%, 100% { opacity: 0; transform: translateY(0); }
+  25% { opacity: .25; }
+  50% { opacity: .15; transform: translateY(-20px); }
+  75% { opacity: .2; }
+}
+
+/* Borde degradado animado para cartas legendarias */
+@keyframes lc-legendaryBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Botón primario — hover con glow verde */
+.lc-btn-primary:hover {
+  background: var(--green-base) !important;
+  box-shadow: 0 0 20px rgba(85,226,0,.15), 0 0 40px rgba(85,226,0,.05);
+}
+
+/* Botón secundario — hover sutil */
+.lc-btn-secondary:hover {
+  border-color: var(--text-ghost) !important;
+  color: var(--text-primary) !important;
+  background: var(--bg-elevated) !important;
+}

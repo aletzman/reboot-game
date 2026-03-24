@@ -116,8 +116,10 @@ export function completeLevel(
   const level = getLevelById(levelId)
   if (!level) throw new Error(`Nivel no encontrado: ${levelId}`)
 
+  const canonicalId = level.id
+
   // guardar progreso
-  saveProgress(levelId, stars, usedFrag)
+  saveProgress(canonicalId, stars, usedFrag)
 
   // desbloquear cartas
   const newCards: Card[] = []
@@ -148,7 +150,7 @@ export function completeLevel(
   const secretCardUnlocked =
     !usedFrag &&
     (save?.fragUsedTotal ?? 0) === 0 &&
-    levelId === '5-02'
+    canonicalId === '5-02'
 
   // sugerir redirect si falló mucho en algún nivel relacionado
   let suggestRedirect: string | null = null
@@ -162,7 +164,7 @@ export function completeLevel(
     newObjects,
     secretCardUnlocked,
     suggestRedirect,
-    nextLevelId: getNextLevelId(levelId),
+    nextLevelId: getNextLevelId(canonicalId),
   }
 }
 

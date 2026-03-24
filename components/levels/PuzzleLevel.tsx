@@ -48,6 +48,23 @@ interface MatchPair {
 
 const PUZZLE_DATA: Record<string, PuzzleData> = {
 
+    // MATCH — Verificación humana
+    'P-02': {
+        type: 'match',
+        items: [
+            { id: 'l1', text: '1, 2, 3, ?' },
+            { id: 'l2', text: 'A, B, A, ?' },
+            { id: 'l3', text: '■, □, ■, ?' },
+            { id: 'l4', text: 'O, OO, OOO, ?' },
+        ],
+        pairs: [
+            { leftId: 'l1', rightId: 'r1' },
+            { leftId: 'l2', rightId: 'r2' },
+            { leftId: 'l3', rightId: 'r3' },
+            { leftId: 'l4', rightId: 'r4' },
+        ],
+    },
+
     // SORT — ordenar líneas de pseudocódigo
     '2-02': {
         type: 'sort',
@@ -157,6 +174,12 @@ const PUZZLE_DATA: Record<string, PuzzleData> = {
 
 // Derechas del match por nivel
 const MATCH_RIGHT: Record<string, { id: string; text: string }[]> = {
+    'P-02': [
+        { id: 'r1', text: '4' },
+        { id: 'r2', text: 'B' },
+        { id: 'r3', text: '□' },
+        { id: 'r4', text: 'OOOO' },
+    ],
     '3-03': [
         { id: 'r1', text: 'secuencia' },
         { id: 'r2', text: 'loop / repetición' },

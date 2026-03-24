@@ -1,6 +1,5 @@
 {
   "cards": [
-
     {
       "id": "card-001",
       "name": "Primer paso",
@@ -14,13 +13,12 @@
       "codeExample": null,
       "tip": "Las máquinas son literales. Si dices 'avanza 3', avanzan exactamente 3. Ni más, ni menos."
     },
-
     {
       "id": "card-002",
       "name": "Repetición",
       "rarity": "common",
       "concept": "Loop / Bucle",
-      "unlockedBy": "1-02",
+      "unlockedBy": "1-04",
       "actName": "Boot.exe",
       "frontArt": "loop_circle",
       "description": "Un loop es una instrucción que se repite N veces. En lugar de escribir la misma acción 10 veces, le dices a la máquina 'haz esto 10 veces' y lo hace.",
@@ -28,13 +26,12 @@
       "codeExample": null,
       "tip": "Los loops ahorran código y evitan errores. Si cambias el número de repeticiones, cambia en un solo lugar."
     },
-
     {
       "id": "card-003",
       "name": "Bifurcación",
       "rarity": "common",
       "concept": "Condicional (SI / SI NO)",
-      "unlockedBy": "1-03",
+      "unlockedBy": "1-05",
       "actName": "Boot.exe",
       "frontArt": "diamond_branch",
       "description": "Un condicional le dice a la máquina: SI algo es verdad, haz A. SI NO, haz B. La máquina evalúa la condición y toma el camino correcto.",
@@ -42,13 +39,12 @@
       "codeExample": null,
       "tip": "Los condicionales son la base de la toma de decisiones en programación. Sin ellos, los programas siempre harían lo mismo."
     },
-
     {
       "id": "card-004",
       "name": "Orden importa",
       "rarity": "rare",
       "concept": "Orden de ejecución",
-      "unlockedBy": "1-04",
+      "unlockedBy": "1-06",
       "actName": "Boot.exe",
       "frontArt": "numbered_steps",
       "description": "Las instrucciones se ejecutan en el orden en que aparecen. Cambiar el orden cambia el resultado — a veces el programa falla, a veces hace algo completamente diferente.",
@@ -56,13 +52,12 @@
       "codeExample": null,
       "tip": "Antes de ejecutar, lee tu programa de arriba a abajo y visualiza qué pasa en cada paso."
     },
-
     {
       "id": "card-005",
       "name": "Lógica viva",
       "rarity": "rare",
       "concept": "Integración de lógica básica",
-      "unlockedBy": "1-05",
+      "unlockedBy": "1-07",
       "actName": "Boot.exe",
       "frontArt": "brain_circuit",
       "description": "Combinar secuencias, loops y condicionales es la base de cualquier programa. No son herramientas separadas — trabajan juntas para resolver problemas complejos.",
@@ -70,7 +65,6 @@
       "codeExample": null,
       "tip": "Cuando un problema es grande, divídelo en partes pequeñas. Resuelve cada parte con las herramientas que conoces."
     },
-
     {
       "id": "card-006",
       "name": "Bloque de control",
@@ -84,7 +78,6 @@
       "codeExample": null,
       "tip": "El pseudocódigo es una herramienta de diseño. Los programadores profesionales lo usan antes de escribir código real."
     },
-
     {
       "id": "card-007",
       "name": "Flujo correcto",
@@ -98,7 +91,6 @@
       "codeExample": null,
       "tip": "Dibuja el flujo de tu programa antes de escribirlo. Un diagrama simple puede ahorrarte horas de depuración."
     },
-
     {
       "id": "card-008",
       "name": "Función",
@@ -112,7 +104,6 @@
       "codeExample": null,
       "tip": "Si escribes el mismo código más de dos veces, probablemente debería ser una función."
     },
-
     {
       "id": "card-009",
       "name": "Variable",
@@ -126,7 +117,6 @@
       "codeExample": null,
       "tip": "Dale nombres descriptivos a tus variables. 'edad' es mejor que 'x'. 'totalVentas' es mejor que 'tv'."
     },
-
     {
       "id": "card-010",
       "name": "Depurador",
@@ -140,7 +130,6 @@
       "codeExample": null,
       "tip": "Los bugs más comunes son de lógica (el programa corre pero hace algo incorrecto), no de sintaxis. Lee el código como si fuera la primera vez."
     },
-
     {
       "id": "card-011",
       "name": "Velocidad de tecleo",
@@ -154,7 +143,6 @@
       "codeExample": null,
       "tip": "No te enfoques en la velocidad al principio. Primero precisión, luego velocidad. La velocidad viene sola con la práctica."
     },
-
     {
       "id": "card-012",
       "name": "Pseudocodificador",
@@ -168,7 +156,6 @@
       "codeExample": null,
       "tip": "El pseudocódigo es independiente del lenguaje. Lo que aprendiste aquí funciona en JavaScript, Python, o cualquier otro lenguaje."
     },
-
     {
       "id": "card-013",
       "name": "El lenguaje elegido",
@@ -182,7 +169,6 @@
       "codeExample": null,
       "tip": "JavaScript es el lenguaje más usado del mundo según Stack Overflow desde 2013. Elegiste bien."
     },
-
     {
       "id": "card-014",
       "name": "Traductor",
@@ -196,7 +182,6 @@
       "codeExample": null,
       "tip": "Si entiendes el concepto, aprender la sintaxis de un nuevo lenguaje es solo memorización. Lo difícil ya lo tienes."
     },
-
     {
       "id": "card-015",
       "name": "var / let / const",
@@ -210,7 +195,6 @@
       "codeExample": "const nombre = 'REBOOT';  // no cambia\nlet vidas = 3;             // puede cambiar\nvidas = vidas - 1;         // ahora es 2",
       "tip": "Prefiere const sobre let. Si el compilador te dice que necesitas let, cámbialo. Así evitas cambios accidentales."
     },
-
     {
       "id": "card-016",
       "name": "Tipos de datos",
@@ -224,7 +208,6 @@
       "codeExample": "const edad = 25;           // number\nconst nombre = 'FRAG';     // string\nconst activo = true;       // boolean\nconst vacio = null;        // null\n\nconsole.log(25 + 5);      // 30\nconsole.log('25' + 5);    // '255' ← cuidado",
       "tip": "typeof te dice de qué tipo es un valor: typeof 42 → 'number', typeof 'hola' → 'string'."
     },
-
     {
       "id": "card-017",
       "name": "function()",
@@ -238,7 +221,6 @@
       "codeExample": "function sumar(a, b) {\n  return a + b;\n}\n\nconst resultado = sumar(3, 4);\nconsole.log(resultado); // 7",
       "tip": "Una función debería hacer una sola cosa y hacerla bien. Si tu función hace 3 cosas, probablemente deberían ser 3 funciones."
     },
-
     {
       "id": "card-018",
       "name": "Bajo presión",
@@ -252,7 +234,6 @@
       "codeExample": null,
       "tip": "Cuando estés bajo presión, respira. Lee el problema completo antes de escribir. Un minuto de lectura vale 10 de reescritura."
     },
-
     {
       "id": "card-019",
       "name": "Array",
@@ -266,7 +247,6 @@
       "codeExample": "const sectores = ['norte', 'sur', 'este'];\n\nconsole.log(sectores[0]);  // 'norte'\nconsole.log(sectores.length); // 3\n\nsectores.forEach(function(s) {\n  console.log('Sector: ' + s);\n});",
       "tip": "El error más común con arrays: acceder al índice igual a su longitud. Si el array tiene 3 elementos, el último es [2], no [3]."
     },
-
     {
       "id": "card-020",
       "name": "Índice",
@@ -280,7 +260,6 @@
       "codeExample": "const items = ['A', 'B', 'C', 'D'];\n// índices:      0    1    2    3\n\nconsole.log(items[0]);              // 'A'\nconsole.log(items[items.length-1]); // 'D' (último)\nconsole.log(items[4]);              // undefined",
       "tip": "items[items.length - 1] siempre te da el último elemento, sin importar cuántos tenga el array."
     },
-
     {
       "id": "card-021",
       "name": "Objeto",
@@ -294,7 +273,6 @@
       "codeExample": "const maquina = {\n  tipo: 'incubadora',\n  potencia: 80,\n  activa: false\n};\n\nconsole.log(maquina.tipo);  // 'incubadora'\nmaquina.activa = true;      // modificar",
       "tip": "Los objetos son la base de la programación orientada a objetos. Casi todo en JavaScript es un objeto."
     },
-
     {
       "id": "card-022",
       "name": "Callback",
@@ -308,7 +286,6 @@
       "codeExample": "function descargar(archivo, callback) {\n  // simula descarga\n  console.log('Descargando...');\n  callback(); // avisa cuando termina\n}\n\ndescargar('datos.zip', function() {\n  console.log('¡Listo! Archivo descargado.');\n});",
       "tip": "Los callbacks son poderosos pero pueden anidarse mucho (callback hell). Aprenderás Promises y async/await como alternativas más limpias."
     },
-
     {
       "id": "card-023",
       "name": "Velocidad JS",
@@ -322,7 +299,6 @@
       "codeExample": "// Todo junto, con fluidez:\nconst maquinas = [{id:1,activa:false},{id:2,activa:false}];\n\nfunction activar(maquina, callback) {\n  maquina.activa = true;\n  callback(maquina);\n}\n\nmaquinas.forEach(function(m) {\n  activar(m, function(result) {\n    console.log('Máquina ' + result.id + ' activa');\n  });\n});",
       "tip": "La fluidez viene de la repetición. Cada línea de código que escribes te acerca más a la fluidez."
     },
-
     {
       "id": "card-024",
       "name": "GÉNESIS",
@@ -336,6 +312,5 @@
       "codeExample": "// Lo que ahora sabes hacer:\nconst genesis = {\n  capsulas: 12,\n  activadas: 0\n};\n\nfunction activar(capsula, callback) {\n  genesis.activadas++;\n  callback(genesis.activadas);\n}\n\nconst capsulas = Array.from({length: 12}, (_, i) => i+1);\n\ncapsulas.forEach(function(c) {\n  activar(c, function(total) {\n    if (total === 12) {\n      console.log('El mundo puede comenzar de nuevo.');\n    }\n  });\n});",
       "tip": "Esto es solo el comienzo. Con estas bases puedes aprender React, Node.js, bases de datos, APIs. El camino está abierto."
     }
-
   ]
 }

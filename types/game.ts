@@ -153,6 +153,7 @@ export type CommandType =
   | 'turn-left'
   | 'turn-right'
   | 'jump'
+  | 'drop'
   | 'activate'
   | 'repeat'
   | 'call-fn'
@@ -179,21 +180,28 @@ export interface MapTile {
   type: TileType
   x: number
   y: number
+  height?: number // 0 for ground, 1 for block 1, etc.
   activated?: boolean
 }
 
 export interface RobotState {
   x: number
   y: number
+  height?: number // same as block height
   direction: Direction
   isMoving: boolean
 }
 
 export interface LightbotLevelData {
   map: MapTile[][]
-  robotStart: { x: number; y: number; direction: Direction }
-  targets: { x: number; y: number }[]
-  maxCommands?: number     // límite de comandos para 3 estrellas
+  robotStart: { x: number; y: number; direction: Direction; height?: number }
+  targets: { x: number; y: number; height?: number }[]
+  maxCommands?: number     // Límite de comandos para obtener 3 estrellas
+  allowedCommands?: CommandType[]
+  allowF1?: boolean        // habilita el contenedor F1
+  maxF1Commands?: number   // límite óptimo de comandos para F1 (para estrellas, opcional)
+  uiLimitMain?: number     // Límite estricto de ranuras en la UI para MAIN
+  uiLimitF1?: number       // Límite estricto de ranuras en la UI para F1
 }
 
 // ------------------------------------------------------------

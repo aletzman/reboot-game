@@ -1,13 +1,16 @@
 // ============================================================
 // REBOOT — components/levels/LightbotLevel.tsx
 // Nivel tipo Lightbot: arrastra comandos, el robot los ejecuta
-// Usa Phaser.js para el mapa isométrico (ssr: false siempre)
+// Mapa isométrico renderizado con Canvas 2D (sin Phaser)
 // ============================================================
 
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import type { Level, LevelState, Command, CommandType, LightbotLevelData, RobotState, Direction } from '@/types/game'
+import { Button } from '@/components/ui/Button'
+import { GameButton } from '@/components/ui/GameButton'
+import { ButtonOption } from '@/components/ui/ButtonOption'
 
 // ------------------------------------------------------------
 // TIPOS INTERNOS
@@ -20,50 +23,58 @@ interface LightbotLevelProps {
     onFragUse: () => void
 }
 
-interface DragState {
-    dragging: boolean
-    commandType: CommandType | null
-    fromIndex: number | null  // null = viene de la paleta
-}
-
 // ------------------------------------------------------------
 // COMANDOS DISPONIBLES EN LA PALETA
 // ------------------------------------------------------------
 
-const PALETTE_COMMANDS: { type: CommandType; label: string; icon: string; color: string }[] = [
-    { type: 'move', label: 'avanzar', icon: '↑', color: '#55e200' },
-    { type: 'turn-left', label: 'girar ←', icon: '↰', color: '#55e200' },
-    { type: 'turn-right', label: 'girar →', icon: '↱', color: '#55e200' },
-    { type: 'jump', label: 'saltar', icon: '⤴', color: '#88c44d' },
-    { type: 'activate', label: 'activar', icon: '⚡', color: '#EF9F27' },
-    { type: 'repeat', label: 'repetir', icon: '↻', color: '#7F77DD' },
+const PALETTE_COMMANDS: { type: CommandType; label: string; icon: string; cssColor: string }[] = [
+    { type: 'move', label: 'avanzar', icon: '↑', cssColor: 'var(--green-light)' },
+    { type: 'turn-left', label: 'girar ←', icon: '↰', cssColor: 'var(--green-light)' },
+    { type: 'turn-right', label: 'girar →', icon: '↱', cssColor: 'var(--green-light)' },
+    { type: 'jump', label: 'saltar', icon: '⤴', cssColor: 'var(--green-muted)' },
+    { type: 'activate', label: 'activar', icon: '⚡', cssColor: 'var(--amber)' },
+    { type: 'repeat', label: 'repetir', icon: '↻', cssColor: 'var(--purple)' },
+    { type: 'call-fn', label: 'F1', icon: 'ƒ1', cssColor: 'var(--cyan)' },
 ]
 
-// Máximo de comandos en la secuencia
 const MAX_COMMANDS = 20
-
-// Velocidad de ejecución en ms por paso
-const EXEC_SPEED = 500
+const EXEC_SPEED = 420
 
 // ------------------------------------------------------------
 // DATOS DE NIVELES LIGHTBOT
-// Aquí defines el mapa y posición inicial de cada nivel
 // ------------------------------------------------------------
 
 const LIGHTBOT_MAPS: Record<string, LightbotLevelData> = {
     '1-01': {
         map: [
-            [{ type: 'wall', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }, { type: 'wall', x: 3, y: 0 }, { type: 'wall', x: 4, y: 0 }],
-            [{ type: 'floor', x: 0, y: 1 }, { type: 'floor', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }, { type: 'floor', x: 3, y: 1 }, { type: 'wall', x: 4, y: 1 }],
-            [{ type: 'floor', x: 0, y: 2 }, { type: 'floor', x: 1, y: 2 }, { type: 'floor', x: 2, y: 2 }, { type: 'floor', x: 3, y: 2 }, { type: 'floor', x: 4, y: 2 }],
-            [{ type: 'wall', x: 0, y: 3 }, { type: 'floor', x: 1, y: 3 }, { type: 'floor', x: 2, y: 3 }, { type: 'target', x: 3, y: 3 }, { type: 'wall', x: 4, y: 3 }],
-            [{ type: 'wall', x: 0, y: 4 }, { type: 'wall', x: 1, y: 4 }, { type: 'floor', x: 2, y: 4 }, { type: 'floor', x: 3, y: 4 }, { type: 'wall', x: 4, y: 4 }],
+            [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }, { type: 'target', x: 3, y: 0 }],
         ],
-        robotStart: { x: 1, y: 1, direction: 'south' },
-        targets: [{ x: 3, y: 3 }],
-        maxCommands: 6,
+        robotStart: { x: 0, y: 0, direction: 'east' },
+        targets: [{ x: 3, y: 0 }],
+        maxCommands: 4,
+        allowedCommands: ['move', 'activate'],
     },
     '1-02': {
+        map: [
+            [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }],
+            [{ type: 'empty', x: 0, y: 1 }, { type: 'empty', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }],
+            [{ type: 'empty', x: 0, y: 2 }, { type: 'empty', x: 1, y: 2 }, { type: 'target', x: 2, y: 2 }],
+        ],
+        robotStart: { x: 0, y: 0, direction: 'east' },
+        targets: [{ x: 2, y: 2 }],
+        maxCommands: 6,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate'],
+    },
+    '1-03': {
+        map: [
+            [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0, height: 1 }, { type: 'floor', x: 2, y: 0, height: 1 }, { type: 'target', x: 3, y: 0 }],
+        ],
+        robotStart: { x: 0, y: 0, direction: 'east' },
+        targets: [{ x: 3, y: 0 }],
+        maxCommands: 6,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate'],
+    },
+    '1-04': {
         map: [
             [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }, { type: 'floor', x: 3, y: 0 }, { type: 'floor', x: 4, y: 0 }],
             [{ type: 'wall', x: 0, y: 1 }, { type: 'floor', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }, { type: 'floor', x: 3, y: 1 }, { type: 'wall', x: 4, y: 1 }],
@@ -73,9 +84,10 @@ const LIGHTBOT_MAPS: Record<string, LightbotLevelData> = {
         ],
         robotStart: { x: 1, y: 0, direction: 'south' },
         targets: [{ x: 3, y: 4 }],
-        maxCommands: 5,
+        maxCommands: 6,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'repeat'],
     },
-    '1-04': {
+    '1-06': {
         map: [
             [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'wall', x: 2, y: 0 }, { type: 'floor', x: 3, y: 0 }, { type: 'floor', x: 4, y: 0 }],
             [{ type: 'floor', x: 0, y: 1 }, { type: 'generator', x: 1, y: 1 }, { type: 'wall', x: 2, y: 1 }, { type: 'generator', x: 3, y: 1 }, { type: 'floor', x: 4, y: 1 }],
@@ -86,8 +98,9 @@ const LIGHTBOT_MAPS: Record<string, LightbotLevelData> = {
         robotStart: { x: 4, y: 0, direction: 'west' },
         targets: [{ x: 0, y: 4 }],
         maxCommands: 12,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'repeat'],
     },
-    '1-05': {
+    '1-07': {
         map: [
             [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }, { type: 'wall', x: 3, y: 0 }, { type: 'floor', x: 4, y: 0 }, { type: 'floor', x: 5, y: 0 }],
             [{ type: 'floor', x: 0, y: 1 }, { type: 'broken', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }, { type: 'wall', x: 3, y: 1 }, { type: 'floor', x: 4, y: 1 }, { type: 'active', x: 5, y: 1 }],
@@ -99,10 +112,66 @@ const LIGHTBOT_MAPS: Record<string, LightbotLevelData> = {
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 5, y: 5 }],
         maxCommands: 16,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'repeat'],
+    },
+    '1-08': {
+        map: [
+            [{ type: 'floor', x: 0, y: 0, height: 0 }, { type: 'floor', x: 1, y: 0, height: 1 }, { type: 'floor', x: 2, y: 0, height: 2 }, { type: 'floor', x: 3, y: 0, height: 3 }, { type: 'floor', x: 4, y: 0, height: 3 }],
+            [{ type: 'wall', x: 0, y: 1 }, { type: 'wall', x: 1, y: 1 }, { type: 'wall', x: 2, y: 1 }, { type: 'wall', x: 3, y: 1 }, { type: 'floor', x: 4, y: 1, height: 3 }],
+            [{ type: 'empty', x: 0, y: 2 }, { type: 'empty', x: 1, y: 2 }, { type: 'empty', x: 2, y: 2 }, { type: 'wall', x: 3, y: 2 }, { type: 'floor', x: 4, y: 2, height: 2 }],
+            [{ type: 'empty', x: 0, y: 3 }, { type: 'empty', x: 1, y: 3 }, { type: 'empty', x: 2, y: 3 }, { type: 'empty', x: 3, y: 3 }, { type: 'floor', x: 4, y: 3, height: 1 }],
+            [{ type: 'target', x: 0, y: 4, height: 0 }, { type: 'floor', x: 1, y: 4, height: 0 }, { type: 'floor', x: 2, y: 4, height: 0 }, { type: 'floor', x: 3, y: 4, height: 0 }, { type: 'floor', x: 4, y: 4, height: 0 }]
+        ],
+        robotStart: { x: 0, y: 0, direction: 'east' },
+        targets: [{ x: 0, y: 4 }],
+        maxCommands: 14,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'repeat'],
+    },
+    '1-09': {
+        map: [
+            [{ type: 'floor', x: 0, y: 0, height: 4 }, { type: 'floor', x: 1, y: 0, height: 3 }, { type: 'floor', x: 2, y: 0, height: 1 }],
+            [{ type: 'wall', x: 0, y: 1 }, { type: 'floor', x: 1, y: 1, height: 2 }, { type: 'floor', x: 2, y: 1, height: 1 }],
+            [{ type: 'wall', x: 0, y: 2 }, { type: 'wall', x: 1, y: 2 }, { type: 'target', x: 2, y: 2, height: 0 }]
+        ],
+        robotStart: { x: 0, y: 0, direction: 'east' },
+        targets: [{ x: 2, y: 2 }],
+        maxCommands: 10,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'repeat'],
+    },
+    '2-08': {
+        map: [
+            [{ type: 'empty', x: 0, y: 0 }, { type: 'empty', x: 1, y: 0 }, { type: 'empty', x: 2, y: 0 }, { type: 'empty', x: 3, y: 0 }, { type: 'empty', x: 4, y: 0 }],
+            [{ type: 'empty', x: 0, y: 1 }, { type: 'empty', x: 1, y: 1 }, { type: 'empty', x: 2, y: 1 }, { type: 'empty', x: 3, y: 1 }, { type: 'empty', x: 4, y: 1 }],
+            [{ type: 'target', x: 0, y: 2 }, { type: 'floor', x: 1, y: 2 }, { type: 'target', x: 2, y: 2 }, { type: 'empty', x: 3, y: 2 }, { type: 'empty', x: 4, y: 2 }],
+            [{ type: 'empty', x: 0, y: 3 }, { type: 'empty', x: 1, y: 3 }, { type: 'floor', x: 2, y: 3 }, { type: 'empty', x: 3, y: 3 }, { type: 'empty', x: 4, y: 3 }],
+            [{ type: 'floor', x: 0, y: 4 }, { type: 'floor', x: 1, y: 4 }, { type: 'target', x: 2, y: 4 }, { type: 'empty', x: 3, y: 4 }, { type: 'empty', x: 4, y: 4 }]
+        ],
+        robotStart: { x: 0, y: 4, direction: 'east' },
+        targets: [{ x: 2, y: 4 }, { x: 2, y: 2 }, { x: 0, y: 2 }],
+        maxCommands: 4,
+        allowF1: true,
+        maxF1Commands: 4,
+        uiLimitMain: 4,
+        uiLimitF1: 4,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-fn'],
+    },
+    '2-09': {
+        map: [
+            [{ type: 'floor', x: 0, y: 0, height: 4 }, { type: 'floor', x: 1, y: 0, height: 3 }, { type: 'empty', x: 2, y: 0, height: 0 }],
+            [{ type: 'empty', x: 0, y: 1, height: 0 }, { type: 'empty', x: 1, y: 1, height: 0 }, { type: 'floor', x: 2, y: 1, height: 2 }],
+            [{ type: 'target', x: 0, y: 2, height: 0 }, { type: 'floor', x: 1, y: 2, height: 0 }, { type: 'floor', x: 2, y: 2, height: 1 }]
+        ],
+        robotStart: { x: 0, y: 2, direction: 'east' },
+        targets: [{ x: 0, y: 0 }],
+        maxCommands: 6,
+        allowF1: true,
+        maxF1Commands: 4,
+        uiLimitMain: 6,
+        uiLimitF1: 4,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'call-fn', 'repeat'],
     },
 }
 
-// Fallback para niveles sin mapa definido aún
 const DEFAULT_MAP: LightbotLevelData = {
     map: [
         [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }],
@@ -114,637 +183,954 @@ const DEFAULT_MAP: LightbotLevelData = {
     maxCommands: 5,
 }
 
-// ------------------------------------------------------------
-// MOTOR DE EJECUCIÓN (sin Phaser — lógica pura)
-// ------------------------------------------------------------
+// ============================================================
+// ISOMETRIC RENDERING ENGINE (Canvas 2D puro)
+// ============================================================
 
-function getNextPosition(
-    robot: RobotState,
-    mapData: LightbotLevelData
-): { x: number; y: number } | null {
-    const { x, y, direction } = robot
+const ISO = {
+    TILE_W: 80,    // ancho del tile isométrico (diamante)
+    TILE_H: 46,    // alto del tile isométrico
+    DEPTH: 18,     // profundidad/grosor del tile 3D
+}
+
+// Colores de tiles (top face, side-left, side-right)
+const TILE_COLORS: Record<string, { top: string; left: string; right: string; glow?: string }> = {
+    floor: { top: '#141B24', left: '#0E1319', right: '#0B0F14' },
+    wall: { top: '#080A0D', left: '#050607', right: '#030404' },
+    target: { top: '#0d2600', left: '#0a1e00', right: '#081800', glow: '#55e20040' },
+    active: { top: '#0a2e2e', left: '#072222', right: '#051a1a', glow: '#12b0bb30' },
+    broken: { top: '#150d1e', left: '#100a16', right: '#0c0812', glow: '#7F77DD20' },
+    generator: { top: '#1f1500', left: '#170f00', right: '#120b00', glow: '#EF9F2730' },
+    empty: { top: '#010101', left: '#010101', right: '#010101' },
+}
+
+function toIso(col: number, row: number, offsetX: number, offsetY: number): { x: number; y: number } {
+    const x = (col - row) * (ISO.TILE_W / 2) + offsetX
+    const y = (col + row) * (ISO.TILE_H / 2) + offsetY
+    return { x, y }
+}
+
+function drawIsoDiamond(
+    ctx: CanvasRenderingContext2D,
+    cx: number, cy: number,
+    colors: { top: string; left: string; right: string; glow?: string },
+    isHighlighted: boolean,
+    highlightColor?: string
+) {
+    const hw = ISO.TILE_W / 2
+    const hh = ISO.TILE_H / 2
+    const d = ISO.DEPTH
+
+    // Cara izquierda (profundidad)
+    ctx.beginPath()
+    ctx.moveTo(cx - hw, cy)
+    ctx.lineTo(cx, cy + hh)
+    ctx.lineTo(cx, cy + hh + d)
+    ctx.lineTo(cx - hw, cy + d)
+    ctx.closePath()
+    ctx.fillStyle = colors.left
+    ctx.fill()
+
+    // Cara derecha (profundidad)
+    ctx.beginPath()
+    ctx.moveTo(cx + hw, cy)
+    ctx.lineTo(cx, cy + hh)
+    ctx.lineTo(cx, cy + hh + d)
+    ctx.lineTo(cx + hw, cy + d)
+    ctx.closePath()
+    ctx.fillStyle = colors.right
+    ctx.fill()
+
+    // Cara superior (diamante)
+    ctx.beginPath()
+    ctx.moveTo(cx, cy - hh)
+    ctx.lineTo(cx + hw, cy)
+    ctx.lineTo(cx, cy + hh)
+    ctx.lineTo(cx - hw, cy)
+    ctx.closePath()
+    ctx.fillStyle = isHighlighted && highlightColor ? highlightColor : colors.top
+    ctx.fill()
+
+    // Bordes del diamante superior
+    ctx.strokeStyle = isHighlighted ? (highlightColor ?? '#55e200') : '#6a6a6a60'
+    ctx.lineWidth = isHighlighted ? 1.5 : 0.5
+    ctx.stroke()
+
+    // Borde inferior del cubo
+    ctx.beginPath()
+    ctx.moveTo(cx - hw, cy + d)
+    ctx.lineTo(cx, cy + hh + d)
+    ctx.lineTo(cx + hw, cy + d)
+    ctx.strokeStyle = '#0d1f0030'
+    ctx.lineWidth = 0.5
+    ctx.stroke()
+
+    // Glow para tiles especiales
+    if (colors.glow) {
+        ctx.beginPath()
+        ctx.moveTo(cx, cy - hh)
+        ctx.lineTo(cx + hw, cy)
+        ctx.lineTo(cx, cy + hh)
+        ctx.lineTo(cx - hw, cy)
+        ctx.closePath()
+        ctx.fillStyle = colors.glow
+        ctx.fill()
+    }
+}
+
+function drawRobot(
+    ctx: CanvasRenderingContext2D,
+    direction: Direction,
+    cx: number, cy: number,
+    pulse: number // 0-1 para animación respiración
+) {
+    const size = 16 + pulse * 2
+
+    // Sombra
+    ctx.beginPath()
+    ctx.ellipse(cx, cy + 8, 14, 6, 0, 0, Math.PI * 2)
+    ctx.fillStyle = '#55e20015'
+    ctx.fill()
+
+    // Cuerpo del robot (rombo)
+    ctx.save()
+    ctx.translate(cx, cy - 6)
+    ctx.beginPath()
+    ctx.moveTo(0, -size)
+    ctx.lineTo(size * 0.7, 0)
+    ctx.lineTo(0, size * 0.6)
+    ctx.lineTo(-size * 0.7, 0)
+    ctx.closePath()
+
+    // Gradiente
+    const g = ctx.createLinearGradient(0, -size, 0, size)
+    g.addColorStop(0, '#88c44d')
+    g.addColorStop(0.5, '#55e200')
+    g.addColorStop(1, '#2d7800')
+    ctx.fillStyle = g
+    ctx.fill()
+    ctx.strokeStyle = '#55e200'
+    ctx.lineWidth = 1.5
+    ctx.stroke()
+
+    // Ojo/dirección
+    const eyeOffsets: Record<Direction, { dx: number; dy: number }> = {
+        north: { dx: 0, dy: -6 },
+        south: { dx: 0, dy: 4 },
+        east: { dx: 5, dy: -1 },
+        west: { dx: -5, dy: -1 },
+    }
+    const { dx, dy } = eyeOffsets[direction]
+    ctx.beginPath()
+    ctx.arc(dx, dy, 3, 0, Math.PI * 2)
+    ctx.fillStyle = '#010101'
+    ctx.fill()
+    ctx.beginPath()
+    ctx.arc(dx, dy, 1.5, 0, Math.PI * 2)
+    ctx.fillStyle = '#55e200'
+    ctx.fill()
+
+    ctx.restore()
+
+    // Glow alrededor del robot
+    ctx.beginPath()
+    ctx.ellipse(cx, cy - 4, 20, 14, 0, 0, Math.PI * 2)
+    ctx.fillStyle = `rgba(85, 226, 0, ${0.04 + pulse * 0.03})`
+    ctx.fill()
+}
+
+function drawTargetMarker(ctx: CanvasRenderingContext2D, cx: number, cy: number, pulse: number) {
+    // Anillo pulsante
+    const r = 10 + pulse * 3
+    ctx.beginPath()
+    ctx.arc(cx, cy, r, 0, Math.PI * 2)
+    ctx.strokeStyle = `rgba(85, 226, 0, ${0.5 + pulse * 0.3})`
+    ctx.lineWidth = 1.5
+    ctx.stroke()
+
+    // Centro
+    ctx.beginPath()
+    ctx.arc(cx, cy, 4, 0, Math.PI * 2)
+    ctx.fillStyle = '#55e200'
+    ctx.fill()
+
+    // Glow
+    ctx.beginPath()
+    ctx.arc(cx, cy, 16, 0, Math.PI * 2)
+    ctx.fillStyle = `rgba(85, 226, 0, ${0.06 + pulse * 0.04})`
+    ctx.fill()
+}
+
+function drawGeneratorIcon(ctx: CanvasRenderingContext2D, cx: number, cy: number, activated: boolean) {
+    // Rayo
+    ctx.save()
+    ctx.translate(cx, cy - 2)
+    ctx.beginPath()
+    ctx.moveTo(-3, -8)
+    ctx.lineTo(2, -2)
+    ctx.lineTo(-1, -2)
+    ctx.lineTo(3, 6)
+    ctx.lineTo(-2, 0)
+    ctx.lineTo(1, 0)
+    ctx.closePath()
+    ctx.fillStyle = activated ? '#55e200' : '#EF9F27'
+    ctx.fill()
+    ctx.restore()
+}
+
+function drawBrokenIcon(ctx: CanvasRenderingContext2D, cx: number, cy: number) {
+    ctx.save()
+    ctx.translate(cx, cy - 2)
+    ctx.font = '10px monospace'
+    ctx.fillStyle = '#7F77DD80'
+    ctx.textAlign = 'center'
+    ctx.fillText('✗', 0, 4)
+    ctx.restore()
+}
+
+// ============================================================
+// MOTOR DE EJECUCIÓN (lógica pura)
+// ============================================================
+
+export interface ExtendedRobotState extends RobotState {
+    isJumping?: boolean
+    prevX?: number
+    prevY?: number
+    height?: number
+    prevHeight?: number
+}
+
+function getNextPosition(robot: ExtendedRobotState, mapData: LightbotLevelData, moveType: 'move' | 'jump' = 'move'): { x: number; y: number; height: number } | null {
+    const { x, y, direction, height = 0 } = robot
     const deltas: Record<Direction, { dx: number; dy: number }> = {
-        north: { dx: 0, dy: -1 },
-        south: { dx: 0, dy: 1 },
-        east: { dx: 1, dy: 0 },
-        west: { dx: -1, dy: 0 },
+        north: { dx: 0, dy: -1 }, south: { dx: 0, dy: 1 },
+        east: { dx: 1, dy: 0 }, west: { dx: -1, dy: 0 },
     }
     const { dx, dy } = deltas[direction]
+
     const nx = x + dx
     const ny = y + dy
+
+    // Check destination
     const row = mapData.map[ny]
     if (!row) return null
-    const tile = row[nx]
-    if (!tile || tile.type === 'wall') return null
-    return { x: nx, y: ny }
+    const destTile = row[nx]
+    if (!destTile || destTile.type === 'wall' || destTile.type === 'empty' || destTile.type === 'broken') return null
+
+    const destHeight = destTile.height || 0
+    const currentHeight = height
+
+    if (moveType === 'jump') {
+        // Can jump exactly 1 level up, or any number of levels down
+        if (destHeight === currentHeight || destHeight > currentHeight + 1) return null;
+    } else {
+        // Move can only be done on the same height
+        if (destHeight !== currentHeight) return null;
+    }
+
+    return { x: nx, y: ny, height: destHeight }
 }
 
 function turnLeft(dir: Direction): Direction {
-    const turns: Record<Direction, Direction> = {
-        north: 'west', west: 'south', south: 'east', east: 'north',
-    }
-    return turns[dir]
+    return ({ north: 'west', west: 'south', south: 'east', east: 'north' } as const)[dir]
 }
-
 function turnRight(dir: Direction): Direction {
-    const turns: Record<Direction, Direction> = {
-        north: 'east', east: 'south', south: 'west', west: 'north',
-    }
-    return turns[dir]
+    return ({ north: 'east', east: 'south', south: 'west', west: 'north' } as const)[dir]
 }
 
-function flattenCommands(commands: Command[]): Command[] {
-    const flat: Command[] = []
-    for (const cmd of commands) {
-        if (cmd.type === 'repeat' && cmd.times && cmd.children) {
-            for (let i = 0; i < cmd.times; i++) {
-                flat.push(...flattenCommands(cmd.children))
+type FlatCommand = { cmd: Command; originalIdx: number; panel: 'main' | 'f1' }
+
+function flattenCommands(commands: Command[], f1Commands: Command[], activePanel: 'main' | 'f1' = 'main', depth = 0): FlatCommand[] {
+    if (depth > 20) return []
+    const flat: FlatCommand[] = []
+
+    for (let idx = 0; idx < commands.length; idx++) {
+        const cmd = commands[idx]
+        if (cmd.type === 'repeat' && cmd.times) {
+            flat.push({ cmd, originalIdx: idx, panel: activePanel })
+
+            const previous = flat.filter(f => f.cmd.type !== 'repeat')
+            for (let i = 0; i < cmd.times - 1; i++) {
+                flat.push(...previous)
+                flat.push({ cmd, originalIdx: idx, panel: activePanel })
+            }
+        } else if (cmd.type === 'call-fn') {
+            flat.push({ cmd, originalIdx: idx, panel: activePanel })
+            if (f1Commands.length > 0) {
+                const subFlat = flattenCommands(f1Commands, f1Commands, 'f1', depth + 1)
+                flat.push(...subFlat)
             }
         } else {
-            flat.push(cmd)
+            flat.push({ cmd, originalIdx: idx, panel: activePanel })
         }
     }
     return flat
 }
 
-// ------------------------------------------------------------
-// COMPONENTE PRINCIPAL
-// ------------------------------------------------------------
+function sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
 
-export default function LightbotLevel({
-    level,
-    state,
-    onComplete,
-    onFragUse,
-}: LightbotLevelProps) {
+// ============================================================
+// COMPONENTE PRINCIPAL
+// ============================================================
+
+export default function LightbotLevel({ level, state, onComplete, onFragUse }: LightbotLevelProps) {
     const mapData = LIGHTBOT_MAPS[level.id] ?? DEFAULT_MAP
-    const phaserRef = useRef<HTMLDivElement>(null)
-    const gameRef = useRef<unknown>(null)
+    const canvasRef = useRef<HTMLCanvasElement>(null)
+    const animRef = useRef<number>(0)
+    const initRef = useRef(false)
 
     const [commands, setCommands] = useState<Command[]>([])
-    const [robot, setRobot] = useState<RobotState>({ ...mapData.robotStart, isMoving: false })
+    const [commandsF1, setCommandsF1] = useState<Command[]>([])
+    const [activePanel, setActivePanel] = useState<'main' | 'f1'>('main')
+    const [robot, setRobot] = useState<ExtendedRobotState>({ ...mapData.robotStart, isMoving: false, isJumping: false, prevX: mapData.robotStart.x, prevY: mapData.robotStart.y })
     const [activatedTiles, setActivated] = useState<Set<string>>(new Set())
     const [isRunning, setIsRunning] = useState(false)
-    const [executingIdx, setExecutingIdx] = useState<number>(-1)
+    const [executingIdx, setExecutingIdx] = useState<{ idx: number; panel: 'main' | 'f1' } | null>(null)
     const [status, setStatus] = useState<'idle' | 'success' | 'failed'>('idle')
     const [repeatModalOpen, setRepeatModal] = useState(false)
     const [repeatTimes, setRepeatTimes] = useState(2)
-    const [dragState, setDragState] = useState<DragState>({ dragging: false, commandType: null, fromIndex: null })
 
-    // ------------------------------------------------------------
-    // INICIALIZAR PHASER
-    // ------------------------------------------------------------
+    // Setup active palette 
+    const isReady = useRef(false)
+    const [allowedTools, setAllowedTools] = useState<typeof PALETTE_COMMANDS>([])
 
     useEffect(() => {
-        let game: unknown = null
+        if (!isReady.current && mapData) {
+            const cmds = mapData.allowedCommands
+                ? PALETTE_COMMANDS.filter(cmd => mapData.allowedCommands?.includes(cmd.type))
+                : PALETTE_COMMANDS
+            setAllowedTools(cmds)
+            setCommands([])
+            setCommandsF1([])
+            setActivePanel('main')
+            isReady.current = true
+        }
+    }, [mapData])
 
-        async function initPhaser() {
-            const Phaser = (await import('phaser')).default
+    // Refs para animation loop (evitar stale closures)
+    const robotRef = useRef<ExtendedRobotState>(robot)
+    const activatedRef = useRef(activatedTiles)
+    const statusRef = useRef(status)
+    robotRef.current = robot
+    activatedRef.current = activatedTiles
+    statusRef.current = status
 
-            const TILE = 56
-            const cols = mapData.map[0].length
-            const rows = mapData.map.length
+    // --------------------------------------------------------
+    // CANVAS ISOMÉTRICO — render loop
+    // --------------------------------------------------------
 
-            class GameScene extends Phaser.Scene {
-                robotSprite!: Phaser.GameObjects.Rectangle
-                tileSprites: Map<string, Phaser.GameObjects.Rectangle> = new Map()
+    useEffect(() => {
+        if (initRef.current) return
+        initRef.current = true
 
-                constructor() { super({ key: 'GameScene' }) }
+        const canvas = canvasRef.current
+        if (!canvas) return
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return
 
-                create() {
-                    const colors: Record<string, number> = {
-                        floor: 0x161B22,
-                        wall: 0x060809,
-                        target: 0x1a4d00,
-                        active: 0x0F6E56,
-                        broken: 0x1a1020,
-                        generator: 0x412402,
-                        empty: 0x010101,
-                    }
+        const cols = mapData.map[0].length
+        const rows = mapData.map.length
 
-                    // dibujar tiles
-                    mapData.map.forEach((row, ry) => {
-                        row.forEach((tile, rx) => {
-                            const px = rx * TILE + TILE / 2
-                            const py = ry * TILE + TILE / 2
-                            const rect = this.add.rectangle(px, py, TILE - 2, TILE - 2, colors[tile.type] ?? 0x161B22)
-                            rect.setStrokeStyle(0.5, 0x0d1f00)
-                            this.tileSprites.set(`${rx},${ry}`, rect)
-
-                            // ícono de target
-                            if (tile.type === 'target') {
-                                this.add.rectangle(px, py, 12, 12, 0x55e200)
-                            }
-                            // ícono de generator
-                            if (tile.type === 'generator') {
-                                this.add.rectangle(px, py, 10, 10, 0xEF9F27)
-                            }
-                            // ícono de broken
-                            if (tile.type === 'broken') {
-                                this.add.text(px - 6, py - 8, '✗', {
-                                    fontSize: '12px',
-                                    color: '#534AB7',
-                                })
-                            }
-                        })
-                    })
-
-                    // robot
-                    const rx = mapData.robotStart.x * TILE + TILE / 2
-                    const ry = mapData.robotStart.y * TILE + TILE / 2
-                    this.robotSprite = this.add.rectangle(rx, ry, TILE - 10, TILE - 10, 0x55e200)
-                    this.robotSprite.setStrokeStyle(1, 0x88c44d)
-
-                    // dirección del robot
-                    this.drawDirectionArrow(rx, ry, mapData.robotStart.direction)
-                }
-
-                drawDirectionArrow(x: number, y: number, dir: Direction) {
-                    const offsets: Record<Direction, { dx: number; dy: number }> = {
-                        north: { dx: 0, dy: -14 },
-                        south: { dx: 0, dy: 14 },
-                        east: { dx: 14, dy: 0 },
-                        west: { dx: -14, dy: 0 },
-                    }
-                    const { dx, dy } = offsets[dir]
-                    this.add.rectangle(x + dx, y + dy, 6, 6, 0x88c44d)
-                }
-
-                moveRobotTo(x: number, y: number, dir: Direction) {
-                    const px = x * TILE + TILE / 2
-                    const py = y * TILE + TILE / 2
-                    this.tweens.add({
-                        targets: this.robotSprite,
-                        x: px,
-                        y: py,
-                        duration: EXEC_SPEED * 0.8,
-                        ease: 'Power2',
-                    })
-                }
-
-                activateTile(x: number, y: number) {
-                    const tile = this.tileSprites.get(`${x},${y}`)
-                    if (tile) {
-                        this.tweens.add({
-                            targets: tile,
-                            fillColor: 0x55e200,
-                            duration: 200,
-                        })
-                    }
-                }
-
-                flashError() {
-                    this.cameras.main.flash(300, 255, 50, 50)
-                }
-
-                flashSuccess() {
-                    this.cameras.main.flash(500, 85, 226, 0)
-                }
+        let maxH = 0
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                maxH = Math.max(maxH, mapData.map[r][c]?.height || 0)
             }
-
-            const config: Phaser.Types.Core.GameConfig = {
-                type: Phaser.AUTO,
-                width: cols * TILE,
-                height: rows * TILE,
-                backgroundColor: '#010101',
-                parent: phaserRef.current ?? undefined,
-                scene: GameScene,
-                audio: { noAudio: true },
-            }
-
-            game = new Phaser.Game(config)
-            gameRef.current = game
         }
 
-        initPhaser()
+        const mapWidthPx = (cols + rows) * (ISO.TILE_W / 2)
+        const mapHeightPx = (cols + rows) * (ISO.TILE_H / 2) + maxH * 26
+
+        const canvasW = Math.max(500, mapWidthPx + 150)
+        const canvasH = Math.max(500, mapHeightPx + ISO.DEPTH + 150)
+        canvas.width = canvasW
+        canvas.height = canvasH
+
+        const offsetX = canvasW / 2 - ((cols - rows) * (ISO.TILE_W / 2)) / 2
+        const offsetY = canvasH / 2 - mapHeightPx / 2 + (maxH * 26) / 2
+
+        let startTime = performance.now()
+        let lastTime = startTime
+        let visX = mapData.robotStart.x
+        let visY = mapData.robotStart.y
+
+        function render(time: number) {
+            if (!ctx) return
+            const elapsed = (time - startTime) / 1000
+            const dt = Math.min((time - lastTime) / 1000, 0.1) // limit to 100ms
+            lastTime = time
+            const pulse = (Math.sin(elapsed * 2.5) + 1) / 2 // 0-1
+
+            ctx.clearRect(0, 0, canvasW, canvasH)
+
+            // Fondo con gradiente sutil
+            const bgGrad = ctx.createRadialGradient(canvasW / 2, canvasH / 2, 0, canvasW / 2, canvasH / 2, canvasW * 0.6)
+            bgGrad.addColorStop(0, '#090C10')
+            bgGrad.addColorStop(1, '#010101')
+            ctx.fillStyle = bgGrad
+            ctx.fillRect(0, 0, canvasW, canvasH)
+
+            // Grid lines muy sutiles (decoración)
+            ctx.save()
+            ctx.globalAlpha = 0.03
+            ctx.strokeStyle = '#55e200'
+            for (let i = 0; i <= cols; i++) {
+                const start = toIso(i, 0, offsetX, offsetY)
+                const end = toIso(i, rows, offsetX, offsetY)
+                ctx.beginPath()
+                ctx.moveTo(start.x, start.y)
+                ctx.lineTo(end.x, end.y)
+                ctx.stroke()
+            }
+            for (let j = 0; j <= rows; j++) {
+                const start = toIso(0, j, offsetX, offsetY)
+                const end = toIso(cols, j, offsetX, offsetY)
+                ctx.beginPath()
+                ctx.moveTo(start.x, start.y)
+                ctx.lineTo(end.x, end.y)
+                ctx.stroke()
+            }
+            ctx.restore()
+
+            const currentRobot = robotRef.current
+            const currentActivated = activatedRef.current
+            const currentStatus = statusRef.current
+
+            // Smooth Movement Interpolation
+            const lerpFactor = 12 * dt
+            visX += (currentRobot.x - visX) * lerpFactor
+            visY += (currentRobot.y - visY) * lerpFactor
+
+            // Dibujar tiles (de atrás hacia adelante para z-order)
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const tile = mapData.map[row][col]
+                    const { x: sx, y: sy } = toIso(col, row, offsetX, offsetY)
+                    const colors = TILE_COLORS[tile.type] ?? TILE_COLORS.floor
+
+                    const th = tile.height || 0
+                    const tz = th * 26
+
+                    const rx = Math.round(visX)
+                    const ry = Math.round(visY)
+                    const isRobotHere = rx === col && ry === row
+                    const isActivated = currentActivated.has(`${col},${row}`)
+
+                    // Color de highlight según tile
+                    let highlight = false
+                    let highlightColor: string | undefined
+
+                    if (tile.type === 'target') {
+                        highlight = true
+                        highlightColor = currentStatus === 'success' ? '#55e200' : `rgba(13, 31, 0, ${0.6 + pulse * 0.4})`
+                    }
+                    if (isActivated) {
+                        highlight = true
+                        highlightColor = '#1a4d00'
+                    }
+
+                    drawIsoDiamond(ctx, sx, sy - tz, colors, highlight, highlightColor)
+
+                    // Iconos de tile
+                    if (tile.type === 'target' && !isRobotHere && !isActivated) {
+                        drawTargetMarker(ctx, sx, sy - tz, pulse)
+                    }
+                    if (tile.type === 'generator') {
+                        drawGeneratorIcon(ctx, sx, sy - tz, isActivated)
+                    }
+                    if (tile.type === 'broken') {
+                        drawBrokenIcon(ctx, sx, sy - tz)
+                    }
+                }
+            }
+
+            // Dibujar robot con interpolación
+            let isoX = visX
+            let isoY = visY
+            let progress = 0
+
+            if ((currentRobot.isMoving || currentRobot.isJumping) && currentRobot.prevX !== undefined && currentRobot.prevY !== undefined) {
+                const totalDistX = currentRobot.x - currentRobot.prevX
+                const totalDistY = currentRobot.y - currentRobot.prevY
+
+                if (totalDistX !== 0) {
+                    progress = (visX - currentRobot.prevX) / totalDistX
+                } else if (totalDistY !== 0) {
+                    progress = (visY - currentRobot.prevY) / totalDistY
+                } else {
+                    progress = 1
+                }
+
+                progress = Math.max(0, Math.min(1, progress))
+
+                isoX = currentRobot.prevX + totalDistX * progress
+                isoY = currentRobot.prevY + totalDistY * progress
+            }
+
+            const { x: rx, y: ry } = toIso(isoX, isoY, offsetX, offsetY)
+
+            // Interpolate height
+            const prevH = currentRobot.prevHeight || 0
+            const currentH = currentRobot.height || 0
+            const isoH = prevH + (currentH - prevH) * progress
+            const rz = isoH * 26
+
+            // Calculo de parábola para el salto
+            let zOffset = 0
+            if (currentRobot.isJumping) {
+                if (progress >= 0 && progress <= 1) {
+                    const arc = 1 - Math.pow(2 * progress - 1, 2) // parabola
+                    zOffset = arc * 25 // height modifier
+                }
+            }
+
+            drawRobot(ctx, currentRobot.direction, rx, ry - 20 - rz - zOffset, pulse)
+
+            // Efectos de grid o status pulse
+            if (currentStatus === 'success') {
+                ctx.fillStyle = `rgba(85, 226, 0, ${0.04 + pulse * 0.03})`
+                ctx.fillRect(0, 0, canvasW, canvasH)
+            } else if (currentStatus === 'failed') {
+                ctx.fillStyle = `rgba(226, 75, 74, ${0.06 * (1 - pulse)})`
+                ctx.fillRect(0, 0, canvasW, canvasH)
+            }
+
+            animRef.current = requestAnimationFrame(render)
+        }
+
+        animRef.current = requestAnimationFrame(render)
+
         return () => {
-            if (game && typeof (game as { destroy?: (b: boolean) => void }).destroy === 'function') {
-                (game as { destroy: (b: boolean) => void }).destroy(true)
-            }
+            cancelAnimationFrame(animRef.current)
+            initRef.current = false
         }
-    }, [level.id])
+    }, [level.id, mapData])
 
-    // ------------------------------------------------------------
+    // --------------------------------------------------------
     // EJECUTAR SECUENCIA
-    // ------------------------------------------------------------
+    // --------------------------------------------------------
 
     const executeCommands = useCallback(async () => {
         if (isRunning || commands.length === 0) return
         setIsRunning(true)
         setStatus('idle')
 
-        const flat = flattenCommands(commands)
-        let currentRobot: RobotState = { ...mapData.robotStart, isMoving: false }
+        const flat = flattenCommands(commands, commandsF1)
+        let currentRobot: ExtendedRobotState = { ...mapData.robotStart, isMoving: false, isJumping: false, height: mapData.robotStart.height || 0 }
         const activated = new Set<string>()
-        const scene = (gameRef.current as { scene?: { getScene: (k: string) => unknown } })
-            ?.scene?.getScene('GameScene') as {
-                moveRobotTo: (x: number, y: number, d: Direction) => void
-                activateTile: (x: number, y: number) => void
-                flashError: () => void
-                flashSuccess: () => void
-            } | null
+        let won = false
 
         for (let i = 0; i < flat.length; i++) {
-            setExecutingIdx(i)
-            const cmd = flat[i]
+            const currentItem = flat[i]
+            setExecutingIdx({ idx: currentItem.originalIdx, panel: currentItem.panel })
+            const cmd = currentItem.cmd
             await sleep(EXEC_SPEED)
 
-            if (cmd.type === 'move') {
-                const next = getNextPosition(currentRobot, mapData)
+            if (cmd.type === 'move' || cmd.type === 'jump') {
+                const isJump = cmd.type === 'jump'
+                const next = getNextPosition(currentRobot, mapData, cmd.type as 'move' | 'jump')
                 if (!next) {
-                    scene?.flashError()
                     setStatus('failed')
                     setIsRunning(false)
-                    setExecutingIdx(-1)
-                    return
+                    setExecutingIdx(null)
+                    return // Restaura la falla instantánea al tocar pared o vacío como pidió el usuario
                 }
-                currentRobot = { ...currentRobot, ...next, isMoving: true }
-                scene?.moveRobotTo(currentRobot.x, currentRobot.y, currentRobot.direction)
+                currentRobot = {
+                    ...currentRobot,
+                    prevX: currentRobot.x,
+                    prevY: currentRobot.y,
+                    prevHeight: currentRobot.height || 0,
+                    ...next,
+                    isMoving: true,
+                    isJumping: isJump
+                }
                 setRobot({ ...currentRobot })
             } else if (cmd.type === 'turn-left') {
-                currentRobot = { ...currentRobot, direction: turnLeft(currentRobot.direction) }
+                currentRobot = { ...currentRobot, direction: turnLeft(currentRobot.direction), isMoving: false, isJumping: false }
                 setRobot({ ...currentRobot })
             } else if (cmd.type === 'turn-right') {
-                currentRobot = { ...currentRobot, direction: turnRight(currentRobot.direction) }
+                currentRobot = { ...currentRobot, direction: turnRight(currentRobot.direction), isMoving: false, isJumping: false }
                 setRobot({ ...currentRobot })
             } else if (cmd.type === 'activate') {
                 const key = `${currentRobot.x},${currentRobot.y}`
                 activated.add(key)
-                scene?.activateTile(currentRobot.x, currentRobot.y)
                 setActivated(new Set(activated))
+            }
+
+            // Comprobar éxito en cada paso
+            const allTargetsReached = mapData.targets.every(
+                t => activated.has(`${t.x},${t.y}`)
+            )
+            if (allTargetsReached) {
+                won = true
+                break
             }
         }
 
-        setExecutingIdx(-1)
+        setExecutingIdx(null)
 
-        // verificar victoria
-        const allTargetsReached = mapData.targets.every(
-            t => currentRobot.x === t.x && currentRobot.y === t.y
-        )
-
-        if (allTargetsReached) {
-            scene?.flashSuccess()
+        if (won) {
             setStatus('success')
             await sleep(600)
-            const stars = calcStars(commands.length, mapData.maxCommands)
+            const stars = calcStars(commands.length, commandsF1.length, mapData.maxCommands, mapData.maxF1Commands)
             onComplete(stars, state.fragUsed)
         } else {
-            scene?.flashError()
             setStatus('failed')
         }
 
         setIsRunning(false)
-    }, [commands, isRunning, mapData, state.fragUsed, onComplete])
+    }, [commands, commandsF1, isRunning, mapData, state.fragUsed, onComplete])
 
-    function calcStars(used: number, max?: number): 1 | 2 | 3 {
-        if (!max) return 2
-        const ratio = used / max
-        if (ratio <= 0.6) return 3
-        if (ratio <= 0.9) return 2
+    function calcStars(usedMain: number, usedF1: number, maxMain?: number, maxF1?: number): 1 | 2 | 3 {
+        if (!maxMain) return 3
+        const totalUsed = usedMain + usedF1
+        const optimal = maxMain + (maxF1 || 0)
+        
+        if (totalUsed <= optimal) return 3
+        if (totalUsed <= optimal + 2) return 2
         return 1
     }
 
-    // ------------------------------------------------------------
+    // --------------------------------------------------------
     // RESET
-    // ------------------------------------------------------------
+    // --------------------------------------------------------
 
     function handleReset() {
-        setRobot({ ...mapData.robotStart, isMoving: false })
+        setRobot({ ...mapData.robotStart, isMoving: false, isJumping: false })
         setActivated(new Set())
         setIsRunning(false)
-        setExecutingIdx(-1)
+        setExecutingIdx(null)
         setStatus('idle')
-        const scene = (gameRef.current as { scene?: { getScene: (k: string) => unknown } })
-            ?.scene?.getScene('GameScene') as { moveRobotTo?: (x: number, y: number, d: Direction) => void } | null
-        scene?.moveRobotTo?.(mapData.robotStart.x, mapData.robotStart.y, mapData.robotStart.direction)
     }
 
-    // ------------------------------------------------------------
-    // DRAG & DROP DE COMANDOS
-    // ------------------------------------------------------------
+    // --------------------------------------------------------
+    // MANEJO DE COMANDOS
+    // --------------------------------------------------------
 
     function handleDragFromPalette(type: CommandType) {
         if (type === 'repeat') {
             setRepeatModal(true)
             return
         }
-        if (commands.length >= MAX_COMMANDS) return
-        setCommands(prev => [...prev, { type }])
+        if (activePanel === 'main') {
+            if (commands.length >= (mapData.uiLimitMain || MAX_COMMANDS)) return
+            setCommands(prev => [...prev, { type }])
+        } else {
+            if (commandsF1.length >= (mapData.uiLimitF1 || 8)) return
+            setCommandsF1(prev => [...prev, { type }])
+        }
     }
 
     function handleRemoveCommand(idx: number) {
-        setCommands(prev => prev.filter((_, i) => i !== idx))
+        if (activePanel === 'main') {
+            setCommands(prev => prev.filter((_, i) => i !== idx))
+        } else {
+            setCommandsF1(prev => prev.filter((_, i) => i !== idx))
+        }
     }
 
     function handleAddRepeat() {
-        if (commands.length >= MAX_COMMANDS) return
-        setCommands(prev => [...prev, {
-            type: 'repeat',
-            times: repeatTimes,
-            children: [],
-        }])
+        if (activePanel === 'main') {
+            if (commands.length >= (mapData.uiLimitMain || MAX_COMMANDS)) return
+            setCommands(prev => [...prev, { type: 'repeat', times: repeatTimes, children: [] }])
+        } else {
+            if (commandsF1.length >= (mapData.uiLimitF1 || 8)) return
+            setCommandsF1(prev => [...prev, { type: 'repeat', times: repeatTimes, children: [] }])
+        }
         setRepeatModal(false)
     }
 
-    // ------------------------------------------------------------
+    // --------------------------------------------------------
     // RENDER
-    // ------------------------------------------------------------
+    // --------------------------------------------------------
 
     return (
-        <div style={{
-            display: 'flex',
-            flex: 1,
-            background: 'var(--bg-void)',
-            gap: 0,
-            flexWrap: 'wrap',
-        }}>
+        <div className="flex flex-1 min-h-0" style={{ background: 'var(--bg-void)' }}>
 
-            {/* Panel izquierdo — mapa Phaser */}
-            <div style={{
-                flex: '1 1 320px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '1.5rem',
-                gap: '1rem',
-            }}>
-                <div style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '10px',
-                    color: 'var(--green-base)',
-                    letterSpacing: '.12em',
-                    alignSelf: 'flex-start',
-                }}>
-          // {level.title}
+            {/* ===== PANEL IZQUIERDO — Mapa isométrico ===== */}
+            <div className="flex-1 flex flex-col items-center justify-center p-4 gap-3 relative overflow-hidden">
+
+                {/* Título del nivel e instrucciones */}
+                <div
+                    className="self-start flex flex-col gap-1 mb-1 mt-2 mx-2"
+                    style={{ fontFamily: 'var(--font-mono)', letterSpacing: '.14em' }}
+                >
+                    <div className="flex items-center gap-2 text-[11px] text-(--green-base)">
+                        <span style={{ color: 'var(--green-light)', textShadow: '0 0 10px var(--green-base)' }}>{'>'} {level.title?.toUpperCase()}</span>
+                        {level.concept && (
+                            <span style={{ color: 'var(--text-ghost)', fontSize: '9px' }}>
+                                [{level.concept}]
+                            </span>
+                        )}
+                    </div>
+                    {level.description && (
+                        <div style={{ color: 'var(--text-muted)', fontSize: '11px', letterSpacing: '.05em', maxWidth: '85%', lineHeight: '1.5', marginTop: '4px' }}>
+                            {'//'} {level.description}
+                        </div>
+                    )}
                 </div>
 
-                {/* Canvas de Phaser */}
+                {/* Canvas isométrico */}
                 <div
-                    ref={phaserRef}
+                    className="relative"
                     style={{
                         border: `1px solid ${status === 'success' ? 'var(--green-base)' : status === 'failed' ? 'var(--red)' : 'var(--bg-hover)'}`,
-                        borderRadius: '8px',
+                        borderRadius: '10px',
                         overflow: 'hidden',
-                        transition: 'border-color .3s',
+                        transition: 'border-color .4s, box-shadow .4s',
+                        boxShadow: status === 'success'
+                            ? '0 0 30px rgba(85,226,0,0.15), inset 0 0 20px rgba(85,226,0,0.05)'
+                            : status === 'failed'
+                                ? '0 0 20px rgba(226,75,74,0.1)'
+                                : '0 0 20px rgba(85,226,0,0.03)',
                     }}
-                />
+                >
+                    <canvas
+                        ref={canvasRef}
+                        style={{
+                            display: 'block',
+                            maxWidth: '100%',
+                            maxHeight: '55vh',
+                            objectFit: 'contain',
+                        }}
+                    />
+                </div>
 
                 {/* Estado */}
-                {status === 'failed' && (
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--red)', letterSpacing: '.1em' }}>
-                        ERROR — el robot no pudo completar la secuencia
-                    </div>
-                )}
-                {status === 'success' && (
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--green-light)', letterSpacing: '.1em' }}>
-                        OBJETIVO ALCANZADO ✓
-                    </div>
-                )}
+                <div
+                    className="h-5 flex items-center"
+                    style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '.1em' }}
+                >
+                    {status === 'failed' && (
+                        <span style={{ color: 'var(--red)' }}>
+                            ✗ ERROR — el robot no pudo completar la secuencia
+                        </span>
+                    )}
+                    {status === 'success' && (
+                        <span style={{ color: 'var(--green-light)' }}>
+                            ✓ OBJETIVO ALCANZADO
+                        </span>
+                    )}
+                    {status === 'idle' && !isRunning && commands.length === 0 && (
+                        <span style={{ color: 'var(--text-ghost)', fontSize: '10px' }}>
+                            agrega comandos para guiar al robot →
+                        </span>
+                    )}
+                </div>
             </div>
 
-            {/* Panel derecho — comandos */}
-            <div style={{
-                flex: '0 0 280px',
-                background: 'var(--bg-surface)',
-                borderLeft: '1px solid var(--bg-hover)',
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '1.25rem',
-                gap: '1rem',
-            }}>
+            {/* ===== PANEL DERECHO — Comandos ===== */}
+            <div className="w-[290px] shrink-0 flex flex-col overflow-y-auto bg-(--bg-surface) border-l border-(--bg-hover) p-5 gap-4">
 
                 {/* Paleta de comandos */}
                 <div>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--green-base)', letterSpacing: '.12em', marginBottom: '.5rem' }}>
-            // comandos disponibles
+                    <div className="font-mono text-[10px] text-(--green-base) tracking-[.12em] mb-2 uppercase">
+                        {'// comandos'}
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.375rem' }}>
-                        {PALETTE_COMMANDS.map(cmd => (
-                            <button
+                    <div className="grid grid-cols-2 gap-[6px]">
+                        {allowedTools.map(cmd => (
+                            <GameButton
                                 key={cmd.type}
+                                variant="command"
+                                icon={<span className="text-[14px]">{cmd.icon}</span>}
                                 onClick={() => handleDragFromPalette(cmd.type)}
-                                disabled={isRunning || commands.length >= MAX_COMMANDS}
-                                style={{
-                                    background: 'var(--bg-elevated)',
-                                    border: '1px solid var(--bg-hover)',
-                                    borderRadius: '6px',
-                                    padding: '7px 10px',
-                                    fontFamily: 'var(--font-mono)',
-                                    fontSize: '11px',
-                                    color: cmd.color,
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '6px',
-                                    letterSpacing: '.06em',
-                                    opacity: isRunning ? 0.5 : 1,
-                                    transition: 'border-color .15s',
-                                }}
-                                onMouseEnter={e => !isRunning && (e.currentTarget.style.borderColor = 'var(--green-base)')}
-                                onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--bg-hover)')}
+                                disabled={
+                                    isRunning ||
+                                    (activePanel === 'main' && commands.length >= (mapData.uiLimitMain || MAX_COMMANDS)) ||
+                                    (activePanel === 'f1' && commandsF1.length >= (mapData.uiLimitF1 || 8))
+                                }
+                                accentColor={cmd.cssColor}
                             >
-                                <span style={{ fontSize: '14px' }}>{cmd.icon}</span>
                                 {cmd.label}
-                            </button>
+                            </GameButton>
                         ))}
                     </div>
                 </div>
 
-                {/* Secuencia de comandos */}
-                <div style={{ flex: 1 }}>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '.5rem',
-                    }}>
-                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--green-base)', letterSpacing: '.12em' }}>
-              // secuencia ({commands.length}/{MAX_COMMANDS})
+                {/* Separador */}
+                <div className="separator-glow" />
+
+                {/* Secuencia de comandos - PRINCIPAL */}
+                <div className="flex-1 flex flex-col cursor-pointer" onClick={() => !isRunning && setActivePanel('main')}>
+                    <div className="flex justify-between items-center mb-2">
+                        <div className={`font-mono text-[10px] tracking-[.12em] uppercase transition-colors ${activePanel === 'main' ? 'text-(--green-base)' : 'text-(--text-ghost)'}`}>
+                            {'// secuencia principal'} ({commands.length}/{mapData.uiLimitMain || MAX_COMMANDS})
                         </div>
-                        {commands.length > 0 && !isRunning && (
-                            <button
+                        {commands.length > 0 && !isRunning && activePanel === 'main' && (
+                            <ButtonOption
+                                text="limpiar"
+                                color="red"
                                 onClick={() => setCommands([])}
-                                style={{
-                                    background: 'transparent',
-                                    border: 'none',
-                                    color: 'var(--text-ghost)',
-                                    fontFamily: 'var(--font-mono)',
-                                    fontSize: '10px',
-                                    cursor: 'pointer',
-                                }}
-                            >
-                                limpiar
-                            </button>
+                            />
                         )}
                     </div>
 
-                    <div style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: '.375rem',
-                        minHeight: '80px',
-                        background: 'var(--bg-elevated)',
-                        borderRadius: '6px',
-                        padding: '.5rem',
-                        border: '1px solid var(--bg-hover)',
-                    }}>
+                    <div className={`flex flex-wrap gap-[6px] min-h-[80px] bg-(--bg-deep) rounded-[2px] p-3 border transition-colors content-start ${activePanel === 'main' ? 'border-(--green-base)' : 'border-(--bg-hover)'}`}>
                         {commands.length === 0 && (
-                            <div style={{
-                                fontFamily: 'var(--font-mono)',
-                                fontSize: '11px',
-                                color: 'var(--text-ghost)',
-                                width: '100%',
-                                textAlign: 'center',
-                                padding: '1rem 0',
-                            }}>
-                                agrega comandos arriba
+                            <div className="font-mono text-[10px] text-(--text-ghost) w-full text-center py-4 flex flex-col items-center gap-1 tracking-wider uppercase">
+                                <span className="text-base opacity-40">⍚</span>
+                                <span>vacío</span>
                             </div>
                         )}
                         {commands.map((cmd, idx) => {
                             const palette = PALETTE_COMMANDS.find(p => p.type === cmd.type)
-                            const isExec = idx === executingIdx
+                            const isExec = executingIdx?.panel === 'main' && executingIdx.idx === idx
                             return (
-                                <div
+                                <GameButton
                                     key={idx}
-                                    onClick={() => !isRunning && handleRemoveCommand(idx)}
-                                    style={{
-                                        background: isExec ? 'var(--green-dark)' : 'var(--bg-surface)',
-                                        border: `1px solid ${isExec ? 'var(--green-light)' : 'var(--bg-hover)'}`,
-                                        borderRadius: '5px',
-                                        padding: '4px 8px',
-                                        fontFamily: 'var(--font-mono)',
-                                        fontSize: '11px',
-                                        color: palette?.color ?? 'var(--green-muted)',
-                                        cursor: isRunning ? 'default' : 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '4px',
-                                        transition: 'all .15s',
+                                    variant="command"
+                                    active={isExec}
+                                    icon={<span className="text-[13px]">{palette?.icon}</span>}
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        if (!isRunning && activePanel === 'main') handleRemoveCommand(idx)
                                     }}
-                                    title="clic para eliminar"
+                                    disabled={isRunning}
+                                    accentColor={palette?.cssColor}
+                                    className="px-2 py-[5px] text-[10px]"
                                 >
-                                    <span>{palette?.icon}</span>
-                                    {cmd.type === 'repeat' && cmd.times && (
-                                        <span style={{ fontSize: '10px', opacity: .7 }}>×{cmd.times}</span>
-                                    )}
-                                </div>
+                                    {cmd.type === 'repeat' && cmd.times ? `×${cmd.times}` : ''}
+                                </GameButton>
                             )
                         })}
                     </div>
                 </div>
 
+                {/* Secuencia de comandos - F1 (Si está activado) */}
+                {mapData.allowF1 && (
+                    <div className="flex-1 flex flex-col cursor-pointer mt-2" onClick={() => !isRunning && setActivePanel('f1')}>
+                        <div className="flex justify-between items-center mb-2">
+                            <div className={`font-mono text-[10px] tracking-[.12em] uppercase transition-colors ${activePanel === 'f1' ? 'text-(--cyan)' : 'text-(--text-ghost)'}`}>
+                                {'// función f1'} ({commandsF1.length}/{mapData.uiLimitF1 || 8})
+                            </div>
+                            {commandsF1.length > 0 && !isRunning && activePanel === 'f1' && (
+                                <ButtonOption
+                                    text="limpiar"
+                                    color="red"
+                                    onClick={() => setCommandsF1([])}
+                                />
+                            )}
+                        </div>
+
+                        <div className={`flex flex-wrap gap-[6px] min-h-[60px] bg-(--bg-deep) rounded-[2px] p-3 border transition-colors content-start ${activePanel === 'f1' ? 'border-(--cyan)' : 'border-(--bg-hover)'}`}>
+                            {commandsF1.length === 0 && (
+                                <div className="font-mono text-[10px] text-(--text-ghost) w-full text-center py-2 flex flex-col items-center tracking-wider uppercase">
+                                    <span>vacío</span>
+                                </div>
+                            )}
+                            {commandsF1.map((cmd, idx) => {
+                                const palette = PALETTE_COMMANDS.find(p => p.type === cmd.type)
+                                const isExec = executingIdx?.panel === 'f1' && executingIdx.idx === idx
+                                return (
+                                    <GameButton
+                                        key={`f1-${idx}`}
+                                        variant="command"
+                                        active={isExec}
+                                        icon={<span className="text-[13px]">{palette?.icon}</span>}
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            if (!isRunning && activePanel === 'f1') handleRemoveCommand(idx)
+                                        }}
+                                        disabled={isRunning}
+                                        accentColor={palette?.cssColor}
+                                        className="px-2 py-[5px] text-[10px]"
+                                    >
+                                        {cmd.type === 'repeat' && cmd.times ? `×${cmd.times}` : ''}
+                                    </GameButton>
+                                )
+                            })}
+                        </div>
+                    </div>
+                )}
+
+                {/* Separador */}
+                <div className="separator-glow" />
+
                 {/* Botones de control */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
-                    <button
+                <div className="flex flex-col gap-2">
+                    <Button
+                        variant="solid"
+                        size="sm"
                         onClick={executeCommands}
                         disabled={isRunning || commands.length === 0}
-                        style={{
-                            background: 'var(--green-dark)',
-                            border: '1px solid var(--green-base)',
-                            borderRadius: '7px',
-                            padding: '11px',
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: '12px',
-                            color: 'var(--green-light)',
-                            cursor: commands.length === 0 || isRunning ? 'not-allowed' : 'pointer',
-                            letterSpacing: '.1em',
-                            opacity: commands.length === 0 || isRunning ? 0.4 : 1,
-                            transition: 'all .15s',
-                        }}
+                        className="w-full"
                     >
-                        {isRunning ? '▶ ejecutando...' : '▶ ejecutar'}
-                    </button>
+                        {isRunning ? '◉ ejecutando...' : '▶ ejecutar'}
+                    </Button>
 
-                    <button
+                    <Button
+                        variant="ghost"
+                        size="xs"
                         onClick={handleReset}
                         disabled={isRunning}
-                        style={{
-                            background: 'transparent',
-                            border: '1px solid var(--bg-hover)',
-                            borderRadius: '7px',
-                            padding: '9px',
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: '11px',
-                            color: 'var(--text-muted)',
-                            cursor: isRunning ? 'not-allowed' : 'pointer',
-                            letterSpacing: '.1em',
-                            opacity: isRunning ? 0.4 : 1,
-                        }}
+                        className="w-full"
                     >
                         ↺ reiniciar
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Info de estrellas */}
                 {mapData.maxCommands && (
-                    <div style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '10px',
-                        color: 'var(--text-ghost)',
-                        borderTop: '1px solid var(--bg-hover)',
-                        paddingTop: '.75rem',
-                        lineHeight: 1.8,
-                    }}>
-                        ★★★ ≤ {Math.floor(mapData.maxCommands * 0.6)} comandos<br />
-                        ★★☆ ≤ {Math.floor(mapData.maxCommands * 0.9)} comandos<br />
-                        ★☆☆ cualquier solución
+                    <div className="font-mono text-[10px] text-(--text-ghost) border-t border-(--bg-hover) pt-3 leading-[1.8]">
+                        <span className="text-(--amber)">★★★</span> ≤ {mapData.maxCommands + (mapData.maxF1Commands || 0)} comandos<br />
+                        <span className="text-(--amber)">★★</span>☆ ≤ {mapData.maxCommands + (mapData.maxF1Commands || 0) + 2} comandos<br />
+                        <span className="text-(--amber)">★</span>☆☆ cualquier solución
                     </div>
                 )}
             </div>
 
-            {/* Modal de REPETIR */}
+            {/* ===== MODAL REPETIR ===== */}
             {repeatModalOpen && (
-                <div style={{
-                    position: 'absolute', inset: 0,
-                    background: 'rgba(1,1,1,.8)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    zIndex: 100,
-                }}>
-                    <div style={{
-                        background: 'var(--bg-surface)',
-                        border: '1px solid var(--green-base)',
-                        borderRadius: '10px',
-                        padding: '1.5rem',
-                        fontFamily: 'var(--font-mono)',
-                        display: 'flex', flexDirection: 'column', gap: '1rem',
-                        minWidth: '240px',
-                    }}>
-                        <div style={{ color: 'var(--green-light)', fontSize: '12px', letterSpacing: '.1em' }}>
-              // repetir N veces
+                <div
+                    className="fixed inset-0 flex items-center justify-center z-50"
+                    style={{ background: 'rgba(1,1,1,.85)', backdropFilter: 'blur(4px)' }}
+                >
+                    <div className="bg-(--bg-surface) border border-(--green-base) rounded-[2px] p-7 font-mono flex flex-col gap-5 min-w-[260px] shadow-[0_0_40px_rgba(85,226,0,0.1)]">
+                        <div className="text-(--green-light) text-xs tracking-[.12em] uppercase">
+                            {'// repetir N veces'}
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-                            <button onClick={() => setRepeatTimes(t => Math.max(2, t - 1))}
-                                style={{ background: 'var(--bg-elevated)', border: '1px solid var(--bg-hover)', borderRadius: '5px', padding: '5px 12px', color: 'var(--green-light)', fontFamily: 'var(--font-mono)', cursor: 'pointer', fontSize: '14px' }}>
+                        <div className="flex items-center justify-center gap-4">
+                            <GameButton
+                                variant="command"
+                                onClick={() => setRepeatTimes(t => Math.max(2, t - 1))}
+                                className="text-base px-4"
+                            >
                                 −
-                            </button>
-                            <span style={{ color: 'var(--green-light)', fontSize: '20px', minWidth: '2ch', textAlign: 'center' }}>{repeatTimes}</span>
-                            <button onClick={() => setRepeatTimes(t => Math.min(10, t + 1))}
-                                style={{ background: 'var(--bg-elevated)', border: '1px solid var(--bg-hover)', borderRadius: '5px', padding: '5px 12px', color: 'var(--green-light)', fontFamily: 'var(--font-mono)', cursor: 'pointer', fontSize: '14px' }}>
+                            </GameButton>
+                            <span className="text-(--green-light) text-2xl min-w-[2ch] text-center font-mono">
+                                {repeatTimes}
+                            </span>
+                            <GameButton
+                                variant="command"
+                                onClick={() => setRepeatTimes(t => Math.min(10, t + 1))}
+                                className="text-base px-4"
+                            >
                                 +
-                            </button>
+                            </GameButton>
                         </div>
-                        <div style={{ display: 'flex', gap: '.5rem' }}>
-                            <button onClick={handleAddRepeat}
-                                style={{ flex: 1, background: 'var(--green-dark)', border: '1px solid var(--green-base)', borderRadius: '6px', padding: '8px', color: 'var(--green-light)', fontFamily: 'var(--font-mono)', fontSize: '11px', cursor: 'pointer', letterSpacing: '.08em' }}>
+                        <div className="flex gap-3">
+                            <Button
+                                variant="solid"
+                                size="xs"
+                                onClick={handleAddRepeat}
+                                className="flex-1"
+                            >
                                 agregar
-                            </button>
-                            <button onClick={() => setRepeatModal(false)}
-                                style={{ flex: 1, background: 'transparent', border: '1px solid var(--bg-hover)', borderRadius: '6px', padding: '8px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '11px', cursor: 'pointer' }}>
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="xs"
+                                onClick={() => setRepeatModal(false)}
+                                className="flex-1"
+                            >
                                 cancelar
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
             )}
         </div>
     )
-}
-
-// ------------------------------------------------------------
-// HELPER
-// ------------------------------------------------------------
-
-function sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms))
 }

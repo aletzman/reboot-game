@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { getSave } from "@/lib/gameState";
+import levelsData from "@/data/levels.json";
 
 export default function HeroButton() {
     const router = useRouter();
@@ -30,7 +31,18 @@ export default function HeroButton() {
             router.push("/level/P-00");
             return;
         }
-        const lastLevel = save.currentLevelId ?? "P-00";
+        
+        let lastLevel = save.currentLevelId ?? "P-00";
+
+        // Si el nivel guardado ya está completado, ir al siguiente nivel
+        if (save.progress[lastLevel]?.completed) {
+            const levels = levelsData.levels;
+            const currentIndex = levels.findIndex((l) => l.id === lastLevel);
+            if (currentIndex !== -1 && currentIndex + 1 < levels.length) {
+                lastLevel = levels[currentIndex + 1].id;
+            }
+        }
+
         router.push(`/level/${lastLevel}`);
     }
 

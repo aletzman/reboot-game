@@ -82,7 +82,7 @@ export default function FragAssistant({ hint, onUse }: FragAssistantProps) {
             <div style={{
                 position: 'fixed',
                 bottom: '1.5rem',
-                right: '1.5rem',
+                left: '1.5rem',
                 zIndex: 100,
             }}>
                 <button

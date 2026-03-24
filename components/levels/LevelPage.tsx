@@ -67,6 +67,7 @@ export default function LevelPage({ levelId }: PageProps) {
     const [missingObjects, setMissing] = useState<string[]>([])
     const [showComplete, setShowComplete] = useState(false)
     const [completionResult, setResult] = useState<ReturnType<typeof completeLevel> | null>(null)
+    const [resetKey, setResetKey] = useState(0)
 
     // ------------------------------------------------------------
     // INICIALIZACIÓN
@@ -162,6 +163,14 @@ export default function LevelPage({ levelId }: PageProps) {
         router.push('/game')
     }
 
+    function handleRetry() {
+        if (!level) return
+        setShowComplete(false)
+        setResult(null)
+        setLevelState(initLevelState(level))
+        setResetKey(prev => prev + 1)
+    }
+
     // ------------------------------------------------------------
     // RENDER — estados de carga y bloqueo
     // ------------------------------------------------------------
@@ -223,7 +232,7 @@ export default function LevelPage({ levelId }: PageProps) {
             )}
 
             {/* Componente del nivel según type */}
-            <main className="flex-1 flex flex-col">
+            <main key={resetKey} className="flex-1 flex flex-col">
                 {renderLevelComponent(level, levelState, handleComplete, handleFragUse)}
             </main>
 
@@ -245,6 +254,7 @@ export default function LevelPage({ levelId }: PageProps) {
                     reviewHint={reviewHint.shouldShow ? reviewHint : null}
                     onNext={handleNext}
                     onMap={handleGoToMap}
+                    onRetry={handleRetry}
                 />
             )}
         </div>
