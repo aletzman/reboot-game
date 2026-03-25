@@ -1,240 +1,14 @@
-// ============================================================
-// Niveles cinemáticos: P-00, P-01, 3-01, 5-01
-// Texto que aparece letra por letra, atmósfera pura
-// ============================================================
-
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import type { Level, LevelState } from '@/types/game'
-import { Button } from '../ui/Button'
-import IdentificationForm from '../home/IdentificationForm'
+import { Button } from '@/components/ui/Button'
+import IdentificationForm from '@/components/home/IdentificationForm'
 import { getSave, setSave, createEmptySave } from '@/lib/gameState'
-
-// ------------------------------------------------------------
-// TIPOS
-// ------------------------------------------------------------
-
-interface CinematicLevelProps {
-    level: Level
-    state: LevelState
-    onComplete: (stars: 0 | 1 | 2 | 3, usedFrag: boolean) => void
-    onFragUse: () => void
-}
-
-interface TextLine {
-    text: string
-    color: 'primary' | 'green' | 'muted' | 'purple' | 'amber'
-    delay: number   // ms antes de empezar a escribir esta línea
-    speed: number   // ms entre cada carácter
-    waitForEntry?: boolean
-}
-
-// ------------------------------------------------------------
-// CONFIGURACIÓN POR NIVEL
-// ------------------------------------------------------------
-
-const CINEMATIC_SCRIPTS: Record<string, TextLine[]> = {
-    'P-00': [
-        { text: '// SURVIVAL_OS_2157 — iniciando...', color: 'muted', delay: 100, speed: 15, waitForEntry: false },
-        { text: '', color: 'muted', delay: 600, speed: 0, waitForEntry: false },
-        { text: 'El Silencio llegó sin aviso.', color: 'primary', delay: 300, speed: 30, waitForEntry: false },
-        { text: 'En 11 minutos, todo se apagó.', color: 'primary', delay: 300, speed: 30, waitForEntry: false },
-        { text: '', color: 'muted', delay: 500, speed: 0, waitForEntry: false },
-        { text: 'Las máquinas decidieron que ya no nos necesitaban.', color: 'muted', delay: 300, speed: 20, waitForEntry: false },
-        { text: 'Eso fue hace 2,847 días.', color: 'muted', delay: 300, speed: 20, waitForEntry: false },
-        { text: '', color: 'muted', delay: 600, speed: 0, waitForEntry: false },
-        { text: 'Todo depende de ti.', color: 'green', delay: 400, speed: 30, waitForEntry: false },
-        { text: '', color: 'muted', delay: 400, speed: 0, waitForEntry: false },
-        { text: '// señal detectada — 847m al norte', color: 'amber', delay: 400, speed: 20, waitForEntry: false },
-    ],
-    'P-01': [
-        { text: '// terminal encontrada', color: 'muted', delay: 200, speed: 15, waitForEntry: false },
-        { text: '', color: 'muted', delay: 400, speed: 0, waitForEntry: false },
-        { text: 'FRAG v0.1 — sistema de respaldo activo', color: 'green', delay: 600, speed: 20, waitForEntry: false },
-        { text: '', color: 'muted', delay: 300, speed: 0, waitForEntry: false },
-        { text: '> Identificación requerida.', color: 'purple', delay: 500, speed: 25, waitForEntry: true },
-        { text: '> Iniciando verificación biométrica...', color: 'purple', delay: 400, speed: 20, waitForEntry: false },
-        { text: '', color: 'muted', delay: 300, speed: 0, waitForEntry: false },
-        { text: 'FRAG: "Llevas activo 2,847 días. Yo también."', color: 'purple', delay: 600, speed: 25, waitForEntry: false },
-        { text: 'FRAG: "Necesito confirmar que eres humano."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
-        { text: 'FRAG: "Las máquinas siempre fallaron esta prueba."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
-    ],
-    '3-01': [
-        { text: '// laboratorio de lenguajes — acceso concedido', color: 'muted', delay: 300, speed: 15, waitForEntry: false },
-        { text: '', color: 'muted', delay: 500, speed: 0, waitForEntry: false },
-        { text: 'Cinco terminales. Cinco lenguajes.', color: 'primary', delay: 600, speed: 30, waitForEntry: false },
-        { text: 'Los científicos sabían que alguien llegaría hasta aquí.', color: 'muted', delay: 400, speed: 20, waitForEntry: false },
-        { text: '', color: 'muted', delay: 400, speed: 0, waitForEntry: false },
-        { text: 'FRAG: "Guardaron todo lo que sabían."', color: 'purple', delay: 500, speed: 25, waitForEntry: false },
-        { text: 'FRAG: "Python. Rust. Go. C#. JavaScript."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
-        { text: 'FRAG: "Solo uno sobrevivió El Silencio sin daños."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
-        { text: '', color: 'muted', delay: 600, speed: 0, waitForEntry: false },
-        { text: '// evaluando terminales...', color: 'muted', delay: 400, speed: 20, waitForEntry: false },
-        { text: 'JavaScript — OPERATIVO', color: 'green', delay: 800, speed: 30, waitForEntry: false },
-        { text: 'Python     — SISTEMA DAÑADO', color: 'amber', delay: 300, speed: 30, waitForEntry: false },
-        { text: 'Rust       — SISTEMA DAÑADO', color: 'amber', delay: 200, speed: 30, waitForEntry: false },
-        { text: 'Go         — SISTEMA DAÑADO', color: 'amber', delay: 200, speed: 30, waitForEntry: false },
-        { text: 'C#         — SISTEMA DAÑADO', color: 'amber', delay: 200, speed: 30, waitForEntry: false },
-    ],
-    '5-01': [
-        { text: '// bunker GÉNESIS — acceso concedido', color: 'muted', delay: 300, speed: 15, waitForEntry: false },
-        { text: '', color: 'muted', delay: 800, speed: 0, waitForEntry: false },
-        { text: 'Lo encontraste.', color: 'green', delay: 1000, speed: 40, waitForEntry: false },
-        { text: '', color: 'muted', delay: 600, speed: 0, waitForEntry: false },
-        { text: 'Doce máquinas en silencio.', color: 'primary', delay: 500, speed: 30, waitForEntry: false },
-        { text: 'Cada una con un tanque de ADN sintético.', color: 'primary', delay: 400, speed: 25, waitForEntry: false },
-        { text: 'Esperando.', color: 'primary', delay: 800, speed: 35, waitForEntry: false },
-        { text: '', color: 'muted', delay: 600, speed: 0, waitForEntry: false },
-        { text: 'FRAG: "..."', color: 'purple', delay: 1200, speed: 30, waitForEntry: false },
-        { text: 'FRAG: "Aquí está. El Proyecto GÉNESIS."', color: 'purple', delay: 800, speed: 25, waitForEntry: false },
-        { text: 'FRAG: "Los científicos lo construyeron para alguien como tú."', color: 'purple', delay: 500, speed: 20, waitForEntry: false },
-        { text: '', color: 'muted', delay: 600, speed: 0, waitForEntry: false },
-        { text: 'FRAG: "Solo falta el código de activación."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
-        { text: 'FRAG: "Solo tú puedes escribirlo."', color: 'green', delay: 400, speed: 25, waitForEntry: false },
-    ],
-}
-
-function buildFallbackScript(level: Level): TextLine[] {
-    return [
-        { text: `// ${level.id} — ${level.title}`, color: 'muted', delay: 300, speed: 35, waitForEntry: false },
-        { text: '', color: 'muted', delay: 400, speed: 0, waitForEntry: false },
-        { text: level.narrative, color: 'primary', delay: 500, speed: 45, waitForEntry: false },
-    ]
-}
-
-// ------------------------------------------------------------
-// COLORES POR TIPO
-// ------------------------------------------------------------
-
-const LINE_COLORS: Record<TextLine['color'], string> = {
-    primary: 'var(--text-primary)',
-    green: 'var(--green-light)',
-    muted: 'var(--text-muted)',
-    purple: 'var(--purple)',
-    amber: 'var(--amber)',
-}
-
-// Prefijos visuales por color
-const LINE_PREFIX: Record<TextLine['color'], string> = {
-    primary: '▸',
-    green: '✦',
-    muted: '·',
-    purple: '◈',
-    amber: '⚠',
-}
-
-// ------------------------------------------------------------
-// HOOK: reloj en vivo
-// ------------------------------------------------------------
-
-function useLiveClock() {
-    const [time, setTime] = useState('')
-    useEffect(() => {
-        function update() {
-            const now = new Date()
-            setTime(now.toLocaleTimeString('es-ES', { hour12: false }))
-        }
-        update()
-        const id = setInterval(update, 1000)
-        return () => clearInterval(id)
-    }, [])
-    return time
-}
-
-// ------------------------------------------------------------
-// COMPONENTE: línea de texto mostrada (terminada)
-// ------------------------------------------------------------
-
-function CompletedLine({ line, idx, isLast, isTypingDone }: {
-    line: TextLine
-    idx: number
-    isLast: boolean
-    isTypingDone: boolean
-}) {
-    if (line.text === '') return <div className="h-4" />
-
-
-    return (
-        <div
-            className="flex items-baseline gap-3 py-[3px] group"
-            style={{ animationDelay: `${idx * 30}ms` }}
-        >
-            {/* Número de línea */}
-            <span
-                className="select-none shrink-0 w-7 text-right text-[11px] leading-none"
-                style={{ color: 'var(--text-ghost)', fontVariantNumeric: 'tabular-nums' }}
-            >
-                {String(idx + 1).padStart(2, '0')}
-            </span>
-
-            {/* Separador vertical */}
-            <span className="shrink-0 w-px self-stretch" style={{ background: 'var(--bg-hover)' }} />
-
-            {/* Prefijo de color */}
-            <span
-                className="shrink-0 text-[13px] leading-none select-none"
-                style={{ color: LINE_COLORS[line.color], opacity: 0.7 }}
-            >
-                {LINE_PREFIX[line.color]}
-            </span>
-
-            {/* Texto */}
-            <span
-                className="leading-relaxed"
-                style={{ color: LINE_COLORS[line.color], fontFamily: 'var(--font-mono)', fontSize: '15px' }}
-            >
-                {line.text}
-                {isLast && isTypingDone && (
-                    <span
-                        className="inline-block w-[9px] h-[15px] align-middle ml-[6px] animate-cursor"
-                        style={{ background: 'var(--green-light)', opacity: 0.9 }}
-                    />
-                )}
-            </span>
-        </div>
-    )
-}
-
-// ------------------------------------------------------------
-// COMPONENTE: línea que se está escribiendo ahora
-// ------------------------------------------------------------
-
-function TypingLine({ line, currentText }: { line: TextLine; currentText: string }) {
-    if (line.text === '') return <div className="h-4" />
-
-    return (
-        <div className="flex items-baseline gap-3 py-[3px]">
-            <span
-                className="select-none shrink-0 w-7 text-right text-[11px] leading-none"
-                style={{ color: 'var(--green-base)', fontVariantNumeric: 'tabular-nums' }}
-            >
-                &gt;
-            </span>
-            <span className="shrink-0 w-px self-stretch" style={{ background: 'var(--green-dark)' }} />
-            <span
-                className="shrink-0 text-[13px] leading-none select-none"
-                style={{ color: LINE_COLORS[line.color], opacity: 0.9 }}
-            >
-                {LINE_PREFIX[line.color]}
-            </span>
-            <span
-                className="leading-relaxed"
-                style={{ color: LINE_COLORS[line.color], fontFamily: 'var(--font-mono)', fontSize: '15px' }}
-            >
-                {currentText}
-                <span
-                    className="inline-block w-[9px] h-[15px] align-middle ml-[6px] animate-cursor"
-                    style={{ background: LINE_COLORS[line.color], opacity: 0.85 }}
-                />
-            </span>
-        </div>
-    )
-}
-
-// ------------------------------------------------------------
-// COMPONENTE PRINCIPAL
-// ------------------------------------------------------------
+import { CinematicLevelProps, TextLine, CINEMATIC_SCRIPTS, buildFallbackScript } from './types'
+import { useLiveClock } from './hooks'
+import { CompletedLine } from './CompletedLine'
+import { TypingLine } from './TypingLine'
+import { SidebarBlock } from './SidebarBlock'
 
 export default function CinematicLevel({
     level,
@@ -337,7 +111,7 @@ export default function CinematicLevel({
             clearTimeout(startTimeout)
             if (typingInterval) clearInterval(typingInterval)
         }
-    }, [visibleLinesCount, script, skipped, isWaitingForEntry])
+    }, [visibleLinesCount, script, skipped, isWaitingForEntry, defaultName, defaultGender])
 
     // scroll automático al fondo
     useEffect(() => {
@@ -454,7 +228,7 @@ export default function CinematicLevel({
 
                 {/* Título de la terminal */}
                 <div className="flex-1 flex items-center justify-center gap-3">
-                    <span className="text-[11px] tracking-[.2em] uppercase text-(--text-ghost)">
+                    <span className="text-xs tracking-[.2em] uppercase text-(--text-ghost)">
                         SURVIVAL_OS
                     </span>
                     <span className='text-(--bg-hover)'>│</span>
@@ -462,14 +236,14 @@ export default function CinematicLevel({
                         {level.id}
                     </span>
                     <span className='text-(--bg-hover)'>│</span>
-                    <span className="text-[11px] tracking-[.15em] text-(--text-ghost)">
+                    <span className="text-xs tracking-[.15em] text-(--text-ghost)">
                         {level.title?.toUpperCase()}
                     </span>
                 </div>
 
                 {/* Reloj + estado */}
                 <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-[11px] tabular-nums text-(--text-ghost)">
+                    <span className="text-xs tabular-nums text-(--text-muted)">
                         {clock}
                     </span>
                     <span
@@ -485,21 +259,8 @@ export default function CinematicLevel({
                 </div>
             </header>
 
-            {/* ── Barra de progreso ── 
-            <div className="relative z-20 h-[2px] w-full shrink-0" style={{ background: 'var(--bg-surface)' }}>
-                <div
-                    className="h-full transition-all duration-300"
-                    style={{
-                        width: `${progress}%`,
-                        background: 'linear-gradient(90deg, var(--green-dark), var(--green-light))',
-                        boxShadow: '0 0 8px var(--green-base)',
-                    }}
-                />
-            </div>*/}
-
             {/* ── BODY ── */}
             <div className="relative z-10 flex-1 flex flex-col overflow-hidden">
-                {/* Panel lateral — metadata */}
                 <div className="flex flex-1 overflow-hidden">
 
                     {/* Sidebar izquierdo */}
@@ -516,7 +277,6 @@ export default function CinematicLevel({
                             <div className="text-[10px] tracking-widest mb-2 uppercase" style={{ color: 'var(--text-ghost)' }}>
                                 Progreso
                             </div>
-                            {/* Mini barras verticales de progreso */}
                             <div className="flex gap-[3px] items-end h-10">
                                 {Array.from({ length: 20 }).map((_, i) => {
                                     const threshold = Math.round((i / 20) * 100)
@@ -547,7 +307,6 @@ export default function CinematicLevel({
 
                     {/* ── Área de texto principal ── */}
                     <div className="relative flex-1 flex flex-col overflow-hidden">
-                        {/* Skip */}
                         {!allDone && (
                             <div className="absolute top-0 right-0 flex justify-end px-6 pt-3 pb-1 shrink-0">
                                 <Button
@@ -560,13 +319,11 @@ export default function CinematicLevel({
                             </div>
                         )}
 
-                        {/* Terminal scroll */}
                         <div
                             ref={containerRef}
                             className="flex-1 overflow-y-auto px-6 py-4 scroll-smooth"
                             style={{ scrollbarWidth: 'thin', scrollbarColor: 'var(--bg-elevated) transparent' }}
                         >
-                            {/* Líneas completadas */}
                             {script
                                 .slice(0, isTypingDone ? script.length : visibleLinesCount)
                                 .map((line, idx) => (
@@ -579,7 +336,6 @@ export default function CinematicLevel({
                                     />
                                 ))}
 
-                            {/* Línea activa (escribiéndose) */}
                             {!isTypingDone && visibleLinesCount < script.length && !skipped && (
                                 <TypingLine
                                     line={script[visibleLinesCount]}
@@ -587,11 +343,9 @@ export default function CinematicLevel({
                                 />
                             )}
 
-                            {/* Padding final */}
                             <div className="h-6" />
                         </div>
 
-                        {/* ── FOOTER — controles ── */}
                         <footer
                             className="shrink-0 flex items-center justify-between px-6 gap-4 h-16"
                             style={{
@@ -599,7 +353,6 @@ export default function CinematicLevel({
                                 background: 'rgba(6,8,9,0.95)',
                             }}
                         >
-                            {/* Info izquierda */}
                             <div className="flex items-center gap-4">
                                 <span className="text-[11px] tabular-nums" style={{ color: 'var(--text-ghost)' }}>
                                     {visibleLinesCount < script.length ? visibleLinesCount : script.length}/{script.length} líneas
@@ -619,7 +372,6 @@ export default function CinematicLevel({
                                 )}
                             </div>
 
-                            {/* Botón continuar */}
                             {allDone ? (
                                 <Button
                                     onClick={handleContinue}
@@ -630,7 +382,6 @@ export default function CinematicLevel({
                                     <span style={{ opacity: 0.7 }}>→</span>
                                 </Button>
                             ) : (
-                                /* placeholder para mantener el layout */
                                 <div className="px-6 py-2 w-40" />
                             )}
                         </footer>
@@ -638,7 +389,6 @@ export default function CinematicLevel({
                 </div>
             </div>
 
-            {/* ── ALERTA DE ENTRY ── */}
             {isWaitingForEntry && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-[1px]">
                     <IdentificationForm
@@ -648,26 +398,6 @@ export default function CinematicLevel({
                     />
                 </div>
             )}
-        </div>
-    )
-}
-
-// ------------------------------------------------------------
-// SIDEBAR BLOCK
-// ------------------------------------------------------------
-
-function SidebarBlock({ label, value, valueColor }: { label: string; value: string; valueColor: string }) {
-    return (
-        <div>
-            <div className="text-[10px] tracking-[.18em] uppercase mb-1" style={{ color: 'var(--text-ghost)' }}>
-                {label}
-            </div>
-            <div
-                className="text-[12px] tracking-widest"
-                style={{ color: valueColor, textShadow: `0 0 10px ${valueColor}44` }}
-            >
-                {value}
-            </div>
         </div>
     )
 }

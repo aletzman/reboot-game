@@ -27,7 +27,7 @@ import FragAssistant from '@/components/frag/FragAssistant'
 // IMPORTS DINÁMICOS — cada componente solo carga cuando se necesita
 // ------------------------------------------------------------
 
-const CinematicLevel = dynamic(() => import('@/components/levels/CinematicLevel'), { ssr: false })
+const CinematicLevel = dynamic(() => import('@/components/levels/CinematicLevel/CinematicLevel'), { ssr: false })
 const LightbotLevel = dynamic(() => import('@/components/levels/LightBotLevel'), { ssr: false })
 const ScratchLevel = dynamic(() => import('@/components/levels/ScratchLevel'), { ssr: false })
 const PuzzleLevel = dynamic(() => import('@/components/levels/PuzzleLevel/PuzzleLevel'), { ssr: false })
