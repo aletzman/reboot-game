@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="64" viewBox="0 0 80 64">
+  <defs>
+    <!-- Gradientes para la loseta activa (Verde brillante) -->
+    <linearGradient id="topAct" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#143b00" />
+      <stop offset="100%" stop-color="#0a1e00" />
+    </linearGradient>
+    <linearGradient id="leftAct" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0d2600" />
+      <stop offset="100%" stop-color="#050f00" />
+    </linearGradient>
+    <linearGradient id="rightAct" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0a1e00" />
+      <stop offset="100%" stop-color="#030800" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#55e200" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#55e200" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Brillo base trasero -->
+  <polygon points="40,-10 90,23 40,56 -10,23" fill="url(#glow)"/>
+
+  <!-- Cara lateral Izquierda -->
+  <polygon points="0,23 40,46 40,64 0,41" fill="url(#leftAct)" stroke="#050a00" stroke-width="0.5"/>
+  <!-- Cara lateral Derecha -->
+  <polygon points="40,46 80,23 80,41 40,64" fill="url(#rightAct)" stroke="#050a00" stroke-width="0.5"/>
+  
+  <!-- Cara Superior -->
+  <polygon points="40,0 80,23 40,46 0,23" fill="url(#topAct)"/>
+
+  <!-- Circuito Acitvado Fuerte -->
+  <path d="M40,10 L65,23.5 L40,37" fill="none" stroke="#55e200" stroke-width="2" stroke-linecap="round"/>
+  <path d="M40,10 L15,23.5 L25,29" fill="none" stroke="#55e200" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <circle cx="40" cy="37" r="3" fill="#ffffff" filter="drop-shadow(0 0 4px #55e200)"/>
+  <circle cx="65" cy="23.5" r="2.5" fill="#55e200"/>
+  <circle cx="15" cy="23.5" r="2.5" fill="#55e200"/>
+
+  <polygon points="40,0.5 79.5,23 40,45.5 0.5,23" fill="none" stroke="#55e200" stroke-width="1.5"/>
+</svg>

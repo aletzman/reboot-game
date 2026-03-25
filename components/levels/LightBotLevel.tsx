@@ -6,11 +6,12 @@
 
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback, ForwardRefExoticComponent, RefAttributes } from 'react'
 import type { Level, LevelState, Command, CommandType, LightbotLevelData, RobotState, Direction } from '@/types/game'
 import { Button } from '@/components/ui/Button'
 import { GameButton } from '@/components/ui/GameButton'
 import { ButtonOption } from '@/components/ui/ButtonOption'
+import { PlayIcon, CornerUpLeft, CornerUpRight, StepForward, MoveRightIcon, LucideProps, RotateCcwIcon, ChevronsUp, FunctionSquare, Repeat, Hand, Lightbulb, Sun } from 'lucide-react'
 
 // ------------------------------------------------------------
 // TIPOS INTERNOS
@@ -27,14 +28,14 @@ interface LightbotLevelProps {
 // COMANDOS DISPONIBLES EN LA PALETA
 // ------------------------------------------------------------
 
-const PALETTE_COMMANDS: { type: CommandType; label: string; icon: string; cssColor: string }[] = [
-    { type: 'move', label: 'avanzar', icon: '↑', cssColor: 'var(--green-light)' },
-    { type: 'turn-left', label: 'girar ←', icon: '↰', cssColor: 'var(--green-light)' },
-    { type: 'turn-right', label: 'girar →', icon: '↱', cssColor: 'var(--green-light)' },
-    { type: 'jump', label: 'saltar', icon: '⤴', cssColor: 'var(--green-muted)' },
-    { type: 'activate', label: 'activar', icon: '⚡', cssColor: 'var(--amber)' },
-    { type: 'repeat', label: 'repetir', icon: '↻', cssColor: 'var(--purple)' },
-    { type: 'call-fn', label: 'F1', icon: 'ƒ1', cssColor: 'var(--cyan)' },
+const PALETTE_COMMANDS: { type: CommandType; label: string; icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; cssColor: string }[] = [
+    { type: 'move', label: 'avanzar', icon: MoveRightIcon, cssColor: 'var(--green-light)' },
+    { type: 'turn-left', label: 'girar', icon: CornerUpLeft, cssColor: 'var(--green-light)' },
+    { type: 'turn-right', label: 'girar', icon: CornerUpRight, cssColor: 'var(--green-light)' },
+    { type: 'jump', label: 'saltar', icon: ChevronsUp, cssColor: 'var(--green-muted)' },
+    { type: 'activate', label: 'activar', icon: Sun, cssColor: 'var(--amber)' },
+    { type: 'repeat', label: 'repetir', icon: Repeat, cssColor: 'var(--purple)' },
+    { type: 'call-fn', label: 'F1', icon: FunctionSquare, cssColor: 'var(--cyan)' },
 ]
 
 const MAX_COMMANDS = 20
@@ -197,8 +198,8 @@ const ISO = {
 const TILE_COLORS: Record<string, { top: string; left: string; right: string; glow?: string }> = {
     floor: { top: '#141B24', left: '#0E1319', right: '#0B0F14' },
     wall: { top: '#080A0D', left: '#050607', right: '#030404' },
-    target: { top: '#0d2600', left: '#0a1e00', right: '#081800', glow: '#55e20040' },
-    active: { top: '#0a2e2e', left: '#072222', right: '#051a1a', glow: '#12b0bb30' },
+    active: { top: '#0d2600', left: '#0a1e00', right: '#081800', glow: '#55e20040' },
+    target: { top: '#0a2e2e', left: '#072222', right: '#051a1a', glow: '#12b0bb30' },
     broken: { top: '#150d1e', left: '#100a16', right: '#0c0812', glow: '#7F77DD20' },
     generator: { top: '#1f1500', left: '#170f00', right: '#120b00', glow: '#EF9F2730' },
     empty: { top: '#010101', left: '#010101', right: '#010101' },
@@ -278,86 +279,107 @@ function drawIsoDiamond(
     }
 }
 
+const robotSprite = typeof window !== 'undefined' ? new Image() : null
+if (robotSprite) {
+    robotSprite.src = '/game/robot_spritesheet.png'
+}
+
 function drawRobot(
     ctx: CanvasRenderingContext2D,
-    direction: Direction,
+    robot: ExtendedRobotState,
     cx: number, cy: number,
     pulse: number // 0-1 para animación respiración
 ) {
-    const size = 16 + pulse * 2
-
     // Sombra
     ctx.beginPath()
     ctx.ellipse(cx, cy + 8, 14, 6, 0, 0, Math.PI * 2)
-    ctx.fillStyle = '#55e20015'
+    ctx.fillStyle = '#00FFFF15'
     ctx.fill()
 
-    // Cuerpo del robot (rombo)
-    ctx.save()
-    ctx.translate(cx, cy - 6)
-    ctx.beginPath()
-    ctx.moveTo(0, -size)
-    ctx.lineTo(size * 0.7, 0)
-    ctx.lineTo(0, size * 0.6)
-    ctx.lineTo(-size * 0.7, 0)
-    ctx.closePath()
+    // Glow / Propulsor debajo del robot
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter'; // Efecto de luz aditiva
 
-    // Gradiente
-    const g = ctx.createLinearGradient(0, -size, 0, size)
-    g.addColorStop(0, '#88c44d')
-    g.addColorStop(0.5, '#55e200')
-    g.addColorStop(1, '#2d7800')
-    ctx.fillStyle = g
-    ctx.fill()
-    ctx.strokeStyle = '#55e200'
-    ctx.lineWidth = 1.5
-    ctx.stroke()
 
-    // Ojo/dirección
-    const eyeOffsets: Record<Direction, { dx: number; dy: number }> = {
-        north: { dx: 0, dy: -6 },
-        south: { dx: 0, dy: 4 },
-        east: { dx: 5, dy: -1 },
-        west: { dx: -5, dy: -1 },
+    // Reducimos drásticamente el parpadeo aleatorio para evitar efecto estroboscópico
+    const flicker = Math.random() * 0.05;
+
+    // Calculamos el mismo offset de respiración que usa el sprite
+    const breathingOffset = pulse * 2;
+    const startY = cy - 8 - breathingOffset;
+
+    // Usamos el 'pulse' (que es una onda suave senoidal) para hacer la transparencia fluida
+    const baseAlpha = 0.05 + (pulse * 0.05) + flicker;
+
+    // 1. Elipse Superior (Más grande, más cerca al robot)
+    ctx.lineWidth = 1.2 + flicker;
+    ctx.beginPath();
+    ctx.ellipse(cx, startY - 2, 10 + flicker * 2, 6 + pulse * 1, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(0, 255, 255, ${baseAlpha})`;
+    ctx.stroke();
+
+    // 2. Elipse Central (Mediana, mucho más pegada a la superior)
+    ctx.beginPath();
+    ctx.ellipse(cx, startY + 3, 7 + flicker * 1.5, 4 + pulse * 0.5, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(0, 255, 255, ${baseAlpha})`;
+    ctx.stroke();
+
+    // 3. Elipse Inferior (Más pequeña, muy pegada a la central)
+    ctx.beginPath();
+    ctx.ellipse(cx, startY + 9, 4 + flicker * 1, 2 + pulse * 0.2, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(0, 255, 255, ${baseAlpha})`;
+    ctx.stroke();
+
+    ctx.restore();
+
+    if (robotSprite && robotSprite.complete) {
+        const spriteWidth = 64;
+        const spriteHeight = 64;
+
+        // Columna (X): Dirección
+        let frameX = 0;
+        if (robot.direction === 'north') frameX = 0;
+        if (robot.direction === 'east') frameX = 64;
+        if (robot.direction === 'south') frameX = 128;
+        if (robot.direction === 'west') frameX = 192;
+
+        // Fila (Y): Acción (Stand, Jump, Activate)
+        let frameY = 0;
+        if (robot.isJumping) frameY = 64;
+        else if (robot.isActivating) frameY = 128;
+
+        const breathingOffset = pulse * 2;
+
+        ctx.drawImage(
+            robotSprite,
+            frameX, frameY,
+            spriteWidth, spriteHeight,
+            cx - (spriteWidth / 2),
+            cy - spriteHeight - breathingOffset + 8,
+            spriteWidth, spriteHeight
+        );
     }
-    const { dx, dy } = eyeOffsets[direction]
-    ctx.beginPath()
-    ctx.arc(dx, dy, 3, 0, Math.PI * 2)
-    ctx.fillStyle = '#010101'
-    ctx.fill()
-    ctx.beginPath()
-    ctx.arc(dx, dy, 1.5, 0, Math.PI * 2)
-    ctx.fillStyle = '#55e200'
-    ctx.fill()
-
-    ctx.restore()
-
-    // Glow alrededor del robot
-    ctx.beginPath()
-    ctx.ellipse(cx, cy - 4, 20, 14, 0, 0, Math.PI * 2)
-    ctx.fillStyle = `rgba(85, 226, 0, ${0.04 + pulse * 0.03})`
-    ctx.fill()
 }
 
 function drawTargetMarker(ctx: CanvasRenderingContext2D, cx: number, cy: number, pulse: number) {
     // Anillo pulsante
-    const r = 10 + pulse * 3
+    const r = 7 + pulse * 2
     ctx.beginPath()
-    ctx.arc(cx, cy, r, 0, Math.PI * 2)
-    ctx.strokeStyle = `rgba(85, 226, 0, ${0.5 + pulse * 0.3})`
+    ctx.ellipse(cx, cy, r * 1.75, r, 0, 0, Math.PI * 2)
+    ctx.strokeStyle = `rgba(18, 176, 187, ${0.4 + pulse * 0.3})`
     ctx.lineWidth = 1.5
     ctx.stroke()
 
     // Centro
     ctx.beginPath()
-    ctx.arc(cx, cy, 4, 0, Math.PI * 2)
-    ctx.fillStyle = '#55e200'
+    ctx.ellipse(cx, cy, 5, 3, 0, 0, Math.PI * 2)
+    ctx.fillStyle = '#12b0bb99'
     ctx.fill()
 
     // Glow
     ctx.beginPath()
-    ctx.arc(cx, cy, 16, 0, Math.PI * 2)
-    ctx.fillStyle = `rgba(85, 226, 0, ${0.06 + pulse * 0.04})`
+    ctx.ellipse(cx, cy, 21, 12, 0, 0, Math.PI * 2)
+    ctx.fillStyle = `rgba(18, 176, 187, ${0.06 + pulse * 0.04})`
     ctx.fill()
 }
 
@@ -394,6 +416,7 @@ function drawBrokenIcon(ctx: CanvasRenderingContext2D, cx: number, cy: number) {
 
 export interface ExtendedRobotState extends RobotState {
     isJumping?: boolean
+    isActivating?: boolean
     prevX?: number
     prevY?: number
     height?: number
@@ -472,10 +495,21 @@ function sleep(ms: number): Promise<void> {
 }
 
 // ============================================================
+// ============================================================
 // COMPONENTE PRINCIPAL
 // ============================================================
 
-export default function LightbotLevel({ level, state, onComplete, onFragUse }: LightbotLevelProps) {
+function calcStars(usedMain: number, usedF1: number, maxMain?: number, maxF1?: number): 1 | 2 | 3 {
+    if (!maxMain) return 3
+    const totalUsed = usedMain + usedF1
+    const optimal = maxMain + (maxF1 || 0)
+
+    if (totalUsed <= optimal) return 3
+    if (totalUsed <= optimal + 2) return 2
+    return 1
+}
+
+export default function LightbotLevel({ level, state, onComplete }: LightbotLevelProps) {
     const mapData = LIGHTBOT_MAPS[level.id] ?? DEFAULT_MAP
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const animRef = useRef<number>(0)
@@ -493,29 +527,20 @@ export default function LightbotLevel({ level, state, onComplete, onFragUse }: L
     const [repeatTimes, setRepeatTimes] = useState(2)
 
     // Setup active palette 
-    const isReady = useRef(false)
-    const [allowedTools, setAllowedTools] = useState<typeof PALETTE_COMMANDS>([])
-
-    useEffect(() => {
-        if (!isReady.current && mapData) {
-            const cmds = mapData.allowedCommands
-                ? PALETTE_COMMANDS.filter(cmd => mapData.allowedCommands?.includes(cmd.type))
-                : PALETTE_COMMANDS
-            setAllowedTools(cmds)
-            setCommands([])
-            setCommandsF1([])
-            setActivePanel('main')
-            isReady.current = true
-        }
-    }, [mapData])
+    const allowedTools = mapData.allowedCommands
+        ? PALETTE_COMMANDS.filter(cmd => mapData.allowedCommands?.includes(cmd.type))
+        : PALETTE_COMMANDS
 
     // Refs para animation loop (evitar stale closures)
     const robotRef = useRef<ExtendedRobotState>(robot)
     const activatedRef = useRef(activatedTiles)
     const statusRef = useRef(status)
-    robotRef.current = robot
-    activatedRef.current = activatedTiles
-    statusRef.current = status
+
+    useEffect(() => {
+        robotRef.current = robot
+        activatedRef.current = activatedTiles
+        statusRef.current = status
+    }, [robot, activatedTiles, status])
 
     // --------------------------------------------------------
     // CANVAS ISOMÉTRICO — render loop
@@ -551,7 +576,7 @@ export default function LightbotLevel({ level, state, onComplete, onFragUse }: L
         const offsetX = canvasW / 2 - ((cols - rows) * (ISO.TILE_W / 2)) / 2
         const offsetY = canvasH / 2 - mapHeightPx / 2 + (maxH * 26) / 2
 
-        let startTime = performance.now()
+        const startTime = performance.now()
         let lastTime = startTime
         let visX = mapData.robotStart.x
         let visY = mapData.robotStart.y
@@ -686,7 +711,7 @@ export default function LightbotLevel({ level, state, onComplete, onFragUse }: L
                 }
             }
 
-            drawRobot(ctx, currentRobot.direction, rx, ry - 20 - rz - zOffset, pulse)
+            drawRobot(ctx, currentRobot, rx, ry - 8 - rz - zOffset, pulse)
 
             // Efectos de grid o status pulse
             if (currentStatus === 'success') {
@@ -754,9 +779,20 @@ export default function LightbotLevel({ level, state, onComplete, onFragUse }: L
                 currentRobot = { ...currentRobot, direction: turnRight(currentRobot.direction), isMoving: false, isJumping: false }
                 setRobot({ ...currentRobot })
             } else if (cmd.type === 'activate') {
+                currentRobot = { ...currentRobot, isActivating: true, isMoving: false, isJumping: false }
+                setRobot({ ...currentRobot })
+                await sleep(250) // pausa para la animacion
+
                 const key = `${currentRobot.x},${currentRobot.y}`
-                activated.add(key)
+                if (activated.has(key)) {
+                    activated.delete(key)
+                } else {
+                    activated.add(key)
+                }
                 setActivated(new Set(activated))
+
+                currentRobot = { ...currentRobot, isActivating: false }
+                setRobot({ ...currentRobot })
             }
 
             // Comprobar éxito en cada paso
@@ -783,15 +819,7 @@ export default function LightbotLevel({ level, state, onComplete, onFragUse }: L
         setIsRunning(false)
     }, [commands, commandsF1, isRunning, mapData, state.fragUsed, onComplete])
 
-    function calcStars(usedMain: number, usedF1: number, maxMain?: number, maxF1?: number): 1 | 2 | 3 {
-        if (!maxMain) return 3
-        const totalUsed = usedMain + usedF1
-        const optimal = maxMain + (maxF1 || 0)
-        
-        if (totalUsed <= optimal) return 3
-        if (totalUsed <= optimal + 2) return 2
-        return 1
-    }
+
 
     // --------------------------------------------------------
     // RESET
@@ -876,14 +904,14 @@ export default function LightbotLevel({ level, state, onComplete, onFragUse }: L
                 <div
                     className="relative"
                     style={{
-                        border: `1px solid ${status === 'success' ? 'var(--green-base)' : status === 'failed' ? 'var(--red)' : 'var(--bg-hover)'}`,
-                        borderRadius: '10px',
+                        border: `2px solid ${status === 'success' ? 'var(--green-base)' : status === 'failed' ? 'var(--red-dark)' : 'var(--bg-hover)'}`,
+                        borderRadius: '5px',
                         overflow: 'hidden',
                         transition: 'border-color .4s, box-shadow .4s',
                         boxShadow: status === 'success'
                             ? '0 0 30px rgba(85,226,0,0.15), inset 0 0 20px rgba(85,226,0,0.05)'
                             : status === 'failed'
-                                ? '0 0 20px rgba(226,75,74,0.1)'
+                                ? '0 0 20px rgba(226,75,74,0.2)'
                                 : '0 0 20px rgba(85,226,0,0.03)',
                     }}
                 >
@@ -922,11 +950,11 @@ export default function LightbotLevel({ level, state, onComplete, onFragUse }: L
             </div>
 
             {/* ===== PANEL DERECHO — Comandos ===== */}
-            <div className="w-[290px] shrink-0 flex flex-col overflow-y-auto bg-(--bg-surface) border-l border-(--bg-hover) p-5 gap-4">
+            <div className="w-[300px] shrink-0 flex flex-col overflow-y-auto bg-(--bg-surface) border-l border-(--bg-hover) p-5 gap-4">
 
                 {/* Paleta de comandos */}
                 <div>
-                    <div className="font-mono text-[10px] text-(--green-base) tracking-[.12em] mb-2 uppercase">
+                    <div className="font-mono text-[12px] text-(--green-base) tracking-[.12em] mb-2 uppercase">
                         {'// comandos'}
                     </div>
                     <div className="grid grid-cols-2 gap-[6px]">
@@ -934,7 +962,7 @@ export default function LightbotLevel({ level, state, onComplete, onFragUse }: L
                             <GameButton
                                 key={cmd.type}
                                 variant="command"
-                                icon={<span className="text-[14px]">{cmd.icon}</span>}
+                                icon={<span className="text-[14px]"><cmd.icon size={14} /></span>}
                                 onClick={() => handleDragFromPalette(cmd.type)}
                                 disabled={
                                     isRunning ||
@@ -955,7 +983,7 @@ export default function LightbotLevel({ level, state, onComplete, onFragUse }: L
                 {/* Secuencia de comandos - PRINCIPAL */}
                 <div className="flex-1 flex flex-col cursor-pointer" onClick={() => !isRunning && setActivePanel('main')}>
                     <div className="flex justify-between items-center mb-2">
-                        <div className={`font-mono text-[10px] tracking-[.12em] uppercase transition-colors ${activePanel === 'main' ? 'text-(--green-base)' : 'text-(--text-ghost)'}`}>
+                        <div className={`font-mono text-[11px] tracking-[.12em] uppercase transition-colors ${activePanel === 'main' ? 'text-(--green-base)' : 'text-(--text-ghost)'}`}>
                             {'// secuencia principal'} ({commands.length}/{mapData.uiLimitMain || MAX_COMMANDS})
                         </div>
                         {commands.length > 0 && !isRunning && activePanel === 'main' && (
@@ -977,12 +1005,13 @@ export default function LightbotLevel({ level, state, onComplete, onFragUse }: L
                         {commands.map((cmd, idx) => {
                             const palette = PALETTE_COMMANDS.find(p => p.type === cmd.type)
                             const isExec = executingIdx?.panel === 'main' && executingIdx.idx === idx
+                            const IconComp = palette?.icon
                             return (
                                 <GameButton
                                     key={idx}
                                     variant="command"
                                     active={isExec}
-                                    icon={<span className="text-[13px]">{palette?.icon}</span>}
+                                    icon={<span className="text-[13px]">{IconComp && <IconComp size={13} />}</span>}
                                     onClick={(e) => {
                                         e.stopPropagation()
                                         if (!isRunning && activePanel === 'main') handleRemoveCommand(idx)
@@ -1002,7 +1031,7 @@ export default function LightbotLevel({ level, state, onComplete, onFragUse }: L
                 {mapData.allowF1 && (
                     <div className="flex-1 flex flex-col cursor-pointer mt-2" onClick={() => !isRunning && setActivePanel('f1')}>
                         <div className="flex justify-between items-center mb-2">
-                            <div className={`font-mono text-[10px] tracking-[.12em] uppercase transition-colors ${activePanel === 'f1' ? 'text-(--cyan)' : 'text-(--text-ghost)'}`}>
+                            <div className={`font-mono text-[12px] tracking-[.12em] uppercase transition-colors ${activePanel === 'f1' ? 'text-(--cyan)' : 'text-(--text-ghost)'}`}>
                                 {'// función f1'} ({commandsF1.length}/{mapData.uiLimitF1 || 8})
                             </div>
                             {commandsF1.length > 0 && !isRunning && activePanel === 'f1' && (
@@ -1023,12 +1052,13 @@ export default function LightbotLevel({ level, state, onComplete, onFragUse }: L
                             {commandsF1.map((cmd, idx) => {
                                 const palette = PALETTE_COMMANDS.find(p => p.type === cmd.type)
                                 const isExec = executingIdx?.panel === 'f1' && executingIdx.idx === idx
+                                const IconComp = palette?.icon
                                 return (
                                     <GameButton
                                         key={`f1-${idx}`}
                                         variant="command"
                                         active={isExec}
-                                        icon={<span className="text-[13px]">{palette?.icon}</span>}
+                                        icon={<span className="text-[13px]">{IconComp && <IconComp size={13} />}</span>}
                                         onClick={(e) => {
                                             e.stopPropagation()
                                             if (!isRunning && activePanel === 'f1') handleRemoveCommand(idx)
@@ -1056,8 +1086,10 @@ export default function LightbotLevel({ level, state, onComplete, onFragUse }: L
                         onClick={executeCommands}
                         disabled={isRunning || commands.length === 0}
                         className="w-full"
+                        icon={isRunning ? StepForward : PlayIcon}
+                        iconPosition="left"
                     >
-                        {isRunning ? '◉ ejecutando...' : '▶ ejecutar'}
+                        {isRunning ? 'Ejecutando...' : 'ejecutar'}
                     </Button>
 
                     <Button
@@ -1066,8 +1098,10 @@ export default function LightbotLevel({ level, state, onComplete, onFragUse }: L
                         onClick={handleReset}
                         disabled={isRunning}
                         className="w-full"
+                        icon={RotateCcwIcon}
+                        iconPosition="left"
                     >
-                        ↺ reiniciar
+                        reiniciar
                     </Button>
                 </div>
 
