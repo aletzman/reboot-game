@@ -15,9 +15,9 @@ export const useAudioStore = create<AudioState>()(
         (set) => ({
             isMuted: false,
             setIsMuted: (isMuted) => set({ isMuted }),
-            musicVolume: 0.5,
+            musicVolume: 0.05,
             setMusicVolume: (musicVolume) => set({ musicVolume }),
-            sfxVolume: 0.8,
+            sfxVolume: 0.4,
             setSfxVolume: (sfxVolume) => set({ sfxVolume }),
         }),
         {
