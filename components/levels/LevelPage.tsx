@@ -378,9 +378,9 @@ function NarrativeBanner({ text }: { text: string }) {
         <div className="bg-(--bg-surface) border-b border-(--bg-hover) py-2.5 px-5 flex items-center justify-between gap-4">
             <button
                 onClick={() => setVisible(false)}
-                className="bg-transparent border-none text-(--text-ghost) text-[11px] cursor-pointer font-mono shrink-0 hover:text-(--text-muted)"
+                className="bg-transparent border-none text-(--red) opacity-70 hover:opacity-100 text-[11px] cursor-pointer font-mono shrink-0 transition-opacity"
             >
-                [x]
+                [X_CERRAR]
             </button>
             <div className="font-mono text-[11px] text-(--purple) tracking-wide leading-relaxed flex-1">
                 {text.split('\n')[0]}

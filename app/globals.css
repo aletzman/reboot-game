@@ -37,6 +37,34 @@
 
   --cyan: #19c8d4;
 
+  /* SCRATCH BLOCK RECYCLED TECH PALETTE */
+  /* Colores desaturados para el tema post-apocalíptico */
+  --block-mover: #66cc00;
+  /* Verde oliva/bosque */
+  --block-girar: #33cccc;
+  /* Turquesa apagado */
+  --block-repetir: #8a66cc;
+  /* Violeta ceniza */
+  --block-si: #3385cc;
+  /* Azul acero */
+  --block-funcion: #cc8533;
+  /* Ámbar oxidado */
+  --block-llamar: #ccac33;
+  /* Oro viejo */
+  --block-activar: #cc334d;
+  /* Rojo desgastado */
+  --block-asignar: #7fa1dd;
+  /* Azul lavanda */
+
+  --block-mover-dark: #336600;
+  --block-girar-dark: #006666;
+  --block-repetir-dark: #553399;
+  --block-si-dark: #114488;
+  --block-funcion-dark: #995511;
+  --block-llamar-dark: #997711;
+  --block-activar-dark: #991133;
+  --block-asignar-dark: #334466;
+
   /* Tipografías por defecto de Next.js (Geist es hermosa para este proyecto) */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-data-mono);
@@ -431,4 +459,64 @@ body {
     transform: translateX(0);
     opacity: 1;
   }
+}
+
+/* CUSTOM SCROLLBAR FOR PANELS */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--bg-void);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--bg-hover);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--green-base);
+}
+
+/* SHAKE ANIMATION FOR ERRORS */
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-4px);
+  }
+
+  50% {
+    transform: translateX(4px);
+  }
+
+  75% {
+    transform: translateX(-4px);
+  }
+}
+
+.animate-shake {
+  animation: shake 0.3s ease-in-out infinite;
+}
+
+/* SLIDE UP WITH FADE */
+@keyframes slide-up {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out forwards;
 }

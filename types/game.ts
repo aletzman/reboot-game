@@ -217,6 +217,7 @@ export type ScratchBlockType =
   | 'FUNCION'
   | 'LLAMAR'
   | 'ACTIVAR'
+  | 'ASIGNAR'
 
 export interface ScratchBlock {
   id: string
