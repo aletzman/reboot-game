@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
+import { useRef, useState, useCallback, useMemo } from 'react'
 import dynamic from 'next/dynamic'
-import type { TestCase, CodeEditorState } from '@/types/game'
+import type { CodeEditorState } from '@/types/game'
 import { CodeEditorLevelProps } from './types'
 import { EDITOR_DATA, DEFAULT_EDITOR } from './constants'
 import { runTests } from './utils'
@@ -35,9 +35,9 @@ export default function CodeEditorLevel({
     const [activePanel, setActivePanel] = useState<'output' | 'tests'>('tests')
     const editorRef = useRef<unknown>(null)
 
-    const lineCount = useMemo(() => 
+    const lineCount = useMemo(() =>
         editorState.code.split('\n').filter(l => l.trim()).length
-    , [editorState.code])
+        , [editorState.code])
 
     // ------------------------------------------------------------
     // EJECUTAR
@@ -112,10 +112,10 @@ export default function CodeEditorLevel({
     return (
         <div className="flex-1 flex flex-col bg-(--bg-void) min-h-[70vh] h-full">
 
-            <EditorHeader 
-                level={level} 
-                robotAPI={data.robotAPI} 
-                running={editorState.running} 
+            <EditorHeader
+                level={level}
+                robotAPI={data.robotAPI}
+                running={editorState.running}
                 phase={phase}
                 onRun={handleRun}
             />
@@ -164,9 +164,8 @@ export default function CodeEditorLevel({
                             <button
                                 key={tab}
                                 onClick={() => setActivePanel(tab)}
-                                className={`flex-1 bg-transparent border-none p-2 font-mono text-[10px] tracking-widest cursor-pointer transition-all border-b-2 ${
-                                    activePanel === tab ? 'bg-(--bg-elevated) border-(--green-base) text-(--green-light)' : 'border-transparent text-(--text-ghost)'
-                                }`}
+                                className={`flex-1 bg-transparent border-none p-2 font-mono text-[10px] tracking-widest cursor-pointer transition-all border-b-2 ${activePanel === tab ? 'bg-(--bg-elevated) border-(--green-base) text-(--green-light)' : 'border-transparent text-(--text-ghost)'
+                                    }`}
                             >
                                 {tab}
                                 {tab === 'tests' && (
@@ -187,11 +186,11 @@ export default function CodeEditorLevel({
                 </div>
             </div>
 
-            <EditorFooter 
-                phase={phase} 
-                tests={editorState.tests} 
-                lineCount={lineCount} 
-                attempts={attempts} 
+            <EditorFooter
+                phase={phase}
+                tests={editorState.tests}
+                lineCount={lineCount}
+                attempts={attempts}
             />
         </div>
     )
