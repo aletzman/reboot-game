@@ -26,14 +26,17 @@ export function GameButton({
     ...props
 }: GameButtonProps) {
 
-    const base = "relative inline-flex items-center gap-2 font-mono uppercase tracking-[.08em] transition-all duration-200 cursor-pointer overflow-hidden select-none";
+
+
+    const base = "relative inline-flex items-center gap-4 font-mono uppercase tracking-[.08em] transition-all duration-200 cursor-pointer overflow-hidden select-none";
+    const hoverColor = `hover:bg-(--bg-hover)`;
 
     const variants: Record<string, string> = {
         command: `
-            rounded-[2px] text-[11px] px-3 py-[7px]
+            rounded-[4px] text-[11px] px-3 py-[7px]
             bg-(--bg-elevated) border border-(--bg-hover)
             text-(--green-light)
-            hover:border-(--green-base) hover:bg-(--bg-hover)
+            ${hoverColor}
             hover:shadow-[0_0_10px_rgba(85,226,0,0.08)]
             active:scale-[0.97]
         `,
@@ -63,19 +66,42 @@ export function GameButton({
         `,
     };
 
-    const activeStyles = active
+    const activeStyles = active && !accentColor
         ? "border-(--green-light)! bg-(--green-dark)! text-(--green-light)! shadow-[0_0_12px_rgba(85,226,0,0.3)]!"
+        : "";
+
+    const activeStylesWithAccent = active && accentColor
+        ? "scale-[1.02] z-10" // Pequeño efecto 3D/Z al activarse
+        : "";
+
+    const accentClasses = accentColor 
+        ? (active 
+            ? "border-[var(--accent-base)]!" 
+            : "border-[var(--accent-border)]! hover:border-[var(--accent-border-hover)]!"
+          )
         : "";
 
     const disabledStyles = disabled
         ? "opacity-40 cursor-not-allowed! hover:bg-(--bg-elevated)! hover:border-(--bg-hover)! hover:shadow-none! hover:text-(--text-ghost)! active:scale-100!"
         : "";
 
+    const dynamicStyle = accentColor ? {
+        color: accentColor,
+        '--accent-base': accentColor,
+        '--accent-border': `color-mix(in srgb, ${accentColor} 20%, transparent)`,
+        '--accent-border-hover': `color-mix(in srgb, ${accentColor} 70%, transparent)`,
+        '--accent-bg-active': `color-mix(in srgb, ${accentColor} 15%, transparent)`,
+        backgroundColor: active ? 'var(--accent-bg-active)' : undefined,
+        boxShadow: active ? `inset 0 0 10px color-mix(in srgb, ${accentColor} 20%, transparent), 0 0 15px color-mix(in srgb, ${accentColor} 40%, transparent)` : undefined,
+        textShadow: active ? `0 0 8px color-mix(in srgb, ${accentColor} 60%, transparent)` : undefined,
+        '--_accent': accentColor
+    } as React.CSSProperties : undefined;
+
     return (
         <button
-            className={`${base} ${variants[variant]} ${activeStyles} ${disabledStyles} ${className}`}
+            className={`${base} ${variants[variant]} ${activeStyles} ${activeStylesWithAccent} ${accentClasses} ${disabledStyles} ${className}`}
             disabled={disabled}
-            style={accentColor ? { color: accentColor, '--_accent': accentColor } as React.CSSProperties : undefined}
+            style={dynamicStyle}
             {...props}
         >
             {icon && <span className="text-[14px] leading-none">{icon}</span>}
