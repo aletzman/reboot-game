@@ -32,7 +32,7 @@ const LightbotLevel = dynamic(() => import('@/components/levels/LightBotLevel/Li
 const ScratchLevel = dynamic(() => import('@/components/levels/ScratchLevel/ScratchLevel'), { ssr: false })
 const PuzzleLevel = dynamic(() => import('@/components/levels/PuzzleLevel/PuzzleLevel'), { ssr: false })
 const SpeedTypingLevel = dynamic(() => import('@/components/levels/SpeedTypingLevel'), { ssr: false })
-const CodeEditorLevel = dynamic(() => import('@/components/levels/CodeEditorLevel'), { ssr: false })
+const CodeEditorLevel = dynamic(() => import('@/components/levels/CodeEditorLevel/CodeEditorLevel'), { ssr: false })
 const DecisionLevel = dynamic(() => import('@/components/levels/DecisionLevel'), { ssr: false })
 const ReviewLevel = dynamic(() => import('@/components/levels/ReviewLevel'), { ssr: false })
 
