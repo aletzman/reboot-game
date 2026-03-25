@@ -32,10 +32,10 @@
   --red-dark: #7a1515;
   --red-muted: #b42b2b;
   /* error */
-  --blue: #378ADD;
+  --blue: #2e4ada;
   /* info, comunes */
 
-  --cyan: #12b0bb;
+  --cyan: #19c8d4;
 
   /* Tipografías por defecto de Next.js (Geist es hermosa para este proyecto) */
   --font-sans: var(--font-geist-sans);
