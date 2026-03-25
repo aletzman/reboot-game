@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="64" viewBox="0 0 80 64">
+  <!-- CSS para Muro Industrial -->
+  <defs>
+    <linearGradient id="topWall" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0e12" />
+      <stop offset="100%" stop-color="#050608" />
+    </linearGradient>
+    <linearGradient id="leftWall" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#07090b" />
+      <stop offset="100%" stop-color="#020304" />
+    </linearGradient>
+    <linearGradient id="rightWall" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#050607" />
+      <stop offset="100%" stop-color="#010101" />
+    </linearGradient>
+  </defs>
+
+  <!-- Cara lateral Izquierda -->
+  <polygon points="0,23 40,46 40,64 0,41" fill="url(#leftWall)" stroke="#020304" stroke-width="0.5"/>
+  <path d="M10,31 L30,42" fill="none" stroke="#010101" stroke-width="1.5"/>
+  <path d="M10,37 L30,48" fill="none" stroke="#010101" stroke-width="1.5"/>
+
+  <!-- Cara lateral Derecha -->
+  <polygon points="40,46 80,23 80,41 40,64" fill="url(#rightWall)" stroke="#010101" stroke-width="0.5"/>
+  <path d="M50,42 L70,31" fill="none" stroke="#010101" stroke-width="1.5"/>
+  <path d="M50,48 L70,37" fill="none" stroke="#010101" stroke-width="1.5"/>
+  
+  <!-- Cara Superior (Diamante) -->
+  <polygon points="40,0 80,23 40,46 0,23" fill="url(#topWall)"/>
+
+  <!-- Pista hundida o Bisel interior sutil para unificación con la escena -->
+  <polygon points="40,4 73,23 40,42 7,23" fill="none" stroke="#040608AA" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <!-- Patrón de placa industrial (X y remaches) -->
+  <path d="M20,23 L60,23" fill="none" stroke="#271613ff" stroke-width="1"/>
+  <path d="M40,11 L40,35" fill="none" stroke="#271613ff" stroke-width="1"/>
+  <polygon points="40,5 72,23 40,41 8,23" fill="none" stroke="#000000" stroke-width="1.5" opacity="0.6"/>
+  
+  <!-- Remaches (esquinas) -->
+  <circle cx="40" cy="5" r="1.5" fill="#2a3644"/>
+  <circle cx="72" cy="23" r="1.5" fill="#2a3644"/>
+  <circle cx="40" cy="41" r="1.5" fill="#2a3644"/>
+  <circle cx="8" cy="23" r="1.5" fill="#2a3644"/>
+</svg>

@@ -1,35 +1,41 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="80" height="64" viewBox="0 0 80 64">
-  <!-- CSS para el estilo cyberpunk del panel -->
   <defs>
-    <linearGradient id="topGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1c2533" />
-      <stop offset="100%" stop-color="#0a0e14" />
+    <linearGradient id="topFlr" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1b2128" />
+      <stop offset="100%" stop-color="#0b0e12" />
     </linearGradient>
-    <linearGradient id="leftGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#111820" />
-      <stop offset="100%" stop-color="#070a0d" />
+    <linearGradient id="innerFlr" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#151a20" />
+      <stop offset="100%" stop-color="#080b0f" />
     </linearGradient>
-    <linearGradient id="rightGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#0d1218" />
-      <stop offset="100%" stop-color="#050709" />
+    <linearGradient id="leftFlr" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#12161b" />
+      <stop offset="100%" stop-color="#07090c" />
+    </linearGradient>
+    <linearGradient id="rightFlr" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0e1115" />
+      <stop offset="100%" stop-color="#040608" />
     </linearGradient>
   </defs>
 
   <!-- Cara lateral Izquierda -->
-  <polygon points="0,23 40,46 40,64 0,41" fill="url(#leftGrad)" stroke="#050607" stroke-width="0.5"/>
+  <polygon points="0,23 40,46 40,64 0,41" fill="url(#leftFlr)" stroke="#06090c" stroke-width="0.5"/>
   <!-- Cara lateral Derecha -->
-  <polygon points="40,46 80,23 80,41 40,64" fill="url(#rightGrad)" stroke="#030404" stroke-width="0.5"/>
+  <polygon points="40,46 80,23 80,41 40,64" fill="url(#rightFlr)" stroke="#06090c" stroke-width="0.5"/>
   
-  <!-- Cara Superior (Diamante de 80x46) -->
-  <!-- Ratio perfecto de 2:1 casi (80 ancho, 46 alto) -->
-  <polygon points="40,0 80,23 40,46 0,23" fill="url(#topGrad)"/>
+  <!-- Base de la cara Superior (Borde Exterior) -->
+  <polygon points="40,0 80,23 40,46 0,23" fill="url(#topFlr)"/>
 
-  <!-- Detalles de circuito (Líneas tecnológicas en el piso) -->
-  <path d="M40,10 L60,21 L40,32" fill="none" stroke="#2d7800" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
-  <path d="M40,10 L20,21 L28,26" fill="none" stroke="#2d7800" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
-  <circle cx="40" cy="32" r="2" fill="#55e200" opacity="0.8"/>
-  <circle cx="60" cy="21" r="1.5" fill="#55e200" opacity="0.5"/>
+  <!-- Pista de circuito hundida (Bisel interior sutil) -->
+  <polygon points="40,4 73,23 40,42 7,23" fill="none" stroke="#040608AA" stroke-width="1.5" stroke-linejoin="round"/>
+  
+  <!-- Superficie interna plana y lisa -->
+  <polygon points="40,5 72,23 40,41 8,23" fill="url(#innerFlr)"/>
 
-  <!-- Borde Neón (Opcional, muy sutil) -->
-  <polygon points="40,0.5 79.5,23 40,45.5 0.5,23" fill="none" stroke="#6a6a6a" stroke-width="1" opacity="0.3"/>
+  <!-- Micro luces o LEDs de registro en 2 vértices (sin color, solo gris) -->
+  <circle cx="40" cy="8" r="1.2" fill="#2d3a4b99"/>
+  <circle cx="40" cy="38" r="1.2" fill="#2d3a4b99"/>
+
+  <!-- Borde perimetral exterior fino -->
+  <polygon points="40,0.5 79.5,23 40,45.5 0.5,23" fill="none" stroke="#36455740" stroke-width="1" opacity="0.6"/>
 </svg>
