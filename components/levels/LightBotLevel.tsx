@@ -11,7 +11,8 @@ import type { Level, LevelState, Command, CommandType, LightbotLevelData, RobotS
 import { Button } from '@/components/ui/Button'
 import { GameButton } from '@/components/ui/GameButton'
 import { ButtonOption } from '@/components/ui/ButtonOption'
-import { PlayIcon, CornerUpLeft, CornerUpRight, StepForward, MoveRightIcon, LucideProps, RotateCcwIcon, ChevronsUp, FunctionSquare, Repeat, Hand, Lightbulb, Sun } from 'lucide-react'
+import { PlayIcon, CornerUpLeft, CornerUpRight, StepForward, MoveRightIcon, LucideProps, RotateCcwIcon, ChevronsUp, FunctionSquare, Repeat, Hand, Lightbulb, Sun, ChevronRightIcon, ChevronsRightIcon, PackageOpen } from 'lucide-react'
+import { useAudioStore } from '@/store/audio.store'
 
 // ------------------------------------------------------------
 // TIPOS INTERNOS
@@ -284,6 +285,28 @@ if (robotSprite) {
     robotSprite.src = '/game/robot_spritesheet.png'
 }
 
+const floorSprite = typeof window !== 'undefined' ? new Image() : null
+if (floorSprite) {
+    floorSprite.src = '/assets/sample_floor.svg'
+}
+
+const activeSprite = typeof window !== 'undefined' ? new Image() : null
+if (activeSprite) {
+    activeSprite.src = '/assets/sample_active.svg'
+}
+
+const wallSprite = typeof window !== 'undefined' ? new Image() : null
+if (wallSprite) wallSprite.src = '/assets/sample_wall.svg'
+
+const brokenSprite = typeof window !== 'undefined' ? new Image() : null
+if (brokenSprite) brokenSprite.src = '/assets/sample_broken.svg'
+
+const genSprite = typeof window !== 'undefined' ? new Image() : null
+if (genSprite) genSprite.src = '/assets/sample_generator.svg'
+
+const genActiveSprite = typeof window !== 'undefined' ? new Image() : null
+if (genActiveSprite) genActiveSprite.src = '/assets/sample_generator_active.svg'
+
 function drawRobot(
     ctx: CanvasRenderingContext2D,
     robot: ExtendedRobotState,
@@ -384,18 +407,26 @@ function drawTargetMarker(ctx: CanvasRenderingContext2D, cx: number, cy: number,
 }
 
 function drawGeneratorIcon(ctx: CanvasRenderingContext2D, cx: number, cy: number, activated: boolean) {
-    // Rayo
+    // Rayo centrado matemáticamente respecto a cx, cy
     ctx.save()
-    ctx.translate(cx, cy - 2)
+    ctx.translate(cx, cy)
     ctx.beginPath()
-    ctx.moveTo(-3, -8)
-    ctx.lineTo(2, -2)
-    ctx.lineTo(-1, -2)
-    ctx.lineTo(3, 6)
-    ctx.lineTo(-2, 0)
-    ctx.lineTo(1, 0)
+    ctx.moveTo(-3, -7)
+    ctx.lineTo(2, -1)
+    ctx.lineTo(-1, -1)
+    ctx.lineTo(3, 7)
+    ctx.lineTo(-2, 1)
+    ctx.lineTo(1, 1)
     ctx.closePath()
-    ctx.fillStyle = activated ? '#55e200' : '#EF9F27'
+
+    if (activated) {
+        ctx.fillStyle = '#ffffff'
+        ctx.shadowColor = '#EF9F27'
+        ctx.shadowBlur = 4
+    } else {
+        ctx.fillStyle = '#EF9F27'
+    }
+
     ctx.fill()
     ctx.restore()
 }
@@ -514,6 +545,27 @@ export default function LightbotLevel({ level, state, onComplete }: LightbotLeve
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const animRef = useRef<number>(0)
     const initRef = useRef(false)
+
+    const moveSoundRef = useRef<HTMLAudioElement | null>(null)
+    const jumpSoundRef = useRef<HTMLAudioElement | null>(null)
+    const activateSoundRef = useRef<HTMLAudioElement | null>(null)
+
+    const { sfxVolume, isMuted } = useAudioStore()
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            moveSoundRef.current = new Audio('/sounds/robot-jump.mp3')
+            jumpSoundRef.current = new Audio('/sounds/robot-jump.mp3')
+            activateSoundRef.current = new Audio('/sounds/activation-sound-2.mp3')
+        }
+    }, [])
+
+    useEffect(() => {
+        const volume = Math.max(0, Math.min(1, isMuted ? 0 : sfxVolume))
+        if (moveSoundRef.current) moveSoundRef.current.volume = volume
+        if (jumpSoundRef.current) jumpSoundRef.current.volume = volume
+        if (activateSoundRef.current) activateSoundRef.current.volume = volume
+    }, [isMuted, sfxVolume])
 
     const [commands, setCommands] = useState<Command[]>([])
     const [commandsF1, setCommandsF1] = useState<Command[]>([])
@@ -638,9 +690,9 @@ export default function LightbotLevel({ level, state, onComplete }: LightbotLeve
                     const th = tile.height || 0
                     const tz = th * 26
 
-                    const rx = Math.round(visX)
-                    const ry = Math.round(visY)
-                    const isRobotHere = rx === col && ry === row
+                    const rxFloor = Math.round(visX)
+                    const ryFloor = Math.round(visY)
+                    const isRobotHere = rxFloor === col && ryFloor === row
                     const isActivated = currentActivated.has(`${col},${row}`)
 
                     // Color de highlight según tile
@@ -656,7 +708,38 @@ export default function LightbotLevel({ level, state, onComplete }: LightbotLeve
                         highlightColor = '#1a4d00'
                     }
 
-                    drawIsoDiamond(ctx, sx, sy - tz, colors, highlight, highlightColor)
+                    let imageToDraw: HTMLImageElement | null = null
+
+                    if (tile.type === 'floor' || tile.type === 'target') {
+                        imageToDraw = isActivated ? activeSprite : floorSprite
+                    } else if (tile.type === 'wall') {
+                        imageToDraw = wallSprite
+                    } else if (tile.type === 'broken') {
+                        imageToDraw = brokenSprite
+                    } else if (tile.type === 'generator') {
+                        imageToDraw = isActivated ? genActiveSprite : genSprite
+                    } else if (tile.type === 'active') {
+                        imageToDraw = activeSprite
+                    }
+
+                    if (imageToDraw && imageToDraw.complete && tile.type !== 'empty') {
+                        const imgX = sx - (ISO.TILE_W / 2)
+                        const imgY = (sy - tz) - (ISO.TILE_H / 2)
+                        ctx.drawImage(imageToDraw, imgX, imgY, ISO.TILE_W, ISO.TILE_H + ISO.DEPTH)
+                        if (highlight && highlightColor) {
+                            ctx.beginPath()
+                            ctx.moveTo(sx, (sy - tz) - ISO.TILE_H / 2)
+                            ctx.lineTo(sx + ISO.TILE_W / 2, (sy - tz))
+                            ctx.lineTo(sx, (sy - tz) + ISO.TILE_H / 2)
+                            ctx.lineTo(sx - ISO.TILE_W / 2, (sy - tz))
+                            ctx.closePath()
+                            ctx.strokeStyle = highlightColor
+                            ctx.lineWidth = 1.5
+                            ctx.stroke()
+                        }
+                    } else {
+                        drawIsoDiamond(ctx, sx, sy - tz, colors, highlight, highlightColor)
+                    }
 
                     // Iconos de tile
                     if (tile.type === 'target' && !isRobotHere && !isActivated) {
@@ -675,6 +758,7 @@ export default function LightbotLevel({ level, state, onComplete }: LightbotLeve
             let isoX = visX
             let isoY = visY
             let progress = 0
+            let isAnimating = false
 
             if ((currentRobot.isMoving || currentRobot.isJumping) && currentRobot.prevX !== undefined && currentRobot.prevY !== undefined) {
                 const totalDistX = currentRobot.x - currentRobot.prevX
@@ -692,6 +776,9 @@ export default function LightbotLevel({ level, state, onComplete }: LightbotLeve
 
                 isoX = currentRobot.prevX + totalDistX * progress
                 isoY = currentRobot.prevY + totalDistY * progress
+                isAnimating = true
+            } else {
+                progress = 1 // Garantiza que si no se esta moviendo, adquiera su altura de destino final ('currentH')
             }
 
             const { x: rx, y: ry } = toIso(isoX, isoY, offsetX, offsetY)
@@ -704,7 +791,7 @@ export default function LightbotLevel({ level, state, onComplete }: LightbotLeve
 
             // Calculo de parábola para el salto
             let zOffset = 0
-            if (currentRobot.isJumping) {
+            if (currentRobot.isJumping && isAnimating) {
                 if (progress >= 0 && progress <= 1) {
                     const arc = 1 - Math.pow(2 * progress - 1, 2) // parabola
                     zOffset = arc * 25 // height modifier
@@ -755,6 +842,11 @@ export default function LightbotLevel({ level, state, onComplete }: LightbotLeve
 
             if (cmd.type === 'move' || cmd.type === 'jump') {
                 const isJump = cmd.type === 'jump'
+                if (isJump) {
+                    if (jumpSoundRef.current) { jumpSoundRef.current.currentTime = 0; jumpSoundRef.current.play().catch(() => { }) }
+                } else {
+                    if (moveSoundRef.current) { moveSoundRef.current.currentTime = 0; moveSoundRef.current.play().catch(() => { }) }
+                }
                 const next = getNextPosition(currentRobot, mapData, cmd.type as 'move' | 'jump')
                 if (!next) {
                     setStatus('failed')
@@ -773,12 +865,15 @@ export default function LightbotLevel({ level, state, onComplete }: LightbotLeve
                 }
                 setRobot({ ...currentRobot })
             } else if (cmd.type === 'turn-left') {
+                if (moveSoundRef.current) { moveSoundRef.current.currentTime = 0; moveSoundRef.current.play().catch(() => { }) }
                 currentRobot = { ...currentRobot, direction: turnLeft(currentRobot.direction), isMoving: false, isJumping: false }
                 setRobot({ ...currentRobot })
             } else if (cmd.type === 'turn-right') {
+                if (moveSoundRef.current) { moveSoundRef.current.currentTime = 0; moveSoundRef.current.play().catch(() => { }) }
                 currentRobot = { ...currentRobot, direction: turnRight(currentRobot.direction), isMoving: false, isJumping: false }
                 setRobot({ ...currentRobot })
             } else if (cmd.type === 'activate') {
+                if (activateSoundRef.current) { activateSoundRef.current.currentTime = 0; activateSoundRef.current.play().catch(() => { }) }
                 currentRobot = { ...currentRobot, isActivating: true, isMoving: false, isJumping: false }
                 setRobot({ ...currentRobot })
                 await sleep(250) // pausa para la animacion
@@ -886,15 +981,15 @@ export default function LightbotLevel({ level, state, onComplete }: LightbotLeve
                     style={{ fontFamily: 'var(--font-mono)', letterSpacing: '.14em' }}
                 >
                     <div className="flex items-center gap-2 text-[11px] text-(--green-base)">
-                        <span style={{ color: 'var(--green-light)', textShadow: '0 0 10px var(--green-base)' }}>{'>'} {level.title?.toUpperCase()}</span>
+                        <span className='text-(--green-light) text-sm' style={{ textShadow: '0 0 10px var(--green-base)' }}>{'>'} {level.title?.toUpperCase()}</span>
                         {level.concept && (
-                            <span style={{ color: 'var(--text-ghost)', fontSize: '9px' }}>
+                            <span className='text-(--text-ghost) text-sm' >
                                 [{level.concept}]
                             </span>
                         )}
                     </div>
                     {level.description && (
-                        <div style={{ color: 'var(--text-muted)', fontSize: '11px', letterSpacing: '.05em', maxWidth: '85%', lineHeight: '1.5', marginTop: '4px' }}>
+                        <div className='text-(--text-muted) text-sm' style={{ letterSpacing: '.05em', maxWidth: '85%', lineHeight: '1.5', marginTop: '4px' }}>
                             {'//'} {level.description}
                         </div>
                     )}
@@ -928,22 +1023,21 @@ export default function LightbotLevel({ level, state, onComplete }: LightbotLeve
 
                 {/* Estado */}
                 <div
-                    className="h-5 flex items-center"
-                    style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '.1em' }}
+                    className="h-5 flex items-center text-xs font-mono tracking-widest"
                 >
                     {status === 'failed' && (
-                        <span style={{ color: 'var(--red)' }}>
+                        <span className='text-(--red)' >
                             ✗ ERROR — el robot no pudo completar la secuencia
                         </span>
                     )}
                     {status === 'success' && (
-                        <span style={{ color: 'var(--green-light)' }}>
+                        <span className='text-(--green-light)' >
                             ✓ OBJETIVO ALCANZADO
                         </span>
                     )}
                     {status === 'idle' && !isRunning && commands.length === 0 && (
-                        <span style={{ color: 'var(--text-ghost)', fontSize: '10px' }}>
-                            agrega comandos para guiar al robot →
+                        <span className='flex items-center gap-1 text-(--text-muted) text-xs'>
+                            agrega comandos para guiar al robot <ChevronsRightIcon size={13} className='animate-arrow-right' />
                         </span>
                     )}
                 </div>
@@ -998,8 +1092,8 @@ export default function LightbotLevel({ level, state, onComplete }: LightbotLeve
                     <div className={`flex flex-wrap gap-[6px] min-h-[80px] bg-(--bg-deep) rounded-[2px] p-3 border transition-colors content-start ${activePanel === 'main' ? 'border-(--green-base)' : 'border-(--bg-hover)'}`}>
                         {commands.length === 0 && (
                             <div className="font-mono text-[10px] text-(--text-ghost) w-full text-center py-4 flex flex-col items-center gap-1 tracking-wider uppercase">
-                                <span className="text-base opacity-40">⍚</span>
-                                <span>vacío</span>
+                                <span className="text-base opacity-60"><PackageOpen absoluteStrokeWidth /></span>
+                                <span className="text-xs opacity-100 ">vacío</span>
                             </div>
                         )}
                         {commands.map((cmd, idx) => {
