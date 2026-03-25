@@ -30,7 +30,7 @@ import FragAssistant from '@/components/frag/FragAssistant'
 const CinematicLevel = dynamic(() => import('@/components/levels/CinematicLevel'), { ssr: false })
 const LightbotLevel = dynamic(() => import('@/components/levels/LightBotLevel'), { ssr: false })
 const ScratchLevel = dynamic(() => import('@/components/levels/ScratchLevel'), { ssr: false })
-const PuzzleLevel = dynamic(() => import('@/components/levels/PuzzleLevel'), { ssr: false })
+const PuzzleLevel = dynamic(() => import('@/components/levels/PuzzleLevel/PuzzleLevel'), { ssr: false })
 const SpeedTypingLevel = dynamic(() => import('@/components/levels/SpeedTypingLevel'), { ssr: false })
 const CodeEditorLevel = dynamic(() => import('@/components/levels/CodeEditorLevel'), { ssr: false })
 const DecisionLevel = dynamic(() => import('@/components/levels/DecisionLevel'), { ssr: false })
