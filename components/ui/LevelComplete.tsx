@@ -32,6 +32,7 @@ interface LevelCompleteProps {
     onNext: () => void
     onMap: () => void
     onRetry: () => void
+    children?: React.ReactNode
 }
 
 // ------------------------------------------------------------
@@ -47,6 +48,7 @@ export default function LevelComplete({
     onNext,
     onMap,
     onRetry,
+    children
 }: LevelCompleteProps) {
     const [selectedCardIdx, setSelectedCardIdx] = useState<number | null>(null)
     const [isFlipped, setIsFlipped] = useState(false)
@@ -251,6 +253,9 @@ export default function LevelComplete({
                                     </div>
                                 </div>
                             )}
+
+                            {/* ── CONTENIDO PERSONALIZADO POR NIVEL (Ej: Stats de typing) ── */}
+                            {children}
 
                             {/* ── BOTONES FINALES ── */}
                             <div className="flex flex-wrap justify-end gap-3 mt-4 animate-[lc-slideUp_.5s_cubic-bezier(.16,1,.3,1)_both]" style={{ animationDelay: '1.5s' }}>

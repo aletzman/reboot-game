@@ -109,14 +109,17 @@ export default function LevelPage({ levelId }: PageProps) {
         setPageStatus('playing')
     }, [levelId])
 
+    const [customCompletionContent, setCustomContent] = useState<React.ReactNode>(null)
+
     // ------------------------------------------------------------
     // HANDLERS — los componentes de nivel llaman a estos callbacks
     // ------------------------------------------------------------
 
-    function handleComplete(stars: 0 | 1 | 2 | 3, usedFrag: boolean) {
+    function handleComplete(stars: 0 | 1 | 2 | 3, usedFrag: boolean, customContent?: React.ReactNode) {
         if (!level) return
         const result = completeLevel(levelId, stars, usedFrag)
         setResult(result)
+        setCustomContent(customContent)
 
         // actualizar estado local
         setLevelState(prev => prev ? {
@@ -255,7 +258,9 @@ export default function LevelPage({ levelId }: PageProps) {
                     onNext={handleNext}
                     onMap={handleGoToMap}
                     onRetry={handleRetry}
-                />
+                >
+                    {customCompletionContent}
+                </LevelComplete>
             )}
         </div>
     )
@@ -268,7 +273,7 @@ export default function LevelPage({ levelId }: PageProps) {
 function renderLevelComponent(
     level: Level,
     state: LevelState,
-    onComplete: (stars: 0 | 1 | 2 | 3, usedFrag: boolean) => void,
+    onComplete: (stars: 0 | 1 | 2 | 3, usedFrag: boolean, customContent?: React.ReactNode) => void,
     onFragUse: () => void,
 ) {
     const commonProps = { level, state, onComplete, onFragUse }
