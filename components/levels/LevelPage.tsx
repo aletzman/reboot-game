@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import type { Level, LevelState } from '@/types/game'
@@ -22,6 +22,8 @@ import { requiresLogin, getSave } from '@/lib/gameState'
 import { Header as GameHeader } from '@/components/ui/Header'
 import LevelComplete from '@/components/ui/LevelComplete'
 import FragAssistant from '@/components/frag/FragAssistant'
+import dialogues from '@/data/dialogues.json'
+import { Radio, X as CloseIcon } from 'lucide-react'
 
 // ------------------------------------------------------------
 // IMPORTS DINÁMICOS — cada componente solo carga cuando se necesita
@@ -59,8 +61,6 @@ type PageStatus =
 export default function LevelPage({ levelId }: PageProps) {
     const router = useRouter()
 
-    console.log(levelId)
-
     const [pageStatus, setPageStatus] = useState<PageStatus>('loading')
     const [level, setLevel] = useState<Level | null>(null)
     const [levelState, setLevelState] = useState<LevelState | null>(null)
@@ -75,7 +75,6 @@ export default function LevelPage({ levelId }: PageProps) {
 
     useEffect(() => {
         const found = getLevelById(levelId)
-        console.log("found", found)
         if (!found) {
             setPageStatus('error')
             return
@@ -85,7 +84,6 @@ export default function LevelPage({ levelId }: PageProps) {
         // verificar login si el nivel lo requiere
         if (requiresLogin(levelId)) {
             const save = getSave()
-            // TODO: reemplazar con verificación real de Supabase auth
             const isLoggedIn = !!save?.player?.name
             if (!isLoggedIn) {
                 setPageStatus('blocked-login')
@@ -112,7 +110,7 @@ export default function LevelPage({ levelId }: PageProps) {
     const [customCompletionContent, setCustomContent] = useState<React.ReactNode>(null)
 
     // ------------------------------------------------------------
-    // HANDLERS — los componentes de nivel llaman a estos callbacks
+    // HANDLERS
     // ------------------------------------------------------------
 
     function handleComplete(stars: 0 | 1 | 2 | 3, usedFrag: boolean, customContent?: React.ReactNode) {
@@ -121,7 +119,6 @@ export default function LevelPage({ levelId }: PageProps) {
         setResult(result)
         setCustomContent(customContent)
 
-        // actualizar estado local
         setLevelState(prev => prev ? {
             ...prev,
             status: 'success',
@@ -142,19 +139,11 @@ export default function LevelPage({ levelId }: PageProps) {
         } : prev)
     }
 
-    function handleHintUsed() {
-        setLevelState(prev => prev ? {
-            ...prev,
-            hintsUsed: prev.hintsUsed + 1,
-        } : prev)
-    }
-
     function handleNext() {
         if (!completionResult?.nextLevelId) {
             router.push('/game')
             return
         }
-        // si hay sugerencia de repaso, mostrarla antes de avanzar
         if (completionResult.suggestRedirect) {
             router.push(`/level/${completionResult.suggestRedirect}`)
         } else {
@@ -175,7 +164,7 @@ export default function LevelPage({ levelId }: PageProps) {
     }
 
     // ------------------------------------------------------------
-    // RENDER — estados de carga y bloqueo
+    // RENDER — estados
     // ------------------------------------------------------------
 
     if (pageStatus === 'loading') {
@@ -217,37 +206,26 @@ export default function LevelPage({ levelId }: PageProps) {
 
     if (!level || !levelState) return <LoadingScreen />
 
-    // objetos de pista disponibles para este nivel
-    const hintObjects = getAvailableHintObjects(levelId)
     const reviewHint = getReviewHint(levelId)
-
-    // ------------------------------------------------------------
-    // RENDER — nivel activo
-    // ------------------------------------------------------------
 
     return (
         <div className="flex flex-col h-[calc(100svh-47px)] bg-(--bg-void)">
-            {/* <GameHeader /> */}
-
-            {/* Narrativa del nivel */}
             {level.narrative && pageStatus === 'playing' && (
                 <NarrativeBanner text={level.narrative} />
             )}
 
-            {/* Componente del nivel según type */}
             <main key={resetKey} className="flex-1 flex flex-col">
                 {renderLevelComponent(level, levelState, handleComplete, handleFragUse)}
             </main>
 
-            {/* FRAG — solo si el nivel lo permite y no se ha usado */}
             {level.fragAvailable && !levelState.fragUsed && (
                 <FragAssistant
                     hint={level.fragHint ?? ''}
                     onUse={handleFragUse}
+                    feedback={levelState.status === 'success' ? 'success' : levelState.status === 'failed' ? 'error' : null}
                 />
             )}
 
-            {/* Modal de nivel completo */}
             {showComplete && completionResult && (
                 <LevelComplete
                     stars={completionResult.stars}
@@ -266,10 +244,6 @@ export default function LevelPage({ levelId }: PageProps) {
     )
 }
 
-// ------------------------------------------------------------
-// SELECTOR DE COMPONENTE POR TYPE
-// ------------------------------------------------------------
-
 function renderLevelComponent(
     level: Level,
     state: LevelState,
@@ -277,8 +251,6 @@ function renderLevelComponent(
     onFragUse: () => void,
 ) {
     const commonProps = { level, state, onComplete, onFragUse }
-
-    console.log(level)
 
     switch (level.type) {
         case 'cinematic': return <CinematicLevel   {...commonProps} />
@@ -297,73 +269,91 @@ function renderLevelComponent(
 }
 
 // ------------------------------------------------------------
-// COMPONENTES DE UI INTERNOS
+// COMPONENTES DE UI
 // ------------------------------------------------------------
 
 function LoadingScreen() {
+    const tip = useMemo(() => {
+        const tips = dialogues.frag.ambient_tips
+        return tips[Math.floor(Math.random() * tips.length)]
+    }, [])
+
     return (
-        <div className="min-h-screen flex items-center justify-center bg-(--bg-void) font-mono text-(--green-base) text-[12px] tracking-[.14em]">
-            cargando nivel...
+        <div className="min-h-screen flex flex-col items-center justify-center bg-(--bg-void) font-mono gap-6 p-8">
+            <div className="relative">
+                <div className="w-12 h-12 border-2 border-(--purple)/30 border-t-(--purple) rounded-full animate-spin" />
+                <div className="absolute inset-0 bg-(--purple)/20 blur-xl rounded-full animate-pulse" />
+            </div>
+
+            <div className="flex flex-col items-center gap-2 max-w-[400px] text-center">
+                <div className="text-(--purple) text-[11px] tracking-[.25em] uppercase font-bold animate-pulse">
+                    Sincronizando con FRAG...
+                </div>
+                <div className="h-px w-24 bg-linear-to-r from-transparent via-(--purple)/40 to-transparent my-2" />
+                <div className="text-(--text-muted) text-[12px] italic leading-relaxed px-4">
+                    "{tip}"
+                </div>
+            </div>
+
+            <div className="absolute bottom-12 flex flex-col items-center gap-1 opacity-40">
+                <span className="text-[10px] text-(--text-ghost) tracking-widest uppercase font-bold">Cargando Búferes del Sector</span>
+                <div className="w-48 h-1 bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full bg-(--purple) animate-[loadingBar_2s_infinite]" />
+                </div>
+            </div>
+
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                @keyframes loadingBar {
+                    0% { width: 0%; transform: translateX(-100%); }
+                    50% { width: 40%; transform: translateX(50%); }
+                    100% { width: 100%; transform: translateX(200%); }
+                }
+            `}} />
         </div>
     )
 }
 
 function ErrorScreen({ message }: { message: string }) {
     return (
-        <div className="p-8 font-mono text-(--red) text-[12px]">
+        <div className="min-h-screen flex items-center justify-center bg-(--bg-void) p-8 font-mono text-(--red) text-[12px]">
             ERROR: {message}
         </div>
     )
 }
 
-interface BlockedScreenProps {
-    title: string
-    message: string
-    items?: string[]
-    onBack: () => void
-    onInventory?: () => void
-    onLogin?: () => void
-}
-
-function BlockedScreen({ title, message, items, onBack, onInventory, onLogin }: BlockedScreenProps) {
+function BlockedScreen({ title, message, items, onBack, onInventory, onLogin }: {
+    title: string; message: string; items?: string[]; onBack: () => void; onInventory?: () => void; onLogin?: () => void;
+}) {
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-(--bg-void) font-mono gap-4 p-8">
-            <div className="text-(--red) text-[11px] tracking-[.14em]">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-(--bg-void) font-mono gap-4 p-8 text-center">
+            <div className="text-(--red) text-[11px] tracking-[.14em] uppercase font-bold text-center">
                 // {title}
             </div>
-            <div className="text-(--text-muted) text-[13px] text-center">
+            <div className="text-(--text-muted) text-[13px] max-w-md mx-auto">
                 {message}
             </div>
             {items && items.length > 0 && (
-                <div className="flex flex-col gap-[.375rem]">
+                <div className="flex flex-col gap-2 my-2">
                     {items.map(item => (
-                        <div key={item} className="bg-(--bg-surface) border border-(--bg-hover) rounded-[6px] py-[6px] px-[14px] text-[12px] text-(--amber)">
+                        <div key={item} className="bg-(--bg-surface) border border-(--bg-hover) rounded-md py-2 px-4 text-[12px] text-(--amber)">
                             {item}
                         </div>
                     ))}
                 </div>
             )}
-            <div className="flex gap-3 mt-2 flex-wrap justify-center">
-                <button
-                    onClick={onBack}
-                    className="bg-(--bg-surface) border border-(--bg-hover) rounded-[6px] py-2 px-5 font-mono text-[12px] text-(--text-muted) cursor-pointer tracking-wide hover:bg-(--bg-hover) transition-colors"
-                >
-                    ← volver al mapa
+            <div className="flex gap-3 mt-4 flex-wrap justify-center">
+                <button onClick={onBack} className="bg-(--bg-surface) border border-(--bg-hover) rounded-md py-2 px-5 text-[12px] text-(--text-muted) hover:bg-(--bg-hover) transition-all">
+                    ← VOLVER AL MAPA
                 </button>
                 {onInventory && (
-                    <button
-                        onClick={onInventory}
-                        className="bg-(--bg-surface) border border-(--green-base) rounded-[6px] py-2 px-5 font-mono text-[12px] text-(--green-light) cursor-pointer tracking-wide hover:bg-(--green-dark) transition-colors"
-                    >
-                        ver inventario
+                    <button onClick={onInventory} className="bg-(--bg-surface) border border-(--green-base) rounded-md py-2 px-5 text-[12px] text-(--green-light) hover:bg-(--green-dark) transition-all">
+                        VER INVENTARIO
                     </button>
                 )}
                 {onLogin && (
-                    <button
-                        onClick={onLogin}
-                        className="bg-(--green-dark) border border-(--green-base) rounded-[6px] py-2 px-5 font-mono text-[12px] text-(--green-light) cursor-pointer tracking-wide hover:bg-(--green-base) transition-colors"
-                    >
-                        identificarse
+                    <button onClick={onLogin} className="bg-(--green-dark) border border-(--green-base) rounded-md py-2 px-5 text-[12px] text-(--green-light) hover:bg-(--green-base) transition-all">
+                        IDENTIFICARSE
                     </button>
                 )}
             </div>
@@ -373,18 +363,70 @@ function BlockedScreen({ title, message, items, onBack, onInventory, onLogin }: 
 
 function NarrativeBanner({ text }: { text: string }) {
     const [visible, setVisible] = useState(true)
+    const isFrag = text.toUpperCase().startsWith('FRAG:') || text.startsWith('// FRAG')
+    const displayText = isFrag ? text.replace(/^FRAG:\s*/i, '').replace(/^\/\/\s*FRAG\s*/i, '') : text
+    const identity = dialogues.frag.identity
+
     if (!visible) return null
+
     return (
-        <div className="bg-(--bg-surface) border-b border-(--bg-hover) py-2.5 px-5 flex items-center justify-between gap-4">
-            <button
+        <>
+            {/* Overlay para cerrar al hacer click fuera */}
+            <div
+                className="fixed inset-0 z-190 bg-transparent cursor-default pointer-events-auto"
                 onClick={() => setVisible(false)}
-                className="bg-transparent border-none text-(--red) opacity-70 hover:opacity-100 text-[11px] cursor-pointer font-mono shrink-0 transition-opacity"
-            >
-                [X_CERRAR]
-            </button>
-            <div className="font-mono text-[11px] text-(--purple) tracking-wide leading-relaxed flex-1">
-                {text.split('\n')[0]}
+            />
+            <div className="fixed top-20 left-1/2 -translate-x-1/2 z-200 w-full max-w-[500px] px-6 py-4 pointer-events-none group">
+                <div className={`
+                    bg-(--bg-elevated)/95 backdrop-blur-xl border border-(--purple)/40 rounded-xl p-5 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] pointer-events-auto relative overflow-hidden transition-all hover:scale-[1.02]
+                    ${isFrag ? 'border-l-4 border-l-(--purple)' : 'border-t-2 border-t-(--purple)'}
+                `}>
+                    <div className="absolute inset-0 pointer-events-none opacity-5">
+                        <div className="w-full h-[2px] bg-(--purple) animate-[scan_4s_linear_infinite]" />
+                    </div>
+
+                    <div className="flex items-center justify-between border-b border-(--purple)/10 pb-2 mb-4">
+                        <div className="flex items-center gap-2.5 text-(--purple)">
+                            <Radio size={14} className={isFrag ? "animate-pulse" : ""} />
+                            <div className="flex flex-col">
+                                <span className="font-mono text-[10px] font-bold tracking-[0.2em] uppercase">
+                                    {isFrag ? identity.full_name : "SISTEMA_LOCAL"}
+                                </span>
+                                {isFrag && (
+                                    <span className="font-mono text-[7px] opacity-60 tracking-wider">INTEGRIDAD: {identity.memory_integrity}</span>
+                                )}
+                            </div>
+                        </div>
+                        <button onClick={() => setVisible(false)} className="text-(--text-ghost) hover:text-(--red) transition-colors p-1">
+                            <CloseIcon size={14} />
+                        </button>
+                    </div>
+
+                    <div className={`font-mono text-[14px] text-(--text-primary) leading-relaxed ${isFrag ? 'italic pl-2' : ''}`}>
+                        {isFrag && <span className="text-(--purple) font-mono mr-2">[{">"}]</span>}
+                        {displayText}
+                    </div>
+
+                    <div className="flex justify-between items-end mt-5">
+                        <div className="flex gap-1">
+                            <div className="w-1 h-1 bg-(--purple)/30 rounded-full" />
+                            <div className="w-1 h-1 bg-(--purple)/60 rounded-full" />
+                            <div className="w-1 h-1 bg-(--purple) rounded-full animate-pulse" />
+                        </div>
+                        <button onClick={() => setVisible(false)} className="font-mono text-[9px] text-(--purple)/60 hover:text-(--purple) transition-all uppercase tracking-[.3em]">
+                            [ ARCHIVAR_DATOS ]
+                        </button>
+                    </div>
+                </div>
+
+                <style dangerouslySetInnerHTML={{
+                    __html: `
+                    @keyframes scan {
+                        0% { transform: translateY(-100%); }
+                        100% { transform: translateY(400%); }
+                    }
+                `}} />
             </div>
-        </div>
+        </>
     )
 }

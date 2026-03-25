@@ -21,7 +21,7 @@ export default function SpeedTypingLevel({
     const [typingState, setTypingState] = useState<SpeedTypingState>({
         lines: data.lines.map(text => ({ text, typed: '', correct: null })),
         currentLineIndex: 0,
-        timeLeft: data.timeLimit,
+        timeLeft: state.fragUsed ? data.timeLimit + 15 : data.timeLimit,
         started: false,
         finished: false,
         wpm: 0,
@@ -46,7 +46,7 @@ export default function SpeedTypingLevel({
         setTypingState({
             lines: data.lines.map(text => ({ text, typed: '', correct: null })),
             currentLineIndex: 0,
-            timeLeft: data.timeLimit,
+            timeLeft: state.fragUsed ? data.timeLimit + 15 : data.timeLimit,
             started: false,
             finished: false,
             wpm: 0,
@@ -216,10 +216,15 @@ export default function SpeedTypingLevel({
                             </div>
                             <div
                                 className="font-mono text-3xl font-medium min-w-[4ch] transition-colors tabular-nums leading-none"
-                                style={{ color: getTimerColor(typingState.timeLeft, data.timeLimit) }}
+                                style={{ color: getTimerColor(typingState.timeLeft, state.fragUsed ? data.timeLimit + 15 : data.timeLimit) }}
                             >
                                 {formatTime(typingState.timeLeft)}
                             </div>
+                            {state.fragUsed && (
+                                <div className="text-(--purple) text-[8px] font-bold mt-1 animate-pulse font-mono tracking-tighter">
+                                    [+15S BOOSTER_ACTIVE]
+                                </div>
+                            )}
                         </div>
 
                         <div className="w-px h-10 bg-(--bg-hover)" />

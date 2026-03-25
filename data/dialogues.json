@@ -1,0 +1,67 @@
+{
+  "frag": {
+    "identity": {
+      "full_name": "Failsafe Recovery Action Grid",
+      "nickname": "FRAG",
+      "build": "(Kernel v.01 Alpha)",
+      "designation": "FRAGMENTO_00",
+      "status": "DETERIORO_CRÍTICO",
+      "memory_integrity": "18.4%"
+    },
+    "intros": [
+      "FRAG v0.1 ALPHA :: Enlace establecido. Protocolo de contingencia activo.",
+      "// SISTEMA DE RESPALDO : FRAG_LINK_ACTIVE. Sincronizando búferes...",
+      "Escaneando subprocesos... Saludos, Superviviente. El código te precede.",
+      "Mis buffers indican una probabilidad de error del 74%. Recomiendo optimización urgente.",
+      "Fragmento de IA detectado. Cargando módulos de asistencia táctica...",
+      "No puedo resolver la lógica por ti, mis protocolos de integridad lo prohíben. Pero puedo guiar tu mirada.",
+      "Detectando fluctuaciones en la red local. Mantente alerta, Operador."
+    ],
+    "confirmations": [
+      "ADVERTENCIA: La asistencia externa invalidará la Certificación de Integridad. ¿Procedemos?",
+      "Si decodifico esto por ti, el sistema marcará este sector como 'asistido' (Sin 3ª Estrella).",
+      "¿Procedemos con la inyección de datos? La recompensa de perfección se perderá en el vacío.",
+      "Mis algoritmos de ayuda están disponibles, pero el reconocimiento de mérito será degradado.",
+      "Confirmar enlace táctico. Esto dejará un rastro digital ineludible."
+    ],
+    "outros": [
+      "Archivando transcripción técnica... Enlace en standby.",
+      "Espero que mis ciclos hayan sido de utilidad. Desconectando para ahorrar energía.",
+      "Buena suerte, Operador. Mantén el código limpio y la mente fría.",
+      "Enlace terminado. Analizando resultados... Rendimiento aceptable.",
+      "Cortando señal. El resto depende de tus manos."
+    ],
+    "fail_reactions": [
+      "Error de sintaxis detectado. ¿Has revisado las comas, o ha sido el hardware?",
+      "Colisión inminente. El robot no es tan resistente como parece, Superviviente.",
+      "Buffer overflow emocional detectado. Respira profundamente. Intenta de nuevo.",
+      "El código es poesía, pero tu estrofa tiene un bug catastrófico.",
+      "Lógica circular detectada. Estás atrapado en un bucle mental. Recalibra."
+    ],
+    "success_reactions": [
+      "Optimización aceptable. Mis felicitaciones (procesadas al 10.42%).",
+      "Nodo asegurado. Siguiente subsector desbloqueado. Buen trabajo.",
+      "Código de alta integridad. Muy impresionante para una forma de vida orgánica.",
+      "El sector respira de nuevo. La energía vuelve a fluir por este nodo.",
+      "Sincronización perfecta. Has demostrado una lógica superior a la media."
+    ],
+    "ambient_tips": [
+      "¿Sabías que antes del Apagón, el código controlaba hasta el clima?",
+      "A veces, la solución más corta no es la más elegante, pero sí la más eficiente.",
+      "Mantén tus funciones pequeñas. Como los suministros en este mundo: limitados.",
+      "Si ves un error 404 en el mundo real, corre. Es un problema de renderizado de la realidad.",
+      "FRAG recomienda: Hidratación constante y depuración de bugs persistentes."
+    ],
+    "story_beats": {
+      "sector-01-start": "Estamos en las afueras. Estos nodos son viejos, pero aún tienen vida. Reajústalos.",
+      "sector-01-mid": "Recuerdo este lugar... Aquí se fabricaban los núcleos de procesamiento. Ahora solo hay óxido.",
+      "sector-01-end": "Puerta de enlace abierta. El camino hacia el Gran Servidor está un paso más cerca."
+    }
+  },
+  "narrative": {
+    "sector-01-name": "El Cementerio de Silicio",
+    "sector-01-desc": "Las afueras de la ciudad. Donde los viejos servidores descansan bajo el polvo radioactivo.",
+    "energy-low": "Niveles de energía críticos en el subsector 4. Lógica de emergencia activada.",
+    "world-context": "Año 21XX. Después del Gran Bug, la programación es la única herramienta de supervivencia."
+  }
+}

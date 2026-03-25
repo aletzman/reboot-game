@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { PuzzleLevelProps, PuzzleData, CONNECTION_COLORS, MATCH_RIGHT } from './types'
 import { PuzzleWrapper } from './PuzzleWrapper'
 
-function MatchItem({ id, text, isSelected, isConnected, isCorrect, isWrong, onClick, isRight = false, selectedLeft = false, isConnectedTo = false, relationColor }: any) {
+function MatchItem({ id, text, isSelected, isConnected, isCorrect, isWrong, onClick, isRight = false, selectedLeft = false, isConnectedTo = false, relationColor, isHinted = false }: any) {
     const draggable = useDraggable({ id })
     const droppable = useDroppable({ id })
 
@@ -31,16 +31,19 @@ function MatchItem({ id, text, isSelected, isConnected, isCorrect, isWrong, onCl
                     ? 'bg-(--green-darkest) border-(--green-base) text-(--green-light) shadow-[0_0_10px_rgba(45,120,0,0.15)]'
                     : isSelected
                         ? 'bg-(--bg-elevated) border-(--green-light) text-(--green-light) ring-1 ring-(--green-light)/20'
-                        : isWrong
-                            ? 'bg-[#1a0808] border-(--red) text-(--red)'
-                            : isConnectedTo || isConnected
-                                ? 'bg-(--bg-elevated)/40 border-l-4'
-                                : isRight && selectedLeft
-                                    ? 'bg-(--bg-deep) border-(--green-dark) text-(--text-primary) hover:border-(--green-light) shadow-[inset_0_0_10px_rgba(45,120,0,0.05)]'
-                                    : 'bg-(--bg-deep) border-[#1a1f26] text-(--text-muted) hover:border-(--green-dark) hover:text-(--green-muted)'}
+                        : isHinted
+                            ? 'bg-(--purple)/10 border-(--purple) text-(--purple) shadow-[0_0_10px_rgba(127,119,221,0.2)]'
+                            : isWrong
+                                ? 'bg-[#1a0808] border-(--red) text-(--red)'
+                                : isConnectedTo || isConnected
+                                    ? 'bg-(--bg-elevated)/40 border-l-4'
+                                    : isRight && selectedLeft
+                                        ? 'bg-(--bg-deep) border-(--green-dark) text-(--text-primary) hover:border-(--green-light) shadow-[inset_0_0_10px_rgba(45,120,0,0.05)]'
+                                        : 'bg-(--bg-deep) border-[#1a1f26] text-(--text-muted) hover:border-(--green-dark) hover:text-(--green-muted)'}
                 ${isRight && !selectedLeft && !isConnectedTo ? 'cursor-default opacity-50' : 'cursor-pointer'}
             `}
         >
+            {isHinted && <div className="absolute inset-0 bg-(--purple)/10 animate-pulse pointer-events-none" />}
             {isSelected && <div className="absolute inset-0 bg-(--green-light) opacity-5 animate-pulse" />}
             <span className="relative z-10 text-sm">{text}</span>
             {(isConnected || isConnectedTo) && (
@@ -131,6 +134,7 @@ export function MatchPuzzle({ level, state, data, onComplete }: PuzzleLevelProps
                 <div className="flex items-center gap-2">
                     <div className={`w-1.5 h-1.5 rounded-full ${Object.keys(connections).length === data.items.length ? 'bg-(--green-light) shadow-[0_0_8px_var(--green-light)]' : 'bg-(--green-dark) animate-pulse'}`} />
                     MAPEO_RELACIONAL // {Object.keys(connections).length}/{data.items.length}
+                    {state.fragUsed && <span className="text-(--purple) text-[10px] ml-2 animate-pulse font-bold tracking-[.3em]">/// ASISTENCIA_ACTIVA</span>}
                 </div>
                 <Button onClick={handleReset} size='xs' variant='outline' icon={RefreshCw}>
                     REINICIAR
@@ -145,6 +149,10 @@ export function MatchPuzzle({ level, state, data, onComplete }: PuzzleLevelProps
                             const isConnected = !!connections[item.id]
                             const isCorrect = feedback === 'correct' && isConnected
                             const relationColor = isConnected ? CONNECTION_COLORS[idx % CONNECTION_COLORS.length] : null
+                            
+                            // Ayuda de FRAG: resaltar el primer par correcto que NO esté conectado (o el primero si no hay ninguno)
+                            const firstPair = data.pairs?.[0]
+                            const isHinted = state.fragUsed && firstPair?.leftId === item.id && !isConnected
 
                             return (
                                 <MatchItem
@@ -155,6 +163,7 @@ export function MatchPuzzle({ level, state, data, onComplete }: PuzzleLevelProps
                                     isConnected={isConnected}
                                     isCorrect={isCorrect}
                                     isWrong={false}
+                                    isHinted={isHinted}
                                     onClick={() => handleLeftClick(item.id)}
                                     relationColor={relationColor}
                                 />
@@ -169,6 +178,9 @@ export function MatchPuzzle({ level, state, data, onComplete }: PuzzleLevelProps
                             const isCorrect = feedback === 'correct' && isConnectedTo
                             const leftIdx = connectedLeftId ? data.items.findIndex(i => i.id === connectedLeftId) : -1
                             const relationColor = isConnectedTo ? CONNECTION_COLORS[leftIdx % CONNECTION_COLORS.length] : null
+                            
+                            const firstPair = data.pairs?.[0]
+                            const isHinted = state.fragUsed && firstPair?.rightId === item.id && !isConnectedTo
 
                             return (
                                 <MatchItem
@@ -180,6 +192,7 @@ export function MatchPuzzle({ level, state, data, onComplete }: PuzzleLevelProps
                                     isConnectedTo={isConnectedTo}
                                     isCorrect={isCorrect}
                                     isWrong={false}
+                                    isHinted={isHinted}
                                     onClick={() => handleRightClick(item.id)}
                                     relationColor={relationColor}
                                 />

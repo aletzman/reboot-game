@@ -89,15 +89,21 @@ export function saveProgress(
   const prev = save.progress[levelId]
   const attempts = (prev?.attempts ?? 0) + 1
 
+  // Si usó FRAG, el máximo de estrellas es 2
+  let finalStars = stars
+  if (usedFrag && finalStars > 2) {
+    finalStars = 2
+  }
+
   // solo actualiza estrellas si mejoró
-  const bestStars = Math.max(prev?.stars ?? 0, stars) as 0 | 1 | 2 | 3
+  const bestStars = Math.max(prev?.stars ?? 0, finalStars) as 0 | 1 | 2 | 3
 
   save.progress[levelId] = {
-    completed: stars > 0,
+    completed: finalStars > 0,
     stars: bestStars,
-    usedFrag,
+    usedFrag: usedFrag || prev?.usedFrag || false,
     attempts,
-    completedAt: stars > 0 ? new Date().toISOString() : prev?.completedAt,
+    completedAt: finalStars > 0 ? new Date().toISOString() : prev?.completedAt,
   }
 
   if (usedFrag) save.fragUsedTotal++

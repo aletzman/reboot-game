@@ -6,7 +6,7 @@ import { PuzzleLevelProps, PuzzleData, PuzzleItem } from './types'
 import { PuzzleWrapper } from './PuzzleWrapper'
 import { move, SyntaxHighlighter } from './utils'
 
-function SortableItem({ item, idx, feedback }: { item: PuzzleItem, idx: number, feedback: 'idle' | 'correct' | 'wrong' }) {
+function SortableItem({ item, idx, feedback, isHinted = false }: { item: PuzzleItem, idx: number, feedback: 'idle' | 'correct' | 'wrong', isHinted?: boolean }) {
     const { ref, isDragging, isDropTarget } = useSortable({
         id: item.id,
         index: idx
@@ -23,9 +23,12 @@ function SortableItem({ item, idx, feedback }: { item: PuzzleItem, idx: number, 
                     ? 'bg-(--green-darkest) border-(--green-base) shadow-[0_0_15px_rgba(45,120,0,0.2)]'
                     : feedback === 'wrong'
                         ? 'bg-[#1a0808] border-(--red) shadow-[0_0_15px_rgba(226,75,74,0.1)]'
-                        : 'bg-(--bg-surface) border-(--text-ghost)/50 hover:border-(--green-dark) shadow-[0_2px_4px_rgba(0,0,0,0.2)]'}
+                        : isHinted
+                            ? 'bg-(--purple)/10 border-(--purple) shadow-[0_0_10px_rgba(127,119,221,0.2)]'
+                            : 'bg-(--bg-surface) border-(--text-ghost)/50 hover:border-(--green-dark) shadow-[0_2px_4px_rgba(0,0,0,0.2)]'}
             `}
         >
+            {isHinted && <div className="absolute inset-y-0 left-0 w-1 bg-(--purple) animate-pulse" />}
             <div className={`
                 flex items-center justify-center px-2 border-r transition-colors w-8
                 ${feedback === 'correct' ? 'bg-(--green-dark) border-(--green-base)' :
@@ -85,9 +88,18 @@ export function SortPuzzle({ level, state, data, onComplete }: PuzzleLevelProps 
 
                 <DragDropProvider onDragEnd={handleDragEnd}>
                     <div className="flex flex-col gap-2 flex-1">
-                        {items.map((item, idx) => (
-                            <SortableItem key={item.id} item={item} idx={idx} feedback={feedback} />
-                        ))}
+                        {items.map((item, idx) => {
+                            const isHinted = state.fragUsed && item.id === data.items[idx].id
+                            return (
+                                <SortableItem 
+                                    key={item.id} 
+                                    item={item} 
+                                    idx={idx} 
+                                    feedback={feedback} 
+                                    isHinted={isHinted}
+                                />
+                            )
+                        })}
                     </div>
                 </DragDropProvider>
             </div>

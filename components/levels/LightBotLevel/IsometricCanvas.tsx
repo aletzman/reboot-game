@@ -222,9 +222,10 @@ interface IsometricCanvasProps {
     robot: ExtendedRobotState
     activatedTiles: Set<string>
     status: 'idle' | 'success' | 'failed'
+    isScanning?: boolean
 }
 
-export function IsometricCanvas({ mapData, robot, activatedTiles, status }: IsometricCanvasProps) {
+export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScanning }: IsometricCanvasProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const animRef = useRef<number>(0)
     const visX = useRef(robot.x)
@@ -312,7 +313,18 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status }: Isom
 
                     if (tile.type === 'target') {
                         highlight = true
-                        highlightColor = status === 'success' ? '#55e200' : `rgba(13, 31, 0, ${0.6 + pulse * 0.4})`
+                        highlightColor = status === 'success' ? '#55e200' : isScanning ? '#7F77DD' : `rgba(13, 31, 0, ${0.6 + pulse * 0.4})`
+                        
+                        // Si está escaneando, dibujar pulso extra
+                        if (isScanning) {
+                            ctx.save()
+                            ctx.beginPath()
+                            ctx.ellipse(sx, sy - tz, 30 * pulse, 15 * pulse, 0, 0, Math.PI * 2)
+                            ctx.strokeStyle = `rgba(127, 119, 221, ${1 - pulse})`
+                            ctx.lineWidth = 2
+                            ctx.stroke()
+                            ctx.restore()
+                        }
                     }
                     if (isActivated) {
                         highlight = true
@@ -390,7 +402,7 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status }: Isom
 
         animRef.current = requestAnimationFrame(render)
         return () => cancelAnimationFrame(animRef.current)
-    }, [mapData, robot, activatedTiles, status])
+    }, [mapData, robot, activatedTiles, status, isScanning])
 
     return (
         <canvas

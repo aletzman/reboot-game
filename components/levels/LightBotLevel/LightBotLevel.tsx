@@ -13,7 +13,7 @@ import { sleep, flattenCommands, getNextPosition, turnLeft, turnRight, calcStars
 import { IsometricCanvas } from './IsometricCanvas'
 import { CommandPalette } from './CommandPalette'
 
-export default function LightBotLevel({ level, state, onComplete }: LightbotLevelProps) {
+export default function LightBotLevel({ level, state, onComplete, onFragUse }: LightbotLevelProps) {
     const mapData = LIGHTBOT_MAPS[level.id] ?? DEFAULT_MAP
     const moveSoundRef = useRef<HTMLAudioElement | null>(null)
     const jumpSoundRef = useRef<HTMLAudioElement | null>(null)
@@ -44,8 +44,18 @@ export default function LightBotLevel({ level, state, onComplete }: LightbotLeve
     const [isRunning, setIsRunning] = useState(false)
     const [executingIdx, setExecutingIdx] = useState<{ idx: number; panel: 'main' | 'f1' } | null>(null)
     const [status, setStatus] = useState<'idle' | 'success' | 'failed'>('idle')
+    const [isScanning, setIsScanning] = useState(false)
     const [repeatModalOpen, setRepeatModal] = useState(false)
     const [repeatTimes, setRepeatTimes] = useState(2)
+
+    // Reaccionar al uso de FRAG
+    useEffect(() => {
+        if (state.fragUsed) {
+            setIsScanning(true)
+            const timer = setTimeout(() => setIsScanning(false), 3000)
+            return () => clearTimeout(timer)
+        }
+    }, [state.fragUsed])
 
     // --------------------------------------------------------
     // EJECUTAR SECUENCIA
@@ -212,7 +222,16 @@ export default function LightBotLevel({ level, state, onComplete }: LightbotLeve
                         robot={robot}
                         activatedTiles={activatedTiles}
                         status={status}
+                        isScanning={isScanning}
                     />
+                    
+                    {/* Sonar Overlay Effect */}
+                    {isScanning && (
+                        <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
+                            <div className="w-[150%] h-[150%] border-2 border-(--purple) rounded-full animate-[ping_2s_ease-out_infinite]" />
+                            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-(--purple)/20 to-transparent animate-pulse" />
+                        </div>
+                    )}
                 </div>
 
                 <div className="h-5 flex items-center text-xs font-mono tracking-widest">
