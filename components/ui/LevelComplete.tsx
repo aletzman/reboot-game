@@ -9,7 +9,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { Card, GameObject } from '@/types/game'
 import { Button } from './Button'
-import { RotateCcwIcon, HardDriveIcon, XIcon } from 'lucide-react'
+import { RotateCcwIcon, HardDriveIcon, XIcon, ArrowRightIcon, ChevronsRightIcon } from 'lucide-react'
 import { DataCartridge, RARITY_STYLES } from '@/components/cards/DataCartridge'
 
 // ------------------------------------------------------------
@@ -176,7 +176,7 @@ export default function LevelComplete({
                                                 {newCards.map((card, idx) => {
                                                     const r = RARITY_STYLES[card.rarity] ?? RARITY_STYLES.common
                                                     return (
-                                                        <div 
+                                                        <div
                                                             key={card.id}
                                                             onClick={() => { setSelectedCardIdx(idx); setIsFlipped(false); }}
                                                             className="flex items-center gap-3 p-3 bg-[#0a0f16] border cursor-pointer hover:bg-[rgba(255,255,255,0.03)] transition-colors"
@@ -257,21 +257,34 @@ export default function LevelComplete({
                                 <Button
                                     onClick={onRetry}
                                     variant="outline"
+                                    size="sm"
                                 >
-                                    <RotateCcwIcon />
+                                    <RotateCcwIcon size={16} />
                                     reintentar
                                 </Button>
                                 <Button
                                     onClick={onMap}
                                     variant="outline"
+                                    size="sm"
                                 >
                                     mapa
                                 </Button>
                                 <Button
                                     onClick={onNext}
+                                    size="sm"
                                     variant="solid"
+                                    icon={reviewHint?.shouldShow ? RotateCcwIcon : ChevronsRightIcon}
+                                    iconPosition={reviewHint?.shouldShow ? "right" : "right"}
                                 >
-                                    {reviewHint?.shouldShow ? `repasar "${reviewHint.levelTitle}"` : 'siguiente nivel →'}
+                                    {reviewHint?.shouldShow ?
+                                        <>
+                                            repasar "{reviewHint.levelTitle}"
+                                        </>
+                                        :
+                                        <>
+                                            siguiente nivel
+                                        </>
+                                    }
                                 </Button>
                             </div>
                         </div>
@@ -282,16 +295,16 @@ export default function LevelComplete({
             {/* OVERLAY DE VISTA DETALLADA DEL MÓDULO */}
             {selectedCardIdx !== null && newCards[selectedCardIdx] && (
                 <div className="fixed inset-0 z-300 bg-black/80 flex flex-col items-center justify-center p-4 backdrop-blur-[2px] animate-[lc-fadeIn_0.2s_ease-out_both] cursor-pointer"
-                     onClick={() => setSelectedCardIdx(null)}>
+                    onClick={() => setSelectedCardIdx(null)}>
                     <div onClick={(e) => e.stopPropagation()} className="relative flex flex-col items-center gap-6">
                         <Button variant="outline" className="hidden sm:flex absolute -top-12 -right-4 border-none hover:bg-(--bg-hover) p-2 text-(--text-muted) hover:text-(--green-light)" onClick={() => setSelectedCardIdx(null)}>
                             <XIcon size={20} /> cerrar
                         </Button>
-                        <DataCartridge 
-                            card={newCards[selectedCardIdx]} 
+                        <DataCartridge
+                            card={newCards[selectedCardIdx]}
                             flipped={isFlipped}
                             onClick={() => setIsFlipped(!isFlipped)}
-                            className="w-[240px] h-[336px] md:w-[280px] md:h-[392px]"
+                            className="w-[240px] h-[336px] md:w-[280px] md:h-[465px]"
                         />
                         <div className="text-[10px] text-(--green-muted) tracking-widest flex items-center gap-2 mt-4 animate-pulse">
                             [ CLICK EN EL MÓDULO PARA LEER DATOS CACHÉ ]

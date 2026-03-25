@@ -28,6 +28,9 @@
   --purple: #7F77DD;
   /* FRAG, épicas */
   --red: #E24B4A;
+  --red-light: #f67c7c;
+  --red-dark: #7a1515;
+  --red-muted: #b42b2b;
   /* error */
   --blue: #378ADD;
   /* info, comunes */
@@ -183,9 +186,12 @@ body {
 }
 
 @keyframes cursor {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0;
   }
@@ -196,7 +202,7 @@ body {
   position: relative;
   overflow: hidden;
   box-shadow: 0 0 15px rgba(85, 226, 0, 0.15),
-              0 0 30px rgba(85, 226, 0, 0.05);
+    0 0 30px rgba(85, 226, 0, 0.05);
   animation: btn-glow-pulse 3s ease-in-out infinite;
 }
 
@@ -207,25 +213,26 @@ body {
   left: -100%;
   width: 60%;
   height: calc(100% + 4px);
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(85, 226, 0, 0.15),
-    rgba(85, 226, 0, 0.3),
-    rgba(85, 226, 0, 0.15),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(85, 226, 0, 0.15),
+      rgba(85, 226, 0, 0.3),
+      rgba(85, 226, 0, 0.15),
+      transparent);
   animation: sweep-glow 4s ease-in-out infinite;
 }
 
 @keyframes btn-glow-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 15px rgba(85, 226, 0, 0.15),
-                0 0 30px rgba(85, 226, 0, 0.05);
+      0 0 30px rgba(85, 226, 0, 0.05);
   }
+
   50% {
     box-shadow: 0 0 25px rgba(85, 226, 0, 0.3),
-                0 0 50px rgba(85, 226, 0, 0.1);
+      0 0 50px rgba(85, 226, 0, 0.1);
   }
 }
 
@@ -233,9 +240,11 @@ body {
   0% {
     left: -60%;
   }
+
   50% {
     left: 100%;
   }
+
   100% {
     left: 100%;
   }
@@ -252,6 +261,7 @@ body {
     opacity: 0;
     transform: translateY(16px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -261,14 +271,12 @@ body {
 /* SEPARADOR CON GLOW */
 .separator-glow {
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--green-dark),
-    var(--green-base),
-    var(--green-dark),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      var(--green-dark),
+      var(--green-base),
+      var(--green-dark),
+      transparent);
   opacity: 0.6;
 }
 
@@ -278,10 +286,17 @@ body {
 }
 
 @keyframes text-flicker {
-  0%, 95%, 97%, 99%, 100% {
+
+  0%,
+  95%,
+  97%,
+  99%,
+  100% {
     opacity: 1;
   }
-  96%, 98% {
+
+  96%,
+  98% {
     opacity: 0.7;
   }
 }
@@ -290,16 +305,21 @@ body {
    LEVEL COMPLETE — animaciones y estilos interactivos
    ═══════════════════════════════════════════════════════════════ */
 
-/* Shimmer horizontal que recorre cartas y paneles */
-@keyframes lc-shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(200%); }
-}
+
 
 /* Pulso de glow para estrellas activas */
 @keyframes lc-starPulse {
-  0%, 100% { opacity: .6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.15); }
+
+  0%,
+  100% {
+    opacity: .6;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
 }
 
 /* Slide up con fade para entrada de secciones */
@@ -308,6 +328,7 @@ body {
     opacity: 0;
     transform: translateY(14px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -316,8 +337,15 @@ body {
 
 /* Punto de indicación parpadeante */
 @keyframes lc-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .2; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .2;
+  }
 }
 
 /* Entrada de carta con escala + fade */
@@ -326,6 +354,7 @@ body {
     opacity: 0;
     transform: scale(.85) translateY(12px);
   }
+
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -334,23 +363,46 @@ body {
 
 /* Partículas flotantes de fondo */
 @keyframes lc-float {
-  0%, 100% { opacity: 0; transform: translateY(0); }
-  25% { opacity: .25; }
-  50% { opacity: .15; transform: translateY(-20px); }
-  75% { opacity: .2; }
+
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+
+  25% {
+    opacity: .25;
+  }
+
+  50% {
+    opacity: .15;
+    transform: translateY(-20px);
+  }
+
+  75% {
+    opacity: .2;
+  }
 }
 
 /* Borde degradado animado para cartas legendarias */
 @keyframes lc-legendaryBorder {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Botón primario — hover con glow verde */
 .lc-btn-primary:hover {
   background: var(--green-base) !important;
-  box-shadow: 0 0 20px rgba(85,226,0,.15), 0 0 40px rgba(85,226,0,.05);
+  box-shadow: 0 0 20px rgba(85, 226, 0, .15), 0 0 40px rgba(85, 226, 0, .05);
 }
 
 /* Botón secundario — hover sutil */

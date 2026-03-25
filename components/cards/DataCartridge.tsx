@@ -16,37 +16,37 @@ export const RARITY_STYLES: Record<string, {
     shimmer: string
 }> = {
     common: {
-        bg: 'rgba(4,44,83,.6)',
-        bgGlow: 'rgba(56,138,221,.08)',
-        border: '#185FA5',
-        color: '#85B7EB',
-        label: 'común',
-        shimmer: 'rgba(56,138,221,.2)',
+        bg: 'rgba(0, 30, 45, .6)',
+        bgGlow: 'rgba(0, 240, 255, .08)',
+        border: '#008C99',
+        color: '#00F0FF',
+        label: 'nodo',
+        shimmer: 'rgba(0, 240, 255, .2)'
     },
     rare: {
-        bg: 'rgba(65,36,2,.6)',
-        bgGlow: 'rgba(239,159,39,.08)',
-        border: '#854F0B',
-        color: '#EF9F27',
-        label: 'rara',
-        shimmer: 'rgba(239,159,39,.2)',
+        bg: 'rgba(25, 5, 45, .6)',
+        bgGlow: 'rgba(184, 41, 255, .08)',
+        border: '#6B1899',
+        color: '#B829FF',
+        label: 'cluster',
+        shimmer: 'rgba(184, 41, 255, .2)'
     },
     epic: {
-        bg: 'rgba(38,33,92,.6)',
-        bgGlow: 'rgba(127,119,221,.08)',
-        border: '#534AB7',
-        color: '#AFA9EC',
-        label: 'épica',
-        shimmer: 'rgba(127,119,221,.25)',
+        bg: 'rgba(45, 0, 20, .6)',
+        bgGlow: 'rgba(255, 0, 123, .1)',
+        border: '#99004A',
+        color: '#FF007B',
+        label: 'matriz',
+        shimmer: 'rgba(255, 0, 123, .25)'
     },
     legendary: {
-        bg: 'rgba(26,8,0,.6)',
-        bgGlow: 'rgba(240,153,123,.1)',
-        border: '#993C1D',
-        color: '#F0997B',
-        label: 'legendaria',
-        shimmer: 'rgba(240,153,123,.3)',
-    },
+        bg: 'rgba(40, 35, 0, .6)',
+        bgGlow: 'rgba(255, 215, 0, .1)',
+        border: '#998100',
+        color: '#FFD700',
+        label: 'núcleo',
+        shimmer: 'rgba(255, 215, 0, .25)'
+    }
 }
 
 // ------------------------------------------------------------
@@ -74,7 +74,7 @@ export function DataCartridge({
     return (
         <div
             onClick={onClick}
-            className={`${className} cursor-pointer shrink-0 group`}
+            className={`${className} cursor-pointer shrink-0 group `}
             style={{
                 perspective: '900px',
                 animation: `lc-cardAppear .6s cubic-bezier(.16,1,.3,1) ${delay}s both`,
@@ -87,15 +87,20 @@ export function DataCartridge({
                     transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
                 }}>
 
+                {/* ═══════════ LADOS 3D (ESPESOR DEL CARTUCHO) ═══════════ */}
+                <div className="absolute left-0 top-0 bottom-0 w-[16px] bg-[#0c1015] border-y border-[#1a1f26]" style={{ transformOrigin: 'left', transform: 'translateZ(8px) rotateY(-90deg)' }} />
+                <div className="absolute right-0 top-0 bottom-0 w-[16px] bg-[#0c1015] border-y border-[#1a1f26]" style={{ transformOrigin: 'right', transform: 'translateZ(8px) rotateY(90deg)' }} />
+                <div className="absolute left-0 right-0 top-0 h-[16px] bg-[#050608] border-x border-[#1a1f26]" style={{ transformOrigin: 'top', transform: 'translateZ(8px) rotateX(90deg)' }} />
+                <div className="absolute left-0 right-0 bottom-0 h-[16px] bg-[#050608] border-x border-[#1a1f26]" style={{ transformOrigin: 'bottom', transform: 'translateZ(8px) rotateX(-90deg)' }} />
+
                 {/* ═══════════ FRENTE (CARTUCHO FÍSICO) ═══════════ */}
-                <div className="absolute inset-0 flex flex-col overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-300"
+                <div className="absolute inset-0 flex flex-col overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.8)] font-mono antialiased"
                     style={{
                         backfaceVisibility: 'hidden',
                         WebkitBackfaceVisibility: 'hidden',
                         background: 'linear-gradient(to bottom, #161b22, #0d1117)',
-                        border: `1px solid ${rarity.border}`,
-                        borderBottomWidth: '4px',
-                        borderRadius: '6px 6px 2px 2px'
+                        borderRadius: '6px 6px 2px 2px',
+                        transform: 'translateZ(8px)'
                     }}>
 
                     {/* 1. SECCIÓN SUPERIOR DEL CARTUCHO (PLÁSTICO & AGARRE) */}
@@ -110,34 +115,42 @@ export function DataCartridge({
                             <div className="h-[2px] bg-[#050608] shadow-[0_1px_0_rgba(255,255,255,0.05)] rounded-full" />
                             <div className="h-[2px] bg-[#050608] shadow-[0_1px_0_rgba(255,255,255,0.05)] rounded-full" />
                         </div>
+                        {/* LED Indicador (Apagado) */}
+                        <div className="absolute top-9 left-4 w-2.5 h-2.5 rounded-full bg-black flex items-center justify-center shadow-[inset_0_1px_3px_rgba(0,0,0,1),0_1px_0_rgba(255,255,255,0.08)]">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#0a2e0a] border border-[#144514] relative shadow-[inset_0_-1px_2px_rgba(0,0,0,0.8)]">
+                                {/* Reflejo curvado del vidrio/plástico */}
+                                <div className="absolute top-[0.5px] left-px w-[2px] h-px bg-white/20 rounded-full rotate-45" />
+                            </div>
+                        </div>
                     </div>
 
                     {/* 2. ETIQUETA HOLOGRÁFICA / STICKER PRINCIPAL */}
                     <div className="flex-1 m-2 p-1.5 flex flex-col relative rounded-[2px] shadow-[inset_0_2px_10px_rgba(0,0,0,1)]"
                         style={{
+                            transform: 'translateZ(1px)',
                             background: '#040608',
                             border: `1px solid ${rarity.color}33`,
                         }}>
                         {/* Shimmer de etiqueta */}
-                        <div className="absolute inset-0 pointer-events-none animate-[lc-shimmer_4s_linear_infinite] overflow-hidden rounded-[2px]"
+                        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[2px]"
                             style={{
                                 background: `repeating-linear-gradient(45deg, transparent, transparent 4px, ${rarity.shimmer} 5px)`,
-                                opacity: 0.15
+                                opacity: 0.3
                             }} />
 
                         {/* Cabecera del sticker */}
                         <div className="w-full flex justify-between items-end border-b pb-1 relative z-10" style={{ borderColor: `${rarity.color}44` }}>
                             <div className="flex flex-col">
-                                <div className="text-[5px] text-(--text-muted) tracking-widest uppercase leading-none mb-[2px]">
+                                <div className="text-[8px] text-(--text-muted) font-semibold tracking-widest uppercase leading-none mb-[2px]">
                                     SYS_MODULE
                                 </div>
-                                <div className="text-[8px] font-bold tracking-widest uppercase" style={{ color: rarity.color }}>
+                                <div className="text-sm font-mono font-bold tracking-widest uppercase" style={{ color: rarity.color }}>
                                     {rarity.label}
                                 </div>
                             </div>
 
                             {/* Barcode falso */}
-                            <div className="h-3.5 w-10 opacity-70"
+                            <div className="h-4.5 w-15 opacity-70"
                                 style={{ background: `repeating-linear-gradient(90deg, ${rarity.color}, ${rarity.color} 1px, transparent 1px, transparent 3px, ${rarity.color} 3px, ${rarity.color} 4px, transparent 4px, transparent 5px)` }}
                             />
                         </div>
@@ -182,49 +195,50 @@ export function DataCartridge({
                 </div>
 
                 {/* ═══════════ REVERSO (PANTALLA LECTURA) ═══════════ */}
-                <div className="absolute inset-0 flex flex-col p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-300"
+                <div className="absolute inset-0 flex flex-col rounded-b-xs p-1.5 font-mono shadow-[0_10px_30px_rgba(0,0,0,0.8)] antialiased"
                     style={{
                         backfaceVisibility: 'hidden',
                         WebkitBackfaceVisibility: 'hidden',
-                        transform: 'rotateY(180deg)',
+                        transform: 'rotateY(180deg) translateZ(8px)',
                         background: 'linear-gradient(to bottom, #11151a, #0a0d11)',
-                        border: `1px solid ${rarity.border}`,
-                        borderTopWidth: '4px',
-                        borderRadius: '6px 6px 2px 2px'
                     }}>
 
                     {/* Pantalla E-ink o Panel empotrado */}
-                    <div className="flex-1 bg-(--bg-deep) border border-[#050608] shadow-[inset_0_4px_15px_rgba(0,0,0,1)] rounded-sm flex flex-col p-2.5 overflow-hidden">
+                    <div className="flex-1 bg-(--bg-deep) border border-[#050608] shadow-[inset_0_4px_15px_rgba(0,0,0,1)] rounded-sm flex flex-col p-2.5 overflow-hidden"
+                        style={{ transform: 'translateZ(1px)' }}>
 
                         {/* Header retro de log */}
-                        <div className="text-[10px] text-(--green-muted) tracking-widest uppercase border-b border-(--bg-hover) pb-1">
+                        <div className="text-[11px] text-(--green-muted) tracking-widest uppercase border-b border-(--bg-hover) pb-1">
                             &gt; DATA_LOG...
                         </div>
 
                         {/* Concepto extraído */}
-                        <div className="text-[10px] sm:text-xs tracking-[.15em] font-bold uppercase mt-1.5"
+                        <div className="text-[10px] sm:text-[13px] tracking-[.15em] font-bold uppercase mt-1.5"
                             style={{ color: rarity.color }}>
                             [{card.concept}]
                         </div>
 
                         {/* Descripción Humana */}
-                        <div className="text-[9px] sm:text-[10px] text-(--text-muted) leading-[1.6] flex-1 pt-1 font-mono overflow-y-auto custom-scrollbar pr-1 mt-1">
+                        <div className="text-[10px] sm:text-[13px] text-(--text-muted) leading-[1.6] flex-1 pt-1 font-mono overflow-y-auto custom-scrollbar pr-1 mt-1">
                             {card.humanExplanation}
                         </div>
 
                         {/* Fragmento de código analizado */}
-                        {card.codeExample && (
-                            <div className="bg-[#020305] border border-(--bg-hover) p-2 mt-1.5 text-[8px] sm:text-[9px] text-(--green-base) font-mono leading-[1.6] whitespace-pre overflow-hidden relative shrink-0 rounded-sm">
+                        {!card.codeExample && (
+                            <div className="bg-[#020305] border border-(--bg-hover) p-2 mt-1.5 text-[11px] sm:text-[13px] text-(--green-base) font-mono leading-[1.6] whitespace-pre overflow-hidden relative shrink-0 rounded-sm">
                                 <div className="absolute top-0 left-0 bottom-0 w-[2px] bg-(--green-darkest)" />
                                 <div className="pl-1.5">
-                                    {card.codeExample.split('\n').slice(0, 4).join('\n')}
+                                    {/*card.codeExample.split('\n').slice(0, 4).join('\n')*/}
+                                    const data = {
+
+                                    }
                                 </div>
                             </div>
                         )}
 
                         {/* Tip del sistema */}
                         {card.tip && (
-                            <div className='text-[8px] sm:text-[9px] text-(--text-muted) leading-tight bg-(--bg-void) p-2 mt-2 border border-(--bg-hover) relative shrink-0 rounded-sm'>
+                            <div className='text-[11px] sm:text-[13px] text-(--text-muted) leading-tight bg-(--bg-void) p-2 mt-2 border border-(--bg-hover) relative shrink-0 rounded-sm'>
                                 <span className="text-(--amber) mr-1 font-bold">INFO:</span>
                                 {card.tip}
                             </div>
@@ -273,7 +287,7 @@ function CardArt({ cardId, rarity, color }: {
             {/* Grid de fondo tipo blueprint */}
             <pattern id={`grid-${cardId}`} width="8" height="8" patternUnits="userSpaceOnUse">
                 <rect width="8" height="8" fill="none" />
-                <circle cx="4" cy="4" r="0.5" fill={color} fillOpacity="0.1" />
+                <circle cx="4" cy="4" r="0.5" fill={color} fillOpacity="0.05" />
             </pattern>
             <rect width="80" height="80" fill={`url(#grid-${cardId})`} />
 
