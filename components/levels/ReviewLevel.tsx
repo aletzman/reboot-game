@@ -1,376 +1,415 @@
 // ============================================================
-// REBOOT — components/levels/DecisionLevel.tsx
-// Nivel de decisión: el jugador elige su lenguaje
-// Solo se usa en el nivel 3-02
+// REBOOT — components/levels/ReviewLevel.tsx
+// Nivel de repaso: orquestador de fases (Quiz, Puzzls, Mini-juego)
 // ============================================================
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import type { Level, LevelState } from '@/types/game'
+import { Button } from '@/components/ui/Button'
+import { Check, X, ArrowRight, Brain, Zap, Terminal } from 'lucide-react'
+import dynamic from 'next/dynamic'
+
+// ------------------------------------------------------------
+// IMPORTS DINÁMICOS — para las fases finales
+// ------------------------------------------------------------
+
+const LightbotLevel = dynamic(() => import('@/components/levels/LightBotLevel/LightBotLevel'), { ssr: false })
+const ScratchLevel = dynamic(() => import('@/components/levels/ScratchLevel/ScratchLevel'), { ssr: false })
+const PuzzleLevel = dynamic(() => import('@/components/levels/PuzzleLevel/PuzzleLevel'), { ssr: false })
+const CodeEditorLevel = dynamic(() => import('@/components/levels/CodeEditorLevel/CodeEditorLevel'), { ssr: false })
 
 // ------------------------------------------------------------
 // TIPOS
 // ------------------------------------------------------------
 
-interface DecisionLevelProps {
+interface ReviewLevelProps {
     level: Level
     state: LevelState
     onComplete: (stars: 0 | 1 | 2 | 3, usedFrag: boolean) => void
     onFragUse: () => void
 }
 
-interface LanguageOption {
+interface Question {
     id: string
-    name: string
-    status: 'active' | 'damaged'
-    description: string
-    detail: string
-    year: string
+    text: string
+    options: string[]
+    correctIndex: number
+    concept: string // para el redirect si falla
 }
 
+type Phase = 'intro' | 'quiz' | 'puzzle' | 'minigame' | 'summary'
+
 // ------------------------------------------------------------
-// OPCIONES DE LENGUAJE
+// DATA DE REPASO POR DEFECTO (Actos 1, 2, 3)
 // ------------------------------------------------------------
 
-const LANGUAGES: LanguageOption[] = [
-    {
-        id: 'javascript',
-        name: 'JavaScript',
-        status: 'active',
-        description: 'El lenguaje de la web. Corre en el browser y en el servidor.',
-        detail: 'Sobrevivió El Silencio en el sistema más aislado del laboratorio. Operativo al 100%.',
-        year: 'creado en 1995',
+const DEFAULT_REVIEW_DATA: Record<string, { questions: Question[] }> = {
+    '1-R': {
+        questions: [
+            {
+                id: 'q1',
+                text: '¿Cuál es el concepto que define un conjunto de instrucciones ejecutadas una tras otra?',
+                options: ['Bucle / Loop', 'Secuencia', 'Función', 'Condicional'],
+                correctIndex: 1,
+                concept: 'secuencia'
+            },
+            {
+                id: 'q2',
+                text: 'Si el robot necesita repetir un patrón fijo de 4 pasos, ¿qué estructura es la más eficiente?',
+                options: ['SI (Condicional)', 'REPETIR (Bucle)', 'SALTAR', 'GIRAR'],
+                correctIndex: 1,
+                concept: 'loop'
+            },
+            {
+                id: 'q3',
+                text: 'En un flujo lógico, el bloque SI (IF) sirve para:',
+                options: ['Aumentar la velocidad del robot', 'Ejecutar código solo si se cumple una condición', 'Repetir pasos infinitamente', 'Definir el nombre del programa'],
+                correctIndex: 1,
+                concept: 'condicional'
+            }
+        ]
     },
-    {
-        id: 'python',
-        name: 'Python',
-        status: 'damaged',
-        description: 'Simple y poderoso. Usado en ciencia de datos e IA.',
-        detail: 'Sistema dañado durante El Silencio. Requiere reparación del compilador.',
-        year: 'creado en 1991',
+    '2-R': {
+        questions: [
+            {
+                id: 'q1',
+                text: '¿Qué estructura permite agrupar una secuencia de bloques bajo un nombre para reutilizarla?',
+                options: ['Variable', 'Bucle', 'Función / Procedimiento', 'Asignación'],
+                correctIndex: 2,
+                concept: 'funcion'
+            },
+            {
+                id: 'q2',
+                text: '¿Para qué sirve una variable en pseudocódigo?',
+                options: ['Para mover al robot', 'Para almacenar información que puede cambiar', 'Para detener el programa', 'Para repetir una acción'],
+                correctIndex: 1,
+                concept: 'variable'
+            },
+            {
+                id: 'q3',
+                text: 'El proceso de encontrar y corregir errores en la lógica de un bloque se conoce como:',
+                options: ['Compilación', 'Iteración', 'Debugging', 'Identificación'],
+                correctIndex: 2,
+                concept: 'debugging'
+            }
+        ]
     },
-    {
-        id: 'csharp',
-        name: 'C#',
-        status: 'damaged',
-        description: 'Robusto y tipado. Base del ecosistema .NET.',
-        detail: 'Módulo de runtime corrompido. No disponible.',
-        year: 'creado en 2000',
+    '3-R': {
+        questions: [
+            {
+                id: 'q1',
+                text: '¿Cuál es la principal diferencia entre el pseudocódigo y un lenguaje real como JavaScript?',
+                options: ['El pseudocódigo no usa lógica', 'El lenguaje real tiene reglas de sintaxis estrictas', 'El pseudocódigo es más rápido de ejecutar', 'JavaScript no permite usar bucles'],
+                correctIndex: 1,
+                concept: 'pseudocodigo_a_js'
+            },
+            {
+                id: 'q2',
+                text: 'Al pasar de bloques visuales a JavaScript, los comandos ahora se escriben como:',
+                options: ['Dibujos técnicos', 'Funciones con paréntesis y punto y coma', 'Solo números', 'Comandos de voz'],
+                correctIndex: 1,
+                concept: 'pseudocodigo_a_js'
+            }
+        ]
     },
-    {
-        id: 'rust',
-        name: 'Rust',
-        status: 'damaged',
-        description: 'Velocidad y seguridad de memoria sin garbage collector.',
-        detail: 'Error crítico en el linker. Requiere reconstrucción completa.',
-        year: 'creado en 2010',
-    },
-    {
-        id: 'go',
-        name: 'Go',
-        status: 'damaged',
-        description: 'Concurrencia nativa. Diseñado para sistemas distribuidos.',
-        detail: 'Paquetes de red dañados. Parcialmente recuperable.',
-        year: 'creado en 2009',
-    },
-]
+    '4-R': {
+        questions: [
+            {
+                id: 'q1',
+                text: '¿Qué palabra clave usamos en JavaScript para declarar un valor que NUNCA debe cambiar?',
+                options: ['let', 'var', 'const', 'fix'],
+                correctIndex: 2,
+                concept: 'variables'
+            },
+            {
+                id: 'q2',
+                text: '¿Cuál es la instrucción estándar para enviar información a la consola del sistema?',
+                options: ['console.log()', 'print()', 'system.out()', 'log.write()'],
+                correctIndex: 0,
+                concept: 'salida'
+            },
+            {
+                id: 'q3',
+                text: 'Los tipos de datos booleanos solo admiten dos valores posibles. ¿Cuáles son?',
+                options: ['0 y 1', 'true y false', 'YES y NO', 'null y defined'],
+                correctIndex: 1,
+                concept: 'logica'
+            }
+        ]
+    }
+}
 
 // ------------------------------------------------------------
 // COMPONENTE PRINCIPAL
 // ------------------------------------------------------------
 
-export default function DecisionLevel({
+export default function ReviewLevel({
     level,
     state,
     onComplete,
-}: DecisionLevelProps) {
-    const [selected, setSelected] = useState<string | null>(null)
-    const [confirmed, setConfirmed] = useState(false)
-    const [hoveredId, setHoveredId] = useState<string | null>(null)
+    onFragUse,
+}: ReviewLevelProps) {
+    const [phase, setPhase] = useState<Phase>('intro')
+    const [currentQuestion, setCurrentQuestion] = useState(0)
+    const [answers, setAnswers] = useState<boolean[]>([])
+    const [showFeedback, setShowFeedback] = useState<number | null>(null)
 
-    function handleSelect(id: string) {
-        if (confirmed) return
-        // solo JavaScript es seleccionable
-        if (LANGUAGES.find(l => l.id === id)?.status === 'damaged') return
-        setSelected(id)
-    }
+    // Obtener data del nivel (desde JSON o fallback)
+    const reviewData = useMemo(() => {
+        // @ts-ignore
+        const fromLevel = level.reviewData || DEFAULT_REVIEW_DATA[level.id]
+        return fromLevel || { questions: [] }
+    }, [level.id])
 
-    function handleConfirm() {
-        if (!selected || confirmed) return
-        setConfirmed(true)
-        setTimeout(() => onComplete(0, state.fragUsed), 1200)
-    }
-
-    const hovered = LANGUAGES.find(l => l.id === hoveredId)
-    const selectedLang = LANGUAGES.find(l => l.id === selected)
+    const questions = reviewData.questions
 
     // ------------------------------------------------------------
-    // RENDER
+    // HANDLERS
     // ------------------------------------------------------------
 
-    return (
-        <div style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            background: 'var(--bg-void)',
-            padding: '2rem 1rem',
-            alignItems: 'center',
-            gap: '2rem',
-        }}>
-            <div style={{ maxWidth: '640px', width: '100%', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    function handleStart() {
+        if (questions.length > 0) setPhase('quiz')
+        else setPhase('puzzle')
+    }
 
-                {/* Header narrativo */}
-                <div>
-                    <div style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '10px',
-                        color: 'var(--green-base)',
-                        letterSpacing: '.14em',
-                        marginBottom: '.5rem',
-                    }}>
-            // laboratorio de lenguajes — selección
+    function handleAnswer(index: number) {
+        if (showFeedback !== null) return
+        
+        setShowFeedback(index)
+        const isCorrect = index === questions[currentQuestion].correctIndex
+        setAnswers(prev => [...prev, isCorrect])
+
+        setTimeout(() => {
+            setShowFeedback(null)
+            if (currentQuestion < questions.length - 1) {
+                setCurrentQuestion(prev => prev + 1)
+            } else {
+                setPhase('puzzle')
+            }
+        }, 1500)
+    }
+
+    function handlePuzzleComplete(stars: number) {
+        // En niveles de repaso, si fallas el puzzle a veces pasas directo a summary
+        // pero aquí seguiremos la lógica de 3 fases
+        setPhase('minigame')
+    }
+
+    function handleFinalComplete(stars: number) {
+        // Cálculo final de estrellas basado en las 3 fases
+        const correctCount = answers.filter(a => a).length
+        const totalQ = questions.length || 1
+        const quizScore = correctCount / totalQ // 0 a 1
+
+        // Simplificado: 3 estrellas si acertaste todo y pasaste el minijuego
+        // En un sistema real usaríamos una fórmula más compleja
+        const finalStars = correctCount === totalQ ? 3 : correctCount >= totalQ / 2 ? 2 : 1
+        
+        onComplete(finalStars as 0|1|2|3, state.fragUsed)
+    }
+
+    // ------------------------------------------------------------
+    // RENDERS DE FASE
+    // ------------------------------------------------------------
+
+    if (phase === 'intro') {
+        return (
+            <div className="flex-1 flex flex-col items-center justify-center p-8 bg-(--bg-void) transition-all animate-in fade-in duration-700">
+                <div className="max-w-md w-full bg-(--bg-surface) border border-(--bg-hover) rounded-xl p-8 flex flex-col gap-6 shadow-2xl relative overflow-hidden">
+                    {/* Background decoration */}
+                    <div className="absolute top-0 right-0 p-4 opacity-10">
+                        <Terminal size={120} className="text-(--green-base) -rotate-12 translate-x-8 -translate-y-8" />
                     </div>
-                    <div style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '13px',
-                        color: 'var(--purple)',
-                        lineHeight: 1.7,
-                    }}>
-                        FRAG: &quot;Cada terminal contiene un lenguaje de programación.
-                        Solo uno sigue operativo. Elige con cuidado — esto definirá
-                        cómo te comunicarás con los sistemas del bunker.&quot;
+
+                    <div className="flex flex-col gap-2">
+                        <div className="text-(--green-base) font-mono text-[10px] tracking-[.25em] uppercase">Protocolo de Repaso :: {level.id}</div>
+                        <h1 className="text-2xl font-bold text-(--text-primary) leading-tight">{level.title}</h1>
                     </div>
-                </div>
 
-                {/* Grid de terminales */}
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-                    gap: '.75rem',
-                }}>
-                    {LANGUAGES.map(lang => {
-                        const isActive = lang.status === 'active'
-                        const isSelected = selected === lang.id
-                        const isConfirmed = confirmed && isSelected
+                    <p className="text-(--text-muted) text-[15px] leading-relaxed">
+                        {level.description}
+                    </p>
 
-                        return (
-                            <div
-                                key={lang.id}
-                                onClick={() => handleSelect(lang.id)}
-                                onMouseEnter={() => setHoveredId(lang.id)}
-                                onMouseLeave={() => setHoveredId(null)}
-                                style={{
-                                    background: isConfirmed
-                                        ? 'var(--green-darkest)'
-                                        : isSelected
-                                            ? '#0d1f00'
-                                            : 'var(--bg-surface)',
-                                    border: `${isSelected ? '2px' : '1px'} solid ${isConfirmed ? 'var(--green-light)'
-                                            : isSelected ? 'var(--green-base)'
-                                                : isActive ? 'var(--green-dark)'
-                                                    : 'var(--bg-hover)'
-                                        }`,
-                                    borderRadius: '10px',
-                                    padding: '1.25rem 1rem',
-                                    cursor: isActive && !confirmed ? 'pointer' : 'default',
-                                    opacity: !isActive ? 0.45 : 1,
-                                    transition: 'all .2s',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: '.625rem',
-                                    position: 'relative',
-                                    overflow: 'hidden',
-                                }}
-                            >
-                                {/* Status indicator */}
-                                <div style={{
-                                    position: 'absolute',
-                                    top: '10px',
-                                    right: '10px',
-                                    width: '7px',
-                                    height: '7px',
-                                    borderRadius: '50%',
-                                    background: isActive ? 'var(--green-light)' : 'var(--red)',
-                                    animation: isActive ? 'termPulse 2s ease-in-out infinite' : 'none',
-                                }} />
-
-                                {/* Nombre del lenguaje */}
-                                <div style={{
-                                    fontFamily: 'var(--font-mono)',
-                                    fontSize: '16px',
-                                    fontWeight: 500,
-                                    color: isActive ? (isSelected ? 'var(--green-light)' : 'var(--text-primary)') : 'var(--text-ghost)',
-                                    letterSpacing: '.06em',
-                                }}>
-                                    {lang.name}
-                                </div>
-
-                                {/* Año */}
-                                <div style={{
-                                    fontFamily: 'var(--font-mono)',
-                                    fontSize: '9px',
-                                    color: isActive ? 'var(--green-base)' : 'var(--text-ghost)',
-                                    letterSpacing: '.1em',
-                                }}>
-                                    {lang.year}
-                                </div>
-
-                                {/* Estado */}
-                                <div style={{
-                                    fontFamily: 'var(--font-mono)',
-                                    fontSize: '10px',
-                                    color: isActive ? 'var(--green-light)' : 'var(--red)',
-                                    letterSpacing: '.1em',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '5px',
-                                }}>
-                                    {isActive ? '▶ OPERATIVO' : '✗ DAÑADO'}
-                                </div>
-
-                                {/* Líneas decorativas de "terminal" */}
-                                <div style={{
-                                    borderTop: '1px solid',
-                                    borderColor: isActive ? 'var(--green-darkest)' : 'var(--bg-hover)',
-                                    paddingTop: '.5rem',
-                                    fontFamily: 'var(--font-mono)',
-                                    fontSize: '9px',
-                                    color: 'var(--text-ghost)',
-                                    lineHeight: 1.5,
-                                }}>
-                                    {lang.detail}
-                                </div>
-
-                                {/* Overlay de confirmación */}
-                                {isConfirmed && (
-                                    <div style={{
-                                        position: 'absolute',
-                                        inset: 0,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        background: 'rgba(13,31,0,.85)',
-                                        fontFamily: 'var(--font-mono)',
-                                        fontSize: '12px',
-                                        color: 'var(--green-light)',
-                                        letterSpacing: '.14em',
-                                    }}>
-                                        seleccionado ✓
-                                    </div>
-                                )}
-                            </div>
-                        )
-                    })}
-                </div>
-
-                {/* Panel inferior — descripción del hover/seleccionado + confirmar */}
-                <div style={{
-                    background: 'var(--bg-surface)',
-                    border: `1px solid ${selected ? 'var(--green-base)' : 'var(--bg-hover)'}`,
-                    borderRadius: '10px',
-                    padding: '1.25rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '1rem',
-                    minHeight: '100px',
-                    transition: 'border-color .2s',
-                }}>
-                    {(hovered || selectedLang) ? (
-                        <>
-                            <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '.75rem',
-                            }}>
-                                <div style={{
-                                    fontFamily: 'var(--font-mono)',
-                                    fontSize: '14px',
-                                    fontWeight: 500,
-                                    color: (hovered ?? selectedLang)?.status === 'active'
-                                        ? 'var(--green-light)'
-                                        : 'var(--text-ghost)',
-                                }}>
-                                    {(hovered ?? selectedLang)?.name}
-                                </div>
-                                <div style={{
-                                    fontFamily: 'var(--font-mono)',
-                                    fontSize: '10px',
-                                    color: (hovered ?? selectedLang)?.status === 'active'
-                                        ? 'var(--green-base)'
-                                        : 'var(--red)',
-                                    letterSpacing: '.1em',
-                                }}>
-                                    {(hovered ?? selectedLang)?.status === 'active' ? 'OPERATIVO' : 'NO DISPONIBLE'}
-                                </div>
-                            </div>
-                            <div style={{
-                                fontFamily: 'var(--font-sans)',
-                                fontSize: '13px',
-                                color: 'var(--text-muted)',
-                                lineHeight: 1.6,
-                            }}>
-                                {(hovered ?? selectedLang)?.description}
-                            </div>
-                        </>
-                    ) : (
-                        <div style={{
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: '11px',
-                            color: 'var(--text-ghost)',
-                            textAlign: 'center',
-                            padding: '1rem 0',
-                            letterSpacing: '.08em',
-                        }}>
-              // pasa el cursor sobre una terminal para ver detalles
+                    <div className="bg-(--bg-deep) rounded-lg p-5 border-l-4 border-l-(--amber)">
+                        <div className="flex items-center gap-2 mb-2 text-(--amber) font-mono text-[11px] font-bold uppercase tracking-widest">
+                            <Zap size={14} /> fase de certificación
                         </div>
-                    )}
-
-                    {/* Botón de confirmar */}
-                    {selected && !confirmed && (
-                        <button
-                            onClick={handleConfirm}
-                            style={{
-                                background: 'var(--green-dark)',
-                                border: '1px solid var(--green-base)',
-                                borderRadius: '8px',
-                                padding: '12px',
-                                fontFamily: 'var(--font-mono)',
-                                fontSize: '12px',
-                                color: 'var(--green-light)',
-                                cursor: 'pointer',
-                                letterSpacing: '.12em',
-                                transition: 'background .2s',
-                                alignSelf: 'stretch',
-                            }}
-                            onMouseEnter={e => (e.currentTarget.style.background = 'var(--green-base)')}
-                            onMouseLeave={e => (e.currentTarget.style.background = 'var(--green-dark)')}
-                        >
-                            confirmar — aprender JavaScript
-                        </button>
-                    )}
-
-                    {confirmed && (
-                        <div style={{
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: '11px',
-                            color: 'var(--green-light)',
-                            textAlign: 'center',
-                            letterSpacing: '.1em',
-                        }}>
-                            FRAG: &quot;JavaScript. Buena elección. Es todo lo que necesitas.&quot;
+                        <div className="text-(--text-muted) text-[13px] italic">
+                            &quot;{level.narrative.replace('FRAG: ', '')}&quot;
                         </div>
-                    )}
+                    </div>
+
+                    <button 
+                        onClick={handleStart}
+                        className="group flex items-center justify-center gap-3 bg-(--green-dark) hover:bg-(--green-base) border border-(--green-base) text-(--green-light) font-mono py-4 px-6 rounded-lg transition-all active:scale-[0.98] shadow-[0_0_20px_rgba(85,226,0,0.1)] hover:shadow-[0_0_30px_rgba(85,226,0,0.2)]"
+                    >
+                        INICIAR PROTOCOLO <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                    </button>
+                    
+                    <div className="flex justify-around items-center pt-2">
+                        {[1, 2, 3].map((i: number) => (
+                            <div key={i} className="flex flex-col items-center gap-2">
+                                <div className={`w-3 h-3 rounded-full border border-(--bg-hover) ${i === 1 ? 'bg-(--green-base) shadow-[0_0_8px_var(--green-base)]' : 'bg-(--bg-deep)'}`} />
+                                <span className="text-[9px] text-(--text-ghost) uppercase tracking-tighter">Fase {i}</span>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
+        )
+    }
 
-            <style>{`
-        @keyframes termPulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.4; }
+    if (phase === 'quiz') {
+        const q = questions[currentQuestion]
+        return (
+            <div className="flex-1 flex flex-col items-center justify-center p-8 bg-(--bg-void) transition-all animate-in zoom-in-95 duration-500">
+                <div className="max-w-xl w-full flex flex-col gap-8">
+                    {/* Progress indicator bar */}
+                    <div className="w-full flex gap-1.5 h-1">
+                        {questions.map((_: any, i: number) => (
+                            <div 
+                                key={i} 
+                                className={`flex-1 rounded-full transition-all duration-500 ${
+                                    i < currentQuestion ? 'bg-(--green-light)' : 
+                                    i === currentQuestion ? 'bg-(--green-base) animate-pulse' : 
+                                    'bg-(--bg-hover)'
+                                }`} 
+                            />
+                        ))}
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-2 text-(--purple) font-mono text-[10px] tracking-widest uppercase">
+                            <Brain size={14} /> Evaluación Teórica :: Pregunta {currentQuestion + 1} de {questions.length}
+                        </div>
+                        <h2 className="text-xl md:text-2xl text-(--text-primary) font-medium leading-snug">
+                            {q.text}
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-3">
+                        {q.options.map((opt: string, i: number) => {
+                            const isCorrect = i === q.correctIndex
+                            const isSelected = showFeedback === i
+                            
+                            let borderColor = 'var(--bg-hover)'
+                            let bgColor = 'var(--bg-surface)'
+                            let textColor = 'var(--text-primary)'
+                            
+                            if (showFeedback !== null) {
+                                if (isCorrect) {
+                                    borderColor = 'var(--green-base)'
+                                    bgColor = 'var(--green-darkest)'
+                                    textColor = 'var(--green-light)'
+                                } else if (isSelected) {
+                                    borderColor = 'var(--red)'
+                                    bgColor = '#2a0a0a'
+                                    textColor = 'var(--red)'
+                                }
+                            }
+
+                            return (
+                                <button
+                                    key={i}
+                                    onClick={() => handleAnswer(i)}
+                                    disabled={showFeedback !== null}
+                                    className={`
+                                        group relative flex items-center gap-4 text-left p-5 rounded-xl border transition-all duration-200
+                                        ${showFeedback === null ? 'hover:border-(--green-base) hover:bg-(--bg-hover) hover:translate-x-1 active:scale-[0.99] cursor-pointer' : 'cursor-default'}
+                                    `}
+                                    style={{ borderColor, backgroundColor: bgColor, color: textColor }}
+                                >
+                                    <div className={`
+                                        w-8 h-8 flex items-center justify-center rounded-lg border font-mono text-xs
+                                        ${showFeedback === null ? 'border-(--bg-hover) group-hover:border-(--green-base) group-hover:bg-(--green-darkest)' : 'border-current'}
+                                    `}>
+                                        {String.fromCharCode(65 + i)}
+                                    </div>
+                                    <span className="flex-1 font-sans text-[15px]">{opt}</span>
+                                    
+                                    {showFeedback !== null && isCorrect && <Check className="text-(--green-light)" size={20} />}
+                                    {showFeedback !== null && isSelected && !isCorrect && <X className="text-(--red)" size={20} />}
+                                </button>
+                            )
+                        })}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    if (phase === 'puzzle') {
+        // Selecciono el tipo basándome en el acto
+        const puzzleType: Level['type'] = 
+            level.act === 1 ? 'puzzle-match' : 
+            level.act === 2 ? 'puzzle-sort' : 
+            level.act === 3 ? 'puzzle-match' : 
+            level.act === 4 ? 'puzzle-bug' : 
+            level.act === 5 ? 'puzzle-fill' : 
+            level.act === 6 ? 'puzzle-sort' : 
+            'puzzle-match' // Acto 7 y fallback
+
+        const miniLevel: Level = { ...level, type: puzzleType }
+        return (
+            <div className="flex-1 flex flex-col h-full animate-in slide-in-from-right duration-500">
+                <div className="bg-(--bg-deep) py-2 px-8 border-b border-(--bg-hover) flex justify-between items-center shrink-0">
+                    <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-(--green-light) animate-pulse shadow-[0_0_8px_var(--green-light)]" />
+                        <span className="font-mono text-[10px] text-(--text-muted) tracking-widest uppercase">Fase 2: Resolución Ética de Puntos de Control</span>
+                    </div>
+                    <div className="text-[10px] font-mono text-(--green-base)">[ STATUS: SYNCING ]</div>
+                </div>
+                <PuzzleLevel 
+                    level={miniLevel} 
+                    state={state} 
+                    onComplete={() => handlePuzzleComplete(3)} 
+                    onFragUse={onFragUse} 
+                />
+            </div>
+        )
+    }
+
+    if (phase === 'minigame') {
+        const miniLevel: Level = {
+            ...level,
+            type: level.act === 1 ? 'lightbot' : level.act === 2 ? 'scratch' : level.act >= 4 ? 'codeeditor' : 'lightbot'
         }
-      `}</style>
-        </div>
-    )
+        return (
+            <div className="flex-1 flex flex-col h-full animate-in slide-in-from-bottom duration-700">
+                 <div className="bg-(--bg-deep) py-2 px-8 border-b border-(--bg-hover) flex justify-between items-center shrink-0">
+                    <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-(--amber) animate-pulse shadow-[0_0_8px_var(--amber)]" />
+                        <span className="font-mono text-[10px] text-(--text-muted) tracking-widest uppercase">Fase 3: Ejecución de Rutina de Emergencia</span>
+                    </div>
+                    <div className="text-[10px] font-mono text-(--amber)">[ STATUS: OVERRIDE ]</div>
+                </div>
+                {level.act === 2 ? (
+                     <ScratchLevel
+                        level={miniLevel}
+                        state={state}
+                        onComplete={(s) => handleFinalComplete(s)}
+                        onFragUse={onFragUse}
+                    />
+                ) : level.act >= 4 ? (
+                    <CodeEditorLevel
+                        level={miniLevel}
+                        state={state}
+                        onComplete={(s) => handleFinalComplete(s)}
+                        onFragUse={onFragUse}
+                    />
+                ) : (
+                    <LightbotLevel
+                        level={miniLevel}
+                        state={state}
+                        onComplete={(s) => handleFinalComplete(s)}
+                        onFragUse={onFragUse}
+                    />
+                )}
+            </div>
+        )
+    }
+
+    return null
 }

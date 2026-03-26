@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import type { TheorySlide } from '@/types/game'
 import { motion, AnimatePresence } from 'motion/react'
-import { 
-    ChevronRight, 
-    ChevronLeft, 
-    Terminal, 
-    Zap, 
-    Info, 
+import {
+    ChevronRight,
+    ChevronLeft,
+    Terminal,
+    Zap,
+    Info,
     CheckCircle2,
     Cpu,
     Activity,
@@ -25,7 +25,7 @@ interface TheoryOverlayProps {
 export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps) {
     const [currentIndex, setCurrentIndex] = useState(0)
     const currentSlide = theory[currentIndex]
-    
+
     const isFirst = currentIndex === 0
     const isLast = currentIndex === theory.length - 1
 
@@ -39,19 +39,19 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
     }
 
     return (
-        <div className="fixed inset-0 z-300 flex items-center justify-center p-6 bg-(--bg-void)/95 backdrop-blur-sm">
-            {/* Ambient Background Elements */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none" 
-                     style={{ backgroundImage: 'linear-gradient(rgba(18, 176, 187, 0.1) 50%, transparent 50%)', backgroundSize: '100% 4px' }} />
-                <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-(--purple)/5 blur-[150px] rounded-full animate-pulse" />
-                <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] bg-(--green-base)/3 blur-[150px] rounded-full animate-pulse [animation-delay:2s]" />
+        <div className="fixed inset-0 z-300 flex items-center justify-center p-6 bg-(--bg-void)/98">
+            {/* Ambient Background Elements - Optimized (no pulses) */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-50">
+                <div className="absolute top-0 left-0 w-full h-full opacity-[0.03]"
+                    style={{ backgroundImage: 'linear-gradient(rgba(18, 176, 187, 0.1) 50%, transparent 50%)', backgroundSize: '100% 2px' }} />
+                <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-(--purple)/5 blur-[120px] rounded-full" />
+                <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] bg-(--green-base)/3 blur-[120px] rounded-full" />
             </div>
 
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, scale: 0.98, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="relative w-full max-w-3xl bg-(--bg-elevated) border border-(--bg-hover) shadow-[0_0_50px_rgba(0,0,0,0.5)] rounded-xs flex flex-col min-h-[500px]"
+                className="relative w-full max-w-3xl bg-(--bg-elevated) border border-(--bg-hover) shadow-[0_0_50px_rgba(0,0,0,0.5)] rounded-xs flex flex-col min-h-[500px] will-change-transform"
             >
                 {/* Tactical Frame Elements */}
                 <div className="absolute -top-px -left-px w-12 h-12 border-t-2 border-l-2 border-(--purple)/50 z-10" />
@@ -71,9 +71,9 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                                     MODULO_PEDAGOGICO // ANALISIS_TECNICO
                                 </span>
                                 <div className="h-px w-8 bg-(--purple)/30" />
-                                <Activity size={10} className="text-(--purple) animate-pulse" />
+                                <Activity size={10} className="text-(--purple)" />
                             </div>
-                            <h2 className="text-(--text-primary) font-mono text-[20px] font-bold tracking-tight">
+                            <h2 className="text-(--text-primary) font-(family-name:--font-title) font-bold text-[20px]">
                                 {currentSlide.title}
                             </h2>
                         </div>
@@ -87,12 +87,12 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                 {/* Content Area - KEY FIX: overflow-visible/y-auto blend */}
                 <div className="flex-1 relative overflow-hidden bg-radial-at-t from-(--bg-surface) to-(--bg-elevated)">
                     {/* Interior Scanlines */}
-                    <div className="absolute inset-0 pointer-events-none opacity-[0.02]" 
+                    <div className="absolute inset-0 pointer-events-none opacity-[0.02]"
                         style={{ backgroundImage: 'repeating-linear-gradient(0deg, #fff, #fff 1px, transparent 1px, transparent 2px)', backgroundSize: '100% 2px' }} />
-                    
+
                     <div className="h-full overflow-y-auto custom-scrollbar px-10 py-10">
                         <AnimatePresence mode="wait">
-                            <motion.div 
+                            <motion.div
                                 key={currentIndex}
                                 initial={{ opacity: 0, y: 5 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -103,7 +103,7 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                                 {/* Narrative/Main Text */}
                                 <div className="relative">
                                     <div className="absolute -left-4 top-0 bottom-0 w-0.5 bg-linear-to-b from-(--purple)/60 via-(--purple)/10 to-transparent" />
-                                    <div className="text-(--text-muted) leading-relaxed text-[16px] font-medium pl-2">
+                                    <div className="text-(--text-muted) leading-relaxed text-[15px] font-normal pl-2">
                                         <TheoryText text={currentSlide.content} />
                                     </div>
                                 </div>
@@ -129,8 +129,8 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                                                     {currentSlide.code.split('\n').map((line, i) => {
                                                         const isHighlighted = currentSlide.highlightLines?.includes(i + 1)
                                                         return (
-                                                            <div 
-                                                                key={i} 
+                                                            <div
+                                                                key={i}
                                                                 className={`flex gap-4 px-4 -mx-4 transition-colors ${isHighlighted ? 'bg-(--green-light)/10 border-l-2 border-(--green-light) text-(--text-primary)' : ''}`}
                                                             >
                                                                 <span className="shrink-0 w-6 text-(--text-ghost) text-right select-none opacity-40">{i + 1}</span>
@@ -158,7 +158,7 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                                                 <span className="text-(--purple) font-bold uppercase text-[10px] tracking-[0.3em] flex items-center gap-2 mb-2">
                                                     ANÁLISIS FRAG <span className="h-px flex-1 bg-(--purple)/20" />
                                                 </span>
-                                                <div className="text-(--text-muted) text-[14px] leading-relaxed italic">
+                                                <div className="text-(--text-muted) text-[14px] leading-relaxed">
                                                     <TheoryText text={currentSlide.explanation} />
                                                 </div>
                                             </div>
@@ -175,18 +175,17 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                     {/* Tactical Progress Bar */}
                     <div className="flex flex-col gap-2">
                         <div className="flex justify-between items-center w-32">
-                            <span className="text-[9px] text-(--text-ghost) font-mono">INTEGRIDAD:</span>
-                            <span className="text-[9px] text-(--purple) font-mono">{Math.round(((currentIndex + 1) / theory.length) * 100)}%</span>
+                            <span className="text-[11px] text-(--text-muted) font-mono">INTEGRIDAD:</span>
+                            <span className="text-[11px] text-(--purple) font-mono">{Math.round(((currentIndex + 1) / theory.length) * 100)}%</span>
                         </div>
                         <div className="flex gap-1">
                             {theory.map((_, i) => (
-                                <div 
-                                    key={i} 
-                                    className={`h-2 transition-all duration-500 rounded-xs ${
-                                        i === currentIndex 
-                                            ? 'w-6 bg-(--purple) shadow-[0_0_10px_rgba(127,119,221,0.5)]' 
-                                            : i < currentIndex ? 'w-3 bg-(--purple)/40' : 'w-3 bg-(--bg-hover)'
-                                    }`}
+                                <div
+                                    key={i}
+                                    className={`h-2 transition-all duration-500 rounded-xs ${i === currentIndex
+                                        ? 'w-6 bg-(--purple) shadow-[0_0_10px_rgba(127,119,221,0.5)]'
+                                        : i < currentIndex ? 'w-3 bg-(--purple)/40' : 'w-3 bg-(--bg-hover)'
+                                        }`}
                                 />
                             ))}
                         </div>
@@ -194,7 +193,7 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
 
                     <div className="flex items-center gap-4">
                         {!isFirst && (
-                            <Button 
+                            <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={prev}
@@ -204,13 +203,12 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                             </Button>
                         )}
 
-                        <Button 
+                        <Button
                             variant="solid"
-                            size="md"
+                            size="sm"
                             onClick={next}
                             icon={isLast ? CheckCircle2 : ChevronRight}
                             iconPosition="right"
-                            className={!isLast ? 'bg-(--purple) border-(--purple)/50 hover:bg-(--purple)/80 shadow-[0_0_20px_rgba(127,119,221,0.2)]' : ''}
                         >
                             {isLast ? 'CONFIRMAR' : 'SIGUIENTE'}
                         </Button>

@@ -109,9 +109,6 @@ export default function LevelComplete({
                 >
                     <div className="relative px-6 py-6 max-h-[85vh] overflow-y-auto custom-scrollbar flex flex-col gap-6">
 
-                        {/* ── CRT scanlines ── */}
-                        <div className="absolute inset-0 pointer-events-none crt-overlay opacity-30 z-10" />
-
                         {/* ── HEADER TERMINAL ── */}
                         <div className="relative z-20 flex items-center justify-between border-b-2 border-(--bg-hover) pb-3 mb-2">
                             <div className="text-[10px] text-(--green-muted) tracking-widest uppercase">
