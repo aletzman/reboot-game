@@ -310,6 +310,58 @@
       "effect": "En el nivel final (5-02) puede consultarse hasta 2 veces. Muestra sintaxis y ejemplos de cada concepto JS sin revelar la solución de los tests.",
       "inventoryNote": "Solo disponible con 3 estrellas en el repaso del Acto IV. Tu mejor aliado en el nivel final si FRAG no puede ayudarte.",
       "obtainCondition": "3 estrellas en nivel 4-R"
+    },
+    {
+      "id": "cheatsheet_fase1",
+      "name": "Guía Táctica: El Lenguaje",
+      "icon": "scroll",
+      "obtainedIn": "4-R",
+      "description": "Una referencia completa de la Fase 1. Contiene la sintaxis de variables, tipos, operadores y bucles.",
+      "lore": "FRAG: 'He condensado la gramática del nuevo mundo en este archivo. No lo pierdas.'",
+      "type": "hint",
+      "required": false,
+      "usedIn": ["5-R", "8-02"],
+      "effect": "Permite consultar la sintaxis básica en niveles posteriores.",
+      "inventoryNote": "Obtenido al superar el Acto IV."
+    },
+    {
+      "id": "cheatsheet_fase2",
+      "name": "Manual de Interfaz: DOM",
+      "icon": "terminal",
+      "obtainedIn": "5-R",
+      "description": "Tu guía para manipular el navegador. Selectores, eventos y almacenamiento.",
+      "lore": "Un fragmento del manual de usuario de las terminales de GÉNESIS.",
+      "type": "hint",
+      "required": false,
+      "usedIn": ["6-R", "8-02"],
+      "effect": "Muestra ejemplos de manipulación del DOM.",
+      "inventoryNote": "Obtenido al superar el Acto V."
+    },
+    {
+      "id": "cheatsheet_fase3",
+      "name": "Protocolo Asíncrono: Modernidad",
+      "icon": "zap",
+      "obtainedIn": "6-R",
+      "description": "Esquemas de promesas, async/await y el API de fetch.",
+      "lore": "Información extraída de las comunicaciones de larga distancia del bunker.",
+      "type": "hint",
+      "required": false,
+      "usedIn": ["7-R", "8-02"],
+      "effect": "Referencia para código asíncrono.",
+      "inventoryNote": "Obtenido al superar el Acto VI."
+    },
+    {
+      "id": "maestria_poo",
+      "name": "Arquitectura de Sistemas: POO",
+      "icon": "layers",
+      "obtainedIn": "7-R",
+      "description": "El nivel más alto de conocimiento: Clases, herencia y prototipos.",
+      "lore": "El certificado de arquitecto de sistemas GÉNESIS. Solo para humanos cualificados.",
+      "type": "final",
+      "required": true,
+      "usedIn": ["8-02"],
+      "effect": "Requerido para el nivel final de activación.",
+      "inventoryNote": "El conocimiento definitivo. Requerido para iniciar GÉNESIS."
     }
   ]
 }

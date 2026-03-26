@@ -665,338 +665,2258 @@
     {
       "id": "4-01",
       "act": 4,
-      "actName": "JavaScript",
-      "type": "codeeditor",
-      "title": "Variables: cajas con nombre",
-      "description": "El robot necesita saber cuántos pasos dar. Ese número cambia. En lugar de hardcodearlo, lo guardas en una variable.",
-      "narrative": "FRAG: 'Una variable es solo una caja con un nombre. Le pones un valor adentro. Cuando la necesitas, llamas a la caja por su nombre.'",
-      "mechanic": "Monaco Editor. Declara una variable y úsala en robot.move(pasos). Cambia el valor, cambia el comportamiento.",
-      "concept": "variables en JS",
-      "codeExample": "let pasos = 3;\nrobot.move(pasos);\n\nconst direccion = 'derecha';\nrobot.turn(direccion);",
+      "actName": "Fase 1: El Lenguaje",
+      "type": "puzzle-match",
+      "title": "¿Qué es JavaScript?",
+      "description": "Entiende el papel de JS en la reconstrucción del mundo digital.",
+      "narrative": "FRAG: 'JavaScript no es solo código, es el sistema nervioso de GÉNESIS.'",
+      "mechanic": "Empareja cada concepto con su función.",
+      "concept": "Intro JS",
+      "theory": [
+        {
+          "step": 1,
+          "title": "¿Qué es JavaScript?",
+          "content": "JavaScript es el lenguaje que da vida a la web. Es el protocolo que permite a las máquinas interactuar con el entorno digital y físico. Es el único lenguaje que el navegador entiende nativamente.",
+          "explanation": "Sin JS, las interfaces son estáticas. Con JS, el mundo responde."
+        },
+        {
+          "step": 2,
+          "title": "Un Lenguaje Universal",
+          "content": "JavaScript se usa en todas partes: aplicaciones web, servidores (Node.js), e incluso para controlar robots (como nuestros droides de limpieza).",
+          "explanation": "Dominar JS es dominar la tecnología del antiguo mundo."
+        },
+        {
+          "step": 3,
+          "title": "Navegador y ECMAScript",
+          "content": "El **navegador** es el entorno donde JS respira. Para asegurar que todos los sistemas hablen igual, existe **ECMAScript**, el estándar técnico oficial que define cómo debe funcionar el lenguaje.",
+          "explanation": "Piénsalo como las leyes de la física digital: universales e inmutables."
+        },
+        {
+          "step": 4,
+          "title": "Interactuar con el mundo",
+          "content": "La mayor potencia de JS es la **interacción**. Permite que un robot se mueva al pulsar un botón o que una puerta se abra tras validar un código. Transforma los datos en acciones.",
+          "explanation": "Sin JS, el mundo es solo una imagen estática. Con JS, es una interfaz viva."
+        }
+      ],
+      "pairs": [
+        {
+          "left": "JavaScript",
+          "right": "Lenguaje universal"
+        },
+        {
+          "left": "Navegador",
+          "right": "Entorno de ejecución"
+        },
+        {
+          "left": "Interacción",
+          "right": "Respuesta al usuario"
+        },
+        {
+          "left": "ECMAScript",
+          "right": "Estándar oficial"
+        }
+      ],
+      "rewardCards": [
+        "card-013"
+      ],
       "fragAvailable": true,
-      "fragHint": "Usa 'let' para crear la variable, ponle un nombre y asígnale un valor con '='.",
       "optional": false,
+      "maxStars": 3,
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": [
-        "card-015"
-      ],
-      "failRedirectTo": null,
-      "maxStars": 3
+      "failRedirectTo": null
     },
     {
       "id": "4-02",
       "act": 4,
-      "actName": "JavaScript",
-      "type": "puzzle-bug",
-      "title": "Encuentra el error de tipos",
-      "description": "El sistema de navegación falla. Está sumando un número con un texto. El resultado es basura. Encuéntralo.",
-      "narrative": "FRAG: 'El programa no falla porque esté mal escrito — falla porque mezcla tipos que no se pueden mezclar.'",
-      "mechanic": "6 líneas de código JS. Una suma incorrectamente number + string. Identifica y corrige.",
-      "concept": "tipos de datos",
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "La Voz del Sistema: console.log",
+      "description": "Aprende a comunicarte con la máquina.",
+      "narrative": "FRAG: 'Si no imprimes, estás a ciegas.'",
+      "mechanic": "Usa console.log().",
+      "concept": "Salida",
+      "theory": [
+        {
+          "step": 1,
+          "title": "console.log",
+          "content": "Envía datos a la terminal.",
+          "code": "console.log('Hola');",
+          "explanation": "Función básica de salida.",
+          "highlightLines": [
+            1
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Usa console.log para imprimir tu nombre y 'Sistema activo'.",
+        "starConditions": [
+          "1 estrella: un mensaje",
+          "2 estrellas: dos mensajes",
+          "3 estrellas: mensaje con número"
+        ]
+      },
+      "rewardCards": [
+        "card-014"
+      ],
       "fragAvailable": true,
-      "fragHint": "¿Estás sumando números o textos? Verifica de qué tipo es cada variable.",
       "optional": false,
+      "maxStars": 3,
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": [
-        "card-016"
-      ],
-      "failRedirectTo": "4-01",
-      "maxStars": 2
+      "failRedirectTo": null
     },
     {
       "id": "4-03",
       "act": 4,
-      "actName": "JavaScript",
+      "actName": "Fase 1: El Lenguaje",
       "type": "codeeditor",
-      "title": "Funciones: instrucciones con nombre",
-      "description": "El robot necesita la misma secuencia compleja en 4 puntos. Escribirla 4 veces no tiene sentido. Crea una función.",
-      "narrative": "FRAG: 'Ya usaste funciones con bloques. Ahora escríbelas tú. function es la palabra clave.'",
-      "mechanic": "Escribe tu primera función JS con parámetros. Llámala 4 veces con diferentes argumentos.",
-      "concept": "funciones con parámetros",
-      "codeExample": "function reactivar(generador) {\n  robot.move(generador.distancia);\n  robot.activate();\n}\n\nreactivar(generador1);\nreactivar(generador2);",
+      "title": "Cápsulas de Memoria: let/const",
+      "description": "Declara variables y entiende por qué 'var' es una reliquia peligrosa del pasado.",
+      "narrative": "FRAG: 'En este búnker, la memoria es limitada. Usa const para lo inalterable y let para lo mutable.'",
+      "mechanic": "Usa let y const correctamente en un script de diagnóstico.",
+      "concept": "Variables y Scope de Bloque",
+      "theory": [
+        {
+          "step": 1,
+          "title": "¿Qué es una variable?",
+          "content": "Una variable es una caja con nombre donde guardas un dato. Puedes guardar un número, un texto, o cualquier valor que tu programa necesite recordar.",
+          "code": "let energia = 100;\nlet nombreBunker = 'Sector 7';\nlet sistemaActivo = true;",
+          "explanation": "Con 'let' declaras la caja y al mismo tiempo le metes un valor. El nombre a la izquierda, el valor a la derecha.",
+          "highlightLines": [
+            1,
+            2,
+            3
+          ],
+          "avoidSyntax": []
+        },
+        {
+          "step": 2,
+          "title": "const: valores que no cambian",
+          "content": "Cuando un valor nunca debe cambiar, usa 'const'. Si intentas reasignarlo, el sistema lanzará un error. Es tu primera línea de defensa contra errores accidentales.",
+          "code": "const CAPACIDAD_MAXIMA = 500;\nconst NOMBRE_SISTEMA = 'GENESIS';\n\nCAPACIDAD_MAXIMA = 600; // ERROR: no se puede reasignar",
+          "explanation": "Por convención, las constantes que nunca cambian se escriben en MAYUSCULAS. No es obligatorio, pero ayuda a leerlas.",
+          "highlightLines": [
+            4
+          ],
+          "avoidSyntax": []
+        },
+        {
+          "step": 3,
+          "title": "var: el modo antiguo (y peligroso)",
+          "content": "Antes de 2015, solo existía 'var'. El problema: var ignora los bloques de código como los if o los for. Una variable declarada con var dentro de un if es visible FUERA del if. Eso causa bugs muy difíciles de encontrar.",
+          "code": "if (true) {\n  var fugitiva = 'me escapo';\n  let encerrada = 'me quedo';\n}\n\nconsole.log(fugitiva);  // 'me escapo' (var se escapó del bloque)\nconsole.log(encerrada); // ERROR (let se quedó adentro)",
+          "explanation": "Hoy en día no hay razón para usar var. Todo el código moderno usa let y const.",
+          "highlightLines": [
+            2,
+            3,
+            6,
+            7
+          ],
+          "avoidSyntax": []
+        },
+        {
+          "step": 4,
+          "title": "Regla simple para elegir cuál usar",
+          "content": "Sigue esta regla en orden: primero intenta con const. Si el valor necesita cambiar, usa let. Nunca uses var.",
+          "code": "const nombre = 'FRAG';      // nunca va a cambiar\nlet bateria = 80;            // va a ir bajando\nbateria = 75;                // esto sí funciona con let\nnombre = 'otro';             // esto falla con const",
+          "explanation": "Usar const por defecto te protege: si accidentalmente intentas cambiar algo que no deberías, el error aparece de inmediato.",
+          "highlightLines": [
+            3,
+            4
+          ],
+          "avoidSyntax": []
+        }
+      ],
+      "challenge": {
+        "instruction": "Declara 'BUNKER' (const) y 'energia' (let). Baja energia a 95.",
+        "starConditions": [
+          "1 estrella: declaración",
+          "2 estrellas: cambio",
+          "3 estrellas: uso de const"
+        ]
+      },
+      "rewardCards": [
+        "card-015"
+      ],
       "fragAvailable": true,
-      "fragHint": "Escribe 'function nombre(parametro) { }' y pon las instrucciones adentro.",
       "optional": false,
+      "maxStars": 3,
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
-      "rewardObjects": [
-        "plano_funciones_js"
-      ],
-      "rewardCards": [
-        "card-017"
-      ],
-      "failRedirectTo": "4-01",
-      "maxStars": 3
+      "rewardObjects": [],
+      "failRedirectTo": null
     },
     {
       "id": "4-04",
       "act": 4,
-      "actName": "JavaScript",
-      "type": "speedtyping",
-      "title": "Código bajo presión",
-      "description": "El sistema tiene un contador regresivo. Si no ingresas el código de estabilización antes de que llegue a cero, el sector colapsa.",
-      "narrative": "FRAG: '¡Contador activo! Necesito que ingreses el protocolo de estabilización ahora.'",
-      "mechanic": "Speed typing con código JS: variables y funciones. Timer 90 segundos. Urgencia narrativa.",
-      "concept": "velocidad con código real",
-      "fragAvailable": false,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "puzzle-match",
+      "title": "Validación: Memoria",
+      "description": "let vs const vs var.",
+      "concept": "Scope",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Las Tres Palabras clave",
+          "content": "Para declarar variables en JS moderno usamos **const** y **let**. Antiguamente se usaba **var**, pero sus comportamientos erráticos lo han vuelto obsoleto.",
+          "explanation": "Usa const por defecto. Cambia a let solo si los datos van a mutar."
+        },
+        {
+          "step": 2,
+          "title": "¿Qué es el Scope?",
+          "content": "El **Scope** (alcance) define dónde es visible una variable. `const` y `let` tienen scope de bloque: viven dentro de las llaves `{}` donde nacen.",
+          "explanation": "Si declaras algo en un búnker, no se ve desde fuera."
+        }
+      ],
+      "pairs": [
+        {
+          "left": "const",
+          "right": "Inmutable"
+        },
+        {
+          "left": "let",
+          "right": "Variable"
+        },
+        {
+          "left": "var",
+          "right": "Obsoleto"
+        },
+        {
+          "left": "Scope",
+          "right": "Alcance de visibilidad"
+        }
+      ],
+      "fragAvailable": true,
       "optional": false,
+      "maxStars": 3,
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": [
-        "card-018"
-      ],
-      "failRedirectTo": null,
-      "maxStars": 3
+      "rewardCards": [],
+      "failRedirectTo": null
     },
     {
       "id": "4-05",
       "act": 4,
-      "actName": "JavaScript",
-      "type": "codeeditor",
-      "title": "Arrays: listas de supervivencia",
-      "description": "Hay 6 generadores que activar. Podrías hacer 6 variables. O guardarlos todos en una lista y recorrerlos.",
-      "narrative": "FRAG: 'Un array es una lista. Imagina una caja con compartimentos numerados. El primero es el 0, no el 1.'",
-      "mechanic": "Crea un array de generadores y usa forEach para activarlos. Practica acceso por índice.",
-      "concept": "arrays y recorrido",
-      "codeExample": "const generadores = ['A', 'B', 'C', 'D'];\n\ngeneradores.forEach(function(gen) {\n  robot.activate(gen);\n});\n\nconsole.log(generadores[0]); // 'A'",
+      "actName": "Fase 1: El Lenguaje",
+      "type": "puzzle-match",
+      "title": "Validación: Hoisting",
+      "description": "Entiende el ciclo de vida de las variables y el Hoisting.",
+      "concept": "Ciclo de vida",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Hoisting y TDZ",
+          "content": "El **Hoisting** es la tendencia del motor de JS de 'elevar' las declaraciones. Sin embargo, con `let` y `const`, no puedes usarlas antes de su línea de código.",
+          "explanation": "El tiempo entre el inicio y la declaración se llama TDZ (Zona Muerta Temporal)."
+        },
+        {
+          "step": 2,
+          "title": "Errores de Acceso",
+          "content": "Si intentas usar una variable antes de inicializarla, obtendrás un **ReferenceError**. Es la forma que tiene el sistema de evitar fantasmas en el código.",
+          "explanation": "Planifica tus variables antes de ejecutarlas."
+        }
+      ],
+      "pairs": [
+        {
+          "left": "Hoisting",
+          "right": "Elevación"
+        },
+        {
+          "left": "TDZ",
+          "right": "Zona muerta"
+        },
+        {
+          "left": "ReferenceError",
+          "right": "Acceso ilegal"
+        },
+        {
+          "left": "Init",
+          "right": "Asignación inicial"
+        }
+      ],
       "fragAvailable": true,
-      "fragHint": "Declara el array con [ ] y usa forEach para recorrerlo.",
       "optional": false,
+      "maxStars": 3,
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": [
-        "card-019"
-      ],
-      "failRedirectTo": "4-03",
-      "maxStars": 3
+      "rewardCards": [],
+      "failRedirectTo": null
     },
     {
       "id": "4-06",
       "act": 4,
-      "actName": "JavaScript",
-      "type": "puzzle-bug",
-      "title": "El inventario roto",
-      "description": "El sistema de inventario tiene 3 bugs de arrays: posiciones incorrectas, índices fuera de rango, confunde length con último índice.",
-      "narrative": "FRAG: 'Si no corriges el inventario, no sabremos qué recursos tiene el bunker. Tres bugs. Los tres sobre listas.'",
-      "mechanic": "3 fragmentos de código JS con bugs de arrays. Corrige uno a uno.",
-      "concept": "bugs comunes con arrays",
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Fantasmas del Código: Hoisting",
+      "description": "Aplica lo aprendido y corrige el bug de Hoisting.",
+      "concept": "TDZ",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Hoisting Práctico",
+          "content": "Como vimos, no puedes usar una variable antes de declararla. Mueve siempre tus declaraciones al inicio de su bloque para evitar errores.",
+          "code": "let x = 5;\nconsole.log(x); // Correcto",
+          "explanation": "El orden de los factores sí altera el producto en JS.",
+          "highlightLines": [
+            1
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Mueve let arriba del log.",
+        "starConditions": [
+          "1 estrella: sin error",
+          "2 estrellas: orden lógico",
+          "3 estrellas: comentario explicativo"
+        ]
+      },
       "fragAvailable": true,
-      "fragHint": "Recuerda: el primer elemento de un array está en la posición 0, no en la 1.",
       "optional": false,
+      "maxStars": 3,
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
-      "rewardObjects": [
-        "componente_repuesto"
-      ],
-      "rewardCards": [
-        "card-020"
-      ],
-      "failRedirectTo": "4-05",
-      "maxStars": 2
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
     },
     {
       "id": "4-07",
       "act": 4,
-      "actName": "JavaScript",
+      "actName": "Fase 1: El Lenguaje",
       "type": "codeeditor",
-      "title": "Objetos: el plano de las máquinas",
-      "description": "Cada máquina del bunker tiene múltiples propiedades. Un objeto agrupa todo bajo un mismo nombre.",
-      "narrative": "FRAG: 'Un objeto es un plano de algo real. La máquina A tiene potencia 80, estado inactivo, tipo incubadora. Todo en un solo lugar.'",
-      "mechanic": "Crea objetos JS para máquinas del bunker. Accede con dot notation. Modifica estado.",
-      "concept": "objetos y propiedades",
-      "codeExample": "const maquinaA = {\n  potencia: 80,\n  estado: 'inactivo',\n  tipo: 'incubadora'\n};\n\nconsole.log(maquinaA.tipo);\nmaquinaA.estado = 'activo';",
+      "title": "Materiales del Sistema: Datos",
+      "description": "typeof operators.",
+      "concept": "Types",
+      "theory": [
+        {
+          "step": 1,
+          "title": "typeof",
+          "content": "Ver tipo de dato.",
+          "code": "typeof 5;",
+          "explanation": "Devuelve 'number'.",
+          "highlightLines": [
+            1
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Usa typeof e imprime los tipos resultantes.",
+        "starConditions": [
+          "1 estrella: typeof usado",
+          "2 estrellas: string/number",
+          "3 estrellas: boolean/null"
+        ]
+      },
+      "rewardCards": [
+        "card-016"
+      ],
       "fragAvailable": true,
-      "fragHint": "Usa { } para crear el objeto y nombre: valor para cada propiedad.",
       "optional": false,
+      "maxStars": 3,
       "isReview": false,
       "reviewOf": [],
-      "requiredObjects": [
-        "diario_ingeniero"
-      ],
-      "rewardObjects": [
-        "plano_estructura_genesis"
-      ],
-      "rewardCards": [
-        "card-021"
-      ],
-      "failRedirectTo": "4-05",
-      "maxStars": 3,
-      "note": "El diario del ingeniero revela la estructura de objetos de las máquinas GÉNESIS dando ventaja en el ejercicio."
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "failRedirectTo": null
     },
     {
       "id": "4-08",
       "act": 4,
-      "actName": "JavaScript",
+      "actName": "Fase 1: El Lenguaje",
       "type": "codeeditor",
-      "title": "Callbacks: cuando termines, avisa",
-      "description": "Una máquina tarda en arrancar. El robot no puede seguir hasta que esté lista. ¿Cómo sabe el programa cuándo terminó?",
-      "narrative": "FRAG: 'Algunas tareas toman tiempo. Le dices a la máquina: cuando termines, llama a esta función. Eso es un callback.'",
-      "mechanic": "Usa callbacks para manejar el arranque asíncrono de máquinas. Introduce asincronía narrativamente.",
-      "concept": "callbacks y asincronía",
-      "codeExample": "function arrancar(maquina, callback) {\n  maquina.iniciar();\n  callback();\n}\n\narrancar(maquinaA, function() {\n  robot.activate();\n});",
+      "title": "Engranajes: Operadores",
+      "description": "Domina la aritmética y la lógica binaria para calibrar los motores del búnker.",
+      "narrative": "FRAG: 'Los motores necesitan energía precisa. Usa operadores para validar la señal.'",
+      "mechanic": "Usa % y operadores lógicos &&, ||.",
+      "concept": "Operators",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Aritmética: El Módulo (%)",
+          "content": "El operador **módulo (%)** devuelve el resto de una división. Es vital para ciclos o para saber si un número es par/impar.",
+          "code": "let resto = 10 % 3; // resto es 1",
+          "explanation": "Si 10 granos se dividen entre 3 personas, sobra 1.",
+          "highlightLines": [
+            1
+          ]
+        },
+        {
+          "step": 2,
+          "title": "Lógica Binaria (&&, ||)",
+          "content": "Los operadores lógicos combinan verdades: **AND (&&)** requiere que TODO sea cierto; **OR (||)** requiere que al menos UNO coincida.",
+          "code": "const listo = energia > 50 && sistemaOK;\nconst alerta = fuego || inundacion;",
+          "explanation": "Lógica pura para decisiones complejas.",
+          "highlightLines": [
+            1,
+            2
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Calibra el motor: (1) Calcula el resto de 27 entre 5 en 'resto'. (2) Activa 'motorListo' si 'energia' es > 80 Y 'combustible' es > 50.",
+        "starConditions": [
+          "1 estrella: cálculo de resto",
+          "2 estrellas: lógica AND",
+          "3 estrellas: uso de variables"
+        ]
+      },
       "fragAvailable": true,
-      "fragHint": "El callback es la función que se ejecuta cuando la tarea termina. Pásala como parámetro.",
       "optional": false,
+      "maxStars": 3,
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": [
-        "card-022"
-      ],
-      "failRedirectTo": "4-06",
-      "maxStars": 3
+      "rewardCards": [],
+      "failRedirectTo": null
     },
     {
       "id": "4-09",
       "act": 4,
-      "actName": "JavaScript",
-      "type": "speedtyping",
-      "title": "El protocolo final",
-      "description": "El último protocolo de seguridad antes del bunker. Mezcla todo: variables, funciones, arrays, objetos.",
-      "narrative": "FRAG: 'El sistema de seguridad requiere el protocolo completo de activación. Es todo lo que has aprendido en una sola secuencia.'",
-      "mechanic": "Speed typing con código JS complejo. Timer 120 segundos. Bonus ★★★ con más de 30 segundos restantes.",
-      "concept": "integración de JavaScript",
-      "fragAvailable": false,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "puzzle-match",
+      "title": "Validación: Tipos",
+      "concept": "Primitivos",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Tipos Primitivos",
+          "content": "En JS, los valores básicos se llaman **Primitivos**. Incluyen **String** (texto), **Number** (números) y **Boolean** (true/false).",
+          "explanation": "Son los ladrillos de construcción de cualquier sistema digital."
+        },
+        {
+          "step": 2,
+          "title": "Indagación: typeof",
+          "content": "El operador **typeof** nos permite preguntar al sistema: '¿Qué tipo de dato es este?'. Nos devolverá una palabra clave como 'string' o 'number'.",
+          "explanation": "Imprescindible para depurar sensores mal calibrados."
+        }
+      ],
+      "pairs": [
+        {
+          "left": "typeof",
+          "right": "Identificador de tipo"
+        },
+        {
+          "left": "String",
+          "right": "Texto"
+        },
+        {
+          "left": "Number",
+          "right": "Valor numérico"
+        },
+        {
+          "left": "Boolean",
+          "right": "Interuptor lógico"
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-10",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Justicia: Igualdad Estricta",
+      "description": "Aprende por qué el doble igual (==) es un riesgo de seguridad y usa siempre el triple igual (===).",
+      "narrative": "FRAG: 'El sistema antiguo era permisivo. El nuevo búnker exige precisión absoluta.'",
+      "concept": "=== vs ==",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Coerción de Tipos",
+          "content": "El operador `==` intenta convertir los valores antes de compararlos. Esto hace que `5 == '5'` sea true, lo cual es peligroso.",
+          "code": "5 == '5'; // true\n5 === '5'; // false",
+          "explanation": "=== compara valor Y tipo de dato. Es la forma segura.",
+          "highlightLines": [
+            2
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Corrige el detector de intrusos: cambia el '==' por '===' para evitar falsos positivos.",
+        "starConditions": [
+          "1 estrella: cambio realizado",
+          "2 estrellas: uso de ===",
+          "3 estrellas: código limpio"
+        ]
+      },
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-11",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Protocolos: ?? y Ternarios",
+      "description": "Usa operadores modernos para manejar valores nulos y tomar decisiones rápidas.",
+      "narrative": "FRAG: 'Código corto es código limpio. Usa atajos seguros.'",
+      "concept": "Nullish & Ternary",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Nullish Coalescing (??)",
+          "content": "El operador **??** otorga un valor por defecto solo si el original es `null` o `undefined`.",
+          "code": "let oxigeno = datos.O2 ?? 50;",
+          "explanation": "Si no hay datos, asumimos un mínimo de 50.",
+          "highlightLines": [
+            1
+          ]
+        },
+        {
+          "step": 2,
+          "title": "Operador Ternario",
+          "content": "Es un `if/else` en una sola línea. `condicion ? true : false`.",
+          "code": "let estado = energia > 20 ? 'OK' : 'FAIL';",
+          "explanation": "Perfecto para asignaciones rápidas.",
+          "highlightLines": [
+            1
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "1. Asigna a 'oxigeno' el valor de 'userOxigeno' o 50 si es nulo. 2. Asigna a 'estado' 'ESTABLE' si energia > 50, o 'CRÍTICO' en caso contrario.",
+        "starConditions": [
+          "1 estrella: usa ??",
+          "2 estrellas: usa ?",
+          "3 estrellas: lógica exacta"
+        ]
+      },
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-12",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "puzzle-match",
+      "title": "Validación: Lógica",
+      "concept": "Booleana",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Operadores Lógicos",
+          "content": "Para combinar verdades usamos **AND (&&)** (ambos deben ser ciertos) y **OR (||)** (uno de los dos). El operador **NOT (!)** invierte el valor.",
+          "explanation": "Pura lógica binaria para procesar sensores."
+        },
+        {
+          "step": 2,
+          "title": "Nullish Coalescing (??)",
+          "content": "El operador **??** nos permite definir un valor por defecto solo si el sistema devuelve `null` o `undefined` (datos corruptos o vacíos).",
+          "explanation": "El plan de contingencia perfecto."
+        }
+      ],
+      "pairs": [
+        {
+          "left": "||",
+          "right": "OR"
+        },
+        {
+          "left": "&&",
+          "right": "AND"
+        },
+        {
+          "left": "??",
+          "right": "Nullish"
+        },
+        {
+          "left": "!",
+          "right": "NOT"
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-13",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Caminos: if / else / else if",
+      "description": "Crea un sistema de diagnóstico multicapa para evaluar la energía del búnker.",
+      "narrative": "FRAG: 'El código debe decidir según el estado de la red. Si hay energía suficiente, avanzamos. Si no, activamos la reserva.'",
+      "concept": "Branches",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Bifurcaciones de Decisión",
+          "content": "Con **else if** podemos evaluar múltiples condiciones en orden. Solo se ejecutará el primer bloque que sea verdadero.",
+          "code": "if (v > 80) { x = 'A'; }\nelse if (v > 40) { x = 'B'; }\nelse { x = 'C'; }",
+          "explanation": "El sistema evalúa de arriba hacia abajo.",
+          "highlightLines": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Escribe la lógica en 'diagnostico': Si energia es mayor a 80: 'ÓPTIMO'. Si es mayor a 40: 'ESTABLE'. En cualquier otro caso: 'ALERTA'.",
+        "starConditions": [
+          "1 estrella: usa if/else",
+          "2 estrellas: usa else if",
+          "3 estrellas: lógica exacta"
+        ]
+      },
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-14",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Selector: switch",
+      "description": "Usa switch para manejar múltiples comandos de consola de forma organizada.",
+      "narrative": "FRAG: 'Cuando tienes una lista de opciones fijas, el switch es más limpio que un bosque de if/else.'",
+      "concept": "Switch",
+      "theory": [
+        {
+          "step": 1,
+          "title": "El Interruptor Switch",
+          "content": "Compara un valor contra varios casos. Cada caso termina con **break** para evitar que la ejecución continúe al siguiente.",
+          "code": "switch (clave) {\n  case 'ROJO': stop(); break;\n  case 'VERDE': go(); break;\n  default: standby();\n}",
+          "explanation": "El caso 'default' es el respaldo si nada coincide.",
+          "highlightLines": [
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Implementa un switch para 'comando': Si es 'INICIAR' asigna 'Encendiendo'. Si es 'PARAR' asigna 'Apagando'. Si es 'STBY' asigna 'Espera'.",
+        "starConditions": [
+          "1 estrella: usa switch",
+          "2 estrellas: usa break",
+          "3 estrellas: usa default"
+        ]
+      },
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-15",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "puzzle-match",
+      "title": "Validación: Flujo",
+      "concept": "Decisiones",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Bifurcaciones",
+          "content": "Con **if** tomamos caminos. Con **else** definimos el camino alternativo. Si hay muchas opciones, usamos **switch**.",
+          "explanation": "Sin decisiones, el robot es solo un pisapapeles."
+        },
+        {
+          "step": 2,
+          "title": "Break y Default",
+          "content": "En un switch, **break** corta la ejecución tras un éxito. **default** es lo que ocurre si ningún caso coincide.",
+          "explanation": "Siempre ten una opción de escape."
+        }
+      ],
+      "pairs": [
+        {
+          "left": "if",
+          "right": "Bifurcación"
+        },
+        {
+          "left": "break",
+          "right": "Escape"
+        },
+        {
+          "left": "default",
+          "right": "Comodín final"
+        },
+        {
+          "left": "condition",
+          "right": "Gatillo"
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-16",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Motores: for",
+      "description": "Automatiza la inspección de motores mediante bucles for.",
+      "narrative": "FRAG: 'Repetir la misma tarea manualmente es para humanos. El búnker necesita automatización.'",
+      "concept": "for loop",
+      "theory": [
+        {
+          "step": 1,
+          "title": "El Bucle For",
+          "content": "Usa `for` cuando sepas cuántas veces exactamente debe repetirse una acción. Se compone de: Inicio, Condición e Incremento.",
+          "code": "for (let i = 0; i < 5; i++) {\n  console.log(i);\n}",
+          "explanation": "El contador 'i' lleva el registro del ciclo.",
+          "highlightLines": [
+            1
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Usa un bucle for para imprimir los números del 1 al 10 en la consola.",
+        "starConditions": [
+          "1 estrella: usa for",
+          "2 estrellas: llega a 10",
+          "3 estrellas: inicio en 1"
+        ]
+      },
+      "rewardCards": [
+        "card-018"
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-17",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Protocolos de Carga: while",
+      "description": "Utiliza bucles while para monitorear procesos hasta que se cumpla una condición.",
+      "narrative": "FRAG: '¿Y si no sabemos cuánto tardará en cargar? El while espera sin descanso.'",
+      "concept": "while loop",
+      "theory": [
+        {
+          "step": 1,
+          "title": "El Bucle While",
+          "content": "Se repite mientras la condición sea verdadera. ¡Cuidado con los bucles infinitos!",
+          "code": "while (energia < 100) {\n  energia++;\n}",
+          "explanation": "La condición se evalúa ANTES de cada iteración.",
+          "highlightLines": [
+            1
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Aumenta la variable 'carga' de 0 a 100 usando un bucle while.",
+        "starConditions": [
+          "1 estrella: usa while",
+          "2 estrellas: condición carga < 100",
+          "3 estrellas: incrementa carga"
+        ]
+      },
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-18",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Control de Energía: break",
+      "description": "Interrumpe bucles prematuramente si se detecta una anomalía.",
+      "narrative": "FRAG: 'Incluso en un loop infinito, siempre debe haber un protocolo de escape.'",
+      "concept": "break/continue",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Corte de Ejecución",
+          "content": "Usa **break** para salir de un loop por completo. Usa **continue** para saltar a la siguiente iteración sin terminar la actual.",
+          "code": "for (i) {\n  if (bug) break;\n  if (info) continue;\n}",
+          "explanation": "Son las llaves de mando del bucle.",
+          "highlightLines": [
+            2,
+            3
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Recorre del 1 al 20: sal del bucle (break) si llegas a 15. Salta el número 13 (continue).",
+        "starConditions": [
+          "1 estrella: usa continue",
+          "2 estrellas: usa break",
+          "3 estrellas: secuencia exacta"
+        ]
+      },
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-19",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "puzzle-match",
+      "title": "Validación: Iteración",
+      "concept": "Loops",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Iteración Continua",
+          "content": "Los loops **for** y **while** permiten repetir acciones. `for` es ideal para ciclos conocidos; `while` es mejor para estados hasta que cambien.",
+          "explanation": "Haz que la máquina trabaje por ti."
+        },
+        {
+          "step": 2,
+          "title": "Puntos de ruptura",
+          "content": "Usa **break** para salir de un bucle inmediatamente si algo ocurre. **incremento** es el paso que evita el bucle infinito.",
+          "explanation": "No dejes que tu procesador se caliente hasta fundirse en un loop eterno."
+        }
+      ],
+      "pairs": [
+        {
+          "left": "for",
+          "right": "Iterador fijo"
+        },
+        {
+          "left": "while",
+          "right": "Condicional"
+        },
+        {
+          "left": "incremento",
+          "right": "Avanzar loop"
+        },
+        {
+          "left": "infinito",
+          "right": "Bucle sin salida"
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-20",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Módulos: Funciones",
+      "concept": "Functions",
+      "challenge": {
+        "instruction": "Declara function 'inyectar'.",
+        "starConditions": [
+          "1 estrella: decl",
+          "2 estrellas: return",
+          "3 estrellas: call"
+        ]
+      },
+      "rewardCards": [
+        "card-017"
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-21",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Transmisión: Parámetros",
+      "description": "Pasa datos a tus funciones para procesar información dinámica.",
+      "narrative": "FRAG: 'Las funciones son motores. Los parámetros son el combustible que les pasamos.'",
+      "concept": "Params & Return",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Parámetros y Retorno",
+          "content": "Los datos entran por los `(parámetros)` y salen mediante `return`.",
+          "code": "function suma(a, b) {\n  return a + b;\n}",
+          "explanation": "El return detiene la ejecución y devuelve el valor.",
+          "highlightLines": [
+            1,
+            2
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Crea una función 'encriptar(msg)' que tome un texto y retorne '[SEC] ' + msg. Úsala para encriptar 'ALERTA'.",
+        "starConditions": [
+          "1 estrella: tiene parámetro",
+          "2 estrellas: usa return",
+          "3 estrellas: llama función"
+        ]
+      },
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-22",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "puzzle-match",
+      "title": "Validación: Fábricas",
+      "concept": "Functions components",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Fábricas de lógica",
+          "content": "Una **función** es una caja que toma **parámetros** (ingredientes) y **retorna** un valor (resultado).",
+          "explanation": "Declara una vez, reutiliza para siempre."
+        },
+        {
+          "step": 2,
+          "title": "La firma de la función",
+          "content": "Sus partes: `function` (palabra clave), `()` (donde entran datos) y `{}` (el cuerpo del motor donde ocurre la magia).",
+          "explanation": "Sigue el estándar para no corromper el sistema."
+        }
+      ],
+      "pairs": [
+        {
+          "left": "return",
+          "right": "Salida"
+        },
+        {
+          "left": "parámetro",
+          "right": "Entrada"
+        },
+        {
+          "left": "()",
+          "right": "Ejecución"
+        },
+        {
+          "left": "{}",
+          "right": "Cuerpo"
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-23",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Almacén: Arrays",
+      "description": "Organiza grandes volúmenes de datos en estructuras de Arrays.",
+      "narrative": "FRAG: 'No podemos crear una variable para cada sensor. Agrupémoslos en una lista ordenada.'",
+      "concept": "Arrays",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Arrays y Índices",
+          "content": "Los Arrays se definen con `[]`. El primer elemento es siempre el índice **0**.",
+          "code": "const items = ['A', 'B'];\nconsole.log(items[0]); // 'A'",
+          "explanation": "El indexado en base cero es fundamental.",
+          "highlightLines": [
+            2
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Crea el array 'sensores' con los valores: 'T1', 'T2', 'T3'. Cambia 'T1' por 'T0' mediante su índice.",
+        "starConditions": [
+          "1 estrella: declara array",
+          "2 estrellas: usa índice 0",
+          "3 estrellas: cambio correcto"
+        ]
+      },
+      "rewardCards": [
+        "card-019"
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-24",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Filtros: .map / .filter",
+      "description": "Aprende a procesar listas de datos de forma masiva con métodos modernos.",
+      "narrative": "FRAG: '¿Mil sensores? No hay problema. Un filtro y tenemos solo los que nos interesan.'",
+      "concept": "Array methods",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Procesamiento Masivo",
+          "content": "`.map()` transforma cada elemento. `.filter()` selecciona elementos que cumplen una condición.",
+          "code": "lista.filter(x => x > 50);\nlista.map(x => x * 2);",
+          "explanation": "Son la base de la manipulación de datos en JS moderno.",
+          "highlightLines": [
+            1,
+            2
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Filtra el array 'voltajes': quédate solo con los mayores a 10. Luego duplica cada valor con map.",
+        "starConditions": [
+          "1 estrella: usa filter",
+          "2 estrellas: usa map",
+          "3 estrellas: encadenado"
+        ]
+      },
+      "rewardCards": [
+        "card-020"
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-25",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Registros: Objetos",
+      "description": "Modela el mundo real mediante objetos con propiedades.",
+      "narrative": "FRAG: 'Un robot no es solo un nombre. Tiene batería, velocidad y estado. Un objeto agrupa todo eso.'",
+      "concept": "Objects",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Objetos Literales",
+          "content": "Agrupan datos mediante pares `clave: valor`. Se accede a ellos con el punto `.`.",
+          "code": "const droide = { id: 1, v: 50 };\nconsole.log(droide.v);",
+          "explanation": "Permiten describir entidades complejas.",
+          "highlightLines": [
+            1,
+            2
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Crea el objeto 'droide' con nombre 'R-01' y bateria 100. Cambia su bateria a 80.",
+        "starConditions": [
+          "1 estrella: crea objeto",
+          "2 estrellas: propiedad nombre",
+          "3 estrellas: cambio de valor"
+        ]
+      },
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-26",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "puzzle-match",
+      "title": "Validación: Listas",
+      "concept": "Array methods",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Listas de datos",
+          "content": "Los **Arrays** son listas ordenadas. Podemos transformarlos con **.map()** (crea una lista nueva) o filtrarlos con **.filter()** (reduce la lista).",
+          "explanation": "Es más eficiente procesar en masa que uno por uno."
+        },
+        {
+          "step": 2,
+          "title": "Propiedades de Array",
+          "content": "**.length** te dice cuántos elementos hay. El acceso es siempre por índice base 0: `[0]` es el primero.",
+          "explanation": "Un error de índice es un cortocircuito asegurado."
+        }
+      ],
+      "pairs": [
+        {
+          "left": ".map()",
+          "right": "Transformar"
+        },
+        {
+          "left": ".filter()",
+          "right": "Seleccionar"
+        },
+        {
+          "left": ".length",
+          "right": "Contar"
+        },
+        {
+          "left": "[0]",
+          "right": "Primero"
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-27",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Entidades: Objetos Avanzados",
+      "description": "Crea modelos complejos de la infraestructura del búnker.",
+      "narrative": "FRAG: 'Un objeto puede contener no solo valores, sino el estado completo de un sector.'",
+      "concept": "Objects",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Propiedades Dinámicas",
+          "content": "Puedes añadir o modificar propiedades de un objeto en cualquier momento tras su creación usando la notación de punto.",
+          "code": "bunker.estado = 'SEGURO';\nif (bunker.energia > 0) { ... }",
+          "explanation": "El estado de tu búnker cambiará según tus decisiones.",
+          "highlightLines": [
+            1
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Crea un objeto 'bunker' con propiedades 'id' (número), 'nombre' (texto) y 'estado' ('ALERTA'). Cambia su estado a 'SEGURO'.",
+        "starConditions": [
+          "1 estrella: crea el objeto",
+          "2 estrellas: propiedades id/nombre",
+          "3 estrellas: cambio de estado"
+        ]
+      },
+      "rewardCards": [
+        "card-021"
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-28",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "codeeditor",
+      "title": "Flecha: Arrow Functions",
+      "description": "Simplifica tu código usando la sintaxis moderna de flecha (=>).",
+      "narrative": "FRAG: 'Código más corto, menos ruido, más velocidad. Las funciones flecha son el estándar moderno.'",
+      "concept": "Arrows",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Sintaxis de Flecha",
+          "content": "Permiten escribir funciones de forma muy concisa. Si la función solo tiene una línea, el `return` es implícito y puedes omitir las llaves.",
+          "code": "const sumar = (a, b) => a + b;\n// En lugar de: function(a,b) { return a+b; }",
+          "explanation": "Es la forma preferida de usar funciones como argumentos en .map() o .filter().",
+          "highlightLines": [
+            1
+          ]
+        }
+      ],
+      "challenge": {
+        "instruction": "Convierte la función 'cuadrado' a una Arrow Function de una sola línea sin usar la palabra 'return'.",
+        "starConditions": [
+          "1 estrella: usa =>",
+          "2 estrellas: sin llaves {}",
+          "3 estrellas: sin return"
+        ]
+      },
+      "rewardCards": [
+        "card-023"
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-29",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "puzzle-match",
+      "title": "Validación: Estructuras",
+      "concept": "Sintaxis",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Sintaxis Moderna",
+          "content": "JS moderno usa **Arrow Functions** `=>` para funciones más compactas y **Objetos** `{}` para agrupar datos complejos.",
+          "explanation": "Código más limpio, mantenimiento más fácil."
+        },
+        {
+          "step": 2,
+          "title": "Estructuras",
+          "content": "Arrays `[]` para orden; Objetos `{}` para descripción. Símbolos simples que estructuran todo el conocimiento del pasado.",
+          "explanation": "Un lugar para cada dato, y cada dato en su lugar."
+        }
+      ],
+      "pairs": [
+        {
+          "left": "=>",
+          "right": "Arrow"
+        },
+        {
+          "left": "{}",
+          "right": "Object"
+        },
+        {
+          "left": "[]",
+          "right": "Array"
+        },
+        {
+          "left": "literal",
+          "right": "Valor directo"
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-R",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "review",
+      "title": "Prueba: Fundamentos",
+      "rewardCards": [
+        "card-024"
+      ],
+      "isReview": true,
+      "reviewOf": [
+        "4-02",
+        "4-03",
+        "4-05",
+        "4-07",
+        "4-10",
+        "4-13",
+        "4-16",
+        "4-20",
+        "4-24",
+        "4-28"
+      ],
+      "maxStars": 3,
+      "requiredObjects": [],
+      "rewardObjects": [
+        "compilador_genesis"
+      ],
+      "failRedirectTo": null,
+      "reviewFailRedirect": {
+        "variables": "4-03",
+        "logica": "4-13",
+        "bucles": "4-16",
+        "arrays": "4-24"
+      },
+      "fragAvailable": false
+    },
+    {
+      "id": "5-01",
+      "act": 5,
+      "actName": "Fase 2: DOM y Navegador",
+      "type": "codeeditor",
+      "title": "El Árbol del Sistema: DOM",
+      "description": "El DOM es el mapa de la interfaz. Aprende a encontrar elementos y a recorrer sus ramas.",
+      "narrative": "FRAG: 'El navegador construye un árbol de objetos. Si dominas el selector, dominas la vista.'",
+      "mechanic": "Usa querySelector y recorre nodos padres/hijos.",
+      "concept": "DOM Selector & Traversal",
+      "theory": [
+        {
+          "title": "¿Qué es el DOM?",
+          "content": "Document Object Model. Es una representación en memoria de tu HTML que JS puede modificar en tiempo real.",
+          "code": "const link = document.querySelector('a');\nconst parent = link.parentElement;",
+          "explanation": "querySelector usa sintaxis de CSS. parentElement permite subir en el árbol.",
+          "highlightLines": [
+            1,
+            2
+          ]
+        }
+      ],
+      "fragAvailable": true,
       "optional": false,
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": [
-        "card-023"
-      ],
-      "failRedirectTo": null,
+      "rewardCards": [],
+      "failRedirectTo": "4-R",
       "maxStars": 3
     },
     {
-      "id": "4-10",
-      "act": 4,
-      "actName": "JavaScript",
+      "id": "5-02",
+      "act": 5,
+      "actName": "Fase 2: DOM y Navegador",
       "type": "codeeditor",
-      "title": "Reactiva el último sector",
-      "description": "El sector 3 — el último antes del bunker. El programa más complejo. Al completarlo, el mapa entero se ilumina.",
-      "narrative": "FRAG: 'Este es el último sector. Si lo reactivas, el camino al Proyecto GÉNESIS queda abierto.'",
-      "mechanic": "Boss Acto IV. Editor libre. Tests automáticos verifican que funcione. Al pasar todos, el sector se ilumina.",
-      "concept": "JavaScript integrado",
+      "title": "Reacción en Cadena: Eventos",
+      "description": "Haz que la interfaz responda al usuario. Aprende a escuchar clics y teclas.",
+      "narrative": "FRAG: 'No esperes a que el sistema actúe. Configura escuchadores (listeners) para reaccionar a cada pulso.'",
+      "mechanic": "Usa addEventListener para detectar interacciones básicas.",
+      "concept": "Event Listeners: click, input, keydown",
+      "theory": [
+        {
+          "title": "Escuchar el Entorno",
+          "content": "addEventListener recibe el tipo de evento y una función a ejecutar cuando ocurra.",
+          "code": "btn.addEventListener('click', () => { ... });",
+          "explanation": "Cada interacción del usuario genera un pulso eléctrico que JS captura.",
+          "highlightLines": [
+            1
+          ]
+        }
+      ],
       "fragAvailable": true,
-      "fragHint": "Empieza por definir los objetos de las máquinas, luego las funciones, luego el programa principal.",
       "optional": false,
       "isReview": false,
       "reviewOf": [],
-      "requiredObjects": [
-        "componente_repuesto"
-      ],
-      "rewardObjects": [
-        "llave_bunker_genesis"
-      ],
+      "requiredObjects": [],
+      "rewardObjects": [],
       "rewardCards": [],
-      "failRedirectTo": "4-07",
+      "failRedirectTo": "5-01",
       "maxStars": 3
     },
     {
-      "id": "4-R",
-      "act": 4,
-      "actName": "JavaScript",
+      "id": "5-03",
+      "act": 5,
+      "actName": "Fase 2: DOM y Navegador",
+      "type": "codeeditor",
+      "title": "El Objeto del Suceso: event",
+      "description": "Extrae información vital de cada interacción detectada.",
+      "narrative": "FRAG: 'Cada evento lleva consigo un reporte. ¿Quién lo disparó? ¿En qué coordenadas? Todo está en el objeto de evento.'",
+      "mechanic": "Usa el parámetro 'e' de addEventListener y e.preventDefault() en un enlace.",
+      "concept": "Event Object & preventDefault",
+      "theory": [
+        {
+          "title": "El Reporte 'e'",
+          "content": "El objeto de evento (usualmente llamado 'e') contiene datos como e.target (quién disparó) y e.key (qué tecla fue).",
+          "code": "link.addEventListener('click', e => {\n  e.preventDefault(); // Detén el envío\n});",
+          "explanation": "Esencial para manejar formularios y clics sin recargar la página.",
+          "highlightLines": [
+            1,
+            2
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "5-02",
+      "maxStars": 3
+    },
+    {
+      "id": "5-04",
+      "act": 5,
+      "actName": "Fase 2: DOM y Navegador",
+      "type": "codeeditor",
+      "title": "Eficiencia Masiva: Delegación",
+      "description": "No configures mil listeners si puedes configurar solo uno maestro.",
+      "narrative": "FRAG: 'Poner un guardia en cada puerta es ineficiente. Pon uno en el pasillo principal que vigile a todos. Eso es Delegación de Eventos.'",
+      "mechanic": "Implementa un listener en un contenedor padre que maneje clics de sus hijos.",
+      "concept": "Event Delegation",
+      "theory": [
+        {
+          "title": "Burbujeo de Eventos",
+          "content": "Los eventos suben por el DOM. Escucharlos en el padre ahorra memoria y maneja elementos creados en el futuro.",
+          "code": "list.addEventListener('click', e => {\n  if(e.target.matches('li')) { ... }\n});",
+          "explanation": "Es el patrón preferido para listas dinámicas en GÉNESIS.",
+          "highlightLines": [
+            1,
+            2
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "5-03",
+      "maxStars": 3
+    },
+    {
+      "id": "5-05",
+      "act": 5,
+      "actName": "Fase 2: DOM y Navegador",
+      "type": "codeeditor",
+      "title": "Camuflaje Digital: Estilos",
+      "description": "Modifica la apariencia interna de la terminal de forma dinámica.",
+      "narrative": "FRAG: 'Usa classList para cambiar estados. El estilo inline es para casos de emergencia, las clases son la norma.'",
+      "mechanic": "Usa classList.toggle y dataset para inyectar metadatos visuales.",
+      "concept": "classList, style, dataset",
+      "theory": [
+        {
+          "title": "Manipulación de Clases",
+          "content": "Añadir/quitar clases es más limpio que tocar .style directamente. dataset permite guardar strings personalizados en el HTML.",
+          "code": "el.classList.toggle('off');\nel.dataset.role = 'admin';",
+          "explanation": "Usa toggle para interruptores de energía o luces del búnker.",
+          "highlightLines": [
+            1,
+            2
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "5-04",
+      "maxStars": 3
+    },
+    {
+      "id": "5-06",
+      "act": 5,
+      "actName": "Fase 2: DOM y Navegador",
+      "type": "codeeditor",
+      "title": "Arquitectura Dinámica: Creación",
+      "description": "Aprende a inyectar nuevos nodos en la estructura del sistema.",
+      "narrative": "FRAG: 'Si falta una pieza, fabrícala. createElement es tu impresora 3D de nodos de interfaz.'",
+      "mechanic": "Usa document.createElement y append para añadir sensores a la consola.",
+      "concept": "createElement, appendChild, remove",
+      "theory": [
+        {
+          "title": "Montaje de Nodos",
+          "content": "Crea el elemento, configúralo y engánchalo al árbol. Para borrarlo, usa .remove().",
+          "code": "const div = document.createElement('div');\nnav.append(div);\ndiv.remove();",
+          "explanation": "Append permite añadir varios nodos o texto a la vez; appendChild solo un nodo.",
+          "highlightLines": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "5-05",
+      "maxStars": 3
+    },
+    {
+      "id": "5-07",
+      "act": 5,
+      "actName": "Fase 2: DOM y Navegador",
+      "type": "codeeditor",
+      "title": "Terminales de Entrada: Formularios",
+      "description": "Captura datos de los búnkeres vecinos usando formularios tácticos.",
+      "narrative": "FRAG: 'Un formulario es una interfaz de datos. Aprende a frenar el envío automático para procesarlo tú mismo.'",
+      "mechanic": "Detén el evento submit y captura valores de los campos de texto.",
+      "concept": "Forms: Value capture & Submit",
+      "theory": [
+        {
+          "title": "Intercepción de Datos",
+          "content": "Escucha siempre el 'submit' del formulario, no el 'click' del botón. Y recuerda preventDefault() para que el sistema no se refresque.",
+          "code": "form.addEventListener('submit', e => {\n  const val = input.value;\n});",
+          "explanation": "El evento submit se dispara por clic o por pulsar 'Enter'. Cubres ambos casos.",
+          "highlightLines": [
+            1,
+            2
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "5-06",
+      "maxStars": 3
+    },
+    {
+      "id": "5-08",
+      "act": 5,
+      "actName": "Fase 2: DOM y Navegador",
+      "type": "codeeditor",
+      "title": "La Verdad de los Datos: Validación",
+      "description": "No aceptes información corrupta. Valida las entradas antes de enviarlas al reactor central.",
+      "narrative": "FRAG: 'Un dato mal formado es una bomba de tiempo. Usa validación básica para proteger el sistema.'",
+      "mechanic": "Valida que el input no esté vacío y cumpla una longitud mínima.",
+      "concept": "Form Validation & FormData",
+      "theory": [
+        {
+          "title": "FormData",
+          "content": "Cuando los campos son muchos, el objeto FormData extrae todos los valores de golpe basándose en el atributo 'name' del HTML.",
+          "code": "const data = new FormData(form);\nconst user = data.get('username');",
+          "explanation": "Es mucho más eficiente que buscar los 30 inputs por ID.",
+          "highlightLines": [
+            1,
+            2
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "5-07",
+      "maxStars": 3
+    },
+    {
+      "id": "5-09",
+      "act": 5,
+      "actName": "Fase 2: DOM y Navegador",
+      "type": "codeeditor",
+      "title": "Persistencia de Búnker: Storage",
+      "description": "Asegúrate de que tus planes no se borren cuando cierres los ojos.",
+      "narrative": "FRAG: 'La RAM es fugaz. localStorage es para siempre. Guarda los planos en el disco del navegador.'",
+      "mechanic": "Usa localStorage para guardar y recuperar el progreso del nivel.",
+      "concept": "localStorage & JSON",
+      "theory": [
+        {
+          "title": "Sellar el Estado",
+          "content": "localStorage solo admite texto. Para guardar objetos, usa JSON.stringify. Para sacarlos, JSON.parse.",
+          "code": "localStorage.setItem('k', JSON.stringify(obj));\nconst res = JSON.parse(localStorage.getItem('k'));",
+          "explanation": "No guardes datos sensibles (passwords) aquí; es visible para cualquier técnico intruso.",
+          "highlightLines": [
+            1,
+            2
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "5-08",
+      "maxStars": 3
+    },
+    {
+      "id": "5-10",
+      "act": 5,
+      "actName": "Fase 2: DOM y Navegador",
+      "type": "codeeditor",
+      "title": "Visión de Rayos X: Debugging",
+      "description": "Aprende a inspeccionar el flujo eléctrico de tu programa.",
+      "narrative": "FRAG: 'No adivines. Observa. La consola es tu ventana al alma de la máquina. Usa breakpoints para detener el tiempo.'",
+      "mechanic": "Usa console.table y la instrucción 'debugger' para diagnosticar un bucle corrupto.",
+      "concept": "Debugging & DevTools",
+      "theory": [
+        {
+          "title": "Detener el Reloj",
+          "content": "Escribir 'debugger' en tu código pausará la ejecución en el navegador, permitiéndote ver el valor de cada variable en ese exacto instante.",
+          "code": "items.forEach(x => {\n  debugger;\n  proceder(x);\n});",
+          "explanation": "Mejor que mil console.log(); es puro control quirúrgico.",
+          "highlightLines": [
+            2
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "5-09",
+      "maxStars": 3
+    },
+    {
+      "id": "5-R",
+      "act": 5,
+      "actName": "Fase 2: DOM y Navegador",
       "type": "review",
-      "title": "Protocolo de verificación — Acto IV",
-      "description": "El bunker GÉNESIS requiere verificación total de JavaScript antes de abrir sus puertas. Variables, tipos, funciones, arrays, objetos, callbacks — todo.",
-      "narrative": "FRAG: 'El protocolo GÉNESIS no acepta conocimiento parcial. El sistema verificará que dominas JavaScript completo antes de darte acceso.'",
-      "mechanic": "3 fases: (1) quiz sobre todos los conceptos JS del acto, (2) puzzle-bug + puzzle-fill combinados con código JS real, (3) mini editor libre con 3 tests automáticos simples.",
-      "concept": "repaso Acto IV — variables, tipos, funciones, arrays, objetos, callbacks",
+      "title": "Protocolo Final: Fase 2",
+      "description": "Domina la interfaz antes de que el mundo exterior se desconecte.",
+      "narrative": "FRAG: 'Has aprendido a buscar, a escuchar y a recordar. Demuestra que puedes construir una terminal funcional de GÉNESIS.'",
+      "mechanic": "Desafío de integración: crea una lista de tareas persistente con validación y delegación de eventos.",
+      "concept": "Repaso Fase 2 Integral",
       "fragAvailable": false,
       "optional": false,
       "isReview": true,
       "reviewOf": [
-        "4-01",
-        "4-02",
-        "4-03",
-        "4-05",
-        "4-06",
-        "4-07",
-        "4-08"
+        "5-01",
+        "5-02",
+        "5-03",
+        "5-04",
+        "5-05",
+        "5-06",
+        "5-07",
+        "5-08",
+        "5-09",
+        "5-10"
       ],
       "requiredObjects": [],
       "rewardObjects": [
-        "cheatsheet_js"
+        "cheatsheet_fase2"
       ],
       "rewardCards": [],
       "failRedirectTo": null,
       "reviewFailRedirect": {
-        "variables": "4-01",
-        "tipos": "4-02",
-        "funciones": "4-03",
-        "arrays": "4-05",
-        "objetos": "4-07",
-        "callbacks": "4-08"
+        "dom": "5-01",
+        "eventos": "5-04",
+        "forms": "5-08",
+        "storage": "5-09"
       },
-      "maxStars": 3,
-      "note": "El objeto 'cheatsheet_js' solo se otorga con 3 estrellas. Es consultable en el nivel final."
+      "maxStars": 3
     },
     {
-      "id": "5-01",
-      "act": 5,
-      "actName": "Proyecto GÉNESIS",
+      "id": "6-01",
+      "act": 6,
+      "actName": "Fase 3: JS Moderno",
+      "type": "codeeditor",
+      "title": "La Espera: Promesas",
+      "description": "El mundo no es instantáneo. Aprende a manejar procesos que tardan en responder.",
+      "narrative": "FRAG: 'Una promesa es un contrato: o te doy el dato, o te explico por qué falló. No bloquees el hilo principal.'",
+      "mechanic": "Crea y consume promesas con .then y .catch.",
+      "concept": "Promises: then & catch",
+      "theory": [
+        {
+          "title": "Estado de una Promesa",
+          "content": "Una promesa puede estar Pendiente, Resuelta (fullfilled) o Rechazada (rejected). catch es vital para evitar el colapso.",
+          "code": "fetchData()\n  .then(res => console.log(res))\n  .catch(err => alert(err));",
+          "explanation": "catch captura cualquier error ocurrido en el flujo asíncrono.",
+          "highlightLines": [
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "5-R",
+      "maxStars": 3
+    },
+    {
+      "id": "6-02",
+      "act": 6,
+      "actName": "Fase 3: JS Moderno",
+      "type": "codeeditor",
+      "title": "Sincronía Aparente: Async/Await",
+      "description": "Escribe código asíncrono que se lea como si fuera lineal. La evolución lógica de las promesas.",
+      "narrative": "FRAG: 'Await detiene la lectura (pero no el sistema) hasta que el dato llega. Es más limpio, más humano.'",
+      "mechanic": "Transforma una cadena de .then en una función async con await.",
+      "concept": "Async / Await Basics",
+      "theory": [
+        {
+          "title": "Azúcar Sintáctico",
+          "content": "Cualquier función marcada como 'async' devuelve una promesa automáticamente. 'await' extrae el valor sin bloquear el navegador.",
+          "code": "async function load() {\n  const res = await fetchData();\n}",
+          "explanation": "Solo puedes usar await dentro de funciones async (o top-level modules).",
+          "highlightLines": [
+            1,
+            2
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "6-01",
+      "maxStars": 3
+    },
+    {
+      "id": "6-03",
+      "act": 6,
+      "actName": "Fase 3: JS Moderno",
+      "type": "codeeditor",
+      "title": "El Escudo: Try/Catch",
+      "description": "Protege tu programa contra fallos inesperados en la red o el servidor.",
+      "narrative": "FRAG: 'El búnker vecino puede estar offline. No permitas que su silencio talle tu procesador. Envuelve tus awaits en un escudo protector.'",
+      "mechanic": "Implementa try/catch/finally para manejar errores asíncronos.",
+      "concept": "Async Error Handling",
+      "theory": [
+        {
+          "title": "Manejo Quirúrgico",
+          "content": "Usa try para el camino feliz, catch para la emergencia y finally para limpiar (apagar luces, cerrar sockets) pase lo que pase.",
+          "code": "try {\n  await connect();\n} catch (e) {\n  repair();\n} finally {\n  log('Fin de intento');\n}",
+          "explanation": "Finally es útil para ocultar 'loading spinners' al final de la carga.",
+          "highlightLines": [
+            1,
+            3,
+            5
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "6-02",
+      "maxStars": 3
+    },
+    {
+      "id": "6-04",
+      "act": 6,
+      "actName": "Fase 3: JS Moderno",
+      "type": "codeeditor",
+      "title": "Extracción: Fetch GET",
+      "description": "Conéctate a sistemas externos y descarga información vital para GÉNESIS.",
+      "narrative": "FRAG: 'Solicita un paquete de datos. Recuerda: fetch no sabe que es JSON hasta que tú se lo dices.'",
+      "mechanic": "Usa fetch() para obtener un JSON y mostrarlo en la consola.",
+      "concept": "Fetch API: GET requests",
+      "theory": [
+        {
+          "title": "Doble Promesa",
+          "content": "Fetch devuelve una respuesta (headers). Necesitas usar .json() (otra promesa) para obtener los datos reales.",
+          "code": "const res = await fetch('/api');\nconst data = await res.json();",
+          "explanation": "Si res.ok es false, deberías lanzar un error manualmente.",
+          "highlightLines": [
+            1,
+            2
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "6-03",
+      "maxStars": 3
+    },
+    {
+      "id": "6-05",
+      "act": 6,
+      "actName": "Fase 3: JS Moderno",
+      "type": "codeeditor",
+      "title": "Transmisión: Fetch POST",
+      "description": "Envía tus reportes de progreso a la base de datos central.",
+      "narrative": "FRAG: 'No solo recibimos, también emitimos. Configura el método, las cabeceras y el cuerpo del mensaje.'",
+      "mechanic": "Realiza un fetch con método POST y body JSON stringified.",
+      "concept": "Fetch API: POST & headers",
+      "theory": [
+        {
+          "title": "Configurar Envío",
+          "content": "Especifica method: 'POST' y 'Content-Type': 'application/json' para que el búnker receptor entienda tu mensaje.",
+          "code": "fetch(url, {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify(payload)\n});",
+          "explanation": "El body debe ser un string JSON, no un objeto de JS.",
+          "highlightLines": [
+            2,
+            3,
+            4
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "6-04",
+      "maxStars": 3
+    },
+    {
+      "id": "6-06",
+      "act": 6,
+      "actName": "Fase 3: JS Moderno",
+      "type": "codeeditor",
+      "title": "Visión Modular: ESM",
+      "description": "Divide tu código en planos independientes para que el sistema sea escalable.",
+      "narrative": "FRAG: 'Un solo archivo de 1000 líneas es un nido de bugs. Exporta componentes, importa maestría.'",
+      "mechanic": "Usa export named y import en un sistema multi-archivo simulado.",
+      "concept": "ES Modules (ESM)",
+      "theory": [
+        {
+          "title": "Exportar e Importar",
+          "content": "Divide la lógica (engine) de la vista (UI). Solo importa lo que necesites para ahorrar energía.",
+          "code": "// engine.js\nexport const power = 100;\n// main.js\nimport { power } from './engine.js';",
+          "explanation": "Named exports (llaves) vs Default exports (sin llaves).",
+          "highlightLines": [
+            2,
+            4
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "6-05",
+      "maxStars": 3
+    },
+    {
+      "id": "6-07",
+      "act": 6,
+      "actName": "Fase 3: JS Moderno",
+      "type": "codeeditor",
+      "title": "Encapsulación: Closures",
+      "description": "Crea variables privadas que solo tus funciones puedan ver.",
+      "narrative": "FRAG: 'No dejes los cables a la vista. Encierra el estado dentro de la función. Eso es un cierre (Closure).'",
+      "mechanic": "Crea una función que devuelva otra función que acceda a una variable interna.",
+      "concept": "Closures & Factories",
+      "theory": [
+        {
+          "title": "Memoria de Función",
+          "content": "Una función 'recuerda' su entorno incluso después de ejecutarse. Es la base de la privacidad en JS.",
+          "code": "function vault() {\n  let code = 'SECRET';\n  return () => code;\n}",
+          "explanation": "'code' no puede leerse desde fuera, solo llamando a la función retornada.",
+          "highlightLines": [
+            2,
+            3
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "6-06",
+      "maxStars": 3
+    },
+    {
+      "id": "6-R",
+      "act": 6,
+      "actName": "Fase 3: JS Moderno",
+      "type": "review",
+      "title": "Protocolo Final: Fase 3",
+      "description": "Verifica tu dominio de la asincronía y la arquitectura moderna.",
+      "narrative": "FRAG: 'El sistema está listo para conectarse al mundo exterior. Demuestra que sabes manejar el tiempo y los datos.'",
+      "mechanic": "Desafío de integración: consulta una API, procesa los datos en un módulo separado y envíalos de vuelta validando errores.",
+      "concept": "Repaso Fase 3 Integral",
+      "fragAvailable": false,
+      "optional": false,
+      "isReview": true,
+      "reviewOf": [
+        "6-01",
+        "6-02",
+        "6-03",
+        "6-04",
+        "6-05",
+        "6-06",
+        "6-07"
+      ],
+      "requiredObjects": [],
+      "rewardObjects": [
+        "cheatsheet_fase3"
+      ],
+      "rewardCards": [],
+      "failRedirectTo": null,
+      "reviewFailRedirect": {
+        "asincronia": "6-02",
+        "errores": "6-03",
+        "fetch": "6-04",
+        "modulos": "6-06"
+      },
+      "maxStars": 3
+    },
+    {
+      "id": "7-01",
+      "act": 7,
+      "actName": "Fase 4: POO",
+      "type": "codeeditor",
+      "title": "Moldes Maestros: Clases",
+      "description": "Crea plantillas para tus sistemas. Aprende a definir propiedades y métodos de instancia.",
+      "narrative": "FRAG: 'Un objeto es un ejemplar. Una clase es el plano que lo define. Si el plano es bueno, el sistema será infinito.'",
+      "mechanic": "Usa class y constructor para instanciar robots.",
+      "concept": "Classes: Constructor & Instance",
+      "theory": [
+        {
+          "title": "Abstracción de Sistemas",
+          "content": "POO organiza el código en 'clases' (planos) que contienen datos (propiedades) y funciones (métodos) relacionadas.",
+          "code": "class Robot {\n  constructor(id) {\n    this.id = id;\n  }\n  greet() { return `IM ${this.id}`; }\n}",
+          "explanation": "El constructor se ejecuta automáticamente al usar 'new Robot()'.",
+          "highlightLines": [
+            1,
+            2,
+            5
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "6-R",
+      "maxStars": 3
+    },
+    {
+      "id": "7-02",
+      "act": 7,
+      "actName": "Fase 4: POO",
+      "type": "codeeditor",
+      "title": "El Contexto de 'this'",
+      "description": "Aprende a qué se refiere la máquina cuando habla de sí misma.",
+      "narrative": "FRAG: 'this es una palabra resbaladiza. Depende de quién llame a la función. Contrólalo antes de que apunte al vacío.'",
+      "mechanic": "Usa this dentro de métodos de clase para acceder a propiedades de instancia.",
+      "concept": "Context & this binding",
+      "theory": [
+        {
+          "title": "¿Quién es 'this'?",
+          "content": "Dentro de una clase, 'this' apunta a la instancia que estás creando. Permite que el robot conozca su propio ID o nivel de batería.",
+          "code": "class Bot {\n  charge() { this.energy = 100; }\n}",
+          "explanation": "Sin 'this', el robot no sabría qué batería cargar.",
+          "highlightLines": [
+            2
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "7-01",
+      "maxStars": 3
+    },
+    {
+      "id": "7-03",
+      "act": 7,
+      "actName": "Fase 4: POO",
+      "type": "codeeditor",
+      "title": "La Sangre del Sistema: Herencia",
+      "description": "No repitas lógica. Crea sistemas especializados que hereden de una base común.",
+      "narrative": "FRAG: 'Un Drone es un Robot, pero vuela. Hereda el motor, pero añade hélices. Usa extends para evolucionar el diseño.'",
+      "mechanic": "Usa extends y super() para especializar clases.",
+      "concept": "Inheritance: extends & super",
+      "theory": [
+        {
+          "title": "Jerarquía de Clases",
+          "content": "Permite que una clase hija obtenga métodos de una clase padre. super() llama al constructor del padre.",
+          "code": "class Drone extends Robot {\n  constructor(id, wings) {\n    super(id);\n    this.wings = wings;\n  }\n}",
+          "explanation": "No puedes usar 'this' en un hijo sin llamar primero a super().",
+          "highlightLines": [
+            1,
+            3
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "7-02",
+      "maxStars": 3
+    },
+    {
+      "id": "7-04",
+      "act": 7,
+      "actName": "Fase 4: POO",
+      "type": "codeeditor",
+      "title": "Evolución por Sobrescritura",
+      "description": "Modifica el comportamiento heredado para adaptarlo a nuevas necesidades tácticas.",
+      "narrative": "FRAG: 'A veces el método del padre no es suficiente. Sobrescríbelo en el hijo para darle un giro único. Eso es Polimorfismo básico.'",
+      "mechanic": "Redefine un método en la clase hija que use super.metodo() para extenderlo.",
+      "concept": "Method Overriding & Polymorphism",
+      "theory": [
+        {
+          "title": "Mismo Nombre, Nueva Lógica",
+          "content": "Si el hijo define un método con el mismo nombre que el padre, el del hijo toma prioridad. super actúa como puente.",
+          "code": "greet() {\n  return super.greet() + ' [FLY MODE]';\n}",
+          "explanation": "Extiendes la funcionalidad original sin borrarla por completo.",
+          "highlightLines": [
+            2
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "7-03",
+      "maxStars": 3
+    },
+    {
+      "id": "7-05",
+      "act": 7,
+      "actName": "Fase 4: POO",
+      "type": "codeeditor",
+      "title": "Sistemas Estáticos",
+      "description": "Existen funciones que pertenecen al plano general, no a cada robot individual.",
+      "narrative": "FRAG: 'No necesitas fabricar un robot para saber cuántos se han fabricado. Usa métodos estáticos para la lógica global de la fábrica.'",
+      "mechanic": "Usa la palabra clave static para crear métodos de utilidad en una clase.",
+      "concept": "Static methods & Properties",
+      "theory": [
+        {
+          "title": "Lógica de Fábrica",
+          "content": "Los métodos estáticos se llaman desde la Clase misma, no desde la instancia (new). Son perfectos para configuraciones globales.",
+          "code": "class Factory {\n  static count = 0;\n  static getCount() { return Factory.count; }\n}",
+          "explanation": "Factory.getCount() funciona sin tener que crear un objeto primero.",
+          "highlightLines": [
+            2,
+            3
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "7-04",
+      "maxStars": 3
+    },
+    {
+      "id": "7-06",
+      "act": 7,
+      "actName": "Fase 4: POO",
+      "type": "codeeditor",
+      "title": "Los Ancestros: Prototipos",
+      "description": "Entiende qué hay bajo el capó de las clases modernas de JavaScript.",
+      "narrative": "FRAG: 'Las clases son solo ropa elegante. Debajo hay prototipos. En JS, todo objeto tiene un enlace a su creador.'",
+      "mechanic": "Añade un método a una clase usando directamente el .prototype.",
+      "concept": "Prototipos & Prototype Chain",
+      "theory": [
+        {
+          "title": "Herencia Prototipal",
+          "content": "Cada objeto tiene un enlace interno a otro objeto (su prototipo). Si una propiedad no está en el hijo, JS la busca 'arriba' en el padre.",
+          "code": "Robot.prototype.hack = () => { ... };",
+          "explanation": "Afectas a todas las instancias de Robot, incluso a las ya creadas.",
+          "highlightLines": [
+            1
+          ]
+        }
+      ],
+      "fragAvailable": true,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": "7-05",
+      "maxStars": 3
+    },
+    {
+      "id": "7-R",
+      "act": 7,
+      "actName": "Fase 4: POO",
+      "type": "review",
+      "title": "Protocolo Final: Fase 4",
+      "description": "Verifica tu capacidad para diseñar la arquitectura del nuevo mundo.",
+      "narrative": "FRAG: 'Es el momento supremo. Diseña el ecosistema de máquinas que reconstruirán el planeta. Sin una estructura sólida, todo perecerá.'",
+      "mechanic": "Desafío de integración: diseña una jerarquía de clases para una red de búnkeres, con herencia, métodos estáticos y validación privada.",
+      "concept": "Repaso Fase 4 Integral",
+      "fragAvailable": false,
+      "optional": false,
+      "isReview": true,
+      "reviewOf": [
+        "7-01",
+        "7-02",
+        "7-03",
+        "7-04",
+        "7-05",
+        "7-06"
+      ],
+      "requiredObjects": [],
+      "rewardObjects": [
+        "maestria_poo"
+      ],
+      "rewardCards": [],
+      "failRedirectTo": null,
+      "reviewFailRedirect": {
+        "clases": "7-01",
+        "herencia": "7-03",
+        "estaticos": "7-05"
+      },
+      "maxStars": 3
+    },
+    {
+      "id": "8-01",
+      "act": 8,
+      "actName": "El Reinicio",
       "type": "cinematic",
-      "title": "El bunker GÉNESIS",
-      "description": "Lo encontraste. Máquinas enormes en silencio, cada una con un tanque de ADN sintético. FRAG no dice nada por un momento.",
-      "narrative": "FRAG: '...Aquí está. El Proyecto GÉNESIS. Los científicos lo construyeron para alguien como tú.' [pausa] 'Solo falta el código de activación.'",
+      "title": "GÉNESIS: Código de Activación",
+      "description": "Frente a la consola central. El manual_activacion_genesis brilla en tu inventario. FRAG está en silencio profundo.",
+      "narrative": "FRAG: '...Lo hiciste. Tienes el conocimiento. El bunker está listo. Solo falta que introduzcas la secuencia final.'",
       "fragAvailable": false,
       "optional": false,
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [
-        "llave_bunker_genesis"
+        "maestria_poo",
+        "cheatsheet_fase3",
+        "cheatsheet_fase2",
+        "cheatsheet_fase1"
       ],
       "rewardObjects": [
-        "manual_activacion_genesis"
+        "terminal_genesis_abierto"
       ],
       "rewardCards": [],
       "failRedirectTo": null
     },
     {
-      "id": "5-02",
-      "act": 5,
-      "actName": "Proyecto GÉNESIS",
+      "id": "8-02",
+      "act": 8,
+      "actName": "El Reinicio",
       "type": "codeeditor",
-      "title": "GÉNESIS — protocolo de activación",
-      "description": "El nivel final. 8 tests — uno por concepto aprendido. Cada test que pasa activa una máquina. FRAG no puede ayudarte aquí.",
-      "narrative": "FRAG: 'El protocolo GÉNESIS requiere verificación manual. No tengo acceso. Solo un humano que entienda el código puede activarlo.' [FRAG se desconecta]",
-      "mechanic": "Editor libre con 8 tests automáticos. Cada test aprobado activa una máquina con animación. Al pasar los 8: secuencia de cierre.",
-      "concept": "JavaScript completo — integración total",
+      "title": "GÉNESIS: Ejecución Final",
+      "description": "El desafío definitivo. Integra todo lo aprendido: lógica, asincronía y clases para activar las 12 cámaras de ADN.",
+      "narrative": "FRAG: 'Este código no solo corre en el bunker. Corre en el futuro de la humanidad. No cometas errores.'",
+      "mechanic": "Editor Boss: 12 tests automáticos que cubren todas las fases. Al completar todos, se activa el final del juego.",
+      "concept": "Full JS Mastery - GÉNESIS Activation",
       "fragAvailable": false,
       "optional": false,
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [
-        "llave_bunker_genesis"
+        "terminal_genesis_abierto"
       ],
       "rewardObjects": [
-        "genesis_activado"
+        "mundo_reconstruido"
       ],
       "rewardCards": [
         "card-024"
       ],
       "failRedirectTo": null,
-      "hintObjects": [
-        "cheatsheet_js",
-        "manual_activacion_genesis",
-        "plano_estructura_genesis"
-      ],
-      "maxStars": 3,
-      "note": "Los objetos hintObjects pueden consultarse hasta 2 veces durante el nivel final si el jugador los tiene en su inventario."
+      "maxStars": 3
     }
   ]
 }

@@ -1,0 +1,367 @@
+{
+  "fase1_el_lenguaje": {
+    "semanas": "1-4",
+    "temas": [
+      {
+        "nombre": "Variables",
+        "subtemas": [
+          "var, let, const",
+          "diferencias de scope",
+          "hoisting",
+          "temporal dead zone"
+        ]
+      },
+      {
+        "nombre": "Tipos de datos",
+        "subtemas": [
+          "string",
+          "number",
+          "boolean",
+          "null",
+          "undefined",
+          "symbol",
+          "bigint",
+          "typeof"
+        ]
+      },
+      {
+        "nombre": "Operadores",
+        "subtemas": [
+          "aritméticos",
+          "comparación (== vs ===)",
+          "lógicos (&&, ||, !)",
+          "ternario",
+          "nullish coalescing (??)"
+        ]
+      },
+      {
+        "nombre": "Condicionales",
+        "subtemas": [
+          "if / else if / else",
+          "switch",
+          "operador ternario",
+          "short-circuit evaluation"
+        ]
+      },
+      {
+        "nombre": "Bucles",
+        "subtemas": [
+          "for",
+          "while",
+          "do...while",
+          "break y continue",
+          "for...of",
+          "for...in"
+        ]
+      },
+      {
+        "nombre": "Funciones",
+        "subtemas": [
+          "declaración vs expresión",
+          "parámetros y argumentos",
+          "return",
+          "scope y closures básicos",
+          "funciones de orden superior"
+        ]
+      },
+      {
+        "nombre": "Arrays",
+        "subtemas": [
+          "crear y acceder",
+          "push, pop, shift, unshift",
+          "map, filter, reduce",
+          "find, some, every",
+          "flat, flatMap",
+          "spread con arrays"
+        ]
+      },
+      {
+        "nombre": "Objetos",
+        "subtemas": [
+          "propiedades y métodos",
+          "notación punto vs corchetes",
+          "Object.keys/values/entries",
+          "spread con objetos",
+          "desestructuración básica"
+        ]
+      },
+      {
+        "nombre": "Arrow functions",
+        "subtemas": [
+          "sintaxis corta",
+          "return implícito",
+          "this en arrow vs function",
+          "cuándo usarlas y cuándo no"
+        ]
+      }
+    ]
+  },
+  "fase2_dom_y_navegador": {
+    "semanas": "5-7",
+    "temas": [
+      {
+        "nombre": "DOM",
+        "subtemas": [
+          "qué es el DOM",
+          "querySelector / querySelectorAll",
+          "getElementById / getElementsByClassName",
+          "recorrer el árbol (parent, children, siblings)"
+        ]
+      },
+      {
+        "nombre": "Eventos",
+        "subtemas": [
+          "addEventListener",
+          "tipos de eventos (click, input, keydown, submit)",
+          "event object (e.target, e.preventDefault)",
+          "event delegation",
+          "removeEventListener"
+        ]
+      },
+      {
+        "nombre": "Modificar HTML y CSS",
+        "subtemas": [
+          "innerHTML vs textContent",
+          "classList (add, remove, toggle)",
+          "style inline",
+          "setAttribute / getAttribute",
+          "dataset"
+        ]
+      },
+      {
+        "nombre": "Crear y eliminar elementos",
+        "subtemas": [
+          "createElement",
+          "appendChild / prepend",
+          "insertAdjacentHTML",
+          "remove / removeChild"
+        ]
+      },
+      {
+        "nombre": "localStorage y sessionStorage",
+        "subtemas": [
+          "setItem / getItem / removeItem",
+          "JSON.stringify y JSON.parse",
+          "cuándo usar cada uno"
+        ]
+      },
+      {
+        "nombre": "Formularios",
+        "subtemas": [
+          "capturar valores de inputs",
+          "validación básica",
+          "evento submit",
+          "FormData"
+        ]
+      },
+      {
+        "nombre": "Debugging",
+        "subtemas": [
+          "console.log / warn / error / table",
+          "DevTools del navegador",
+          "breakpoints",
+          "inspeccionar el DOM en vivo"
+        ]
+      }
+    ]
+  },
+  "fase3_javascript_moderno": {
+    "semanas": "8-10",
+    "temas": [
+      {
+        "nombre": "Promesas",
+        "subtemas": [
+          "qué es asincronía",
+          "new Promise",
+          ".then / .catch / .finally",
+          "Promise.all / Promise.race / Promise.allSettled"
+        ]
+      },
+      {
+        "nombre": "Async / Await",
+        "subtemas": [
+          "async function",
+          "await",
+          "manejo de errores con try/catch",
+          "await en paralelo vs secuencial"
+        ]
+      },
+      {
+        "nombre": "Fetch API",
+        "subtemas": [
+          "fetch básico",
+          "métodos HTTP (GET, POST, PUT, DELETE)",
+          "headers y body",
+          "consumir una API REST pública",
+          "manejar errores de red"
+        ]
+      },
+      {
+        "nombre": "Módulos ES6",
+        "subtemas": [
+          "export / export default",
+          "import",
+          "importaciones nombradas vs default",
+          "module bundlers (intro a Vite/Webpack)"
+        ]
+      },
+      {
+        "nombre": "Destructuring",
+        "subtemas": [
+          "destructuring de objetos",
+          "destructuring de arrays",
+          "valores por defecto",
+          "renombrar variables",
+          "destructuring en parámetros"
+        ]
+      },
+      {
+        "nombre": "Spread y Rest",
+        "subtemas": [
+          "spread en arrays",
+          "spread en objetos",
+          "rest en funciones",
+          "clonar vs referenciar"
+        ]
+      },
+      {
+        "nombre": "Template literals",
+        "subtemas": [
+          "sintaxis backtick",
+          "interpolación",
+          "multilínea",
+          "tagged templates (básico)"
+        ]
+      },
+      {
+        "nombre": "Optional chaining y nullish",
+        "subtemas": [
+          "?. operador",
+          "?? operador",
+          "??= asignación condicional"
+        ]
+      }
+    ]
+  },
+  "fase4_poo": {
+    "semanas": "11-13",
+    "temas": [
+      {
+        "nombre": "Clases",
+        "subtemas": [
+          "class y constructor",
+          "propiedades y métodos de instancia",
+          "métodos estáticos",
+          "getters y setters",
+          "campos privados (#)"
+        ]
+      },
+      {
+        "nombre": "Herencia",
+        "subtemas": [
+          "extends",
+          "super()",
+          "sobrescribir métodos",
+          "polimorfismo básico"
+        ]
+      },
+      {
+        "nombre": "Prototipos",
+        "subtemas": [
+          "prototype chain",
+          "Object.create",
+          "__proto__ vs prototype",
+          "cómo las clases son azúcar sobre prototipos"
+        ]
+      },
+      {
+        "nombre": "Patrones de diseño básicos",
+        "subtemas": [
+          "factory functions",
+          "singleton",
+          "observer (pub/sub)",
+          "módulo (IIFE)"
+        ]
+      }
+    ]
+  },
+  "fase5_avanzado": {
+    "semanas": "14+",
+    "temas": [
+      {
+        "nombre": "Closures en profundidad",
+        "subtemas": [
+          "lexical scope",
+          "factory functions con closures",
+          "módulo con closure",
+          "memory leaks"
+        ]
+      },
+      {
+        "nombre": "This y contexto",
+        "subtemas": [
+          "this en distintos contextos",
+          "bind / call / apply",
+          "this en clases vs funciones",
+          "this en arrow functions"
+        ]
+      },
+      {
+        "nombre": "Event Loop",
+        "subtemas": [
+          "call stack",
+          "Web APIs",
+          "callback queue",
+          "microtask queue",
+          "por qué setTimeout(fn, 0) no es inmediato"
+        ]
+      },
+      {
+        "nombre": "Manejo de errores avanzado",
+        "subtemas": [
+          "tipos de errores (TypeError, RangeError…)",
+          "Error personalizado (extends Error)",
+          "manejo en cadenas de promesas",
+          "patrones de error handling"
+        ]
+      },
+      {
+        "nombre": "Iteradores y generadores",
+        "subtemas": [
+          "Symbol.iterator",
+          "for...of bajo el capó",
+          "function*",
+          "yield",
+          "casos de uso reales"
+        ]
+      },
+      {
+        "nombre": "Performance básico",
+        "subtemas": [
+          "debounce y throttle",
+          "lazy loading",
+          "evitar re-renders innecesarios",
+          "memoización básica"
+        ]
+      },
+      {
+        "nombre": "Herramientas del ecosistema",
+        "subtemas": [
+          "npm / package.json",
+          "Vite o Parcel",
+          "ESLint + Prettier",
+          "intro a TypeScript"
+        ]
+      },
+      {
+        "nombre": "Siguiente paso: frameworks",
+        "subtemas": [
+          "React (más popular)",
+          "Vue (más suave de aprender)",
+          "Svelte (más moderno)",
+          "cuándo aprender Node.js"
+        ]
+      }
+    ]
+  }
+}

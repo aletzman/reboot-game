@@ -1,0 +1,124 @@
+{
+  "terms": [
+    {
+      "id": "variable",
+      "term": "variable",
+      "technical": "Un contenedor con nombre que almacena un valor en memoria, accesible mediante un identificador.",
+      "human": "Como una caja con una etiqueta. Guardas algo adentro y le pones un nombre a la caja para saber qué hay sin tener que abrirla."
+    },
+    {
+      "id": "let",
+      "term": "let",
+      "technical": "Declara una variable local con ámbito de bloque, permitiendo opcionalmente inicializarla con un valor.",
+      "human": "Una caja que puedes abrir en el futuro para cambiar lo que hay adentro. Es flexible."
+    },
+    {
+      "id": "const",
+      "term": "const",
+      "technical": "Declara una constante de ámbito de bloque, cuyo valor no puede ser reasignado.",
+      "human": "Una caja sellada. Una vez que guardas algo y le pones el nombre, nadie puede cambiar el contenido sin romper el programa."
+    },
+    {
+      "id": "hoisting",
+      "term": "hoisting",
+      "technical": "Comportamiento en JS donde las declaraciones se mueven a la parte superior de su ámbito antes de la ejecución.",
+      "human": "Como cuando el sistema escanea tu código buscando nombres antes de empezar a leerlo, como un recepcionista revisando la lista de invitados antes de abrir la fiesta."
+    },
+    {
+      "id": "scope",
+      "term": "scope",
+      "technical": "El contexto actual de ejecución en el que los valores y las expresiones son 'visibles' o pueden ser referenciados.",
+      "human": "Como el alcance de tu voz. En una habitación pequeña (un bloque de código) te escuchan todos, pero en la calle (el código global) nadie sabe qué estás diciendo adentro."
+    },
+    {
+      "id": "string",
+      "term": "string",
+      "technical": "Una secuencia inmutable de caracteres utilizada para representar texto.",
+      "human": "Simplemente una cadena de letras o palabras. Es 'texto puro' para la computadora."
+    },
+    {
+      "id": "boolean",
+      "term": "boolean",
+      "technical": "Tipo de dato lógico que puede tener solo dos valores: true o false.",
+      "human": "Como un interruptor de luz. Solo puede estar encendido (true) o apagado (false). Sin grises."
+    },
+    {
+      "id": "async",
+      "term": "async",
+      "technical": "Palabra clave que define una función asíncrona, que devuelve un objeto Promise.",
+      "human": "Le avisa al programa: 'Oye, esto va a tardar un poco, no te quedes congelado esperando, sigue con lo tuyo y yo te aviso'."
+    },
+    {
+      "id": "dom",
+      "term": "DOM",
+      "technical": "Document Object Model. Una interfaz de programación para documentos HTML y XML que representa la página como un árbol de objetos.",
+      "human": "El esqueleto invisible de la página que permite a JavaScript tocar y cambiar cosas en la pantalla como si fueran piezas de un juego."
+    },
+    {
+      "id": "selector",
+      "term": "selector",
+      "technical": "Un patrón utilizado para identificar elementos específicos dentro del árbol del DOM usando sintaxis de CSS.",
+      "human": "Como una linterna que apunta exactamente a lo que quieres agarrar en la página, ya sea un botón, un título o un texto."
+    },
+    {
+      "id": "evento",
+      "term": "evento",
+      "technical": "Una señal que indica que algo ha ocurrido (un clic, una tecla pulsada, la carga de una página).",
+      "human": "Un aviso del sistema. Como el timbre de una puerta: le dice al programa que alguien acaba de tocar o hacer algo."
+    },
+    {
+      "id": "delegacion",
+      "term": "delegación",
+      "technical": "Patrón que consiste en añadir un único listener a un contenedor padre en lugar de a cada hijo individual, aprovechando el burbujeo de eventos.",
+      "human": "Poner un solo guardia en la entrada principal para vigilar a todos, en lugar de poner un guardia en cada armario de la casa. Ahorra mucha memoria."
+    },
+    {
+      "id": "storage",
+      "term": "storage",
+      "technical": "Mecanismo de almacenamiento persistente en el navegador que permite guardar datos entre sesiones.",
+      "human": "El disco duro del navegador. Permite que la computadora 'recuerde' quién eres o en qué nivel te quedaste aunque la apagues."
+    },
+    {
+      "id": "json",
+      "term": "JSON",
+      "technical": "JavaScript Object Notation. Un formato ligero de intercambio de datos, fácil de leer para humanos y máquinas.",
+      "human": "Un idioma común para empaquetar información. Es como meter tus cosas en una caja con una lista clara de qué hay adentro para mandarla por correo."
+    },
+    {
+      "id": "promesa",
+      "term": "promesa",
+      "technical": "Un objeto que representa la terminación o el fracaso de una operación asíncrona.",
+      "human": "Literalmente un trato: 'No tengo el dato ahora, pero te prometo que te lo daré cuando termine, o te explicaré por qué falló'."
+    },
+    {
+      "id": "fetch",
+      "term": "fetch",
+      "technical": "Interfaz moderna para realizar peticiones HTTP asíncronas para obtener recursos de la red.",
+      "human": "Como pedir un envío por delivery. Envías la orden por internet y esperas a que el paquete llegue a tu puerta."
+    },
+    {
+      "id": "modulo",
+      "term": "módulo",
+      "technical": "Una unidad de código independiente que puede exportar e importar funcionalidades de otros archivos.",
+      "human": "Como una pieza de un rompecabezas. En lugar de tener una sola foto gigante difícil de mover, tienes piezas pequeñas que encajan perfectamente."
+    },
+    {
+      "id": "clase",
+      "term": "clase",
+      "technical": "Una plantilla para crear objetos, encapsulando datos y comportamientos relacionados.",
+      "human": "El plano de una casa. No es la casa real, pero tiene todas las instrucciones para construir cien casas exactamente iguales."
+    },
+    {
+      "id": "herencia",
+      "term": "herencia",
+      "technical": "Mecanismo que permite a una clase 'hija' adquirir las propiedades y métodos de una clase 'padre'.",
+      "human": "Como el ADN. Un robot hijo puede tener las mismas piezas básicas que su padre, pero con armas nuevas o un color diferente."
+    },
+    {
+      "id": "prototipo",
+      "term": "prototipo",
+      "technical": "Un modelo original sobre el cual se basan los objetos en JavaScript para compartir métodos y propiedades.",
+      "human": "El ancestro común de un grupo. Si un robot no sabe cómo volar, mira a su 'abuelo' prototipo para ver si él sí sabía hacerlo."
+    }
+  ]
+}
