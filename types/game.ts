@@ -19,6 +19,22 @@ export interface ReviewFailRedirect {
   [concept: string]: string // concepto → id del nivel donde se vio
 }
 
+export interface TheorySlide {
+  step: number
+  title: string
+  content: string
+  code?: string
+  explanation?: string
+  highlightLines?: number[]
+  avoidSyntax?: string[]
+}
+
+export interface Challenge {
+  difficulty: 'easy' | 'medium' | 'hard'
+  instruction: string
+  starConditions: string[]
+}
+
 export interface Level {
   id: string
   act: number
@@ -43,6 +59,9 @@ export interface Level {
   hintObjects?: string[]   // objetos consultables durante el nivel
   maxStars?: 1 | 2 | 3
   note?: string
+  theory?: TheorySlide[]
+  pitfalls?: string[]      // errores comunes específicos del tema
+  challenge?: Challenge    // desafío detallado
 }
 
 // ------------------------------------------------------------
@@ -272,7 +291,7 @@ export interface CodeEditorState {
 // HELPERS DE TIPO
 // ------------------------------------------------------------
 
-export type ActNumber = 0 | 1 | 2 | 3 | 4 | 5
+export type ActNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
 
 export interface ActSummary {
   number: ActNumber

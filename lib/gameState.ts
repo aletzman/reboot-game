@@ -179,14 +179,14 @@ export function canAccessLevel(levelId: string): LevelAccessResult {
   if (!getSave()) return { allowed: false, reason: 'locked', requiredAct: 0 }
 
   // buscar el nivel en los datos
-  const level = (levelsData.levels as { id: string; requiredObjects: string[] }[])
-    .find(l => l.id === levelId)
+  const level = (levelsData.levels as any[]).find(l => l.id === levelId)
 
   if (!level) return { allowed: false, reason: 'locked', requiredAct: 0 }
 
   // verificar objetos requeridos
-  const missingObjects = level.requiredObjects.filter(
-    objId => !save!.objects.includes(objId)
+  const reqObjs = level.requiredObjects ?? []
+  const missingObjects = reqObjs.filter(
+    (objId: string) => !save!.objects.includes(objId)
   )
 
   if (missingObjects.length > 0) {
@@ -197,11 +197,16 @@ export function canAccessLevel(levelId: string): LevelAccessResult {
 }
 
 export function requiresLogin(levelId: string): boolean {
-  // los actos 4 y 5 requieren login
+  // los actos 4, 5, 6 y 7 requieren login
   return (
     levelId.startsWith('4-') ||
     levelId.startsWith('5-') ||
-    levelId === '4-R'
+    levelId.startsWith('6-') ||
+    levelId.startsWith('7-') ||
+    levelId === '4-R' ||
+    levelId === '5-R' ||
+    levelId === '6-R' ||
+    levelId === '7-R'
   )
 }
 
