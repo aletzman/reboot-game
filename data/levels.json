@@ -676,7 +676,7 @@
         {
           "step": 1,
           "title": "¿Qué es JavaScript?",
-          "content": "JavaScript es el lenguaje que da vida a la web. Es el protocolo que permite a las máquinas interactuar con el entorno digital y físico. Es el único lenguaje que el navegador entiende nativamente.",
+          "content": "JavaScript(JS) es el lenguaje que da vida a la web. Es el protocolo que permite a las máquinas interactuar con el entorno digital y físico. Es el único lenguaje que el navegador entiende nativamente.",
           "explanation": "Sin JS, las interfaces son estáticas. Con JS, el mundo responde."
         },
         {
@@ -688,14 +688,14 @@
         {
           "step": 3,
           "title": "Navegador y ECMAScript",
-          "content": "El **navegador** es el entorno donde JS respira. Para asegurar que todos los sistemas hablen igual, existe **ECMAScript**, el estándar técnico oficial que define cómo debe funcionar el lenguaje.",
+          "content": "El navegador es el entorno donde JS respira. Para asegurar que todos los sistemas hablen igual, existe ECMAScript, el estándar técnico oficial que define cómo debe funcionar el lenguaje.",
           "explanation": "Piénsalo como las leyes de la física digital: universales e inmutables."
         },
         {
           "step": 4,
-          "title": "Interactuar con el mundo",
-          "content": "La mayor potencia de JS es la **interacción**. Permite que un robot se mueva al pulsar un botón o que una puerta se abra tras validar un código. Transforma los datos en acciones.",
-          "explanation": "Sin JS, el mundo es solo una imagen estática. Con JS, es una interfaz viva."
+          "title": "Causa y Efecto",
+          "content": "JS no solo procesa datos en la oscuridad; escucha el entorno. Se queda esperando un estímulo externo (un clic, una contraseña, una alerta) para transformar instantáneamente esa información en una acción física.",
+          "explanation": "Sin JavaScript, la interfaz es un panel muerto. Con él, la terminal escucha tus órdenes, decide y ejecuta."
         }
       ],
       "pairs": [
@@ -741,12 +741,43 @@
       "theory": [
         {
           "step": 1,
-          "title": "console.log",
-          "content": "Envía datos a la terminal.",
-          "code": "console.log('Hola');",
-          "explanation": "Función básica de salida.",
+          "title": "El Monitor del Sistema",
+          "content": "La máquina no tiene interfaz gráfica por defecto. `console.log()` es la instrucción que obliga al sistema a mostrar un mensaje en la terminal para que tú, el operador, puedas leerlo.",
+          "code": "console.log('Iniciando protocolo...');",
+          "explanation": "Las comillas simples (' ') o dobles (\" \") le dicen a la máquina que estás enviando texto puro. A esto se le llama 'String' (cadena de texto).",
           "highlightLines": [
             1
+          ]
+        },
+        {
+          "step": 2,
+          "title": "Texto vs. Valores",
+          "content": "Para la máquina, una palabra no es lo mismo que un valor matemático. Los números se escriben crudos, sin comillas.",
+          "code": "console.log('Nivel de energía:');\nconsole.log(100);",
+          "explanation": "Si escribes '100' (con comillas), la máquina lo lee como la palabra cien. Si escribes 100 (sin comillas), lo entiende como una cantidad con la que puede hacer cálculos.",
+          "highlightLines": [
+            2
+          ]
+        },
+        {
+          "step": 3,
+          "title": "Múltiples Entradas",
+          "content": "No necesitas hacer un `console.log` para cada cosa. Puedes inyectar varios datos en la misma línea separándolos con una coma.",
+          "code": "console.log('Estado del núcleo:', 85, 'estable');",
+          "explanation": "La terminal imprimirá todos los valores juntos en la misma línea, añadiendo un espacio automáticamente entre ellos.",
+          "highlightLines": [
+            1
+          ]
+        },
+        {
+          "step": 4,
+          "title": "Visión de Rayos X (Debugging)",
+          "content": "¿Para qué sirve esto realmente? Lo usarás para rastrear errores. Como no puedes ver los datos moviéndose, imprimes mensajes para saber en qué paso exacto se quedó atascado el sistema.",
+          "code": "console.log('Paso 1: OK');\n// (Aquí iría código complejo que podría fallar)\nconsole.log('Paso 2: OK');",
+          "explanation": "Esta será tu herramienta de diagnóstico más importante. Cuando algo no funcione, tu primer instinto debe ser imprimirlo.",
+          "highlightLines": [
+            1,
+            3
           ]
         }
       ],
@@ -864,13 +895,13 @@
         {
           "step": 1,
           "title": "Las Tres Palabras clave",
-          "content": "Para declarar variables en JS moderno usamos **const** y **let**. Antiguamente se usaba **var**, pero sus comportamientos erráticos lo han vuelto obsoleto.",
+          "content": "Para declarar variables en JS moderno usamos const y let. Antiguamente se usaba var, pero sus comportamientos erráticos lo han vuelto obsoleto.",
           "explanation": "Usa const por defecto. Cambia a let solo si los datos van a mutar."
         },
         {
           "step": 2,
           "title": "¿Qué es el Scope?",
-          "content": "El **Scope** (alcance) define dónde es visible una variable. `const` y `let` tienen scope de bloque: viven dentro de las llaves `{}` donde nacen.",
+          "content": "El Scope (alcance) define dónde es visible una variable. `const` y `let` tienen scope de bloque: viven dentro de las llaves `{}` donde nacen.",
           "explanation": "Si declaras algo en un búnker, no se ve desde fuera."
         }
       ],
@@ -914,13 +945,13 @@
         {
           "step": 1,
           "title": "Hoisting y TDZ",
-          "content": "El **Hoisting** es la tendencia del motor de JS de 'elevar' las declaraciones. Sin embargo, con `let` y `const`, no puedes usarlas antes de su línea de código.",
+          "content": "El Hoisting es la tendencia del motor de JS de 'elevar' las declaraciones. Sin embargo, con `let` y `const`, no puedes usarlas antes de su línea de código.",
           "explanation": "El tiempo entre el inicio y la declaración se llama TDZ (Zona Muerta Temporal)."
         },
         {
           "step": 2,
           "title": "Errores de Acceso",
-          "content": "Si intentas usar una variable antes de inicializarla, obtendrás un **ReferenceError**. Es la forma que tiene el sistema de evitar fantasmas en el código.",
+          "content": "Si intentas usar una variable antes de inicializarla, obtendrás un ReferenceError. Es la forma que tiene el sistema de evitar fantasmas en el código.",
           "explanation": "Planifica tus variables antes de ejecutarlas."
         }
       ],
@@ -942,6 +973,14 @@
           "right": "Asignación inicial"
         }
       ],
+      "challenge": {
+        "instruction": "Vincula cada término de la fase de compilación con su definición técnica para asegurar el búnker contra ReferenceErrors.",
+        "starConditions": [
+          "1 estrella: 2 aciertos",
+          "2 estrellas: 3 aciertos",
+          "3 estrellas: Sin fallos"
+        ]
+      },
       "fragAvailable": true,
       "optional": false,
       "maxStars": 3,
@@ -956,9 +995,10 @@
       "id": "4-06",
       "act": 4,
       "actName": "Fase 1: El Lenguaje",
-      "type": "codeeditor",
+      "type": "puzzle-sort",
       "title": "Fantasmas del Código: Hoisting",
-      "description": "Aplica lo aprendido y corrige el bug de Hoisting.",
+      "description": "Ordena el flujo de datos para evitar que el sistema intente leer variables antes de que existan.",
+      "narrative": "El motor de JS intenta elevar las declaraciones, pero con let y const, el acceso antes de tiempo es fatal. Reestablece el orden lógico.",
       "concept": "TDZ",
       "theory": [
         {
@@ -972,12 +1012,29 @@
           ]
         }
       ],
+      "items": [
+        {
+          "id": "line-1",
+          "text": "let señalBunker = 404;",
+          "isCode": true
+        },
+        {
+          "id": "line-2",
+          "text": "console.log(señalBunker);",
+          "isCode": true
+        },
+        {
+          "id": "line-3",
+          "text": "// Calibración de red exitosa",
+          "isCode": true
+        }
+      ],
       "challenge": {
-        "instruction": "Mueve let arriba del log.",
+        "instruction": "Ordena las líneas de código para que la variable se declare ANTES de ser impresa en la terminal.",
         "starConditions": [
-          "1 estrella: sin error",
-          "2 estrellas: orden lógico",
-          "3 estrellas: comentario explicativo"
+          "1 estrella: Orden funcional",
+          "2 estrellas: Sin errores de referencia",
+          "3 estrellas: Lógica de búnker optimizada"
         ]
       },
       "fragAvailable": true,
@@ -995,82 +1052,88 @@
       "act": 4,
       "actName": "Fase 1: El Lenguaje",
       "type": "codeeditor",
-      "title": "Materiales del Sistema: Datos",
-      "description": "typeof operators.",
-      "concept": "Types",
+      "title": "Materiales del Sistema: Tipos Primitivos",
+      "description": "Aprende a diferenciar la materia prima del código y usa typeof para escanearla.",
+      "narrative": "Cada pieza de información en el sistema tiene un peso y una forma distintos. Si intentas sumar texto con voltaje, quemarás los fusibles.",
+      "concept": "Primitivos y typeof",
       "theory": [
         {
           "step": 1,
-          "title": "typeof",
-          "content": "Ver tipo de dato.",
-          "code": "typeof 5;",
-          "explanation": "Devuelve 'number'.",
+          "title": "Materia Prima (Primitivos)",
+          "content": "En el lenguaje de las máquinas, los datos más básicos e indivisibles se llaman Primitivos. No son mecanismos complejos; son la materia prima pura y dura con la que forjarás todo el sistema operativo.",
+          "code": "// Estos son valores primitivos puros:\n'Alarma';\n404;\ntrue;",
+          "explanation": "Piensa en ellos como un bloque de titanio sólido o un cable de cobre de un solo hilo. No puedes desarmarlos en piezas más pequeñas.",
           "highlightLines": [
-            1
-          ]
-        }
-      ],
-      "challenge": {
-        "instruction": "Usa typeof e imprime los tipos resultantes.",
-        "starConditions": [
-          "1 estrella: typeof usado",
-          "2 estrellas: string/number",
-          "3 estrellas: boolean/null"
-        ]
-      },
-      "rewardCards": [
-        "card-016"
-      ],
-      "fragAvailable": true,
-      "optional": false,
-      "maxStars": 3,
-      "isReview": false,
-      "reviewOf": [],
-      "requiredObjects": [],
-      "rewardObjects": [],
-      "failRedirectTo": null
-    },
-    {
-      "id": "4-08",
-      "act": 4,
-      "actName": "Fase 1: El Lenguaje",
-      "type": "codeeditor",
-      "title": "Engranajes: Operadores",
-      "description": "Domina la aritmética y la lógica binaria para calibrar los motores del búnker.",
-      "narrative": "FRAG: 'Los motores necesitan energía precisa. Usa operadores para validar la señal.'",
-      "mechanic": "Usa % y operadores lógicos &&, ||.",
-      "concept": "Operators",
-      "theory": [
-        {
-          "step": 1,
-          "title": "Aritmética: El Módulo (%)",
-          "content": "El operador **módulo (%)** devuelve el resto de una división. Es vital para ciclos o para saber si un número es par/impar.",
-          "code": "let resto = 10 % 3; // resto es 1",
-          "explanation": "Si 10 granos se dividen entre 3 personas, sobra 1.",
-          "highlightLines": [
-            1
+            2,
+            3,
+            4
           ]
         },
         {
           "step": 2,
-          "title": "Lógica Binaria (&&, ||)",
-          "content": "Los operadores lógicos combinan verdades: **AND (&&)** requiere que TODO sea cierto; **OR (||)** requiere que al menos UNO coincida.",
-          "code": "const listo = energia > 50 && sistemaOK;\nconst alerta = fuego || inundacion;",
-          "explanation": "Lógica pura para decisiones complejas.",
+          "title": "Registros: El String",
+          "content": "Los *Strings* (cadenas de texto) son para comunicación y registros. Deben ir siempre envueltos en comillas (simples o dobles) para que el sistema sepa que es lenguaje humano y no un comando ejecutable.",
+          "code": "let registro = 'SISTEMA COMPROMETIDO';\nlet idUsuario = \"Operador_77\";",
+          "explanation": "Si omites las comillas, la máquina intentará ejecutar la palabra como si fuera una instrucción y colapsará.",
           "highlightLines": [
             1,
+            2
+          ]
+        },
+        {
+          "step": 3,
+          "title": "Calibración: El Number",
+          "content": "Los *Numbers* son el lenguaje de la física y la calibración. Se escriben crudos, sin comillas. La máquina los usa para todo: desde números enteros hasta decimales negativos.",
+          "code": "let voltaje = 220;\nlet temperatura = -15.5;",
+          "explanation": "Solo con este tipo de dato puedes realizar operaciones aritméticas (sumar, restar, multiplicar).",
+          "highlightLines": [
+            1,
+            2
+          ]
+        },
+        {
+          "step": 4,
+          "title": "Interruptores: El Boolean",
+          "content": "Los *Booleans* son la lógica binaria pura. Solo admiten dos estados absolutos: `true` (encendido/verdadero) o `false` (apagado/falso). Tampoco llevan comillas.",
+          "code": "let compuertaAbierta = false;\nlet alarmaActivada = true;",
+          "explanation": "Son la base de las decisiones de la máquina. Un simple 'uno' o 'cero' que dictará si el búnker se sella o se abre.",
+          "highlightLines": [
+            1,
+            2
+          ]
+        },
+        {
+          "step": 5,
+          "title": "El Vacío: Null y Undefined",
+          "content": "No todos los datos tienen valor. `undefined` significa que un sensor existe pero nadie lo ha inicializado (el sistema no sabe qué es). `null` es un vacío intencional: tú como operador decides vaciar el dato.",
+          "code": "let sensorO2; // Su valor es undefined\nlet errorActual = null; // El sistema está limpio intencionalmente",
+          "explanation": "Undefined es un olvido o un estado inicial. Null es una orden directa de borrar la memoria.",
+          "highlightLines": [
+            1,
+            2
+          ]
+        },
+        {
+          "step": 6,
+          "title": "El Escáner (typeof)",
+          "content": "¿Qué pasa si un nodo te envía un dato ciego desde la superficie y no sabes qué es? El operador `typeof` actúa como un escáner que revela la verdadera naturaleza de cualquier valor.",
+          "code": "let señal = 404;\nconsole.log(typeof señal); // Imprime 'number'",
+          "explanation": "Esta es tu herramienta principal para diagnosticar redes corrompidas antes de que causen daños estructurales.",
+          "highlightLines": [
             2
           ]
         }
       ],
       "challenge": {
-        "instruction": "Calibra el motor: (1) Calcula el resto de 27 entre 5 en 'resto'. (2) Activa 'motorListo' si 'energia' es > 80 Y 'combustible' es > 50.",
+        "instruction": "Usa typeof dentro de un console.log() para imprimir el tipo de las variables 'lecturaOxigeno' y 'estadoPuerta'.",
         "starConditions": [
-          "1 estrella: cálculo de resto",
-          "2 estrellas: lógica AND",
-          "3 estrellas: uso de variables"
+          "1 estrella: Imprimir lecturaOxigeno",
+          "2 estrellas: Imprimir estadoPuerta",
+          "3 estrellas: Sintaxis correcta y sin errores"
         ]
       },
+      "initialCode": "let lecturaOxigeno = 85.5;\nlet estadoPuerta = 'CERRADA';\n\n// Escanea e imprime el tipo de lecturaOxigeno\n\n// Escanea e imprime el tipo de estadoPuerta\n",
+      "solution": "let lecturaOxigeno = 85.5;\nlet estadoPuerta = 'CERRADA';\n\nconsole.log(typeof lecturaOxigeno);\nconsole.log(typeof estadoPuerta);",
       "fragAvailable": true,
       "optional": false,
       "maxStars": 3,
@@ -1078,11 +1141,13 @@
       "reviewOf": [],
       "requiredObjects": [],
       "rewardObjects": [],
-      "rewardCards": [],
+      "rewardCards": [
+        "card-016"
+      ],
       "failRedirectTo": null
     },
     {
-      "id": "4-09",
+      "id": "4-08",
       "act": 4,
       "actName": "Fase 1: El Lenguaje",
       "type": "puzzle-match",
@@ -1091,14 +1156,14 @@
       "theory": [
         {
           "step": 1,
-          "title": "Tipos Primitivos",
-          "content": "En JS, los valores básicos se llaman **Primitivos**. Incluyen **String** (texto), **Number** (números) y **Boolean** (true/false).",
-          "explanation": "Son los ladrillos de construcción de cualquier sistema digital."
+          "title": "Recordatorio de Primitivos",
+          "content": "Los valores básicos como **String** (texto), **Number** (números) y **Boolean** (true/false) son la base inmutable del sistema.",
+          "explanation": "Son los ladrillos de construcción de cualquier arquitectura digital."
         },
         {
           "step": 2,
-          "title": "Indagación: typeof",
-          "content": "El operador **typeof** nos permite preguntar al sistema: '¿Qué tipo de dato es este?'. Nos devolverá una palabra clave como 'string' o 'number'.",
+          "title": "Recordatorio de typeof",
+          "content": "El operador **typeof** nos permite interrogar al sistema: '¿Qué tipo de dato es este?'.",
           "explanation": "Imprescindible para depurar sensores mal calibrados."
         }
       ],
@@ -1109,17 +1174,98 @@
         },
         {
           "left": "String",
-          "right": "Texto"
+          "right": "Texto entre comillas"
         },
         {
           "left": "Number",
-          "right": "Valor numérico"
+          "right": "Valor matemático"
         },
         {
           "left": "Boolean",
-          "right": "Interuptor lógico"
+          "right": "Interruptor true/false"
         }
       ],
+      "challenge": {
+        "instruction": "Vincula los tipos primitivos con su descripción funcional para desbloquear los manuales de calibración.",
+        "starConditions": [
+          "1 estrella: 2 aciertos",
+          "2 estrellas: 3 aciertos",
+          "3 estrellas: Sin fallos"
+        ]
+      },
+      "fragAvailable": true,
+      "optional": false,
+      "maxStars": 3,
+      "isReview": true,
+      "reviewOf": [
+        "4-07"
+      ],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [],
+      "failRedirectTo": null
+    },
+    {
+      "id": "4-09",
+      "act": 4,
+      "actName": "Fase 1: El Lenguaje",
+      "type": "puzzle-fill",
+      "title": "Justicia: Igualdad Estricta",
+      "description": "Aprende por qué el doble igual (==) es un riesgo crítico de seguridad y usa siempre el triple igual (===).",
+      "narrative": "El sistema antiguo era permisivo y colapsó. El nuevo búnker exige precisión absoluta. Las coincidencias a medias son vulnerabilidades.",
+      "concept": "=== vs ==",
+      "theory": [
+        {
+          "step": 1,
+          "title": "Coerción de Tipos (El Peligro)",
+          "content": "El operador `==` intenta ser amable y convierte los valores antes de compararlos. Esto hace que el número 5 sea igual al texto '5', abriendo brechas de seguridad.",
+          "code": "let codigoIngresado = '1234';\nlet claveSeguridad = 1234;\nconsole.log(codigoIngresado == claveSeguridad); // true (¡PELIGRO!)",
+          "explanation": "La puerta se abriría aunque el tipo de dato fuera incorrecto.",
+          "highlightLines": [
+            3
+          ]
+        },
+        {
+          "step": 2,
+          "title": "Igualdad Estricta (La Solución)",
+          "content": "El operador `===` (triple igual) es implacable. Compara el valor Y el tipo de dato. Si no son exactamente idénticos en naturaleza, los rechaza.",
+          "code": "console.log(codigoIngresado === claveSeguridad); // false (SEGURO)",
+          "explanation": "En ingeniería de software profesional, SIEMPRE usarás `===`.",
+          "highlightLines": [
+            1
+          ]
+        }
+      ],
+      "items": [
+        {
+          "id": "f1",
+          "text": "let idUsuario = '9901';",
+          "isCode": true
+        },
+        {
+          "id": "f2",
+          "text": "let idAdmin = 9901;",
+          "isCode": true
+        },
+        {
+          "id": "f3",
+          "text": "let acceso = idUsuario ___ idAdmin;",
+          "blank": "___",
+          "answer": "===",
+          "isCode": true
+        }
+      ],
+      "fillAnswers": [
+        "==="
+      ],
+      "challenge": {
+        "instruction": "Completa el detector: reemplaza el hueco con el operador de igualdad estricta para asegurar que el ID de usuario coincida en valor Y tipo.",
+        "starConditions": [
+          "1 estrella: Operador corregido",
+          "2 estrellas: Seguridad estricta activa",
+          "3 estrellas: Cero vulnerabilidades"
+        ]
+      },
       "fragAvailable": true,
       "optional": false,
       "maxStars": 3,
@@ -1135,30 +1281,45 @@
       "act": 4,
       "actName": "Fase 1: El Lenguaje",
       "type": "codeeditor",
-      "title": "Justicia: Igualdad Estricta",
-      "description": "Aprende por qué el doble igual (==) es un riesgo de seguridad y usa siempre el triple igual (===).",
-      "narrative": "FRAG: 'El sistema antiguo era permisivo. El nuevo búnker exige precisión absoluta.'",
-      "concept": "=== vs ==",
+      "title": "Engranajes: Operadores Lógicos",
+      "description": "Domina la aritmética y la lógica binaria para calibrar los motores del búnker.",
+      "narrative": "Los motores de ensamblaje requieren calibración exacta. Utiliza operadores aritméticos y lógicos para validar la señal de encendido.",
+      "mechanic": "Usa % y operadores lógicos &&, ||.",
+      "concept": "Operators",
       "theory": [
         {
           "step": 1,
-          "title": "Coerción de Tipos",
-          "content": "El operador `==` intenta convertir los valores antes de compararlos. Esto hace que `5 == '5'` sea true, lo cual es peligroso.",
-          "code": "5 == '5'; // true\n5 === '5'; // false",
-          "explanation": "=== compara valor Y tipo de dato. Es la forma segura.",
+          "title": "Aritmética: El Módulo (%)",
+          "content": "El operador módulo (%) devuelve el resto de una división exacta. Es vital para crear ciclos cerrados o para saber si un engranaje es par o impar.",
+          "code": "let sobrante = 10 % 3; // sobra 1\nlet esPar = 24 % 2 === 0; // true (no sobra nada)",
+          "explanation": "Si distribuyes 10 unidades de energía entre 3 celdas, cada celda recibe 3, y sobra 1 unidad. Dividir entre 2 y verificar si sobra 0 es la forma de saber si un número es par.",
           "highlightLines": [
+            1,
+            2
+          ]
+        },
+        {
+          "step": 2,
+          "title": "Protocolos Combinados (&&, ||)",
+          "content": "Para decisiones críticas, un solo sensor no basta. AND (&&) es seguridad estricta: exige que *todas* las condiciones se cumplan al mismo tiempo. OR (||) es reactividad pura: se activa si *al menos una* condición es verdadera.",
+          "code": "const listo = energia > 50 && sistemaOK;\nconst alerta = fuego || inundacion;",
+          "explanation": "El `&&` es como la puerta de un búnker que necesita dos llaves giradas a la vez para abrirse. El `||` es una alarma de emergencia: sonará ya sea por fuego, o por agua.",
+          "highlightLines": [
+            1,
             2
           ]
         }
       ],
       "challenge": {
-        "instruction": "Corrige el detector de intrusos: cambia el '==' por '===' para evitar falsos positivos.",
+        "instruction": "Calibra el motor: (1) Calcula el resto de 27 entre 5 en la variable 'resto'. (2) Activa la variable 'motorListo' evaluando si 'energia' es mayor a 80 Y 'combustible' es mayor a 50.",
         "starConditions": [
-          "1 estrella: cambio realizado",
-          "2 estrellas: uso de ===",
-          "3 estrellas: código limpio"
+          "1 estrella: cálculo de resto",
+          "2 estrellas: lógica AND",
+          "3 estrellas: código exacto"
         ]
       },
+      "initialCode": "let energia = 85;\nlet combustible = 60;\n\n// 1. Calcula el resto de 27 dividido por 5\nlet resto = \n\n// 2. Evalúa si energia > 80 Y combustible > 50\nlet motorListo = \n",
+      "solution": "let energia = 85;\nlet combustible = 60;\n\nlet resto = 27 % 5;\nlet motorListo = energia > 80 && combustible > 50;",
       "fragAvailable": true,
       "optional": false,
       "maxStars": 3,
@@ -1173,39 +1334,64 @@
       "id": "4-11",
       "act": 4,
       "actName": "Fase 1: El Lenguaje",
-      "type": "codeeditor",
-      "title": "Protocolos: ?? y Ternarios",
-      "description": "Usa operadores modernos para manejar valores nulos y tomar decisiones rápidas.",
-      "narrative": "FRAG: 'Código corto es código limpio. Usa atajos seguros.'",
+      "type": "puzzle-fill",
+      "title": "Protocolos Modernos: ?? y Ternarios",
+      "description": "Usa operadores avanzados para manejar valores nulos y tomar decisiones de una sola línea.",
+      "narrative": "El código largo es propenso a errores. Domina las estructuras compactas para mantener el núcleo del sistema rápido y eficiente.",
       "concept": "Nullish & Ternary",
       "theory": [
         {
           "step": 1,
           "title": "Nullish Coalescing (??)",
-          "content": "El operador **??** otorga un valor por defecto solo si el original es `null` o `undefined`.",
-          "code": "let oxigeno = datos.O2 ?? 50;",
-          "explanation": "Si no hay datos, asumimos un mínimo de 50.",
+          "content": "El operador **??** otorga un valor por defecto solo si el original es `null` o `undefined`. Es tu red de seguridad contra datos corruptos.",
+          "code": "let lecturaSensor = null;\nlet oxigeno = lecturaSensor ?? 50;",
+          "explanation": "Si el sensor está roto (null), el sistema asumirá automáticamente un 50% para evitar el pánico.",
           "highlightLines": [
-            1
+            2
           ]
         },
         {
           "step": 2,
-          "title": "Operador Ternario",
-          "content": "Es un `if/else` en una sola línea. `condicion ? true : false`.",
-          "code": "let estado = energia > 20 ? 'OK' : 'FAIL';",
-          "explanation": "Perfecto para asignaciones rápidas.",
+          "title": "El Operador Ternario",
+          "content": "Es un `if/else` comprimido en una sola línea. La estructura es: `condicion ? valorSiVerdadero : valorSiFalso`.",
+          "code": "let bateria = 15;\nlet estado = bateria > 20 ? 'ESTABLE' : 'CRÍTICO';",
+          "explanation": "Lee la línea 2 como: ¿Es la batería mayor a 20? Si es cierto ('?'), asigna 'ESTABLE'. De lo contrario (':'), asigna 'CRÍTICO'.",
           "highlightLines": [
-            1
+            2
           ]
         }
       ],
+      "items": [
+        {
+          "id": "f1",
+          "text": "let sensorO2 = null;",
+          "isCode": true
+        },
+        {
+          "id": "f2",
+          "text": "let nivelO2 = sensorO2 ___ 21;",
+          "blank": "___",
+          "answer": "??",
+          "isCode": true
+        },
+        {
+          "id": "f3",
+          "text": "let búnker = nivelO2 > 15 ___ 'SEGURO' : 'PELIGRO';",
+          "blank": "___",
+          "answer": "?",
+          "isCode": true
+        }
+      ],
+      "fillAnswers": [
+        "??",
+        "?"
+      ],
       "challenge": {
-        "instruction": "1. Asigna a 'oxigeno' el valor de 'userOxigeno' o 50 si es nulo. 2. Asigna a 'estado' 'ESTABLE' si energia > 50, o 'CRÍTICO' en caso contrario.",
+        "instruction": "Usa los operadores avanzados para establecer una red de seguridad: (1) Asigna 21 si el sensor falla, (2) Valida si el búnker es seguro.",
         "starConditions": [
-          "1 estrella: usa ??",
-          "2 estrellas: usa ?",
-          "3 estrellas: lógica exacta"
+          "1 estrella: Nullish aplicado",
+          "2 estrellas: Ternario funcional",
+          "3 estrellas: Protocolo optimizado"
         ]
       },
       "fragAvailable": true,
@@ -1228,40 +1414,51 @@
       "theory": [
         {
           "step": 1,
-          "title": "Operadores Lógicos",
-          "content": "Para combinar verdades usamos **AND (&&)** (ambos deben ser ciertos) y **OR (||)** (uno de los dos). El operador **NOT (!)** invierte el valor.",
-          "explanation": "Pura lógica binaria para procesar sensores."
+          "title": "Símbolos Lógicos",
+          "content": "La máquina no entiende intenciones, solo símbolos. **&& (AND)** exige cumplimiento total. **|| (OR)** busca al menos una coincidencia.",
+          "explanation": "Las herramientas para cruzar datos."
         },
         {
           "step": 2,
-          "title": "Nullish Coalescing (??)",
-          "content": "El operador **??** nos permite definir un valor por defecto solo si el sistema devuelve `null` o `undefined` (datos corruptos o vacíos).",
-          "explanation": "El plan de contingencia perfecto."
+          "title": "Seguridad y Condicionales",
+          "content": "El operador **?? (Nullish)** protege contra el vacío (`null`), mientras que el **Ternario (?)** ejecuta micro-decisiones al instante.",
+          "explanation": "Eficiencia pura en el código."
         }
       ],
       "pairs": [
         {
           "left": "||",
-          "right": "OR"
+          "right": "OR (Una o más verdades)"
         },
         {
           "left": "&&",
-          "right": "AND"
+          "right": "AND (Verdad absoluta)"
         },
         {
           "left": "??",
-          "right": "Nullish"
+          "right": "Nullish (Valor por defecto)"
         },
         {
-          "left": "!",
-          "right": "NOT"
+          "left": "===",
+          "right": "Igualdad Estricta"
         }
       ],
+      "challenge": {
+        "instruction": "Resuelve la arquitectura lógica combinando operadores de igualdad y protocolos booleanos.",
+        "starConditions": [
+          "1 estrella: 2 aciertos",
+          "2 estrellas: 3 aciertos",
+          "3 estrellas: Sin fallos"
+        ]
+      },
       "fragAvailable": true,
       "optional": false,
       "maxStars": 3,
-      "isReview": false,
-      "reviewOf": [],
+      "isReview": true,
+      "reviewOf": [
+        "4-10",
+        "4-11"
+      ],
       "requiredObjects": [],
       "rewardObjects": [],
       "rewardCards": [],
