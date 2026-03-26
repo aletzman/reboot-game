@@ -4,7 +4,7 @@ import { Header } from "@/components/ui/Header";
 import CRTOverlay from "@/components/ui/CRTOverlay";
 import "./globals.css";
 
-const geistSans = Geist({
+const geistSans = Monda({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });

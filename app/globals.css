@@ -106,6 +106,7 @@ body {
   opacity: 0.5;
   transform: translateZ(0);
   backface-visibility: hidden;
+  z-index: 10000;
 }
 
 /* EFECTO GLITCH PARA EL TÍTULO */

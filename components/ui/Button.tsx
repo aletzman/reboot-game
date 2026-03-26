@@ -29,7 +29,7 @@ export function Button({
     const defaultSweep = variant === "solid";
     const sweepEnabled = showSweep ?? defaultSweep;
 
-    const baseClasses = "relative group inline-flex items-center justify-center gap-2 rounded-[2px] font-semibold font-mono uppercase tracking-widest transition-all duration-300 cursor-pointer overflow-hidden leading-none";
+    const baseClasses = "relative group inline-flex items-center justify-center gap-2 rounded-[2px] font-semibold font-mono uppercase tracking-widest transition-all cursor-pointer overflow-hidden leading-none";
 
     const variants = {
         outline: "bg-transparent border border-(--green-base) text-(--green-light) hover:bg-(--green-darkest) shadow-[0_0_15px_rgba(85,226,0,0.05)] hover:shadow-[0_0_25px_rgba(85,226,0,0.15)]",
@@ -71,7 +71,7 @@ export function Button({
     );
 
     const renderContent = () => (
-        <span className="relative z-10 flex items-center justify-center gap-2 w-full text-center pl-[0.1em] pt-[2px]">
+        <span className="relative z-10 flex items-center justify-center gap-2 w-full text-center pl-[0.1em] pt-[2px] ">
             {Icon && iconPosition === "left" && <Icon size={iconSizes[size]} className="shrink-0" />}
             {children}
             {Icon && iconPosition === "right" && <Icon size={iconSizes[size]} className="shrink-0" />}
