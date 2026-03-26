@@ -37,6 +37,7 @@ const SpeedTypingLevel = dynamic(() => import('@/components/levels/SpeedTypingLe
 const CodeEditorLevel = dynamic(() => import('@/components/levels/CodeEditorLevel/CodeEditorLevel'), { ssr: false })
 const DecisionLevel = dynamic(() => import('@/components/levels/DecisionLevel'), { ssr: false })
 const ReviewLevel = dynamic(() => import('@/components/levels/ReviewLevel'), { ssr: false })
+const TheoryOverlay = dynamic(() => import('@/components/levels/TheoryOverlay/TheoryOverlay'), { ssr: false })
 
 // ------------------------------------------------------------
 // TIPOS
@@ -68,6 +69,7 @@ export default function LevelPage({ levelId }: PageProps) {
     const [showComplete, setShowComplete] = useState(false)
     const [completionResult, setResult] = useState<ReturnType<typeof completeLevel> | null>(null)
     const [resetKey, setResetKey] = useState(0)
+    const [showingTheory, setShowingTheory] = useState(false)
 
     // ------------------------------------------------------------
     // INICIALIZACIÓN
@@ -105,6 +107,10 @@ export default function LevelPage({ levelId }: PageProps) {
 
         setLevelState(initLevelState(found))
         setPageStatus('playing')
+
+        if (found.theory && found.theory.length > 0) {
+            setShowingTheory(true)
+        }
     }, [levelId])
 
     const [customCompletionContent, setCustomContent] = useState<React.ReactNode>(null)
@@ -210,8 +216,12 @@ export default function LevelPage({ levelId }: PageProps) {
 
     return (
         <div className="flex flex-col h-[calc(100svh-47px)] bg-(--bg-void)">
-            {level.narrative && pageStatus === 'playing' && (
+            {level.narrative && pageStatus === 'playing' && !showingTheory && (
                 <NarrativeBanner text={level.narrative} />
+            )}
+
+            {showingTheory && level.theory && (
+                <TheoryOverlay theory={level.theory} onComplete={() => setShowingTheory(false)} />
             )}
 
             <main key={resetKey} className="flex-1 flex flex-col">
@@ -273,9 +283,12 @@ function renderLevelComponent(
 // ------------------------------------------------------------
 
 function LoadingScreen() {
-    const tip = useMemo(() => {
+    const [tip, setTip] = useState<string>(dialogues.frag.ambient_tips[0])
+
+    useEffect(() => {
         const tips = dialogues.frag.ambient_tips
-        return tips[Math.floor(Math.random() * tips.length)]
+        const randomTip = tips[Math.floor(Math.random() * tips.length)]
+        setTip(randomTip)
     }, [])
 
     return (
