@@ -203,9 +203,6 @@ export default function CinematicLevel({
                 }}
             />
 
-            {/* ── CRT scanlines ── */}
-            <div className="absolute inset-0 pointer-events-none crt-overlay opacity-30" />
-
             {/* ── HEADER de la terminal ── */}
             <header
                 className="relative z-20 flex items-center justify-between px-5 py-2 gap-4 shrink-0 border-b border-(--bg-hover)"

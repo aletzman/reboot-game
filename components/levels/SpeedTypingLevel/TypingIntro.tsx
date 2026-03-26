@@ -14,8 +14,6 @@ interface TypingIntroProps {
 export function TypingIntro({ level, data, onStart }: TypingIntroProps) {
     return (
         <div className="flex-1 flex flex-col items-center justify-center bg-(--bg-void) p-8 relative overflow-hidden">
-            {/* Efectos de fondo CRT */}
-            <div className="absolute inset-0 pointer-events-none opacity-20 crt-overlay" />
             <div className="absolute top-0 left-0 w-full h-[2px] bg-(--green-base) opacity-10 animate-scanline pointer-events-none" />
 
             {/* Elementos decorativos de terminal */}

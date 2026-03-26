@@ -153,6 +153,108 @@ export const PUZZLE_DATA: Record<string, PuzzleData> = {
             { leftId: 'l4', rightId: 'r4' },
         ],
     },
+    '1-R': {
+        type: 'match',
+        items: [
+            { id: 'l1', text: 'Secuencia' },
+            { id: 'l2', text: 'Bucle' },
+            { id: 'l3', text: 'Condicional' },
+            { id: 'l4', text: 'Orden de ejecución' },
+        ],
+        pairs: [
+            { leftId: 'l1', rightId: 'r1' },
+            { leftId: 'l2', rightId: 'r2' },
+            { leftId: 'l3', rightId: 'r3' },
+            { leftId: 'l4', rightId: 'r4' },
+        ],
+        rightItems: [
+            { id: 'r1', text: 'Pasos en orden' },
+            { id: 'r2', text: 'Repetir acciones' },
+            { id: 'r3', text: 'Si... entonces...' },
+            { id: 'r4', text: 'El top-down del programa' },
+        ]
+    },
+    '2-R': {
+        type: 'sort',
+        items: [
+            { id: '1', text: 'FUNCION estabilizar()' },
+            { id: '2', text: '  SI nucleo == caliente ENTONCES' },
+            { id: '3', text: '    ACTIVAR(refrigerante)' },
+            { id: '4', text: '  FIN SI' },
+            { id: '5', text: 'FIN FUNCION' },
+        ]
+    },
+    '3-R': {
+        type: 'match',
+        items: [
+            { id: 'l1', text: 'REPETIR (bloque)' },
+            { id: 'l2', text: 'SI (bloque)' },
+            { id: 'l3', text: 'MOVER()' },
+            { id: 'l4', text: '// comentario' },
+        ],
+        pairs: [
+            { leftId: 'l1', rightId: 'r1' },
+            { leftId: 'l2', rightId: 'r2' },
+            { leftId: 'l3', rightId: 'r3' },
+            { leftId: 'l4', rightId: 'r4' },
+        ],
+        rightItems: [
+            { id: 'r1', text: 'for / while' },
+            { id: 'r2', text: 'if-else' },
+            { id: 'r3', text: 'Invocación de función' },
+            { id: 'r4', text: 'Explicación del código' },
+        ]
+    },
+    '4-R': {
+        type: 'bug',
+        bugLineIndex: 1,
+        items: [
+            { id: 'a', text: 'const nucleo = "estable";' },
+            { id: 'b', text: 'nucleo = "critico";', hasBug: true }, // error: const cannot be reassigned
+            { id: 'c', text: 'console.log(nucleo);' }
+        ]
+    },
+    '5-R': {
+        type: 'fill',
+        items: [
+            { id: 'a', text: 'function calcularEnergia(____)', blank: '____', answer: 'v', isCode: true },
+            { id: 'b', text: '  let total = v * 10;', isCode: true },
+            { id: 'c', text: '  ____ total;', blank: '____', answer: 'return', isCode: true },
+            { id: 'd', text: '}', isCode: true },
+        ],
+        fillAnswers: ['v', 'return']
+    },
+    '6-R': {
+        type: 'sort',
+        items: [
+            { id: '1', text: 'let n = 0;' },
+            { id: '2', text: 'while (n < 5) {' },
+            { id: '3', text: '  robot.move();' },
+            { id: '4', text: '  n++;' },
+            { id: '5', text: '}' },
+        ]
+    },
+    '7-R': {
+        type: 'match',
+        items: [
+            { id: 'l1', text: 'const data = [1, 2, 3]' },
+            { id: 'l2', text: 'const obj = { id: 1 }' },
+            { id: 'l3', text: 'data.length' },
+            { id: 'l4', text: 'obj.id' },
+        ],
+        pairs: [
+            { leftId: 'l1', rightId: 'r1' },
+            { leftId: 'l2', rightId: 'r2' },
+            { leftId: 'l3', rightId: 'r3' },
+            { leftId: 'l4', rightId: 'r4' },
+        ],
+        rightItems: [
+            { id: 'r1', text: 'Arreglo (Array)' },
+            { id: 'r2', text: 'Objeto' },
+            { id: 'r3', text: 'Longitud del arreglo' },
+            { id: 'r4', text: 'Propiedad del objeto' },
+        ]
+    },
 }
 
 export const MATCH_RIGHT: Record<string, { id: string; text: string }[]> = {

@@ -141,6 +141,18 @@ export const LIGHTBOT_MAPS: Record<string, LightbotLevelData> = {
         uiLimitF1: 4,
         allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'call-fn', 'repeat'],
     },
+    '1-R': {
+        map: [
+            [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'wall', x: 2, y: 0 }, { type: 'floor', x: 3, y: 0, height: 1 }],
+            [{ type: 'wall', x: 0, y: 1 }, { type: 'floor', x: 1, y: 1 }, { type: 'wall', x: 2, y: 1 }, { type: 'floor', x: 3, y: 1, height: 2 }],
+            [{ type: 'floor', x: 0, y: 2, height: 1 }, { type: 'floor', x: 1, y: 2 }, { type: 'floor', x: 2, y: 2 }, { type: 'floor', x: 3, y: 2, height: 1 }],
+            [{ type: 'target', x: 0, y: 3 }, { type: 'floor', x: 1, y: 3 }, { type: 'floor', x: 2, y: 3 }, { type: 'floor', x: 3, y: 3 }],
+        ],
+        robotStart: { x: 0, y: 0, direction: 'east' },
+        targets: [{ x: 0, y: 3 }],
+        maxCommands: 12,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'repeat'],
+    },
 }
 
 export const DEFAULT_MAP: LightbotLevelData = {

@@ -12,8 +12,6 @@ export function PuzzleWrapper({ level, title, children, onCheck, checkLabel = 'v
 }) {
     return (
         <div className="flex-1 flex flex-col items-center py-12 px-4 bg-(--bg-void) relative overflow-hidden min-h-screen">
-            {/* ── CRT scanlines ── */}
-            <div className="absolute inset-0 pointer-events-none crt-overlay opacity-20 z-0" />
 
             <div className="relative z-10 max-w-[620px] w-full flex flex-col gap-6 animate-fade-in-up">
                 {/* ── DEVICE FRAME ── */}

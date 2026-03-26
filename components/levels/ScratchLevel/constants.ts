@@ -170,6 +170,23 @@ export const SCRATCH_DATA: Record<string, ScratchLevelData> = {
             return types.has('FUNCION') && types.has('REPETIR') && types.has('ACTIVAR')
         },
     },
+    '2-R': {
+        availableBlocks: ['MOVER', 'GIRAR', 'REPETIR', 'SI', 'FUNCION', 'LLAMAR', 'ACTIVAR', 'ASIGNAR'],
+        maxBlocks: 15,
+        hint: 'Demuestra tu dominio total del pseudocódigo',
+        map: {
+            grid: [
+                [0, 0, 0, 0, 0],
+                [0, 2, 0, 2, 0],
+                [0, 0, 0, 0, 0],
+                [0, 2, 0, 2, 0],
+                [0, 0, 3, 0, 0]
+            ],
+            start: { x: 2, y: 4, dir: 'up' },
+            objective: [{ x: 1, y: 1 }, { x: 3, y: 1 }, { x: 1, y: 3 }, { x: 3, y: 3 }]
+        },
+        validateFn: (blocks) => blocks.length > 0
+    },
 }
 
 export const DEFAULT_SCRATCH: ScratchLevelData = {
