@@ -1,71 +1,93 @@
 import { TestCase } from '@/types/game'
 import { EDITOR_DATA } from './constants'
 
-export function runTests(code: string, tests: Omit<TestCase, 'passed'>[]): TestCase[] {
-    const patterns: Record<string, (code: string) => boolean> = {
-        // variables
-        't1-4-01': c => /\b(let|const)\s+\w+/.test(c),
-        't2-4-01': c => /robot\.move\s*\(\s*\w+\s*\)/.test(c),
+export function runTests(code: string, tests: Omit<TestCase, 'passed'>[], levelId: string): TestCase[] {
+    const patterns: Record<string, (c: string) => boolean> = {
+        // 4-02: console.log
+        '4-02-t1': c => (c.match(/console\.log/g) || []).length >= 2,
+        '4-02-t2': c => /console\.log\s*\(/.test(c),
 
-        // funciones
-        't1-4-03': c => /\bfunction\b/.test(c),
-        't2-4-03': c => /function\s+\w+\s*\(\s*\w+/.test(c),
-        't3-4-03': c => {
-            const fnMatch = c.match(/function\s+(\w+)/)
-            if (!fnMatch) return false
-            const name = fnMatch[1]
-            return new RegExp(name + '\\s*\\(').test(c.replace(`function ${name}`, ''))
+        // 4-03: let/const
+        '4-03-t1': c => /\bconst\s+BUNKER\b/.test(c),
+        '4-03-t2': c => /\blet\s+energia\b/.test(c),
+        '4-03-t3': c => /energia\s*=\s*95/.test(c),
+
+        // 4-06: Hoisting/TDZ
+        '4-06-t1': c => {
+            const decl = c.indexOf('let radiacion');
+            const use = c.indexOf('console.log');
+            return decl !== -1 && use !== -1 && decl < use;
         },
 
-        // arrays
-        't1-4-05': c => /\[[\s\S]*?\]/.test(c),
-        't2-4-05': c => /\.forEach\s*\(/.test(c),
-        't3-4-05': c => /robot\.activate\s*\(/.test(c) && /\.forEach\s*\(/.test(c),
+        // 4-07: Types
+        '4-07-t1': c => /typeof\b/.test(c),
+        '4-07-t2': c => /console\.log\b/.test(c),
 
-        // objetos
-        't1-4-07': c => /\{[\s\S]*?:[\s\S]*?\}/.test(c),
-        't2-4-07': c => {
-            const objMatch = c.match(/\{([\s\S]*?)\}/)
-            if (!objMatch) return false
-            const props = objMatch[1].split(',').filter(p => p.includes(':'))
-            return props.length >= 2
-        },
-        't3-4-07': c => /\w+\.\w+/.test(c),
+        // 4-08: Operators (Diagnosis)
+        '4-08-t1': c => /resto\s*=\s*(2|27\s*%\s*5)/.test(c),
+        '4-08-t2': c => /&&/.test(c),
+        '4-08-t3': c => /motorListo\s*=\s*true/.test(c) || /motorListo\s*=\s*\(?energia\s*>\s*80\s*&&\s*combustible\s*>\s*50\)?/.test(c),
+        '4-10-t1': c => c.includes('===') && !c.includes('== '),
 
-        // callbacks
-        't1-4-08': c => /function\s+\w+\s*\(\s*\w+\s*,\s*\w+/.test(c),
-        't2-4-08': c => {
-            const paramMatch = c.match(/function\s+\w+\s*\(\s*\w+\s*,\s*(\w+)/)
-            if (!paramMatch) return false
-            const cbParam = paramMatch[1]
-            return new RegExp(cbParam + '\\s*\\(').test(c)
-        },
-        't3-4-08': c => /\bfunction\b[\s\S]*?\bfunction\b/.test(c),
+        // 4-11: ?? / Ternary
+        '4-11-t1': c => /\?\?/.test(c),
+        '4-11-t2': c => /\?\s*.*:/.test(c),
 
-        // nivel 4-10
-        't1-4-10': c => /\b(let|const)\s+\w+/.test(c),
-        't2-4-10': c => /\bfunction\b/.test(c),
-        't3-4-10': c => /\[[\s\S]*?\]/.test(c),
-        't4-4-10': c => /\{[\s\S]*?:[\s\S]*?\}/.test(c),
-        't5-4-10': c => /robot\.activate\s*\(/.test(c),
+        // 4-13: if/else
+        '4-13-t1': c => /\bif\b[\s\S]*\belse\s+if\b[\s\S]*\belse\b/.test(c),
+        '4-13-t2': c => /'ÓPTIMO'|'ESTABLE'|'ALERTA'/.test(c),
 
-        // nivel final 5-02
-        't1-5-02': c => /\b(let|const)\s+\w+/.test(c),
-        't2-5-02': c => /\bfunction\b/.test(c),
-        't3-5-02': c => /\[[\s\S]*?\]/.test(c),
-        't4-5-02': c => /\{[\s\S]*?:[\s\S]*?\}/.test(c),
-        't5-5-02': c => /\.forEach\s*\(|for\s*\(/.test(c),
-        't6-5-02': c => /\bif\s*\(/.test(c),
-        't7-5-02': c => /function[\s\S]*?function/.test(c),
-        't8-5-02': c => /genesis\.activar\s*\(/.test(c),
+        // 4-14: switch
+        '4-14-t1': c => /\bswitch\b/.test(c) && /\bcase\b/.test(c),
+        '4-14-t2': c => /\bdefault\b/.test(c) && /\bbreak\b/.test(c) || c.includes('default'),
+
+        // 4-16: for
+        '4-16-t1': c => /\bfor\b/.test(c),
+        '4-16-t2': c => /10/.test(c),
+
+        // 4-17: while
+        '4-17-t1': c => /\bwhile\b/.test(c),
+        '4-17-t2': c => /100/.test(c) && /carga\s*(\+|=)/.test(c),
+
+        // 4-18: break/continue
+        '4-18-t1': c => /\bcontinue\b/.test(c),
+        '4-18-t2': c => /\bbreak\b/.test(c),
+
+        // 4-20: Functions
+        '4-20-t1': c => /\bfunction\s+inyectar\b/.test(c),
+        '4-20-t2': c => /\breturn\b/.test(c),
+
+        // 4-21: Return/Params
+        '4-21-t1': c => /\breturn\b/.test(c) && /\+/.test(c),
+        '4-21-t2': c => /\bconst|let\s+\w+\s*=\s*\w+\(/.test(c),
+
+        // 4-23: Arrays
+        '4-23-t1': c => /\[.*,.*,.*\]/.test(c),
+        '4-23-t2': c => /\.push\s*\(/.test(c),
+
+        // 4-24: map
+        '4-24-t1': c => /\.map\s*\(/.test(c),
+        '4-24-t2': c => /\*|0\.9/.test(c),
+
+        // 4-25: filter
+        '4-25-t1': c => /\.filter\s*\(/.test(c),
+        '4-25-t2': c => />\s*50/.test(c),
+
+        // 4-27: Objects
+        '4-27-t1': c => /\{[\s\S]*id[\s\S]*nombre[\s\S]*estado[\s\S]*\}/.test(c),
+        '4-27-t2': c => /\.estado\s*=/.test(c),
+
+        // 4-28: Arrow Functions
+        '4-28-t1': c => /=>/.test(c),
+        '4-28-t2': c => /=>\s*[^\{]/.test(c),
+
+        // 4-R: Final Review
+        '4-R-t1': c => /\.filter\s*\(/.test(c) && /\.map\s*\(/.test(c),
+        '4-R-t2': c => /=>/.test(c),
     }
 
     return tests.map(test => {
-        const levelId = Object.keys(EDITOR_DATA).find(k =>
-            EDITOR_DATA[k].tests.some(t => t.id === test.id)
-        ) ?? ''
-        const key = `${test.id}-${levelId}`
-
+        const key = `${levelId}-${test.id}`
         const fn = patterns[key]
         const passed = fn ? fn(code) : code.trim().length > 0
 

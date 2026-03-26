@@ -11,6 +11,7 @@ export interface PuzzleData {
     type: 'sort' | 'fill' | 'bug' | 'match'
     items: PuzzleItem[]
     pairs?: MatchPair[]      // solo para match
+    rightItems?: { id: string; text: string }[] // nuevo: para match dinámico
     bugLineIndex?: number    // solo para bug
     fillAnswers?: string[]   // respuestas correctas para fill
 }

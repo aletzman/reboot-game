@@ -73,7 +73,7 @@ export default function CodeEditorLevel({
         }
 
         // correr tests de análisis estático
-        const results = runTests(code, data.tests)
+        const results = runTests(code, data.tests, level.id)
         const allPassed = results.every(t => t.passed)
         const passedCount = results.filter(t => t.passed).length
 
@@ -110,7 +110,7 @@ export default function CodeEditorLevel({
     }, [editorState.code, editorState.running, data, attempts, onComplete, state.fragUsed])
 
     return (
-        <div className="flex-1 flex flex-col bg-(--bg-void) min-h-[70vh] h-full">
+        <div className="flex-1 flex flex-col bg-(--bg-void) min-h-[70vh] h-full overflow-hidden border border-(--bg-hover) rounded-xl shadow-2xl">
 
             <EditorHeader
                 level={level}
@@ -120,69 +120,81 @@ export default function CodeEditorLevel({
                 onRun={handleRun}
             />
 
-            {/* Editor + Panel derecho */}
-            <div className="flex-1 flex min-h-0 flex-wrap">
-
-                {/* Monaco Editor */}
-                <div className="flex-[1_1_400px] min-h-[400px]">
-                    <MonacoEditor
-                        height="100%"
-                        defaultLanguage="javascript"
-                        value={editorState.code}
-                        onChange={val => setEditorState(prev => ({ ...prev, code: val ?? '' }))}
-                        onMount={(editor: unknown) => { editorRef.current = editor }}
-                        theme="vs-dark"
-                        options={{
-                            fontSize: 14,
-                            fontFamily: "'Geist Mono', 'Fira Code', monospace",
-                            lineHeight: 24,
-                            minimap: { enabled: false },
-                            scrollBeyondLastLine: false,
-                            renderLineHighlight: 'line',
-                            cursorBlinking: 'smooth',
-                            smoothScrolling: true,
-                            tabSize: 2,
-                            wordWrap: 'on',
-                            padding: { top: 16, bottom: 16 },
-                            overviewRulerBorder: false,
-                            hideCursorInOverviewRuler: true,
-                            renderWhitespace: 'none',
-                            folding: false,
-                            glyphMargin: false,
-                            lineDecorationsWidth: 0,
-                            lineNumbersMinChars: 3,
-                        }}
-                    />
-                </div>
-
-                {/* Panel derecho — tests + output */}
-                <div className="flex-[0_0_260px] bg-(--bg-surface) border-l border-(--bg-hover) flex flex-col">
-
-                    {/* Tabs */}
-                    <div className="flex border-b border-(--bg-hover)">
-                        {(['tests', 'output'] as const).map(tab => (
-                            <button
-                                key={tab}
-                                onClick={() => setActivePanel(tab)}
-                                className={`flex-1 bg-transparent border-none p-2 font-mono text-[10px] tracking-widest cursor-pointer transition-all border-b-2 ${activePanel === tab ? 'bg-(--bg-elevated) border-(--green-base) text-(--green-light)' : 'border-transparent text-(--text-ghost)'
-                                    }`}
-                            >
-                                {tab}
-                                {tab === 'tests' && (
-                                    <span className="ml-[5px] opacity-60">
-                                        ({editorState.tests.filter(t => t.passed).length}/{editorState.tests.length})
-                                    </span>
-                                )}
-                            </button>
-                        ))}
+            <div className="flex-1 flex min-h-0 overflow-hidden">
+                {/* Editor + Console Column */}
+                <div className="flex-1 flex flex-col min-w-0 bg-(--bg-deep) relative">
+                    <div className="flex-1 relative group overflow-hidden">
+                        {/* Industrial Border Accent */}
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-(--green-dark) via-transparent to-(--green-darkest) opacity-30 z-10" />
+                        
+                        <MonacoEditor
+                            height="100%"
+                            defaultLanguage="javascript"
+                            value={editorState.code}
+                            onChange={val => setEditorState(prev => ({ ...prev, code: val ?? '' }))}
+                            onMount={(editor: any) => { editorRef.current = editor }}
+                            theme="vs-dark"
+                            options={{
+                                fontSize: 14,
+                                fontFamily: "var(--font-mono)",
+                                lineHeight: 24,
+                                minimap: { enabled: false },
+                                scrollBeyondLastLine: false,
+                                renderLineHighlight: 'all',
+                                cursorBlinking: 'phase',
+                                cursorSmoothCaretAnimation: 'on',
+                                smoothScrolling: true,
+                                tabSize: 2,
+                                wordWrap: 'on',
+                                padding: { top: 20, bottom: 20 },
+                                overviewRulerBorder: false,
+                                hideCursorInOverviewRuler: true,
+                                renderWhitespace: 'none',
+                                folding: false,
+                                glyphMargin: false,
+                                lineDecorationsWidth: 4,
+                                lineNumbersMinChars: 3,
+                                scrollbar: {
+                                    vertical: 'visible',
+                                    horizontal: 'hidden',
+                                    verticalSliderSize: 4,
+                                    verticalScrollbarSize: 4,
+                                }
+                            }}
+                        />
                     </div>
 
-                    {/* Contenido paneles */}
-                    {activePanel === 'tests' ? (
+                    {/* ALWAYS VISIBLE CONSOLE */}
+                    <div className="h-48 border-t border-(--bg-hover) flex flex-col bg-(--bg-void)">
+                        <div className="px-4 py-2 bg-(--bg-surface) border-b border-(--bg-hover) flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-(--green-base) animate-pulse" />
+                                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-(--text-muted)">Terminal de Salida</span>
+                            </div>
+                            <span className="text-[9px] font-mono text-(--text-ghost)">STDOUT / STDERR</span>
+                        </div>
+                        <div className="flex-1 overflow-hidden">
+                            <OutputPanel output={editorState.output} error={editorState.error} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Panel — Tests Only or Context */}
+                <div className="w-[340px] bg-(--bg-surface) border-l border-(--bg-hover) flex flex-col relative overflow-hidden shrink-0">
+                    <div className="px-4 py-3 bg-(--bg-deep) border-b border-(--bg-hover) flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-(--green-light)">Pruebas de Sistema</span>
+                        </div>
+                        <div className={`text-[9px] px-2 py-0.5 rounded-full font-mono ${
+                            editorState.allTestsPassed ? 'bg-(--green-darkest) text-(--green-light)' : 'bg-(--bg-hover) text-(--text-ghost)'
+                        }`}>
+                            {editorState.tests.filter(t => t.passed).length}/{editorState.tests.length} VERIFICADO
+                        </div>
+                    </div>
+                    
+                    <div className="flex-1 overflow-y-auto custom-scrollbar relative z-0">
                         <TestPanel tests={editorState.tests} level={level} />
-                    ) : (
-                        <OutputPanel output={editorState.output} error={editorState.error} />
-                    )}
+                    </div>
                 </div>
             </div>
 

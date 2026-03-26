@@ -59,7 +59,7 @@ function MatchItem({ id, text, isSelected, isConnected, isCorrect, isWrong, onCl
 }
 
 export function MatchPuzzle({ level, state, data, onComplete }: PuzzleLevelProps & { data: PuzzleData }) {
-    const rightItems = MATCH_RIGHT[level.id] ?? []
+    const rightItems = data.rightItems ?? MATCH_RIGHT[level.id] ?? []
     const [shuffledRight] = useState(() => [...rightItems].sort(() => Math.random() - 0.5))
     const [connections, setConnections] = useState<Record<string, string>>({})
     const [selectedLeft, setSelectedLeft] = useState<string | null>(null)
