@@ -38,7 +38,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${dataMono.variable} ${fontTitle.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <CRTOverlay />
+        {/*<CRTOverlay />*/}
         <Header />
         {children}
       </body>

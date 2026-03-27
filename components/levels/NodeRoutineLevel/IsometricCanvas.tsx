@@ -115,11 +115,6 @@ function drawRobot(
     cx: number, cy: number,
     pulse: number
 ) {
-    ctx.beginPath()
-    ctx.ellipse(cx, cy + 8, 14, 6, 0, 0, Math.PI * 2)
-    ctx.fillStyle = '#00FFFF15'
-    ctx.fill()
-
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     const flicker = Math.random() * 0.05;
@@ -458,7 +453,7 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
 
             // Sombra del robot más dinámica
             ctx.beginPath()
-            ctx.ellipse(rx, ry - rz + 8, 12 - zOffset * 0.1, 5 - zOffset * 0.05, 0, 0, Math.PI * 2)
+            ctx.ellipse(rx, ry - rz + 2, 12 - zOffset * 0.1, 5 - zOffset * 0.05, 0, 0, Math.PI * 2)
             ctx.fillStyle = `rgba(0, 0, 0, ${0.4 - zOffset * 0.01})`
             ctx.fill()
 
@@ -479,14 +474,6 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
                 }
             }
 
-            // Overlay de Scanlines CRT
-            ctx.save()
-            ctx.globalCompositeOperation = 'overlay'
-            ctx.globalAlpha = 0.05
-            ctx.fillStyle = '#000'
-            for (let y = 0; y < canvasH; y += 3) {
-                ctx.fillRect(0, y, canvasW, 1)
-            }
             ctx.restore()
 
             animRef.current = requestAnimationFrame(render)
