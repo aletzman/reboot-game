@@ -280,8 +280,13 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
 
         const startTime = performance.now()
         let lastTime = startTime
-        visX.current = robot.x
-        visY.current = robot.y
+        // Solo forzar la posición (snap) si no estamos en movimiento/salto (ej. reseteo)
+        // o si la distancia es demasiado grande (teletransporte)
+        const dist = Math.hypot(robot.x - visX.current, robot.y - visY.current)
+        if ((!robot.isMoving && !robot.isJumping) || dist > 1.5) {
+            visX.current = robot.x
+            visY.current = robot.y
+        }
 
         function render(time: number) {
             if (!ctx) return
@@ -334,7 +339,9 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
             }
             ctx.restore()
 
-            const lerpFactor = 12 * dt
+            // Aumentamos el factor de lerp para que sea muy rápido (1-2 frames extra)
+            // 24 * dt @ 60fps es ~0.38 por frame. En 2-3 frames está en su sitio.
+            const lerpFactor = 24 * dt
             visX.current += (robot.x - visX.current) * lerpFactor
             visY.current += (robot.y - visY.current) * lerpFactor
 
