@@ -35,7 +35,8 @@ function drawIsoDiamond(
     cx: number, cy: number,
     colors: { top: string; left: string; right: string; glow?: string },
     isHighlighted: boolean,
-    highlightColor?: string
+    highlightColor?: string,
+    showTop: boolean = true
 ) {
     const hw = ISO.TILE_W / 2
     const hh = ISO.TILE_H / 2
@@ -61,19 +62,41 @@ function drawIsoDiamond(
     ctx.fillStyle = colors.right
     ctx.fill()
 
-    // Cara superior (diamante)
-    ctx.beginPath()
-    ctx.moveTo(cx, cy - hh)
-    ctx.lineTo(cx + hw, cy)
-    ctx.lineTo(cx, cy + hh)
-    ctx.lineTo(cx - hw, cy)
-    ctx.closePath()
-    ctx.fillStyle = isHighlighted && highlightColor ? highlightColor : colors.top
-    ctx.fill()
+    if (showTop) {
+        // Cara superior (diamante)
+        ctx.beginPath()
+        ctx.moveTo(cx, cy - hh)
+        ctx.lineTo(cx + hw, cy)
+        ctx.lineTo(cx, cy + hh)
+        ctx.lineTo(cx - hw, cy)
+        ctx.closePath()
+        ctx.fillStyle = isHighlighted && highlightColor ? highlightColor : colors.top
+        ctx.fill()
 
-    // Bordes del diamante superior
-    ctx.strokeStyle = isHighlighted ? (highlightColor ?? '#55e200') : '#6a6a6a60'
-    ctx.lineWidth = isHighlighted ? 1.5 : 0.5
+        // Bordes del diamante superior
+        ctx.strokeStyle = isHighlighted ? (highlightColor ?? '#55e200') : '#6a6a6a60'
+        ctx.lineWidth = isHighlighted ? 1.5 : 0.5
+        ctx.stroke()
+
+        // Glow para tiles especiales
+        if (colors.glow) {
+            ctx.beginPath()
+            ctx.moveTo(cx, cy - hh)
+            ctx.lineTo(cx + hw, cy)
+            ctx.lineTo(cx, cy + hh)
+            ctx.lineTo(cx - hw, cy)
+            ctx.closePath()
+            ctx.fillStyle = colors.glow
+            ctx.fill()
+        }
+    }
+
+    // Borde lateral central (unión de caras)
+    ctx.beginPath()
+    ctx.moveTo(cx, cy + hh)
+    ctx.lineTo(cx, cy + hh + d)
+    ctx.strokeStyle = '#0d1f0030'
+    ctx.lineWidth = 0.5
     ctx.stroke()
 
     // Borde inferior del cubo
@@ -84,18 +107,6 @@ function drawIsoDiamond(
     ctx.strokeStyle = '#0d1f0030'
     ctx.lineWidth = 0.5
     ctx.stroke()
-
-    // Glow para tiles especiales
-    if (colors.glow) {
-        ctx.beginPath()
-        ctx.moveTo(cx, cy - hh)
-        ctx.lineTo(cx + hw, cy)
-        ctx.lineTo(cx, cy + hh)
-        ctx.lineTo(cx - hw, cy)
-        ctx.closePath()
-        ctx.fillStyle = colors.glow
-        ctx.fill()
-    }
 }
 
 function drawRobot(
@@ -248,7 +259,7 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
         }
 
         const mapWidthPx = (cols + rows) * (ISO.TILE_W / 2)
-        const mapHeightPx = (cols + rows) * (ISO.TILE_H / 2) + maxH * 26
+        const mapHeightPx = (cols + rows) * (ISO.TILE_H / 2) + maxH * (ISO.DEPTH - 1)
 
         const canvasW = Math.max(500, mapWidthPx + 150)
         const canvasH = Math.max(500, mapHeightPx + ISO.DEPTH + 150)
@@ -256,7 +267,7 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
         canvas.height = canvasH
 
         const offsetX = canvasW / 2 - ((cols - rows) * (ISO.TILE_W / 2)) / 2
-        const offsetY = canvasH / 2 - mapHeightPx / 2 + (maxH * 26) / 2
+        const offsetY = canvasH / 2 - mapHeightPx / 2 + (maxH * (ISO.DEPTH - 1)) / 2
 
         const startTime = performance.now()
         let lastTime = startTime
@@ -300,66 +311,80 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
             for (let row = 0; row < rows; row++) {
                 for (let col = 0; col < cols; col++) {
                     const tile = mapData.map[row][col]
-                    const { x: sx, y: sy } = toIso(col, row, offsetX, offsetY)
-                    const colors = TILE_COLORS[tile.type] ?? TILE_COLORS.floor
-                    const th = tile.height || 0
-                    const tz = th * 26
+                    if (!tile || tile.type === 'empty') continue
 
+                    const { x: sx, y: sy } = toIso(col, row, offsetX, offsetY)
+                    const th = tile.height || 0
                     const isRobotHere = Math.round(visX.current) === col && Math.round(visY.current) === row
                     const isActivated = activatedTiles.has(`${col},${row}`)
 
-                    let highlight = false
-                    let highlightColor: string | undefined
+                    // Rellenar desde el suelo hasta la altura del tile
+                    for (let h = 0; h <= th; h++) {
+                        const tz = h * (ISO.DEPTH - 0.5) // Leve solapamiento para evitar huecos de 1px
+                        const isTop = h === th
+                        
+                        // Para las capas inferiores, usamos un tipo base
+                        const currentType = isTop ? tile.type : (tile.type === 'wall' ? 'wall' : 'floor')
+                        const colors = TILE_COLORS[currentType] ?? TILE_COLORS.floor
+                        
+                        let highlight = false
+                        let highlightColor: string | undefined
 
-                    if (tile.type === 'target') {
-                        highlight = true
-                        highlightColor = status === 'success' ? '#55e200' : isScanning ? '#7F77DD' : `rgba(13, 31, 0, ${0.6 + pulse * 0.4})`
+                        if (isTop) {
+                            if (tile.type === 'target') {
+                                highlight = true
+                                highlightColor = status === 'success' ? '#55e200' : isScanning ? '#7F77DD' : `rgba(13, 31, 0, ${0.6 + pulse * 0.4})`
 
-                        // Si está escaneando, dibujar pulso extra
-                        if (isScanning) {
-                            ctx.save()
-                            ctx.beginPath()
-                            ctx.ellipse(sx, sy - tz, 30 * pulse, 15 * pulse, 0, 0, Math.PI * 2)
-                            ctx.strokeStyle = `rgba(127, 119, 221, ${1 - pulse})`
-                            ctx.lineWidth = 2
-                            ctx.stroke()
-                            ctx.restore()
+                                if (isScanning) {
+                                    ctx.save()
+                                    ctx.beginPath()
+                                    ctx.ellipse(sx, sy - tz, 30 * pulse, 15 * pulse, 0, 0, Math.PI * 2)
+                                    ctx.strokeStyle = `rgba(127, 119, 221, ${1 - pulse})`
+                                    ctx.lineWidth = 2
+                                    ctx.stroke()
+                                    ctx.restore()
+                                }
+                            }
+                            if (isActivated) {
+                                highlight = true
+                                highlightColor = '#1a4d00'
+                            }
+                        }
+
+                        let imageToDraw: HTMLImageElement | null = null
+                        if (currentType === 'floor' || currentType === 'target') imageToDraw = (isTop && isActivated) ? activeSprite : floorSprite
+                        else if (currentType === 'wall') imageToDraw = wallSprite
+                        else if (currentType === 'broken') imageToDraw = brokenSprite
+                        else if (currentType === 'generator') imageToDraw = (isTop && isActivated) ? genActiveSprite : genSprite
+                        else if (currentType === 'active') imageToDraw = activeSprite
+
+                        if (imageToDraw && imageToDraw.complete) {
+                            const imgX = sx - (ISO.TILE_W / 2)
+                            const imgY = (sy - tz) - (ISO.TILE_H / 2)
+                            // Aumento sutil del alto para asegurar que no haya bordes transparentes entre tiles
+                            ctx.drawImage(imageToDraw, imgX, imgY, ISO.TILE_W, ISO.TILE_H + ISO.DEPTH + 1)
+                            
+                            if (isTop && highlight && highlightColor) {
+                                ctx.beginPath()
+                                ctx.moveTo(sx, (sy - tz) - ISO.TILE_H / 2)
+                                ctx.lineTo(sx + ISO.TILE_W / 2, (sy - tz))
+                                ctx.lineTo(sx, (sy - tz) + ISO.TILE_H / 2)
+                                ctx.lineTo(sx - ISO.TILE_W / 2, (sy - tz))
+                                ctx.closePath()
+                                ctx.strokeStyle = highlightColor
+                                ctx.lineWidth = 1.5
+                                ctx.stroke()
+                            }
+                        } else {
+                            drawIsoDiamond(ctx, sx, sy - tz, colors, isTop && highlight, highlightColor, isTop)
+                        }
+
+                        if (isTop) {
+                            if (tile.type === 'target' && !isRobotHere && !isActivated) drawTargetMarker(ctx, sx, sy - tz, pulse)
+                            if (tile.type === 'generator') drawGeneratorIcon(ctx, sx, sy - tz, isActivated)
+                            if (tile.type === 'broken') drawBrokenIcon(ctx, sx, sy - tz)
                         }
                     }
-                    if (isActivated) {
-                        highlight = true
-                        highlightColor = '#1a4d00'
-                    }
-
-                    let imageToDraw: HTMLImageElement | null = null
-                    if (tile.type === 'floor' || tile.type === 'target') imageToDraw = isActivated ? activeSprite : floorSprite
-                    else if (tile.type === 'wall') imageToDraw = wallSprite
-                    else if (tile.type === 'broken') imageToDraw = brokenSprite
-                    else if (tile.type === 'generator') imageToDraw = isActivated ? genActiveSprite : genSprite
-                    else if (tile.type === 'active') imageToDraw = activeSprite
-
-                    if (imageToDraw && imageToDraw.complete && tile.type !== 'empty') {
-                        const imgX = sx - (ISO.TILE_W / 2)
-                        const imgY = (sy - tz) - (ISO.TILE_H / 2)
-                        ctx.drawImage(imageToDraw, imgX, imgY, ISO.TILE_W, ISO.TILE_H + ISO.DEPTH)
-                        if (highlight && highlightColor) {
-                            ctx.beginPath()
-                            ctx.moveTo(sx, (sy - tz) - ISO.TILE_H / 2)
-                            ctx.lineTo(sx + ISO.TILE_W / 2, (sy - tz))
-                            ctx.lineTo(sx, (sy - tz) + ISO.TILE_H / 2)
-                            ctx.lineTo(sx - ISO.TILE_W / 2, (sy - tz))
-                            ctx.closePath()
-                            ctx.strokeStyle = highlightColor
-                            ctx.lineWidth = 1.5
-                            ctx.stroke()
-                        }
-                    } else {
-                        drawIsoDiamond(ctx, sx, sy - tz, colors, highlight, highlightColor)
-                    }
-
-                    if (tile.type === 'target' && !isRobotHere && !isActivated) drawTargetMarker(ctx, sx, sy - tz, pulse)
-                    if (tile.type === 'generator') drawGeneratorIcon(ctx, sx, sy - tz, isActivated)
-                    if (tile.type === 'broken') drawBrokenIcon(ctx, sx, sy - tz)
                 }
             }
 
@@ -381,7 +406,7 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
             const prevH = robot.prevHeight || 0
             const currentH = robot.height || 0
             const isoH = prevH + (currentH - prevH) * progress
-            const rz = isoH * 26
+            const rz = isoH * (ISO.DEPTH - 0.5)
 
             let zOffset = 0
             if (robot.isJumping && progress < 1) {

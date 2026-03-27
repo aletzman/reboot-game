@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Monda, Orbitron, Share_Tech_Mono } from "next/font/google";
+import { Teko, Monda, Orbitron, Share_Tech_Mono, Rubik_Mono_One } from "next/font/google";
 import { Header } from "@/components/ui/Header";
 import CRTOverlay from "@/components/ui/CRTOverlay";
 import "./globals.css";
@@ -15,8 +15,9 @@ const dataMono = Share_Tech_Mono({
   weight: ["400"],
 });
 
-const fontTitle = Orbitron({
-  variable: "--font-data-title"
+const fontTitle = Teko({
+  variable: "--font-data-title",
+  weight: ["500", "600", "700"],
 })
 export const metadata: Metadata = {
   title: "Reboot",

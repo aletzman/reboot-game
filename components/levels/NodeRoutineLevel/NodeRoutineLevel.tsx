@@ -202,7 +202,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }
                     </div>
                     {level.description && (
                         <div className='text-(--text-muted) text-sm tracking-[.05em] max-w-[85%] mt-1 leading-normal'>
-                            {'//'} {level.description}
+                            {'//Objetivo: '} {level.description}
                         </div>
                     )}
                 </div>
@@ -224,7 +224,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }
                         status={status}
                         isScanning={isScanning}
                     />
-                    
+
                     {/* Sonar Overlay Effect */}
                     {isScanning && (
                         <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">

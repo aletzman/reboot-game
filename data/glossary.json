@@ -133,6 +133,12 @@
       "human": "Como el alcance de tu voz. En una habitación pequeña (un bloque de código) te escuchan todos, pero en la calle (el código global) nadie sabe qué estás diciendo adentro."
     },
     {
+      "id": "secuencia",
+      "term": "Secuencia",
+      "technical": "Estructura de control fundamental que dicta la ejecución de instrucciones de forma lineal y consecutiva, una tras otra, en el orden exacto en que fueron escritas en el código.",
+      "human": "El orden estricto e inquebrantable de los eventos. La máquina es ciega y carece de intuición; ejecutará tus órdenes paso a paso, de arriba hacia abajo. La secuencia es la ley absoluta de causa y efecto en el sistema: si el orden falla, la máquina colapsa."
+    },
+    {
       "id": "selector",
       "term": "selector",
       "technical": "Un patrón utilizado para identificar elementos específicos dentro del árbol del DOM usando sintaxis de CSS.",
