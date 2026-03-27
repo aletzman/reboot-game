@@ -71,6 +71,13 @@ export default function LevelPage({ levelId }: PageProps) {
     const [resetKey, setResetKey] = useState(0)
     const [showingTheory, setShowingTheory] = useState(false)
 
+    // Memoizar mensaje de FRAG para que sea estable durante el nivel pero aleatorio al inicio
+    const randomizedFragHint = useMemo(() => {
+        if (!level?.fragHint) return ''
+        const hints = Array.isArray(level.fragHint) ? level.fragHint : [level.fragHint]
+        return hints[Math.floor(Math.random() * hints.length)]
+    }, [level?.id, levelState?.status])
+
     // ------------------------------------------------------------
     // INICIALIZACIÓN
     // ------------------------------------------------------------
@@ -145,6 +152,10 @@ export default function LevelPage({ levelId }: PageProps) {
         } : prev)
     }
 
+    function handleStatusChange(status: LevelState['status']) {
+        setLevelState(prev => prev ? { ...prev, status } : prev)
+    }
+
     function handleNext() {
         if (!completionResult?.nextLevelId) {
             router.push('/game')
@@ -216,23 +227,20 @@ export default function LevelPage({ levelId }: PageProps) {
 
     return (
         <div className="flex flex-col h-[calc(100svh-47px)] bg-(--bg-void)">
-            {level.narrative && pageStatus === 'playing' && !showingTheory && (
-                <NarrativeBanner text={level.narrative} />
-            )}
-
             {showingTheory && level.theory && (
                 <TheoryOverlay theory={level.theory} onComplete={() => setShowingTheory(false)} />
             )}
 
             <main key={resetKey} className="flex-1 flex flex-col">
-                {renderLevelComponent(level, levelState, handleComplete, handleFragUse)}
+                {renderLevelComponent(level, levelState, handleComplete, handleFragUse, handleStatusChange)}
             </main>
 
-            {level.fragAvailable && !levelState.fragUsed && (
+            {level.fragAvailable && levelState.status === 'failed' && (
                 <FragAssistant
-                    hint={level.fragHint ?? ''}
+                    hint={randomizedFragHint}
                     onUse={handleFragUse}
-                    feedback={levelState.status === 'success' ? 'success' : levelState.status === 'failed' ? 'error' : null}
+                    autoOpen={true}
+                    feedback="error"
                 />
             )}
 
@@ -259,8 +267,9 @@ function renderLevelComponent(
     state: LevelState,
     onComplete: (stars: 0 | 1 | 2 | 3, usedFrag: boolean, customContent?: React.ReactNode) => void,
     onFragUse: () => void,
+    onStatusChange: (status: LevelState['status']) => void,
 ) {
-    const commonProps = { level, state, onComplete, onFragUse }
+    const commonProps = { level, state, onComplete, onFragUse, onStatusChange }
 
     switch (level.type) {
         case 'cinematic': return <CinematicLevel   {...commonProps} />

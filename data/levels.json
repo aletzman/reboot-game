@@ -67,13 +67,15 @@
       "actName": "Boot.exe",
       "type": "noderoutine",
       "title": "Primeros Pasos",
-      "description": "Un robot de mantenimiento espera instrucciones. Aprende a indicarle cómo moverse hacia el frente.",
+      "description": "Lleva el robot a la celda marcada.",
       "narrative": "FRAG: \"El robot reacciona a comandos de Secuencia. Ordena sus pasos para llegar al objetivo y activarlo.\"",
       "mechanic": "Arrastra flechas para mover el robot al panel. Introduce: secuencia, avanzar, girar.",
       "concept": "secuencia",
       "fragAvailable": true,
-      "fragHint": "[ESTADO DEL ROBOT] Posición inicial: [0,0]. Objetivo detectado a 2 celdas frontales. Activa el protocolo de carga al llegar.",
-      "optional": false,
+      "fragHint": [
+        "El robot ejecuta cada bloque en orden, de izquierda a derecha y de arriba hacia abajo.",
+        "Revisa en qué posición quedó el robot después de cada paso."
+      ],
       "isReview": false,
       "reviewOf": [],
       "requiredObjects": [
@@ -97,7 +99,11 @@
       "mechanic": "Arrastra flechas para mover el robot al panel. Introduce: secuencia, avanzar, girar.",
       "concept": "secuencia",
       "fragAvailable": true,
-      "fragHint": "[ANÁLISIS DE RUTA] Vector de avance interrumpido por barrera estructural. Necesario cambiar orientación 90º para realinear con el nodo.",
+      "fragHint": [
+        "Las direcciones (izquierda/derecha) dependen de hacia dónde está mirando el robot.",
+        "Imagina que estás dentro del robot. ¿Hacia dónde tendrías que girar tú?",
+        "Un giro solo cambia la orientación, no mueve al robot de celda."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -120,7 +126,11 @@
       "mechanic": "Arrastra flechas para mover el robot al panel. Introduce: secuencia, avanzar, girar.",
       "concept": "saltar",
       "fragAvailable": true,
-      "fragHint": "[TOPOGRAFÍA] Terreno irregular detectado. Los actuadores hidráulicos (SALTAR) permiten cambios de elevación de ±1 unidad.",
+      "fragHint": [
+        "El robot solo puede subir si hay un escalón justo en la celda de enfrente.",
+        "Saltar gasta energía, asegúrate de estar frente al obstáculo antes de hacerlo.",
+        "Si el robot intenta saltar donde no hay nada que subir, la instrucción se ignorará."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -143,7 +153,11 @@
       "mechanic": "Descubre el bloque REPETIR. En lugar de 8 flechas, usa REPETIR(8). Introduce loops visualmente.",
       "concept": "loop",
       "fragAvailable": true,
-      "fragHint": "[OPTIMIZACIÓN DE CICLOS] La secuencia contiene redundancias. Un bucle iterativo reducirá la carga del búfer de comandos considerablemente.",
+      "fragHint": [
+        "¿Ves que el robot hace lo mismo varias veces? El bloque REPETIR es perfecto aquí.",
+        "Coloca las acciones que quieres que se repitan DENTRO del bloque amarillo.",
+        "El número del bloque REPETIR indica cuántas veces se ejecutará lo que hay dentro."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -166,7 +180,11 @@
       "mechanic": "Puzzle visual: empareja situación (panel verde/rojo) con acción correcta. Introduce condicional.",
       "concept": "condicional",
       "fragAvailable": true,
-      "fragHint": "[LÓGICA BOOLEANA] Evaluación de estado requerida: SI (estado == verde) ENTONCES (avanzar). La ruta depende de la variable de color.",
+      "fragHint": [
+        "El robot debe decidir qué camino tomar según el color del panel.",
+        "Usa el rombo de decisión para evaluar la condición antes de moverte.",
+        "Si la condición no se cumple, el robot simplemente pasará a la siguiente instrucción fuera del bloque."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -189,7 +207,11 @@
       "mechanic": "Mapa con 3 generadores y obstáculos. Orden incorrecto = reinicio. Introduce consecuencias del orden.",
       "concept": "orden de ejecución",
       "fragAvailable": true,
-      "fragHint": "[FLUJO DE DATOS] El sistema es secuencial. Cambiar la prioridad de activación de los nodos evitará el colapso por sobrecarga.",
+      "fragHint": [
+        "El orden importa. Si activas un generador fuera de su turno, el sistema se reiniciará.",
+        "Planifica tu ruta visualmente antes de colocar los bloques.",
+        "Recuerda que cada acción toma tiempo. Calcula bien tus movimientos."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -214,7 +236,11 @@
       "mechanic": "Nivel boss Acto I. Combina secuencia + loop + condicional sin conceptos nuevos.",
       "concept": "integración de lógica",
       "fragAvailable": true,
-      "fragHint": "[ANALIZANDO NÚCLEO] Estructura polimórfica detectada. Fragmenta la ruta en subprocesos aislados para gestionar la complejidad.",
+      "fragHint": [
+        "Este es un reto grande. Intenta dividir el camino en partes más pequeñas.",
+        "¿Hay patrones que se repiten? Los bucles te ahorrarán mucho espacio en la memoria.",
+        "No tengas miedo de fallar. Cada intento te enseña más sobre el mapa."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -239,7 +265,11 @@
       "mechanic": "Subir una plataforma compleja aprovechando ciclos de saltos",
       "concept": "algoritmos espaciales",
       "fragAvailable": true,
-      "fragHint": "[ITERACIÓN VERTICAL] Detección de serie de obstáculos en el eje Z. Un ciclo repetitivo de saltos optimizará el ascenso.",
+      "fragHint": [
+        "Para subir esta colina, necesitarás combinar avances con saltos precisos.",
+        "¿Puedes ver la escalera? Cada peldaño requiere una acción de salto.",
+        "Si usas un REPETIR, asegúrate de que el ciclo termine en la posición correcta para el siguiente paso."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -260,7 +290,11 @@
       "mechanic": "Múltiples bajadas en pirámide",
       "concept": "Saltos avanzados",
       "fragAvailable": true,
-      "fragHint": "[GRAVEDAD CONTROLADA] Los saltos hacia abajo no limitan la profundidad. El desplazamiento vertical puede cubrir múltiples niveles de una vez.",
+      "fragHint": [
+        "A veces, el camino más rápido es hacia abajo. El robot puede saltar al vacío de forma segura.",
+        "Calcula la caída. ¿En qué celda aterrizarás?",
+        "No olvides activar los núcleos intermedios antes de llegar al final."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -320,7 +354,11 @@
       "mechanic": "Mismos conceptos del Acto I pero con bloques etiquetados: MOVER, GIRAR, REPETIR, SI.",
       "concept": "pseudocódigo",
       "fragAvailable": true,
-      "fragHint": "Los bloques funcionan igual que las flechas — solo tienen nombre ahora.",
+      "fragHint": [
+        "Estos bloques funcionan igual que tus flechas, pero ahora tienen nombres técnicos.",
+        "MOVER es tu comando de avance. Úsalo para navegar el bus de datos.",
+        "Estamos traduciendo lógica física a lógica digital. ¡Vas por buen camino!"
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -370,7 +408,11 @@
       "mechanic": "Primera vez con bloque FUNCIÓN. Define una secuencia, nómbrala, llámala 3 veces.",
       "concept": "función",
       "fragAvailable": true,
-      "fragHint": "¿No sería más fácil guardar esos pasos con un nombre y llamarlo cuando lo necesites?",
+      "fragHint": [
+        "Usa una FUNCIÓN para guardar un grupo de pasos que vas a usar mucho.",
+        "Primero 'define' la función con un nombre, y luego 'llámala' cuando la necesites.",
+        "Las funciones hacen que tu código sea mucho más fácil de leer y mantener."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -421,7 +463,11 @@
       "mechanic": "8 líneas de pseudocódigo con un error lógico. El jugador lo identifica y corrige.",
       "concept": "debugging",
       "fragAvailable": true,
-      "fragHint": "El error está en cómo se evalúa la condición.",
+      "fragHint": [
+        "Lee el código línea por línea. ¿Hay algo que no tenga sentido lógico?",
+        "A veces el error es solo un signo equivocado o una dirección invertida.",
+        "El 'debugging' es el arte de ser un detective del código."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -468,7 +514,11 @@
       "mechanic": "Boss Acto II. Programa completo con bloques: funciones, loops, condicionales, variables.",
       "concept": "integración pseudocódigo",
       "fragAvailable": true,
-      "fragHint": "Divide el problema: primero define tus funciones, luego el programa principal.",
+      "fragHint": [
+        "Organiza tu lógica: define tus subrutinas primero y úsalas en el flujo principal.",
+        "Este servidor requiere precisión quirúrgica. Revisa tus condicionales.",
+        "Si un bloque te sobra, intenta optimizar tu secuencia."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -493,7 +543,11 @@
       "mechanic": "Uso de contenedor F1 y comando llamar F1",
       "concept": "funciones espaciales",
       "fragAvailable": true,
-      "fragHint": "Primero resuelve un segmento del mapa. Guarda esos bloques en F1.",
+      "fragHint": [
+        "F1 es como una maleta donde guardas instrucciones para usarlas después.",
+        "Solo tienes que arrastrar el bloque F1 al panel principal para ejecutar todo lo que guardaste.",
+        "Ahorra espacio usando subrutinas inteligentes."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -514,7 +568,11 @@
       "mechanic": "Combinación de F1 con bloque repetidor",
       "concept": "abstracción 3D interactiva",
       "fragAvailable": true,
-      "fragHint": "Tu F1 ideal debería subir un nivel y girar para prepararse para el siguiente.",
+      "fragHint": [
+        "Imagina la espiral. Cada vuelta es igual a la anterior pero en un nivel distinto.",
+        "Si F1 sube y gira, estarás listo para el siguiente peldaño.",
+        "Combina F1 con un bucle REPETIR para automatizar todo el ascenso."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -923,14 +981,11 @@
           "right": "Alcance de visibilidad"
         }
       ],
-      "fragAvailable": true,
-      "optional": false,
-      "maxStars": 3,
-      "isReview": false,
-      "reviewOf": [],
-      "requiredObjects": [],
-      "rewardObjects": [],
-      "rewardCards": [],
+      "fragHint": [
+        "El scope es como una habitación: lo que declaras dentro de un bloque {}, se queda en el bloque.",
+        "Si una variable no se encuentra, revisa si está 'encerrada' en un bloque distinto.",
+        "Los búnkers de JS moderno (con let y const) son muy estrictos con su alcance."
+      ],
       "failRedirectTo": null
     },
     {

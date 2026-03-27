@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
-import type { Command, CommandType } from '@/types/game'
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
+import type { LevelState, Command, CommandType } from '@/types/game'
 import { Button } from '@/components/ui/Button'
-import { GameButton } from '@/components/ui/GameButton'
-import { ChevronsRightIcon } from 'lucide-react'
+import { ChevronsRightIcon, ShieldAlert, Cpu, Share2, Terminal, Database, ArrowRight } from 'lucide-react'
 import { useAudioStore } from '@/store/audio.store'
 
 import { NodeRoutineLevelProps, ExtendedRobotState } from './types'
@@ -13,13 +12,23 @@ import { sleep, flattenCommands, getNextPosition, turnLeft, turnRight, calcStars
 import { IsometricCanvas } from './IsometricCanvas'
 import { CommandPalette } from './CommandPalette'
 
-export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }: NodeRoutineLevelProps) {
+export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, onStatusChange }: NodeRoutineLevelProps) {
     const mapData = NODEROUTINE_MAPS[level.id] ?? DEFAULT_MAP
     const moveSoundRef = useRef<HTMLAudioElement | null>(null)
     const jumpSoundRef = useRef<HTMLAudioElement | null>(null)
     const activateSoundRef = useRef<HTMLAudioElement | null>(null)
 
     const { sfxVolume, isMuted } = useAudioStore()
+
+    // Logs del sistema para la terminal "coleta"
+    const [logs, setLogs] = useState<{ id: string, msg: string, type: 'info' | 'warn' | 'success' | 'err' }[]>([
+        { id: 'boot', msg: 'SISTEMA_REBOOT_V4 INICIADO...', type: 'info' },
+        { id: 'ready', msg: 'ESPERANDO INPUT_DE_RUTINA...', type: 'info' }
+    ])
+
+    const addLog = useCallback((msg: string, type: 'info' | 'warn' | 'success' | 'err' = 'info') => {
+        setLogs(prev => [{ id: Math.random().toString(), msg, type }, ...prev].slice(0, 5))
+    }, [])
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -43,7 +52,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }
     const [activatedTiles, setActivated] = useState<Set<string>>(new Set())
     const [isRunning, setIsRunning] = useState(false)
     const [executingIdx, setExecutingIdx] = useState<{ idx: number; panel: 'main' | 'f1' } | null>(null)
-    const [status, setStatus] = useState<'idle' | 'success' | 'failed'>('idle')
+    const [status, setStatus] = useState<LevelState['status']>('idle')
     const [isScanning, setIsScanning] = useState(false)
     const [repeatModalOpen, setRepeatModal] = useState(false)
     const [repeatTimes, setRepeatTimes] = useState(2)
@@ -52,10 +61,11 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }
     useEffect(() => {
         if (state.fragUsed) {
             setIsScanning(true)
+            addLog('FRAG_RECON: ANALIZANDO VECTOR_DE_DATOS...', 'warn')
             const timer = setTimeout(() => setIsScanning(false), 3000)
             return () => clearTimeout(timer)
         }
-    }, [state.fragUsed])
+    }, [state.fragUsed, addLog])
 
     // --------------------------------------------------------
     // EJECUTAR SECUENCIA
@@ -64,7 +74,9 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }
     const executeCommands = useCallback(async () => {
         if (isRunning || commands.length === 0) return
         setIsRunning(true)
-        setStatus('idle')
+        setStatus('playing')
+        onStatusChange('playing')
+        addLog('EJECUTANDO RUTINA_PRINCIPAL...', 'info')
 
         const flat = flattenCommands(commands, commandsF1)
         let currentRobot: ExtendedRobotState = { ...mapData.robotStart, isMoving: false, isJumping: false, height: mapData.robotStart.height || 0 }
@@ -79,6 +91,8 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }
 
             if (cmd.type === 'move' || cmd.type === 'jump') {
                 const isJump = cmd.type === 'jump'
+                addLog(`OP_EJEC: ${isJump ? 'S_ALTO' : 'MV_ADEL'} // LOC:(${currentRobot.x},${currentRobot.y})`, 'info')
+
                 if (isJump) {
                     if (jumpSoundRef.current) { jumpSoundRef.current.currentTime = 0; jumpSoundRef.current.play().catch(() => { }) }
                 } else {
@@ -86,7 +100,9 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }
                 }
                 const next = getNextPosition(currentRobot, mapData, cmd.type as 'move' | 'jump')
                 if (!next) {
+                    addLog('ERROR: COLISIÓN O MOVIMIENTO INVÁLIDO', 'err')
                     setStatus('failed')
+                    onStatusChange('failed')
                     setIsRunning(false)
                     setExecutingIdx(null)
                     return
@@ -102,14 +118,17 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }
                 }
                 setRobot({ ...currentRobot })
             } else if (cmd.type === 'turn-left') {
+                addLog('OP_EJEC: ROT_IZQ', 'info')
                 if (moveSoundRef.current) { moveSoundRef.current.currentTime = 0; moveSoundRef.current.play().catch(() => { }) }
                 currentRobot = { ...currentRobot, direction: turnLeft(currentRobot.direction), isMoving: false, isJumping: false }
                 setRobot({ ...currentRobot })
             } else if (cmd.type === 'turn-right') {
+                addLog('OP_EJEC: ROT_DER', 'info')
                 if (moveSoundRef.current) { moveSoundRef.current.currentTime = 0; moveSoundRef.current.play().catch(() => { }) }
                 currentRobot = { ...currentRobot, direction: turnRight(currentRobot.direction), isMoving: false, isJumping: false }
                 setRobot({ ...currentRobot })
             } else if (cmd.type === 'activate') {
+                addLog('OP_EJEC: ACT_VINC', 'warn')
                 if (activateSoundRef.current) { activateSoundRef.current.currentTime = 0; activateSoundRef.current.play().catch(() => { }) }
                 currentRobot = { ...currentRobot, isActivating: true, isMoving: false, isJumping: false }
                 setRobot({ ...currentRobot })
@@ -133,21 +152,26 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }
 
         setExecutingIdx(null)
         if (won) {
+            addLog('ÉXITO: NODO_SINCRO_COMPLETA', 'success')
             setStatus('success')
             await sleep(600)
             const stars = calcStars(commands.length, commandsF1.length, mapData.maxCommands, mapData.maxF1Commands)
             onComplete(stars, state.fragUsed)
         } else {
+            addLog('FALLO: OBJETIVOS_RESTANTES', 'err')
             setStatus('failed')
+            onStatusChange('failed')
         }
         setIsRunning(false)
-    }, [commands, commandsF1, isRunning, mapData, state.fragUsed, onComplete])
+    }, [commands, commandsF1, isRunning, mapData, state.fragUsed, onComplete, addLog, onStatusChange])
 
     // --------------------------------------------------------
     // MANEJO DE COMANDOS
     // --------------------------------------------------------
 
     function handleAddCommand(type: CommandType) {
+        if (status === 'failed' || status === 'success') handleReset()
+
         if (type === 'repeat') {
             setRepeatModal(true)
             return
@@ -162,13 +186,16 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }
     }
 
     function handleRemoveCommand(idx: number) {
+        if (status === 'failed' || status === 'success') handleReset()
         if (activePanel === 'main') setCommands(prev => prev.filter((_, i) => i !== idx))
         else setCommandsF1(prev => prev.filter((_, i) => i !== idx))
     }
 
     function handleClearCommands() {
+        if (status === 'failed' || status === 'success') handleReset()
         if (activePanel === 'main') setCommands([])
         else setCommandsF1([])
+        addLog('BUFFER LIMPÍADO', 'warn')
     }
 
     function handleReset() {
@@ -177,6 +204,8 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }
         setIsRunning(false)
         setExecutingIdx(null)
         setStatus('idle')
+        onStatusChange('idle')
+        addLog('SISTEMA REINICIADO', 'info')
     }
 
     function handleAddRepeat() {
@@ -191,57 +220,170 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }
     }
 
     return (
-        <div className="flex flex-1 min-h-0 bg-(--bg-void)">
+        <div className="flex flex-1 min-h-0 bg-(--bg-void) relative selection:bg-(--green-base) selection:text-(--white) overflow-hidden">
 
-            {/* PANEL IZQUIERDO — Mapa */}
-            <div className="flex-1 flex flex-col items-center justify-center p-4 gap-3 relative overflow-hidden">
-                <div className="self-start flex flex-col gap-1 mb-1 mt-2 mx-2 font-mono tracking-[.14em]">
-                    <div className="flex items-center gap-2 text-[11px] text-(--green-base)">
-                        <span className='text-(--green-light) text-sm' style={{ textShadow: '0 0 10px var(--green-base)' }}>{'>'} {level.title?.toUpperCase()}</span>
-                        {level.concept && <span className='text-(--text-ghost) text-sm'>[{level.concept}]</span>}
+            {/* Decoración de fondo de consola ciberdeck */}
+            <div className="absolute inset-0 opacity-[0.02] pointer-events-none z-0">
+                <div className="absolute top-0 right-0 w-[60%] h-[60%] bg-radial-gradient from-(--green-base) to-transparent" />
+                <div className="grid grid-cols-20 h-full w-full">
+                    {Array.from({ length: 400 }).map((_, i) => (
+                        <div key={i} className="border-[0.5px] border-(--green-base)/20 h-10 w-full" />
+                    ))}
+                </div>
+            </div>
+
+            {/* PANEL IZQUIERDO — Interfaz Ciberdeck */}
+            <div className="flex-1 flex flex-col p-4 md:p-6 gap-4 relative z-10 overflow-hidden">
+
+                {/* Tactical Header V2 */}
+                <div className="grid grid-cols-12 gap-4 border-b border-(--bg-hover) pb-4 mb-2 bg-(--bg-surface)/20 p-2 rounded-t-lg">
+                    <div className="col-span-12 md:col-span-5 flex flex-col">
+                        <div className="flex items-center gap-3 mb-1.5">
+                            <div className="relative">
+                                <span className={`absolute inset-0 rounded-full ${isRunning ? 'bg-(--amber)' : 'bg-(--green-light)'} opacity-40`} />
+                                <span className={`relative block w-3 h-3 rounded-full ${isRunning ? 'bg-(--amber) animate-pulse' : 'bg-(--green-light)'} shadow-[0_0_10px_currentColor]`} />
+                            </div>
+                            <h1 className="text-2xl font-mono font-bold tracking-tighter text-(--text-primary)">
+                                {level.title.toUpperCase()}
+                            </h1>
+                            <div className="px-2 py-0.5 border border-(--bg-hover) bg-(--bg-deep) text-[9px] font-mono text-(--text-ghost) rounded">
+                                ACT_0{level.act}_NODO
+                            </div>
+                        </div>
+                        <div className="flex flex-wrap gap-x-5 gap-y-1">
+                            <div className="flex items-center gap-2">
+                                <ShieldAlert size={10} className="text-(--amber)" />
+                                <span className="hud-label text-[10px]">AUTH:</span>
+                                <span className="text-[10px] font-mono text-(--green-light)">SYS_OPERATOR</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Cpu size={10} className="text-(--green-muted)" />
+                                <span className="hud-label text-[10px]">ADDR:</span>
+                                <span className="text-[10px] font-mono font-bold text-(--text-primary)">{level.id}</span>
+                            </div>
+                        </div>
                     </div>
-                    {level.description && (
-                        <div className='text-(--text-muted) text-sm tracking-[.05em] max-w-[85%] mt-1 leading-normal'>
-                            {'//Objetivo: '} {level.description}
+
+                    <div className="col-span-6 md:col-span-4 flex items-center justify-center border-x border-(--bg-hover)/30 px-4">
+                        <div className="w-full flex flex-col gap-1.5">
+                            <div className="flex justify-between items-end">
+                                <span className="text-[9px] font-mono text-(--text-ghost)">SIGNAL_STRENGTH</span>
+                                <span className="text-[9px] font-mono text-(--green-light)">98.4%</span>
+                            </div>
+                            <div className="h-1 w-full bg-(--bg-deep) rounded-full overflow-hidden border border-(--bg-hover)/50">
+                                <div className="h-full bg-linear-to-r from-(--green-dark) to-(--green-light) w-[98%]" />
+                            </div>
                         </div>
-                    )}
+                    </div>
+
+                    <div className="col-span-6 md:col-span-3 flex flex-col items-end justify-center">
+                        <div className="hud-label text-[9px] mb-1">DATA_STREAM:</div>
+                        <div className={`px-4 py-1.5 border-2 text-[11px] font-mono tracking-[.25em] font-bold shadow-sm transition-all duration-300 ${status === 'success' ? 'border-(--green-base) text-(--green-light) bg-(--green-darkest)' : status === 'failed' ? 'border-(--red) text-(--red) bg-(--red)/10' : isRunning ? 'border-(--amber) text-(--amber) bg-(--amber)/10' : 'border-(--bg-hover) text-(--text-ghost) bg-(--bg-deep)'}`}>
+                            {status === 'success' ? '>> REINICIO_OK' : status === 'failed' ? '!! FALLO_SEC' : isRunning ? '>> PROT_EJEC' : '>> MODO_STBY'}
+                        </div>
+                    </div>
                 </div>
 
-                <div
-                    className="relative"
-                    style={{
-                        border: `2px solid ${status === 'success' ? 'var(--green-base)' : status === 'failed' ? 'var(--red-dark)' : 'var(--bg-hover)'}`,
-                        borderRadius: '5px',
-                        overflow: 'hidden',
-                        transition: 'border-color .4s, box-shadow .4s',
-                        boxShadow: status === 'success' ? '0 0 30px rgba(85,226,0,0.15), inset 0 0 20px rgba(85,226,0,0.05)' : status === 'failed' ? '0 0 20px rgba(226,75,74,0.2)' : '0 0 20px rgba(85,226,0,0.03)',
-                    }}
-                >
-                    <IsometricCanvas
-                        mapData={mapData}
-                        robot={robot}
-                        activatedTiles={activatedTiles}
-                        status={status}
-                        isScanning={isScanning}
-                    />
+                {/* Main Content Layout — Split View */}
+                <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0">
 
-                    {/* Sonar Overlay Effect */}
-                    {isScanning && (
-                        <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
-                            <div className="w-[150%] h-[150%] border-2 border-(--purple) rounded-full animate-[ping_2s_ease-out_infinite]" />
-                            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-(--purple)/20 to-transparent animate-pulse" />
+                    {/* Sección del Mapa (Centro-Derecha en Desktop) */}
+                    <div className="flex-3 flex flex-col gap-4 min-h-0">
+                        <div className="flex-1 flex items-center justify-center relative bg-(--bg-deep)/40 rounded-sm border border-(--bg-hover)/50 p-2 overflow-hidden shadow-inner">
+                            <IsometricCanvas
+                                mapData={mapData}
+                                robot={robot}
+                                activatedTiles={activatedTiles}
+                                status={status}
+                                isScanning={isScanning}
+                            />
+
+                            {/* Corner Accents */}
+                            <div className="absolute top-4 left-4 w-4 h-4 border-l border-t border-(--green-base)/40" />
+                            <div className="absolute top-4 right-4 w-4 h-4 border-r border-t border-(--green-base)/40" />
+                            <div className="absolute bottom-4 left-4 w-4 h-4 border-l border-b border-(--green-base)/40" />
+                            <div className="absolute bottom-4 right-4 w-4 h-4 border-r border-b border-(--green-base)/40" />
+
+                            {/* Floating Metadata Information Overlay */}
+                            <div className="absolute bottom-6 left-6 flex flex-col gap-1 pointer-events-none">
+                                <div className="flex items-center gap-3 bg-(--bg-surface)/80 px-3 py-1.5 border border-(--bg-hover) rounded-sm">
+                                    <div className="flex flex-col">
+                                        <span className="text-[8px] font-mono text-(--text-ghost) leading-none mb-1 uppercase">Local_Coords</span>
+                                        <span className="text-xs font-mono text-(--green-light) tabular-nums">X:{robot.x.toFixed(1)} Y:{robot.y.toFixed(1)}</span>
+                                    </div>
+                                    <div className="w-px h-6 bg-(--bg-hover)" />
+                                    <div className="flex flex-col">
+                                        <span className="text-[8px] font-mono text-(--text-ghost) leading-none mb-1 uppercase">Robot_Status</span>
+                                        <span className={`text-xs font-mono tabular-nums ${isRunning ? 'text-(--amber)' : 'text-(--green-muted)'}`}>IDLE_LOCKED</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    )}
-                </div>
 
-                <div className="h-5 flex items-center text-xs font-mono tracking-widest">
-                    {status === 'failed' && <span className='text-(--red)'>✗ ERROR — el robot no pudo completar la secuencia</span>}
-                    {status === 'success' && <span className='text-(--green-light)'>✓ OBJETIVO ALCANZADO</span>}
-                    {status === 'idle' && !isRunning && commands.length === 0 && (
-                        <span className='flex items-center gap-1 text-(--text-muted) text-xs'>
-                            agrega comandos para guiar al robot <ChevronsRightIcon size={13} className='animate-arrow-right' />
-                        </span>
-                    )}
+                        {/* Status Feedback Banner */}
+                        <div className="h-10 flex items-center justify-center overflow-hidden">
+                            {status === 'failed' && (
+                                <div className="w-full text-(--red) flex items-center gap-4 bg-(--red)/5 px-6 py-2 border border-(--red)/30 rounded-md animate-in slide-in-from-bottom-2 duration-300">
+                                    <ShieldAlert size={16} />
+                                    <span className="text-[11px] font-mono font-bold tracking-[.2em] uppercase">Anomalía_De_Secuencia: Re-calibrando buffers locales...</span>
+                                </div>
+                            )}
+                            {status === 'success' && (
+                                <div className="w-full text-(--green-light) flex items-center gap-4 bg-(--green-base)/10 px-6 py-2 border border-(--green-base)/40 rounded-md animate-in slide-in-from-bottom-2 duration-300">
+                                    <Share2 size={16} className="animate-pulse" />
+                                    <span className="text-[11px] font-mono font-bold tracking-[.2em] uppercase">Nivel_Sincronizado: Conexión establecida con el sector {level.act}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Sección de Diagnóstico y Logs (Derecha en Desktop) */}
+                    <div className="flex-1 flex flex-col gap-4 min-w-[280px]">
+
+                        {/* Objetivo del Nivel en Box táctico */}
+                        <div className="bg-(--bg-surface) border border-(--bg-hover) p-4 relative rounded-sm overflow-hidden min-h-[140px] flex flex-col">
+                            <div className="absolute top-0 left-0 w-1 h-full bg-(--green-base)" />
+                            <div className="flex justify-between items-center mb-3">
+                                <h3 className="text-[10px] font-mono font-bold text-(--text-ghost) uppercase tracking-widest flex items-center gap-2">
+                                    <Database size={12} className="text-(--green-base)" />
+                                    Objetivo_Misión
+                                </h3>
+                            </div>
+                            <p className="text-[13px] text-(--text-primary)/90 font-sans leading-relaxed flex-1">
+                                {level.description || 'Debe inyectar una secuencia de comandos válida para activar los nodos de respuesta del sector.'}
+                            </p>
+                            <div className="mt-4 flex items-center gap-2 border-t border-(--bg-hover) pt-3 opacity-60">
+                                <ArrowRight size={10} className="text-(--green-light)" />
+                                <span className="text-[9px] font-mono text-(--text-ghost) uppercase">Nodos: {mapData.targets.length} | Comandos: {mapData.maxCommands}</span>
+                            </div>
+                        </div>
+
+                        {/* System Logs Realtime */}
+                        <div className="flex-1 bg-(--bg-deep) border border-(--bg-hover) rounded-sm flex flex-col overflow-hidden max-h-[300px]">
+                            <div className="bg-(--bg-surface) px-3 py-1.5 border-b border-(--bg-hover) flex justify-between items-center">
+                                <span className="text-[10px] font-mono font-bold text-(--text-primary) tracking-widest uppercase flex items-center gap-2">
+                                    <Terminal size={12} className="text-(--green-light)" />
+                                    System_Log
+                                </span>
+                                <div className="flex gap-1.5">
+                                    <div className="w-1.5 h-1.5 bg-(--green-base)/30 rounded-full" />
+                                    <div className="w-1.5 h-1.5 bg-(--green-base)/30 rounded-full" />
+                                </div>
+                            </div>
+                            <div className="flex-1 p-3 flex flex-col-reverse gap-2 overflow-y-auto custom-scrollbar font-mono text-[10px] leading-tight">
+                                {logs.map(log => (
+                                    <div key={log.id} className={`flex gap-2 animate-in slide-in-from-left-2 fade-in duration-300 ${log.type === 'err' ? 'text-(--red)' : log.type === 'warn' ? 'text-(--amber)' : log.type === 'success' ? 'text-(--green-light)' : 'text-(--text-muted)'}`}>
+                                        <span className="opacity-50 shrink-0 select-none">[{">"}]</span>
+                                        <span className="wrap-break-words">{log.msg}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="bg-(--bg-surface)/50 p-1 px-3 border-t border-(--bg-hover) flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 bg-(--green-base) rounded-full animate-pulse" />
+                                <span className="text-[8px] text-(--text-ghost) font-mono uppercase tracking-tighter">Live_Telemetry_Feed_Active</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -258,24 +400,48 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }
                 onClearCommands={handleClearCommands}
                 onExecute={executeCommands}
                 onReset={handleReset}
+                status={status}
             />
 
             {repeatModalOpen && (
-                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/85 backdrop-blur-xs">
-                    <div className="bg-(--bg-surface) border border-(--green-base) rounded-[2px] p-7 font-mono flex flex-col gap-5 min-w-[260px] shadow-[0_0_40px_rgba(85,226,0,0.1)]">
-                        <div className="text-(--green-light) text-xs tracking-[.12em] uppercase">{'// repetir N veces'}</div>
-                        <div className="flex items-center justify-center gap-4">
-                            <GameButton variant="command" onClick={() => setRepeatTimes(t => Math.max(2, t - 1))} className="text-base px-4">−</GameButton>
-                            <span className="text-(--green-light) text-2xl min-w-[2ch] text-center font-mono">{repeatTimes}</span>
-                            <GameButton variant="command" onClick={() => setRepeatTimes(t => Math.min(10, t + 1))} className="text-base px-4">+</GameButton>
+                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/85 animate-in fade-in duration-300">
+                    <div className="bg-(--bg-surface) border border-(--green-base)/40 p-8 font-mono flex flex-col gap-6 min-w-[300px] shadow-[0_0_60px_rgba(45,120,0,0.2)] relative rounded-sm">
+                        <div className="absolute top-2 left-2 text-[8px] text-(--text-ghost) opacity-40 uppercase">Sys_Dialog_v4</div>
+
+                        <div className="text-(--green-light) text-[11px] tracking-[.2em] uppercase border-b border-(--bg-hover) pb-3 flex items-center justify-between">
+                            <span>// PROTOCOLO_ITERATIVO</span>
                         </div>
-                        <div className="flex gap-3">
-                            <Button variant="solid" size="xs" onClick={handleAddRepeat} className="flex-1">agregar</Button>
-                            <Button variant="ghost" size="xs" onClick={() => setRepeatModal(false)} className="flex-1">cancelar</Button>
+
+                        <div className="py-4">
+                            <div className="text-center text-(--text-ghost) text-[10px] mb-4 uppercase tracking-widest">DEFINIR_CANTIDAD_CICLOS</div>
+                            <div className="flex items-center justify-center gap-6">
+                                <button onClick={() => setRepeatTimes(t => Math.max(2, t - 1))} className="w-10 h-10 flex items-center justify-center border border-(--bg-hover) hover:border-(--green-base) bg-(--bg-deep) transition-colors rounded-md">−</button>
+                                <div className="flex flex-col items-center">
+                                    <span className="text-(--green-light) text-5xl font-mono leading-none animate-in slide-in-from-bottom-2" key={repeatTimes}>{repeatTimes}</span>
+                                    <span className="text-[9px] text-(--text-ghost) mt-3 opacity-60 uppercase tracking-widest">Iteraciones</span>
+                                </div>
+                                <button onClick={() => setRepeatTimes(t => Math.min(10, t + 1))} className="w-10 h-10 flex items-center justify-center border border-(--bg-hover) hover:border-(--green-base) bg-(--bg-deep) transition-colors rounded-md">+</button>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-4 pt-2">
+                            <button
+                                onClick={handleAddRepeat}
+                                className="flex-1 h-10 bg-(--green-dark) border border-(--green-base) text-(--white) font-mono text-xs uppercase tracking-widest hover:bg-(--green-base) transition-colors rounded-sm shadow-[0_0_15px_rgba(45,120,0,0.2)]"
+                            >
+                                Inyectar(n)
+                            </button>
+                            <button
+                                onClick={() => setRepeatModal(false)}
+                                className="flex-1 h-10 border border-(--bg-hover) text-(--text-muted) font-mono text-xs uppercase tracking-widest hover:text-(--text-primary) hover:bg-(--bg-hover) transition-all rounded-sm"
+                            >
+                                Abortar
+                            </button>
                         </div>
                     </div>
                 </div>
             )}
+
         </div>
     )
 }

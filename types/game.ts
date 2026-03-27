@@ -47,7 +47,7 @@ export interface Level {
   concept?: string
   codeExample?: string
   fragAvailable: boolean
-  fragHint?: string
+  fragHint?: string | string[]
   optional: boolean
   isReview: boolean
   reviewOf: string[]

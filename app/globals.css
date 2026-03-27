@@ -521,3 +521,84 @@ body {
 .animate-slide-up {
   animation: slide-up 0.5s ease-out forwards;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   TERMINAL & INDUSTRIAL UI UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+
+.terminal-frame {
+  position: relative;
+  background: var(--bg-deep);
+}
+
+.terminal-frame::before,
+.terminal-frame::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--green-base);
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.6;
+}
+
+/* Superior Izquierda */
+.terminal-frame::before {
+  top: -2px;
+  left: -2px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+
+/* Inferior Derecha */
+.terminal-frame::after {
+  bottom: -2px;
+  right: -2px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+
+.terminal-header {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--bg-hover);
+  padding: 4px 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-ghost);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hud-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-ghost);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.hud-value {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--green-light);
+  text-shadow: 0 0 5px var(--green-dark);
+}
+
+.memory-bar-container {
+  height: 4px;
+  background: var(--bg-void);
+  border: 1px solid var(--bg-hover);
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.memory-bar-fill {
+  height: 100%;
+  background: var(--green-base);
+  transition: width 0.3s ease;
+}

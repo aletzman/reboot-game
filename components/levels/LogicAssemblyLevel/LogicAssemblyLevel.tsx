@@ -43,6 +43,8 @@ export default function LogicAssemblyLevel({
     level,
     state,
     onComplete,
+    onFragUse,
+    onStatusChange
 }: LogicAssemblyLevelProps) {
     const data = LOGICASSEMBLY_DATA[level.id] ?? DEFAULT_LOGICASSEMBLY
     const availableDefs = BLOCK_DEFS.filter(d => data.availableBlocks.includes(d.type))
@@ -145,7 +147,11 @@ export default function LogicAssemblyLevel({
             setTimeout(() => onComplete(stars as 1 | 2 | 3, state.fragUsed), 1000)
         } else {
             setFeedback('wrong')
-            setTimeout(() => setFeedback('idle'), 2000)
+            onStatusChange('failed')
+            setTimeout(() => {
+                setFeedback('idle')
+                onStatusChange('idle')
+            }, 5000)
         }
     }
 

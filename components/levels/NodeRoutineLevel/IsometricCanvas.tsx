@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { ExtendedRobotState } from './types'
 import { ISO, TILE_COLORS } from './constants'
 import { toIso } from './utils'
-import { NodeRoutineLevelData } from '@/types/game'
+import { NodeRoutineLevelData, LevelState } from '@/types/game'
 
 // --- Assets ---
 const robotSprite = typeof window !== 'undefined' ? new Image() : null
@@ -232,7 +232,7 @@ interface IsometricCanvasProps {
     mapData: NodeRoutineLevelData
     robot: ExtendedRobotState
     activatedTiles: Set<string>
-    status: 'idle' | 'success' | 'failed'
+    status: LevelState['status']
     isScanning?: boolean
 }
 
@@ -242,10 +242,13 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
     const visX = useRef(robot.x)
     const visY = useRef(robot.y)
 
+    // Partículas de "Polvo Digital"
+    const particles = useRef<{ x: number, y: number, s: number, vx: number, vy: number }[]>([])
+
     useEffect(() => {
         const canvas = canvasRef.current
         if (!canvas) return
-        const ctx = canvas.getContext('2d')
+        const ctx = canvas.getContext('2d', { alpha: false }) // Optimizado para fondos opacos
         if (!ctx) return
 
         const cols = mapData.map[0].length
@@ -269,6 +272,17 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
         const offsetX = canvasW / 2 - ((cols - rows) * (ISO.TILE_W / 2)) / 2
         const offsetY = canvasH / 2 - mapHeightPx / 2 + (maxH * (ISO.DEPTH - 1)) / 2
 
+        // Inicializar partículas si no existen
+        if (particles.current.length === 0) {
+            particles.current = Array.from({ length: 50 }).map(() => ({
+                x: Math.random() * canvasW,
+                y: Math.random() * canvasH,
+                s: 0.5 + Math.random() * 1.5,
+                vx: -0.2 + Math.random() * 0.4,
+                vy: -0.5 - Math.random() * 0.5
+            }))
+        }
+
         const startTime = performance.now()
         let lastTime = startTime
         visX.current = robot.x
@@ -283,15 +297,36 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
 
             ctx.clearRect(0, 0, canvasW, canvasH)
 
-            const bgGrad = ctx.createRadialGradient(canvasW / 2, canvasH / 2, 0, canvasW / 2, canvasH / 2, canvasW * 0.6)
-            bgGrad.addColorStop(0, '#090C10')
-            bgGrad.addColorStop(1, '#010101')
+            // Fondo con degradado profundo
+            const bgGrad = ctx.createRadialGradient(canvasW / 2, canvasH / 2, 0, canvasW / 2, canvasH / 2, canvasW * 0.7)
+            bgGrad.addColorStop(0, '#0a0d12')
+            bgGrad.addColorStop(0.5, '#040609')
+            bgGrad.addColorStop(1, '#000000')
             ctx.fillStyle = bgGrad
             ctx.fillRect(0, 0, canvasW, canvasH)
 
+            // Dibujar Partículas (Digital Dust)
             ctx.save()
-            ctx.globalAlpha = 0.03
+            for (let i = 0; i < particles.current.length; i++) {
+                const p = particles.current[i]
+                p.y += p.vy
+                p.x += p.vx
+                if (p.y < 0) p.y = canvasH
+                if (p.x < 0) p.x = canvasW
+                if (p.x > canvasW) p.x = 0
+
+                ctx.fillStyle = status === 'failed'
+                    ? `rgba(226, 75, 74, ${0.1 + Math.random() * 0.3})`
+                    : `rgba(85, 226, 0, ${0.05 + Math.random() * 0.2})`
+                ctx.fillRect(p.x, p.y, p.s, p.s)
+            }
+            ctx.restore()
+
+            // Dibujar Grilla "Digital Echo"
+            ctx.save()
+            ctx.globalAlpha = 0.05 + pulse * 0.03
             ctx.strokeStyle = '#55e200'
+            ctx.lineWidth = 0.5
             for (let i = 0; i <= cols; i++) {
                 const start = toIso(i, 0, offsetX, offsetY)
                 const end = toIso(i, rows, offsetX, offsetY)
@@ -320,27 +355,26 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
 
                     // Rellenar desde el suelo hasta la altura del tile
                     for (let h = 0; h <= th; h++) {
-                        const tz = h * (ISO.DEPTH - 0.5) // Leve solapamiento para evitar huecos de 1px
+                        const tz = h * (ISO.DEPTH - 0.5)
                         const isTop = h === th
-                        
-                        // Para las capas inferiores, usamos un tipo base
+
                         const currentType = isTop ? tile.type : (tile.type === 'wall' ? 'wall' : 'floor')
                         const colors = TILE_COLORS[currentType] ?? TILE_COLORS.floor
-                        
+
                         let highlight = false
                         let highlightColor: string | undefined
 
                         if (isTop) {
                             if (tile.type === 'target') {
                                 highlight = true
-                                highlightColor = status === 'success' ? '#55e200' : isScanning ? '#7F77DD' : `rgba(13, 31, 0, ${0.6 + pulse * 0.4})`
+                                highlightColor = status === 'success' ? '#55e200' : isScanning ? '#7F77DD' : `rgba(13, 31, 0, ${0.4 + pulse * 0.4})`
 
                                 if (isScanning) {
                                     ctx.save()
                                     ctx.beginPath()
-                                    ctx.ellipse(sx, sy - tz, 30 * pulse, 15 * pulse, 0, 0, Math.PI * 2)
-                                    ctx.strokeStyle = `rgba(127, 119, 221, ${1 - pulse})`
-                                    ctx.lineWidth = 2
+                                    ctx.ellipse(sx, sy - tz, 40 * pulse, 20 * pulse, 0, 0, Math.PI * 2)
+                                    ctx.strokeStyle = `rgba(127, 119, 221, ${0.4 - pulse * 0.4})`
+                                    ctx.lineWidth = 1.5
                                     ctx.stroke()
                                     ctx.restore()
                                 }
@@ -361,19 +395,27 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
                         if (imageToDraw && imageToDraw.complete) {
                             const imgX = sx - (ISO.TILE_W / 2)
                             const imgY = (sy - tz) - (ISO.TILE_H / 2)
-                            // Aumento sutil del alto para asegurar que no haya bordes transparentes entre tiles
-                            ctx.drawImage(imageToDraw, imgX, imgY, ISO.TILE_W, ISO.TILE_H + ISO.DEPTH + 1)
-                            
+
+                            // Animación de "Levantamiento" si es éxito
+                            const finalTZ = (status === 'success' && isTop) ? tz + (Math.sin(elapsed * 4 + col + row) * 2) : tz
+
+                            ctx.drawImage(imageToDraw, imgX, imgY - (finalTZ - tz), ISO.TILE_W, ISO.TILE_H + ISO.DEPTH + 1)
+
                             if (isTop && highlight && highlightColor) {
                                 ctx.beginPath()
-                                ctx.moveTo(sx, (sy - tz) - ISO.TILE_H / 2)
-                                ctx.lineTo(sx + ISO.TILE_W / 2, (sy - tz))
-                                ctx.lineTo(sx, (sy - tz) + ISO.TILE_H / 2)
-                                ctx.lineTo(sx - ISO.TILE_W / 2, (sy - tz))
+                                ctx.moveTo(sx, (sy - finalTZ) - ISO.TILE_H / 2)
+                                ctx.lineTo(sx + ISO.TILE_W / 2, (sy - finalTZ))
+                                ctx.lineTo(sx, (sy - finalTZ) + ISO.TILE_H / 2)
+                                ctx.lineTo(sx - ISO.TILE_W / 2, (sy - finalTZ))
                                 ctx.closePath()
                                 ctx.strokeStyle = highlightColor
-                                ctx.lineWidth = 1.5
+                                ctx.lineWidth = isScanning ? 2 : 1.5
+                                if (isScanning) {
+                                    ctx.shadowColor = highlightColor
+                                    ctx.shadowBlur = 10 * pulse
+                                }
                                 ctx.stroke()
+                                ctx.shadowBlur = 0
                             }
                         } else {
                             drawIsoDiamond(ctx, sx, sy - tz, colors, isTop && highlight, highlightColor, isTop)
@@ -414,13 +456,38 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
                 zOffset = arc * 25
             }
 
+            // Sombra del robot más dinámica
+            ctx.beginPath()
+            ctx.ellipse(rx, ry - rz + 8, 12 - zOffset * 0.1, 5 - zOffset * 0.05, 0, 0, Math.PI * 2)
+            ctx.fillStyle = `rgba(0, 0, 0, ${0.4 - zOffset * 0.01})`
+            ctx.fill()
+
             drawRobot(ctx, robot, rx, ry - 8 - rz - zOffset, pulse)
 
+            // Efectos de pantalla (Glitch en falla)
             if (status === 'success') {
-                ctx.fillStyle = `rgba(85, 226, 0, ${0.04 + pulse * 0.03})`; ctx.fillRect(0, 0, canvasW, canvasH)
+                ctx.fillStyle = `rgba(85, 226, 0, ${0.02 + pulse * 0.03})`; ctx.fillRect(0, 0, canvasW, canvasH)
             } else if (status === 'failed') {
-                ctx.fillStyle = `rgba(226, 75, 74, ${0.06 * (1 - pulse)})`; ctx.fillRect(0, 0, canvasW, canvasH)
+                ctx.fillStyle = `rgba(226, 75, 74, ${0.04 * (1 - pulse)})`; ctx.fillRect(0, 0, canvasW, canvasH)
+                // Glitch sutil: desplazamiento aleatorio de bloques
+                if (Math.random() > 0.98) {
+                    const blockY = Math.random() * canvasH
+                    const blockH = 5 + Math.random() * 20
+                    ctx.drawImage(ctx.canvas, 10, blockY, canvasW - 10, blockH, 0, blockY, canvasW - 10, blockH)
+                    ctx.fillStyle = 'rgba(255, 0, 0, 0.05)'
+                    ctx.fillRect(0, blockY, canvasW, blockH)
+                }
             }
+
+            // Overlay de Scanlines CRT
+            ctx.save()
+            ctx.globalCompositeOperation = 'overlay'
+            ctx.globalAlpha = 0.05
+            ctx.fillStyle = '#000'
+            for (let y = 0; y < canvasH; y += 3) {
+                ctx.fillRect(0, y, canvasW, 1)
+            }
+            ctx.restore()
 
             animRef.current = requestAnimationFrame(render)
         }
@@ -432,11 +499,14 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
     return (
         <canvas
             ref={canvasRef}
+            className="rounded-lg shadow-[0_0_40px_rgba(0,0,0,0.6)]"
             style={{
                 display: 'block',
                 maxWidth: '100%',
-                maxHeight: '55vh',
+                maxHeight: '58vh',
                 objectFit: 'contain',
+                filter: status === 'failed' ? 'hue-rotate(-10deg) saturate(1.4) contrast(1.1)' : 'none',
+                transition: 'filter 0.5s ease'
             }}
         />
     )
