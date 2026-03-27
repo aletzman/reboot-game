@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { ScratchBlock, ScratchBlockType } from '@/types/game'
+import { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
 import { MapData } from './types'
 
 interface FlatSimulatorProps {
-    blocks: ScratchBlock[]
+    blocks: LogicAssemblyBlock[]
     map: MapData
     isExecuting: boolean
     onFinish: (success: boolean) => void
@@ -43,8 +43,8 @@ export function FlatSimulator({
         }
     }, [isExecuting, map, blocks])
 
-    const flatInstructions = useCallback((program: ScratchBlock[], allBlocks: ScratchBlock[]): {type: ScratchBlockType, value?: string | number}[] => {
-        let result: {type: ScratchBlockType, value?: string | number}[] = []
+    const flatInstructions = useCallback((program: LogicAssemblyBlock[], allBlocks: LogicAssemblyBlock[]): {type: LogicAssemblyBlockType, value?: string | number}[] => {
+        let result: {type: LogicAssemblyBlockType, value?: string | number}[] = []
         for (const b of program) {
             if (b.type === 'REPETIR' && b.children) {
                 const times = parseInt(b.value as string) || 1

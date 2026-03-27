@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { ExtendedRobotState } from './types'
 import { ISO, TILE_COLORS } from './constants'
 import { toIso } from './utils'
-import { LightbotLevelData } from '@/types/game'
+import { NodeRoutineLevelData } from '@/types/game'
 
 // --- Assets ---
 const robotSprite = typeof window !== 'undefined' ? new Image() : null
@@ -218,7 +218,7 @@ function drawBrokenIcon(ctx: CanvasRenderingContext2D, cx: number, cy: number) {
 }
 
 interface IsometricCanvasProps {
-    mapData: LightbotLevelData
+    mapData: NodeRoutineLevelData
     robot: ExtendedRobotState
     activatedTiles: Set<string>
     status: 'idle' | 'success' | 'failed'
@@ -314,7 +314,7 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
                     if (tile.type === 'target') {
                         highlight = true
                         highlightColor = status === 'success' ? '#55e200' : isScanning ? '#7F77DD' : `rgba(13, 31, 0, ${0.6 + pulse * 0.4})`
-                        
+
                         // Si está escaneando, dibujar pulso extra
                         if (isScanning) {
                             ctx.save()

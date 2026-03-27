@@ -1,6 +1,6 @@
 import type { Level, LevelState, Command, Direction, RobotState } from '@/types/game'
 
-export interface LightbotLevelProps {
+export interface NodeRoutineLevelProps {
     level: Level
     state: LevelState
     onComplete: (stars: 0 | 1 | 2 | 3, usedFrag: boolean) => void

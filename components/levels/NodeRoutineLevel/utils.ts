@@ -1,4 +1,4 @@
-import { Direction, Command, LightbotLevelData } from '@/types/game'
+import { Direction, Command, NodeRoutineLevelData } from '@/types/game'
 import { ExtendedRobotState, FlatCommand } from './types'
 import { ISO } from './constants'
 
@@ -47,7 +47,7 @@ export function flattenCommands(commands: Command[], f1Commands: Command[], acti
     return flat
 }
 
-export function getNextPosition(robot: ExtendedRobotState, mapData: LightbotLevelData, moveType: 'move' | 'jump' = 'move'): { x: number; y: number; height: number } | null {
+export function getNextPosition(robot: ExtendedRobotState, mapData: NodeRoutineLevelData, moveType: 'move' | 'jump' = 'move'): { x: number; y: number; height: number } | null {
     const { x, y, direction, height = 0 } = robot
     const deltas: Record<Direction, { dx: number; dy: number }> = {
         north: { dx: 0, dy: -1 }, south: { dx: 0, dy: 1 },

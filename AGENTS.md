@@ -29,8 +29,8 @@ reboot/
 │       └── progress/route.ts     # Guarda/lee progreso en Supabase
 ├── components/
 │   ├── levels/
-│   │   ├── LightbotLevel.tsx     # Nivel tipo Lightbot (flechas arrastrables)
-│   │   ├── ScratchLevel.tsx      # Nivel tipo Scratch (bloques visuales)
+│   │   ├── NodeRoutineLevel.tsx     # Nivel tipo NodeRoutine (flechas arrastrables)
+│   │   ├── LogicAssemblyLevel.tsx      # Nivel tipo LogicAssembly (bloques visuales)
 │   │   ├── PuzzleLevel.tsx       # Puzzles intermedios (4 subtipos)
 │   │   ├── SpeedTypingLevel.tsx  # Speed typing contra el reloj
 │   │   └── CodeEditorLevel.tsx   # Editor Monaco con JS real
@@ -113,7 +113,7 @@ Cada nivel está definido en `data/levels.json` con esta estructura:
 ```json
 {
   "id": "sector-01-level-01",
-  "type": "lightbot",
+  "type": "noderoutine",
   "sector": 1,
   "title": "Primera señal",
   "narrative": "Texto que aparece antes del nivel",
@@ -125,8 +125,8 @@ Cada nivel está definido en `data/levels.json` con esta estructura:
 ```
 
 **Tipos de nivel (`type`):**
-- `lightbot` — flechas arrastrables, robot en mapa isométrico
-- `scratch` — bloques visuales drag & drop
+- `noderoutine` — flechas arrastrables, robot en mapa isométrico
+- `logicassembly` — bloques visuales drag & drop
 - `puzzle-sort` — ordenar líneas de código
 - `puzzle-fill` — completar el código (fill in the blank)
 - `puzzle-bug` — encontrar el bug
@@ -242,7 +242,7 @@ Timeout máximo de ejecución: **3 segundos**. Si se supera, el nivel muestra er
 
 ## Convenciones de código
 
-- Componentes: PascalCase (`LightbotLevel.tsx`)
+- Componentes: PascalCase (`NodeRoutineLevel.tsx`)
 - Funciones y variables: camelCase (`saveProgress`)
 - Constantes globales: UPPER_SNAKE (`MAX_FRAG_USES`)
 - Archivos de datos: kebab-case (`levels.json`)
@@ -266,10 +266,10 @@ Timeout máximo de ejecución: **3 segundos**. Si se supera, el nivel muestra er
 ## Estado actual del proyecto (hackathon build)
 
 - [ ] Pantalla de inicio con creación de personaje
-- [ ] Nivel 1: Lightbot (sector 1)
+- [ ] Nivel 1: NodeRoutine (sector 1)
 - [ ] Sistema de cartas (animación de desbloqueo)
 - [ ] Mapa del mundo (sectores)
-- [ ] Nivel 2: Scratch
+- [ ] Nivel 2: LogicAssembly
 - [ ] Puzzles intermedios
 - [ ] Speed typing
 - [ ] Editor Monaco

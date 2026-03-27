@@ -1,9 +1,9 @@
 'use client'
 
-import { ScratchBlock } from '@/types/game'
+import { LogicAssemblyBlock } from '@/types/game'
 import { BLOCK_DEFS } from './constants'
 
-export function PseudocodeSummary({ blocks, depth = 0 }: { blocks: ScratchBlock[]; depth?: number }) {
+export function PseudocodeSummary({ blocks, depth = 0 }: { blocks: LogicAssemblyBlock[]; depth?: number }) {
     return (
         <div className="font-mono text-[9px] text-(--text-ghost) leading-relaxed p-2 max-h-[180px] overflow-y-auto custom-scrollbar">
             {blocks.map((block, idx) => {

@@ -2,9 +2,9 @@
 
 import { useState, useCallback } from 'react'
 import { DragDropProvider, useDraggable, useDroppable, DragOverlay } from '@dnd-kit/react'
-import type { ScratchBlock, ScratchBlockType } from '@/types/game'
-import { ScratchLevelProps, BlockDef } from './types'
-import { BLOCK_DEFS, SCRATCH_DATA, DEFAULT_SCRATCH } from './constants'
+import type { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
+import { LogicAssemblyLevelProps, BlockDef } from './types'
+import { BLOCK_DEFS, LOGICASSEMBLY_DATA, DEFAULT_LOGICASSEMBLY } from './constants'
 import { flatBlocks, makeBlock, updateBlockValueInTree, removeBlockFromTree, addChildToTree, findAndReorder, moveBlockInTree } from './utils'
 import { BlockItem } from './BlockItem'
 import { PseudocodeSummary } from './PseudocodeSummary'
@@ -39,15 +39,15 @@ function DraggablePaletteBlock({ def, disabled, maxReached, onClick }: { def: Bl
     )
 }
 
-export default function ScratchLevel({
+export default function LogicAssemblyLevel({
     level,
     state,
     onComplete,
-}: ScratchLevelProps) {
-    const data = SCRATCH_DATA[level.id] ?? DEFAULT_SCRATCH
+}: LogicAssemblyLevelProps) {
+    const data = LOGICASSEMBLY_DATA[level.id] ?? DEFAULT_LOGICASSEMBLY
     const availableDefs = BLOCK_DEFS.filter(d => data.availableBlocks.includes(d.type))
 
-    const [program, setProgram] = useState<ScratchBlock[]>([])
+    const [program, setProgram] = useState<LogicAssemblyBlock[]>([])
     const [feedback, setFeedback] = useState<'idle' | 'correct' | 'wrong'>('idle')
     const [attempts, setAttempts] = useState(0)
     const [isExecuting, setIsExecuting] = useState(false)
@@ -60,7 +60,7 @@ export default function ScratchLevel({
     // ACCIONES
     // ------------------------------------------------------------
 
-    function handleAddBlock(type: ScratchBlockType) {
+    function handleAddBlock(type: LogicAssemblyBlockType) {
         if (isExecuting || feedback !== 'idle') return
         if (flatBlocks(program).length >= data.maxBlocks) return
         setProgram(prev => [...prev, makeBlock(type)])
@@ -81,7 +81,7 @@ export default function ScratchLevel({
         setProgram(prev => moveBlockInTree(id, direction, prev))
     }
 
-    function handleAddChild(parentId: string, type: ScratchBlockType) {
+    function handleAddChild(parentId: string, type: LogicAssemblyBlockType) {
         if (isExecuting || feedback !== 'idle') return
         setProgram(prev => addChildToTree(parentId, type, prev))
     }
@@ -111,7 +111,7 @@ export default function ScratchLevel({
         const sid = op.source.id || (op.source.data?.id)
         const tid = op.target?.id || (op.target?.data?.id)
         const isNew = op.source.data?.isNew || false
-        const newType = op.source.data?.type as ScratchBlockType | undefined
+        const newType = op.source.data?.type as LogicAssemblyBlockType | undefined
 
         if (!sid) return
 

@@ -1,9 +1,9 @@
-import { BlockDef, ScratchLevelData } from './types'
-import { ScratchBlock } from '@/types/game'
+import { BlockDef, LogicAssemblyLevelData } from './types'
+import { LogicAssemblyBlock } from '@/types/game'
 
 // Redefinimos flatBlocks aquí para evitar dependencia circular con utils.ts
-function flatBlocksLocal(blocks: ScratchBlock[]): ScratchBlock[] {
-    const result: ScratchBlock[] = []
+function flatBlocksLocal(blocks: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
+    const result: LogicAssemblyBlock[] = []
     if (!blocks) return result
     for (const b of blocks) {
         result.push(b)
@@ -98,7 +98,7 @@ export const BLOCK_DEFS: BlockDef[] = [
     },
 ]
 
-export const SCRATCH_DATA: Record<string, ScratchLevelData> = {
+export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
     '2-01': {
         availableBlocks: ['MOVER', 'GIRAR', 'REPETIR', 'ACTIVAR', 'ASIGNAR'],
         maxBlocks: 8,
@@ -114,10 +114,10 @@ export const SCRATCH_DATA: Record<string, ScratchLevelData> = {
             start: { x: 1, y: 3, dir: 'up' },
             objective: [{ x: 1, y: 1 }]
         },
-        validateFn: (blocks: ScratchBlock[]) => {
+        validateFn: (blocks: LogicAssemblyBlock[]) => {
             const flat = flatBlocksLocal(blocks)
-            const hasRepetir = flat.some((b: ScratchBlock) => b.type === 'REPETIR')
-            const hasActivar = flat.some((b: ScratchBlock) => b.type === 'ACTIVAR')
+            const hasRepetir = flat.some((b: LogicAssemblyBlock) => b.type === 'REPETIR')
+            const hasActivar = flat.some((b: LogicAssemblyBlock) => b.type === 'ACTIVAR')
             return hasRepetir && hasActivar
         },
     },
@@ -138,10 +138,10 @@ export const SCRATCH_DATA: Record<string, ScratchLevelData> = {
             start: { x: 3, y: 3, dir: 'up' },
             objective: [{ x: 1, y: 1 }, { x: 5, y: 1 }, { x: 1, y: 5 }, { x: 5, y: 5 }]
         },
-        validateFn: (blocks: ScratchBlock[]) => {
+        validateFn: (blocks: LogicAssemblyBlock[]) => {
             const flat = flatBlocksLocal(blocks)
-            const hasFuncion = flat.some((b: ScratchBlock) => b.type === 'FUNCION')
-            const llamadas = flat.filter((b: ScratchBlock) => b.type === 'LLAMAR')
+            const hasFuncion = flat.some((b: LogicAssemblyBlock) => b.type === 'FUNCION')
+            const llamadas = flat.filter((b: LogicAssemblyBlock) => b.type === 'LLAMAR')
             return hasFuncion && llamadas.length >= 3
         },
     },
@@ -164,9 +164,9 @@ export const SCRATCH_DATA: Record<string, ScratchLevelData> = {
             start: { x: 4, y: 4, dir: 'up' },
             objective: [{ x: 1, y: 1 }, { x: 7, y: 1 }, { x: 1, y: 7 }, { x: 7, y: 7 }]
         },
-        validateFn: (blocks: ScratchBlock[]) => {
+        validateFn: (blocks: LogicAssemblyBlock[]) => {
             const flat = flatBlocksLocal(blocks)
-            const types = new Set(flat.map((b: ScratchBlock) => b.type))
+            const types = new Set(flat.map((b: LogicAssemblyBlock) => b.type))
             return types.has('FUNCION') && types.has('REPETIR') && types.has('ACTIVAR')
         },
     },
@@ -189,9 +189,9 @@ export const SCRATCH_DATA: Record<string, ScratchLevelData> = {
     },
 }
 
-export const DEFAULT_SCRATCH: ScratchLevelData = {
+export const DEFAULT_LOGICASSEMBLY: LogicAssemblyLevelData = {
     availableBlocks: ['MOVER', 'GIRAR', 'REPETIR', 'ACTIVAR'],
     maxBlocks: 10,
     hint: 'Construye la secuencia correcta',
-    validateFn: (blocks: ScratchBlock[]) => blocks.length > 0,
+    validateFn: (blocks: LogicAssemblyBlock[]) => blocks.length > 0,
 }

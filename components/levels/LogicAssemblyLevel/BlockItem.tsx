@@ -4,16 +4,16 @@ import React, { useState } from 'react'
 import { useDroppable } from '@dnd-kit/react'
 import { useSortable } from '@dnd-kit/react/sortable'
 import { PackageOpen, GripVertical, ChevronUp, ChevronDown, Plus } from 'lucide-react'
-import { ScratchBlock, ScratchBlockType } from '@/types/game'
+import { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
 import { BlockDef } from './types'
 import { BLOCK_DEFS } from './constants'
 
 interface BlockItemProps {
-    block: ScratchBlock
+    block: LogicAssemblyBlock
     availableDefs: BlockDef[]
     onRemove: (id: string) => void
     onValueChange: (id: string, value: string | number) => void
-    onAddChild: (parentId: string, type: ScratchBlockType) => void
+    onAddChild: (parentId: string, type: LogicAssemblyBlockType) => void
     onMove: (id: string, direction: 'up' | 'down') => void
     availableFunctions: string[]
     index: number

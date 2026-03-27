@@ -4,8 +4,8 @@
 
 export type LevelType =
   | 'cinematic'
-  | 'lightbot'
-  | 'scratch'
+  | 'noderoutine'
+  | 'logicassembly'
   | 'puzzle-sort'
   | 'puzzle-fill'
   | 'puzzle-bug'
@@ -164,7 +164,7 @@ export interface Sector {
 }
 
 // ------------------------------------------------------------
-// MOTOR DE LIGHTBOT
+// MOTOR DE NODEROUTINE
 // ------------------------------------------------------------
 
 export type CommandType =
@@ -211,7 +211,7 @@ export interface RobotState {
   isMoving: boolean
 }
 
-export interface LightbotLevelData {
+export interface NodeRoutineLevelData {
   map: MapTile[][]
   robotStart: { x: number; y: number; direction: Direction; height?: number }
   targets: { x: number; y: number; height?: number }[]
@@ -224,10 +224,10 @@ export interface LightbotLevelData {
 }
 
 // ------------------------------------------------------------
-// MOTOR DE SCRATCH
+// MOTOR DE LOGICASSEMBLY
 // ------------------------------------------------------------
 
-export type ScratchBlockType =
+export type LogicAssemblyBlockType =
   | 'MOVER'
   | 'GIRAR'
   | 'REPETIR'
@@ -238,12 +238,12 @@ export type ScratchBlockType =
   | 'ACTIVAR'
   | 'ASIGNAR'
 
-export interface ScratchBlock {
+export interface LogicAssemblyBlock {
   id: string
-  type: ScratchBlockType
+  type: LogicAssemblyBlockType
   value?: number | string   // para MOVER(n), REPETIR(n), GIRAR('izquierda')
   condition?: string        // para SI
-  children?: ScratchBlock[] // bloques anidados dentro de REPETIR, SI, etc
+  children?: LogicAssemblyBlock[] // bloques anidados dentro de REPETIR, SI, etc
   fnName?: string           // para FUNCION y LLAMAR
 }
 

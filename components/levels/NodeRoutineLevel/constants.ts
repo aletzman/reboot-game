@@ -1,6 +1,6 @@
 import { ForwardRefExoticComponent, RefAttributes } from 'react'
 import { CornerUpLeft, CornerUpRight, MoveRightIcon, LucideProps, ChevronsUp, FunctionSquare, Repeat, Sun } from 'lucide-react'
-import { CommandType, LightbotLevelData } from '@/types/game'
+import { CommandType, NodeRoutineLevelData } from '@/types/game'
 
 export const PALETTE_COMMANDS: { type: CommandType; label: string; icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; cssColor: string }[] = [
     { type: 'move', label: 'avanzar', icon: MoveRightIcon, cssColor: 'var(--green-light)' },
@@ -15,7 +15,7 @@ export const PALETTE_COMMANDS: { type: CommandType; label: string; icon: Forward
 export const MAX_COMMANDS = 20
 export const EXEC_SPEED = 420
 
-export const LIGHTBOT_MAPS: Record<string, LightbotLevelData> = {
+export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     '1-01': {
         map: [
             [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }, { type: 'target', x: 3, y: 0 }],
@@ -155,7 +155,7 @@ export const LIGHTBOT_MAPS: Record<string, LightbotLevelData> = {
     },
 }
 
-export const DEFAULT_MAP: LightbotLevelData = {
+export const DEFAULT_MAP: NodeRoutineLevelData = {
     map: [
         [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }],
         [{ type: 'floor', x: 0, y: 1 }, { type: 'floor', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }],

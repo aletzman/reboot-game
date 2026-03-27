@@ -1,8 +1,8 @@
-import { ScratchBlock, ScratchBlockType } from '@/types/game'
+import { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
 import { BLOCK_DEFS } from './constants'
 
-export function flatBlocks(blocks: ScratchBlock[]): ScratchBlock[] {
-    const result: ScratchBlock[] = []
+export function flatBlocks(blocks: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
+    const result: LogicAssemblyBlock[] = []
     if (!blocks) return result
     for (const b of blocks) {
         result.push(b)
@@ -11,7 +11,7 @@ export function flatBlocks(blocks: ScratchBlock[]): ScratchBlock[] {
     return result
 }
 
-export function makeBlock(type: ScratchBlockType): ScratchBlock {
+export function makeBlock(type: LogicAssemblyBlockType): LogicAssemblyBlock {
     const def = BLOCK_DEFS.find(d => d.type === type)!
     return {
         id: `${type}-${Math.random().toString(36).substring(2, 9)}`,
@@ -22,7 +22,7 @@ export function makeBlock(type: ScratchBlockType): ScratchBlock {
 }
 
 // Tree modification helpers
-export function updateBlockValueInTree(id: string, value: string | number, blocks: ScratchBlock[]): ScratchBlock[] {
+export function updateBlockValueInTree(id: string, value: string | number, blocks: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
     return blocks.map(b => {
         if (b.id === id) return { ...b, value }
         if (b.children) return { ...b, children: updateBlockValueInTree(id, value, b.children) }
@@ -30,13 +30,13 @@ export function updateBlockValueInTree(id: string, value: string | number, block
     })
 }
 
-export function removeBlockFromTree(id: string, blocks: ScratchBlock[]): ScratchBlock[] {
+export function removeBlockFromTree(id: string, blocks: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
     return blocks
         .filter(b => b.id !== id)
         .map(b => b.children ? { ...b, children: removeBlockFromTree(id, b.children) } : b)
 }
 
-export function addChildToTree(parentId: string, type: ScratchBlockType, blocks: ScratchBlock[]): ScratchBlock[] {
+export function addChildToTree(parentId: string, type: LogicAssemblyBlockType, blocks: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
     return blocks.map(b => {
         if (b.id === parentId && b.children !== undefined) {
             return { ...b, children: [...b.children, makeBlock(type)] }
@@ -47,14 +47,14 @@ export function addChildToTree(parentId: string, type: ScratchBlockType, blocks:
 }
 
 export function findAndReorder(
-    items: ScratchBlock[], 
+    items: LogicAssemblyBlock[], 
     sourceId: string, 
     targetId: string, 
     isNew: boolean = false, 
-    newBlockType?: ScratchBlockType
-): ScratchBlock[] {
-    let movedBlock: ScratchBlock | null = null;
-    let listWithoutSource: ScratchBlock[] = [];
+    newBlockType?: LogicAssemblyBlockType
+): LogicAssemblyBlock[] {
+    let movedBlock: LogicAssemblyBlock | null = null;
+    let listWithoutSource: LogicAssemblyBlock[] = [];
 
     // 1. Extraer el bloque origen
     if (isNew && newBlockType) {
@@ -64,7 +64,7 @@ export function findAndReorder(
         if (!sourceId || sourceId === targetId) return items;
 
         let foundSource = false;
-        function extract(list: ScratchBlock[]): ScratchBlock[] {
+        function extract(list: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
             const idx = list.findIndex(b => b.id === sourceId);
             if (idx !== -1) {
                 movedBlock = list[idx];
@@ -86,7 +86,7 @@ export function findAndReorder(
     // Caso A: El destino es un contenedor vacío o específico de hijos
     if (targetId && targetId.startsWith('children-')) {
         const parentId = targetId.replace('children-', '');
-        function nest(list: ScratchBlock[]): ScratchBlock[] {
+        function nest(list: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
             return list.map(b => {
                 if (b.id === parentId) {
                     inserted = true;
@@ -104,7 +104,7 @@ export function findAndReorder(
     }
 
     // Caso B: El destino es otro bloque (reordenar poniéndolo antes)
-    function insertAt(list: ScratchBlock[]): ScratchBlock[] {
+    function insertAt(list: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
         const idx = list.findIndex(b => b.id === targetId);
         if (idx !== -1) {
             inserted = true;
@@ -128,7 +128,7 @@ export function findAndReorder(
     return finalResult;
 }
 
-export function moveBlockInTree(id: string, direction: 'up' | 'down', blocks: ScratchBlock[]): ScratchBlock[] {
+export function moveBlockInTree(id: string, direction: 'up' | 'down', blocks: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
     const idx = blocks.findIndex(b => b.id === id)
     if (idx !== -1) {
         const nextIdx = direction === 'up' ? idx - 1 : idx + 1

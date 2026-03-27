@@ -1,6 +1,6 @@
 'use client'
 
-import { Command, CommandType, LightbotLevelData } from '@/types/game'
+import { Command, CommandType, NodeRoutineLevelData } from '@/types/game'
 import { GameButton } from '@/components/ui/GameButton'
 import { ButtonOption } from '@/components/ui/ButtonOption'
 import { Button } from '@/components/ui/Button'
@@ -13,7 +13,7 @@ interface CommandPaletteProps {
     activePanel: 'main' | 'f1'
     isRunning: boolean
     executingIdx: { idx: number; panel: 'main' | 'f1' } | null
-    mapData: LightbotLevelData
+    mapData: NodeRoutineLevelData
     setActivePanel: (panel: 'main' | 'f1') => void
     onAddCommand: (type: CommandType) => void
     onRemoveCommand: (idx: number) => void

@@ -60,8 +60,8 @@ export function getPrevLevelId(currentId: string): string | null {
 // Mapeo de type → nombre del componente a importar dinámicamente
 export const LEVEL_COMPONENT_MAP: Record<LevelType, string> = {
   'cinematic':     'CinematicLevel',
-  'lightbot':      'LightbotLevel',
-  'scratch':       'ScratchLevel',
+  'noderoutine':      'NodeRoutineLevel',
+  'logicassembly':       'LogicAssemblyLevel',
   'puzzle-sort':   'PuzzleLevel',
   'puzzle-fill':   'PuzzleLevel',
   'puzzle-bug':    'PuzzleLevel',

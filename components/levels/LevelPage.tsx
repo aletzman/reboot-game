@@ -30,8 +30,8 @@ import { Radio, X as CloseIcon } from 'lucide-react'
 // ------------------------------------------------------------
 
 const CinematicLevel = dynamic(() => import('@/components/levels/CinematicLevel/CinematicLevel'), { ssr: false })
-const LightbotLevel = dynamic(() => import('@/components/levels/LightBotLevel/LightBotLevel'), { ssr: false })
-const ScratchLevel = dynamic(() => import('@/components/levels/ScratchLevel/ScratchLevel'), { ssr: false })
+const NodeRoutineLevel = dynamic(() => import('@/components/levels/NodeRoutineLevel/NodeRoutineLevel'), { ssr: false })
+const LogicAssemblyLevel = dynamic(() => import('@/components/levels/LogicAssemblyLevel/LogicAssemblyLevel'), { ssr: false })
 const PuzzleLevel = dynamic(() => import('@/components/levels/PuzzleLevel/PuzzleLevel'), { ssr: false })
 const SpeedTypingLevel = dynamic(() => import('@/components/levels/SpeedTypingLevel/SpeedTypingLevel'), { ssr: false })
 const CodeEditorLevel = dynamic(() => import('@/components/levels/CodeEditorLevel/CodeEditorLevel'), { ssr: false })
@@ -264,8 +264,8 @@ function renderLevelComponent(
 
     switch (level.type) {
         case 'cinematic': return <CinematicLevel   {...commonProps} />
-        case 'lightbot': return <LightbotLevel    {...commonProps} />
-        case 'scratch': return <ScratchLevel     {...commonProps} />
+        case 'noderoutine': return <NodeRoutineLevel    {...commonProps} />
+        case 'logicassembly': return <LogicAssemblyLevel     {...commonProps} />
         case 'puzzle-sort':
         case 'puzzle-fill':
         case 'puzzle-bug':

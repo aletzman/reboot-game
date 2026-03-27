@@ -7,14 +7,14 @@ import { GameButton } from '@/components/ui/GameButton'
 import { ChevronsRightIcon } from 'lucide-react'
 import { useAudioStore } from '@/store/audio.store'
 
-import { LightbotLevelProps, ExtendedRobotState } from './types'
-import { LIGHTBOT_MAPS, DEFAULT_MAP, MAX_COMMANDS, EXEC_SPEED } from './constants'
+import { NodeRoutineLevelProps, ExtendedRobotState } from './types'
+import { NODEROUTINE_MAPS, DEFAULT_MAP, MAX_COMMANDS, EXEC_SPEED } from './constants'
 import { sleep, flattenCommands, getNextPosition, turnLeft, turnRight, calcStars } from './utils'
 import { IsometricCanvas } from './IsometricCanvas'
 import { CommandPalette } from './CommandPalette'
 
-export default function LightBotLevel({ level, state, onComplete, onFragUse }: LightbotLevelProps) {
-    const mapData = LIGHTBOT_MAPS[level.id] ?? DEFAULT_MAP
+export default function NodeRoutineLevel({ level, state, onComplete, onFragUse }: NodeRoutineLevelProps) {
+    const mapData = NODEROUTINE_MAPS[level.id] ?? DEFAULT_MAP
     const moveSoundRef = useRef<HTMLAudioElement | null>(null)
     const jumpSoundRef = useRef<HTMLAudioElement | null>(null)
     const activateSoundRef = useRef<HTMLAudioElement | null>(null)

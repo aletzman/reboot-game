@@ -1,6 +1,6 @@
-import { Level, LevelState, ScratchBlock, ScratchBlockType } from '@/types/game'
+import { Level, LevelState, LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
 
-export interface ScratchLevelProps {
+export interface LogicAssemblyLevelProps {
     level: Level
     state: LevelState
     onComplete: (stars: 0 | 1 | 2 | 3, usedFrag: boolean) => void
@@ -8,7 +8,7 @@ export interface ScratchLevelProps {
 }
 
 export interface BlockDef {
-    type: ScratchBlockType
+    type: LogicAssemblyBlockType
     label: string
     color: string
     border: string
@@ -25,10 +25,10 @@ export interface MapData {
     objective: { x: number, y: number }[]
 }
 
-export interface ScratchLevelData {
-    availableBlocks: ScratchBlockType[]
+export interface LogicAssemblyLevelData {
+    availableBlocks: LogicAssemblyBlockType[]
     maxBlocks: number
     hint: string
-    validateFn: (blocks: ScratchBlock[]) => boolean
+    validateFn: (blocks: LogicAssemblyBlock[]) => boolean
     map?: MapData
 }

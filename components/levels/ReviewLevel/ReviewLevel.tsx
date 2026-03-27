@@ -13,8 +13,8 @@ import { ReviewLevelProps, Phase } from './types'
 // IMPORTS DINÁMICOS — para las fases finales
 // ------------------------------------------------------------
 
-const LightbotLevel = dynamic(() => import('@/components/levels/LightBotLevel/LightBotLevel'), { ssr: false })
-const ScratchLevel = dynamic(() => import('@/components/levels/ScratchLevel/ScratchLevel'), { ssr: false })
+const NodeRoutineLevel = dynamic(() => import('@/components/levels/NodeRoutineLevel/NodeRoutineLevel'), { ssr: false })
+const LogicAssemblyLevel = dynamic(() => import('@/components/levels/LogicAssemblyLevel/LogicAssemblyLevel'), { ssr: false })
 const PuzzleLevel = dynamic(() => import('@/components/levels/PuzzleLevel/PuzzleLevel'), { ssr: false })
 const CodeEditorLevel = dynamic(() => import('@/components/levels/CodeEditorLevel/CodeEditorLevel'), { ssr: false })
 
@@ -31,8 +31,7 @@ export default function ReviewLevel({
 
     // Obtener data del nivel (desde JSON o fallback)
     const reviewData = useMemo(() => {
-        // @ts-ignore
-        const fromLevel = level.reviewData || DEFAULT_REVIEW_DATA[level.id]
+        const fromLevel = DEFAULT_REVIEW_DATA[level.id]
         return fromLevel || { questions: [] }
     }, [level.id])
 
@@ -49,7 +48,7 @@ export default function ReviewLevel({
 
     function handleAnswer(index: number) {
         if (showFeedback !== null) return
-        
+
         setShowFeedback(index)
         const isCorrect = index === questions[currentQuestion].correctIndex
         setAnswers(prev => [...prev, isCorrect])
@@ -72,11 +71,11 @@ export default function ReviewLevel({
         // Cálculo final de estrellas basado en las 3 fases
         const correctCount = answers.filter(a => a).length
         const totalQ = questions.length || 1
-        
+
         // Simplificado: 3 estrellas si acertaste todo y pasaste el minijuego
         const finalStars = correctCount === totalQ ? 3 : correctCount >= totalQ / 2 ? 2 : 1
-        
-        onComplete(finalStars as 0|1|2|3, state.fragUsed)
+
+        onComplete(finalStars as 0 | 1 | 2 | 3, state.fragUsed)
     }
 
     // ------------------------------------------------------------
@@ -89,7 +88,7 @@ export default function ReviewLevel({
 
     if (phase === 'quiz') {
         return (
-            <QuizPhase 
+            <QuizPhase
                 question={questions[currentQuestion]}
                 currentQuestion={currentQuestion}
                 totalQuestions={questions.length}
@@ -100,14 +99,14 @@ export default function ReviewLevel({
     }
 
     if (phase === 'puzzle') {
-        const puzzleType: Level['type'] = 
-            level.act === 1 ? 'puzzle-match' : 
-            level.act === 2 ? 'puzzle-sort' : 
-            level.act === 3 ? 'puzzle-match' : 
-            level.act === 4 ? 'puzzle-bug' : 
-            level.act === 5 ? 'puzzle-fill' : 
-            level.act === 6 ? 'puzzle-sort' : 
-            'puzzle-match'
+        const puzzleType: Level['type'] =
+            level.act === 1 ? 'puzzle-match' :
+                level.act === 2 ? 'puzzle-sort' :
+                    level.act === 3 ? 'puzzle-match' :
+                        level.act === 4 ? 'puzzle-bug' :
+                            level.act === 5 ? 'puzzle-fill' :
+                                level.act === 6 ? 'puzzle-sort' :
+                                    'puzzle-match'
 
         const miniLevel: Level = { ...level, type: puzzleType }
         return (
@@ -133,11 +132,11 @@ export default function ReviewLevel({
                         </div>
                     </div>
                 </div>
-                <PuzzleLevel 
-                    level={miniLevel} 
-                    state={state} 
-                    onComplete={() => handlePuzzleComplete(3)} 
-                    onFragUse={onFragUse} 
+                <PuzzleLevel
+                    level={miniLevel}
+                    state={state}
+                    onComplete={() => handlePuzzleComplete(3)}
+                    onFragUse={onFragUse}
                 />
             </div>
         )
@@ -146,7 +145,7 @@ export default function ReviewLevel({
     if (phase === 'minigame') {
         const miniLevel: Level = {
             ...level,
-            type: level.act === 1 ? 'lightbot' : level.act === 2 ? 'scratch' : level.act >= 4 ? 'codeeditor' : 'lightbot'
+            type: level.act === 1 ? 'noderoutine' : level.act === 2 ? 'logicassembly' : level.act >= 4 ? 'codeeditor' : 'noderoutine'
         }
         return (
             <div className="flex-1 flex flex-col h-full animate-in slide-in-from-bottom duration-700">
@@ -172,7 +171,7 @@ export default function ReviewLevel({
                     </div>
                 </div>
                 {level.act === 2 ? (
-                     <ScratchLevel
+                    <LogicAssemblyLevel
                         level={miniLevel}
                         state={state}
                         onComplete={(s) => handleFinalComplete(s)}
@@ -186,7 +185,7 @@ export default function ReviewLevel({
                         onFragUse={onFragUse}
                     />
                 ) : (
-                    <LightbotLevel
+                    <NodeRoutineLevel
                         level={miniLevel}
                         state={state}
                         onComplete={(s) => handleFinalComplete(s)}
