@@ -38,12 +38,12 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     },
     '1-03': {
         map: [
-            [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0, height: 1 }, { type: 'floor', x: 2, y: 0, height: 1}, { type: 'target', x: 3, y: 0 }],
+            [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0, height: 1 }, { type: 'floor', x: 2, y: 0, height: 1 }, { type: 'target', x: 3, y: 0 }],
             [{ type: 'floor', x: 0, y: 1 }, { type: 'floor', x: 1, y: 1, height: 1 }, { type: 'floor', x: 2, y: 1, height: 1 }, { type: 'floor', x: 0, y: 1 }],
 
         ],
         robotStart: { x: 0, y: 0, direction: 'east' },
-        targets: [{ x: 3, y: 0 } ],
+        targets: [{ x: 3, y: 0 }],
         maxCommands: 6,
         allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate'],
     },
@@ -76,10 +76,10 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     '1-07': {
         map: [
             [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }, { type: 'wall', x: 3, y: 0 }, { type: 'floor', x: 4, y: 0 }, { type: 'floor', x: 5, y: 0 }],
-            [{ type: 'floor', x: 0, y: 1 }, { type: 'broken', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }, { type: 'wall', x: 3, y: 1 }, { type: 'floor', x: 4, y: 1 }, { type: 'active', x: 5, y: 1 }],
+            [{ type: 'floor', x: 0, y: 1 }, { type: 'wall', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }, { type: 'wall', x: 3, y: 1 }, { type: 'floor', x: 4, y: 1 }, { type: 'floor', x: 5, y: 1 }],
             [{ type: 'floor', x: 0, y: 2 }, { type: 'floor', x: 1, y: 2 }, { type: 'floor', x: 2, y: 2 }, { type: 'floor', x: 3, y: 2 }, { type: 'floor', x: 4, y: 2 }, { type: 'floor', x: 5, y: 2 }],
-            [{ type: 'active', x: 0, y: 3 }, { type: 'floor', x: 1, y: 3 }, { type: 'broken', x: 2, y: 3 }, { type: 'floor', x: 3, y: 3 }, { type: 'floor', x: 4, y: 3 }, { type: 'floor', x: 5, y: 3 }],
-            [{ type: 'floor', x: 0, y: 4 }, { type: 'floor', x: 1, y: 4 }, { type: 'floor', x: 2, y: 4 }, { type: 'floor', x: 3, y: 4 }, { type: 'broken', x: 4, y: 4 }, { type: 'floor', x: 5, y: 4 }],
+            [{ type: 'floor', x: 0, y: 3 }, { type: 'floor', x: 1, y: 3 }, { type: 'wall', x: 2, y: 3 }, { type: 'floor', x: 3, y: 3 }, { type: 'floor', x: 4, y: 3 }, { type: 'floor', x: 5, y: 3 }],
+            [{ type: 'floor', x: 0, y: 4 }, { type: 'floor', x: 1, y: 4 }, { type: 'floor', x: 2, y: 4 }, { type: 'floor', x: 3, y: 4 }, { type: 'wall', x: 4, y: 4 }, { type: 'floor', x: 5, y: 4 }],
             [{ type: 'floor', x: 0, y: 5 }, { type: 'floor', x: 1, y: 5 }, { type: 'floor', x: 2, y: 5 }, { type: 'floor', x: 3, y: 5 }, { type: 'floor', x: 4, y: 5 }, { type: 'target', x: 5, y: 5 }],
         ],
         robotStart: { x: 0, y: 0, direction: 'east' },
