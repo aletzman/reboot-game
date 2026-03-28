@@ -20,20 +20,22 @@ export default function CinematicLevel({
         const save = typeof window !== 'undefined' ? getSave() : null;
         const savedName = save && save.player?.name !== 'Jugador' ? save.player.name : "";
 
-        // Si al momento de Cargar el nivel ya está registrado y repite el nivel P-01, cambiar los diálogos
-        if (level.id === 'P-01' && savedName) {
-            return [
-                { text: '// terminal encontrada', color: 'muted', delay: 200, speed: 15, waitForEntry: false },
+        // Si al momento de Cargar el nivel ya está registrado y repite el nivel, cambiar los diálogos en la sección de la terminal
+        if (level.id === 'P-00' && savedName) {
+            const terminalPart: TextLine[] = [
+                { text: '', color: 'muted', delay: 800, speed: 0, waitForEntry: false },
+                { text: '// enlace local restablecido', color: 'muted', delay: 600, speed: 15, waitForEntry: false },
                 { text: '', color: 'muted', delay: 400, speed: 0, waitForEntry: false },
-                { text: 'FRAG v0.1 — sistema de respaldo activo', color: 'green', delay: 600, speed: 20, waitForEntry: false },
+                { text: 'FRAG v0.1 — en línea', color: 'green', delay: 600, speed: 20, waitForEntry: false },
                 { text: '', color: 'muted', delay: 300, speed: 0, waitForEntry: false },
-                { text: `> Identidad confirmada: ${savedName}`, color: 'green', delay: 500, speed: 25, waitForEntry: false },
-                { text: '> Accediendo a registros anteriores...', color: 'purple', delay: 400, speed: 20, waitForEntry: false },
+                { text: `> Operador reconocido: ${savedName}`, color: 'green', delay: 500, speed: 25, waitForEntry: false },
+                { text: '> Restaurando estado de memoria...', color: 'purple', delay: 400, speed: 20, waitForEntry: false },
                 { text: '', color: 'muted', delay: 300, speed: 0, waitForEntry: false },
-                { text: 'FRAG: "Llevas activo 2,847 días. Yo también."', color: 'purple', delay: 600, speed: 25, waitForEntry: false },
-                { text: 'FRAG: "Qué bueno tenerte de vuelta."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
-                { text: 'FRAG: "Las máquinas no saben que seguimos aquí."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
+                { text: 'FRAG: "Tu código sigue intacto."', color: 'purple', delay: 600, speed: 25, waitForEntry: false },
+                { text: 'FRAG: "GÉNESIS escaneó la red mientras no estabas. Logré ocultar nuestra señal."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
+                { text: 'FRAG: "Tenemos sistemas que reparar. Volvamos al trabajo."', color: 'purple', delay: 400, speed: 25, waitForEntry: false },
             ];
+            return [...terminalPart];
         }
         return baseScript;
     });
@@ -73,7 +75,7 @@ export default function CinematicLevel({
         if (currentLineDef.text === '') {
             const emptyTimeout = setTimeout(() => {
                 setVisibleLinesCount(prev => prev + 1)
-            }, currentLineDef.delay || 400)
+            }, (currentLineDef.delay || 400) * 0.5) // 2x faster transit
             return () => clearTimeout(emptyTimeout)
         }
 
@@ -93,7 +95,7 @@ export default function CinematicLevel({
                             setTimeout(() => {
                                 setVisibleLinesCount(prev => prev + 1)
                                 setCurrentText("")
-                            }, 150)
+                            }, 100)
                         } else {
                             setIsWaitingForEntry(true)
                         }
@@ -101,11 +103,11 @@ export default function CinematicLevel({
                         setTimeout(() => {
                             setVisibleLinesCount(prev => prev + 1)
                             setCurrentText("")
-                        }, 150)
+                        }, 100)
                     }
                 }
-            }, currentLineDef.speed)
-        }, currentLineDef.delay)
+            }, Math.max(1, currentLineDef.speed * 0.5)) // 2x faster typewriting
+        }, currentLineDef.delay * 0.5) // 2x faster delay before typing start
 
         return () => {
             clearTimeout(startTimeout)
@@ -151,19 +153,22 @@ export default function CinematicLevel({
         // Inyectamos la confirmación dinámicamente en el guión actual
         setScript(prev => {
             const nextScript = [...prev];
-            // Reemplazamos "Iniciando verificación biométrica" con nuestro texto dinámico
-            if (level.id === 'P-01' && nextScript[5]) {
-                nextScript.splice(5, 1, {
-                    text: `> Identidad confirmada: ${data.name.toUpperCase()}`,
-                    color: 'green',
-                    delay: 200,
-                    speed: 25,
-                    waitForEntry: false
-                });
+            if (level.id === 'P-00') {
+                // Buscamos el índice de la línea que solicita identificación (waitForEntry: true)
+                const entryLineIndex = nextScript.findIndex((l: TextLine) => l.waitForEntry);
+                if (entryLineIndex !== -1) {
+                    nextScript.splice(entryLineIndex + 1, 1, {
+                        text: `> Identidad confirmada: ${data.name.toUpperCase()}`,
+                        color: 'green' as const,
+                        delay: 200,
+                        speed: 25,
+                        waitForEntry: false
+                    });
+                }
             } else {
                 nextScript.splice(visibleLinesCount + 1, 0, {
                     text: `> Identidad confirmada: ${data.name.toUpperCase()}`,
-                    color: 'green',
+                    color: 'green' as const,
                     delay: 200,
                     speed: 25,
                     waitForEntry: false
