@@ -23,6 +23,7 @@ export default function ReviewLevel({
     state,
     onComplete,
     onFragUse,
+    onStatusChange,
 }: ReviewLevelProps) {
     const [phase, setPhase] = useState<Phase>('intro')
     const [currentQuestion, setCurrentQuestion] = useState(0)
@@ -137,6 +138,7 @@ export default function ReviewLevel({
                     state={state}
                     onComplete={() => handlePuzzleComplete(3)}
                     onFragUse={onFragUse}
+                    onStatusChange={onStatusChange}
                 />
             </div>
         )
@@ -176,6 +178,7 @@ export default function ReviewLevel({
                         state={state}
                         onComplete={(s) => handleFinalComplete(s)}
                         onFragUse={onFragUse}
+                        onStatusChange={onStatusChange}
                     />
                 ) : level.act >= 4 ? (
                     <CodeEditorLevel
@@ -183,6 +186,7 @@ export default function ReviewLevel({
                         state={state}
                         onComplete={(s) => handleFinalComplete(s)}
                         onFragUse={onFragUse}
+                        onStatusChange={onStatusChange}
                     />
                 ) : (
                     <NodeRoutineLevel
@@ -190,6 +194,7 @@ export default function ReviewLevel({
                         state={state}
                         onComplete={(s) => handleFinalComplete(s)}
                         onFragUse={onFragUse}
+                        onStatusChange={onStatusChange}
                     />
                 )}
             </div>

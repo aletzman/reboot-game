@@ -15,6 +15,7 @@ export interface ReviewLevelProps {
     state: LevelState
     onComplete: (stars: 0 | 1 | 2 | 3, usedFrag: boolean) => void
     onFragUse: () => void
+    onStatusChange: (status: LevelState['status']) => void
 }
 
 export interface QuestionProps {

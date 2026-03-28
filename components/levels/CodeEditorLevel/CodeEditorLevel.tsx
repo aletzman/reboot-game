@@ -18,6 +18,8 @@ export default function CodeEditorLevel({
     level,
     state,
     onComplete,
+    onFragUse,
+    onStatusChange,
 }: CodeEditorLevelProps) {
     const data = EDITOR_DATA[level.id] ?? DEFAULT_EDITOR
 
