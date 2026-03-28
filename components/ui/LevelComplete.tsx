@@ -11,6 +11,7 @@ import type { Card, GameObject } from '@/types/game'
 import { Button } from './Button'
 import { RotateCcwIcon, HardDriveIcon, XIcon, ChevronsRightIcon, DatabaseIcon, CpuIcon, ActivityIcon } from 'lucide-react'
 import { DataCartridge, RARITY_STYLES } from '@/components/cards/DataCartridge'
+import { CardDetailModal } from '@/components/cards/CardDetailModal'
 
 // ------------------------------------------------------------
 // TIPOS
@@ -323,34 +324,12 @@ export default function LevelComplete({
             </div>
 
             {/* OVERLAY DE VISTA DETALLADA DEL MÓDULO */}
-            {selectedCardIdx !== null && newCards[selectedCardIdx] && (
-                <div className="fixed inset-0 z-300 bg-black/95 flex flex-col items-center justify-center p-4 transition-opacity duration-300 cursor-pointer"
-                    onClick={() => setSelectedCardIdx(null)}>
-                    <div onClick={(e) => e.stopPropagation()} className="relative flex flex-col items-center gap-8 animate-[lc-cardAppear_.5s_cubic-bezier(.16,1,.3,1)_both]">
-                        <Button
-                            variant="ghost"
-                            className="absolute -top-16 right-0 text-(--text-muted) hover:text-(--red) transition-colors"
-                            onClick={() => setSelectedCardIdx(null)}
-                        >
-                            <XIcon size={24} /> CERRAR
-                        </Button>
-                        <DataCartridge
-                            card={newCards[selectedCardIdx]}
-                            flipped={isFlipped}
-                            onClick={() => setIsFlipped(!isFlipped)}
-                            className="w-[260px] h-[360px] md:w-[320px] md:h-[480px] shadow-[0_0_80px_rgba(0,0,0,1)]"
-                        />
-                        <div className="flex flex-col items-center gap-2">
-                            <div className="text-[11px] text-(--green-light) tracking-[.4em] uppercase font-bold text-center">
-                                [ CLICK PARA ROTAR MÓDULO ]
-                            </div>
-                            <div className="text-[9px] text-(--text-muted) tracking-widest uppercase opacity-60">
-                                ESC_DATA: ACCESO_AUTORIZADO
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <CardDetailModal
+                selectedCard={selectedCardIdx !== null ? newCards[selectedCardIdx] : null}
+                isFlipped={isFlipped}
+                onClose={() => setSelectedCardIdx(null)}
+                onFlip={() => setIsFlipped(!isFlipped)}
+            />
         </div>
     )
 }
