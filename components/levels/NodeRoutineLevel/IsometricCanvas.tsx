@@ -11,22 +11,22 @@ const robotSprite = typeof window !== 'undefined' ? new Image() : null
 if (robotSprite) robotSprite.src = '/game/robot_spritesheet.png'
 
 const floorSprite = typeof window !== 'undefined' ? new Image() : null
-if (floorSprite) floorSprite.src = '/assets/sample_floor.svg'
+if (floorSprite) floorSprite.src = '/assets/sample_floor.png'
 
 const activeSprite = typeof window !== 'undefined' ? new Image() : null
-if (activeSprite) activeSprite.src = '/assets/sample_active.svg'
+if (activeSprite) activeSprite.src = '/assets/sample_active.png'
 
 const wallSprite = typeof window !== 'undefined' ? new Image() : null
-if (wallSprite) wallSprite.src = '/assets/sample_wall.svg'
+if (wallSprite) wallSprite.src = '/assets/sample_wall.png'
 
 const brokenSprite = typeof window !== 'undefined' ? new Image() : null
-if (brokenSprite) brokenSprite.src = '/assets/sample_broken.svg'
+if (brokenSprite) brokenSprite.src = '/assets/sample_broken.png'
 
 const genSprite = typeof window !== 'undefined' ? new Image() : null
-if (genSprite) genSprite.src = '/assets/sample_generator.svg'
+if (genSprite) genSprite.src = '/assets/sample_generator.png'
 
 const genActiveSprite = typeof window !== 'undefined' ? new Image() : null
-if (genActiveSprite) genActiveSprite.src = '/assets/sample_generator_active.svg'
+if (genActiveSprite) genActiveSprite.src = '/assets/sample_generator_active.png'
 
 // --- Drawing functions ---
 
