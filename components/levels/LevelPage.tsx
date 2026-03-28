@@ -35,7 +35,7 @@ const LogicAssemblyLevel = dynamic(() => import('@/components/levels/LogicAssemb
 const PuzzleLevel = dynamic(() => import('@/components/levels/PuzzleLevel/PuzzleLevel'), { ssr: false })
 const SpeedTypingLevel = dynamic(() => import('@/components/levels/SpeedTypingLevel/SpeedTypingLevel'), { ssr: false })
 const CodeEditorLevel = dynamic(() => import('@/components/levels/CodeEditorLevel/CodeEditorLevel'), { ssr: false })
-const DecisionLevel = dynamic(() => import('@/components/levels/DecisionLevel'), { ssr: false })
+const DecisionLevel = dynamic(() => import('@/components/levels/DecisionLevel/DecisionLevel'), { ssr: false })
 const ReviewLevel = dynamic(() => import('@/components/levels/ReviewLevel'), { ssr: false })
 const TheoryOverlay = dynamic(() => import('@/components/levels/TheoryOverlay/TheoryOverlay'), { ssr: false })
 
