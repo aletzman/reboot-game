@@ -6,10 +6,10 @@
 
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useMemo, memo } from 'react'
 import type { Card, GameObject } from '@/types/game'
 import { Button } from './Button'
-import { RotateCcwIcon, HardDriveIcon, XIcon, ArrowRightIcon, ChevronsRightIcon } from 'lucide-react'
+import { RotateCcwIcon, HardDriveIcon, XIcon, ChevronsRightIcon, DatabaseIcon, CpuIcon, ActivityIcon } from 'lucide-react'
 import { DataCartridge, RARITY_STYLES } from '@/components/cards/DataCartridge'
 
 // ------------------------------------------------------------
@@ -56,15 +56,19 @@ export default function LevelComplete({
     const [backdropReady, setBackdropReady] = useState(false)
     const [panelReady, setPanelReady] = useState(false)
 
-    // animación de entrada
+    // animación de entrada optimizada
     useEffect(() => {
-        requestAnimationFrame(() => setBackdropReady(true))
-        const t = setTimeout(() => setPanelReady(true), 150)
-        return () => clearTimeout(t)
+        const frame = requestAnimationFrame(() => setBackdropReady(true))
+        const t = setTimeout(() => setPanelReady(true), 100)
+        return () => {
+            cancelAnimationFrame(frame)
+            clearTimeout(t)
+        }
     }, [])
 
-    // animación de estrellas una a una
+    // animación de celdas una a una
     useEffect(() => {
+        if (stars === 0) return
         let count = 0
         const interval = setInterval(() => {
             count++
@@ -76,15 +80,14 @@ export default function LevelComplete({
         return () => clearInterval(interval)
     }, [stars])
 
-    const starMessage = stars === 3
-        ? 'FRAG: "Solución óptima. Impresionante."'
-        : stars === 2
-            ? 'FRAG: "Bien hecho. Puedes mejorar la eficiencia."'
-            : stars === 1
-                ? 'FRAG: "Completado. Intenta usar menos comandos."'
-                : 'FRAG: "Nivel registrado."'
+    const starMessage = useMemo(() => {
+        if (stars === 3) return 'FRAG: "Sincronización perfecta. Has recuperado todos los datos del sector."'
+        if (stars === 2) return 'FRAG: "Buen trabajo. Conexión estable, aunque se detectaron redundancias."'
+        if (stars === 1) return 'FRAG: "Conexión mínima establecida. Los datos son legibles pero incompletos."'
+        return 'FRAG: "Registro de nivel guardado. El núcleo sigue inestable."'
+    }, [stars])
 
-    const hasCardsOrObjects = newCards.length > 0 || secretCardUnlocked || newObjects.length > 0;
+    const hasRewards = newCards.length > 0 || secretCardUnlocked || newObjects.length > 0;
 
     // ------------------------------------------------------------
     // RENDER
@@ -92,83 +95,98 @@ export default function LevelComplete({
 
     return (
         <div
-            className={`fixed inset-0 z-200 flex items-center justify-center p-4 transition-colors duration-500 ease-out backdrop-blur-[1px] `}
+            className={`fixed inset-0 z-200 flex items-center justify-center p-4 transition-colors duration-700 ease-out ${backdropReady ? 'bg-black/80' : 'bg-black/0'}`}
         >
-            {/* Partículas flotando — efecto sutil */}
+            {/* Partículas flotando — efecto sutil (Memoized) */}
             <FloatingParticles visible={backdropReady} />
 
-            <div className="relative w-full max-w-[650px] bg-[#0c1218] rounded-xs p-[3px] border border-[#121922] shadow-[0_0_80px_rgba(0,0,0,0.8)]">
-                {/* Panel principal */}
-                <div
-                    className="relative bg-(--bg-void) border border-(--bg-hover) shadow-inner flex flex-col font-mono"
-                    style={{
-                        opacity: panelReady ? 1 : 0,
-                        transform: panelReady ? 'translateY(0) scale(1)' : 'translateY(20px) scale(.97)',
-                        transition: 'all .5s cubic-bezier(.16,1,.3,1)',
-                    }}
-                >
-                    <div className="relative px-6 py-6 max-h-[85vh] overflow-y-auto custom-scrollbar flex flex-col gap-6">
+            <div className={`relative w-full max-w-[680px] bg-[#0c1218] rounded-sm p-[2px] border border-[#1a2636] shadow-[0_0_100px_rgba(0,0,0,0.9)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${panelReady ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-8'}`}>
+
+                {/* Decoración Corners */}
+                <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-(--green-base) z-30" />
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-(--green-base) z-30" />
+
+                {/* Scanline Effect Overlay ONLY inside the modal for performance */}
+                <div className="absolute inset-0 pointer-events-none z-20 opacity-[0.03] overflow-hidden rounded-sm">
+                    <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,white_3px)] w-full h-full" />
+                </div>
+
+                <div className="relative bg-(--bg-void) border border-(--bg-hover) shadow-inner flex flex-col font-mono overflow-hidden">
+                    <div className="relative px-6 py-6 max-h-[85vh] overflow-y-auto custom-scrollbar flex flex-col gap-6 z-10">
 
                         {/* ── HEADER TERMINAL ── */}
-                        <div className="relative z-20 flex items-center justify-between border-b-2 border-(--bg-hover) pb-3 mb-2">
-                            <div className="text-[10px] text-(--green-muted) tracking-widest uppercase">
-                                SIS_EXT // DATA
+                        <div className="relative z-20 flex items-center justify-between border-b border-[#1a2636] pb-4 mb-2">
+                            <div className="flex flex-col gap-1">
+                                <div className="text-[9px] text-(--green-muted) tracking-[0.3em] uppercase flex items-center gap-2">
+                                    <ActivityIcon size={10} /> SIS_STATUS // COMPLETE
+                                </div>
+                                <div className="text-[18px] font-bold text-white tracking-[.15em] uppercase leading-none mt-1">
+                                    Misión Finalizada
+                                </div>
                             </div>
-                            <div className="text-[15px] font-bold text-white tracking-[.25em] uppercase" style={{ textShadow: '0 0 10px rgba(255,255,255,0.2)' }}>
-                                Nivel Completado
-                            </div>
-                            <div className="text-[10px] text-(--green-base) tracking-widest uppercase animate-pulse">
-                                [ OK ]
+                            <div className="flex flex-col items-end gap-1">
+                                <div className="px-2 py-0.5 bg-(--green-darkest) border border-(--green-base) text-[10px] text-(--green-light) tracking-widest uppercase animate-pulse">
+                                    &gt; OK_DATA
+                                </div>
+                                <div className="text-[8px] text-(--text-muted) tracking-tighter uppercase font-mono">
+                                    LOG_REF: {Math.random().toString(36).substring(2, 10).toUpperCase()}
+                                </div>
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-6 relative z-20">
+                        <div className="flex flex-col gap-8 relative z-20 transition-all">
 
-                            {/* ── ESTRELLAS Y ESTADO ── */}
-                            <div className="flex gap-4 sm:flex-row flex-col">
-                                {/* CAJA ESTRELLAS */}
-                                <div className="bg-[#0b1016] border border-[#1a2636] px-5 py-4 flex flex-col items-center justify-center gap-2 rounded-xs shrink-0 w-full sm:w-auto">
-                                    <span className="text-[9px] text-(--green-muted) uppercase tracking-[.15em] leading-none block w-full text-center pb-2 border-b border-[#1c2936]">
-                                        Eficiencia
+                            {/* ── CÉLULAS DE ENERGÍA Y ESTADO ── */}
+                            <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] gap-4">
+                                {/* CAJA CÉLULAS (FUSION CELLS) */}
+                                <div className="bg-[#080c11] border border-[#1a2636] px-4 py-5 flex flex-col items-center justify-center gap-4 rounded-xs shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)]">
+                                    <span className="text-[9px] text-(--text-muted) uppercase tracking-[.2em] leading-none block w-full text-center pb-3 border-b border-[#131d2a]">
+                                        Estatus_Sincronía
                                     </span>
-                                    <div className="flex justify-center gap-[10px] mt-2">
+                                    <div className="flex justify-center gap-3 mt-1">
                                         {[1, 2, 3].map(n => (
-                                            <div key={n} className="transform scale-[0.85] origin-center">
-                                                <StarIcon index={n} active={visibleStars >= n} delay={n * 0.15} />
-                                            </div>
+                                            <DataNode key={n} active={visibleStars >= n} delay={n * 0.1} />
                                         ))}
                                     </div>
                                 </div>
 
-                                {/* CAJA REPORTE FRAG */}
-                                <div className="flex-1 bg-(--bg-elevated) border border-[#1a3810] p-4 rounded-xs relative">
-                                    <div className="absolute top-[-8px] bg-[#0b1016] px-2 left-4 text-[9px] text-(--green-muted) tracking-widest border border-[#1a3810] rounded-xs">
-                                        REPORTE_IA
+                                {/* CAJA REPORTE NÚCLEO */}
+                                <div className="flex flex-col justify-center bg-(--bg-surface) border-l-4 border-(--cyan) p-5 rounded-r-xs relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 p-2 opacity-10">
+                                        <ActivityIcon size={48} className="text-(--cyan)" />
                                     </div>
-                                    <div className={`text-[12px] leading-[1.6] mt-1 ${stars === 3 ? 'text-(--green-light)' : 'text-(--text-muted)'}`}>
+                                    <div className="text-[9px] text-(--purple) font-bold tracking-[.25em] mb-2 uppercase flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 bg-(--purple) rounded-full animate-pulse" /> FRAG_SYSTEM ANALYSIS
+                                    </div>
+                                    <div className={`text-[13px] leading-normal ${stars === 3 ? 'text-(--green-light)' : 'text-(--text-primary)'}`}>
                                         {starMessage}
                                     </div>
                                     {reviewHint?.levelTitle && (
-                                        <div className="text-[9px] text-[#425e79] mt-3 tracking-widest uppercase border-t border-[#1c2936] pt-2">
-                                            Fuente: {reviewHint.levelTitle}
+                                        <div className="text-[9px] text-(--text-muted) mt-3 tracking-widest uppercase flex items-center gap-2">
+                                            <span className="text-(--text-ghost)">DB_SOURCE:</span> {reviewHint.levelTitle}
                                         </div>
                                     )}
                                 </div>
                             </div>
 
                             {/* Contenedor de recompensas si hay alguna */}
-                            {hasCardsOrObjects && (
-                                <div className="border border-[#1a3810] bg-[#061006] p-5 rounded-xs flex flex-col gap-5">
-                                    <div className="text-[10px] text-(--green-base) uppercase tracking-widest flex items-center gap-3">
-                                        <span>[ NUEVOS DATOS ]</span>
-                                        <div className="h-px flex-1 bg-[linear-gradient(90deg,rgba(45,120,0,0.5),transparent)]" />
+                            {hasRewards && (
+                                <div className="border border-[#1a3810] bg-[#061006] p-5 rounded-xs flex flex-col gap-6 relative overflow-hidden group">
+                                    {/* Shimmer de fondo para rewards */}
+                                    <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(85,226,0,0.03)_50%,transparent_75%)] bg-size-[200%_200%] animate-[lc-shimmer_6s_linear_infinite]" />
+
+                                    <div className="text-[11px] text-(--green-base) uppercase font-bold tracking-[.3em] flex items-center gap-4 relative z-10">
+                                        <DatabaseIcon size={14} />
+                                        <span>RECURSOS RECUPERADOS</span>
+                                        <div className="h-px flex-1 bg-[linear-gradient(90deg,var(--green-base),transparent)] opacity-30" />
                                     </div>
 
                                     {/* ── CARTAS DESBLOQUEADAS ── */}
                                     {newCards.length > 0 && (
-                                        <div className="animate-[lc-slideUp_.5s_cubic-bezier(.16,1,.3,1)_both]" style={{ animationDelay: '0.6s' }}>
-                                            <div className="text-[10px] text-(--green-light) tracking-[.14em] mb-4 uppercase">
-                                                {newCards.length === 1 ? '• 1 Módulo de memoria detectado' : `• ${newCards.length} Módulos detectados`}
+                                        <div className="animate-[lc-slideUp_.6s_ease-out_both] delay-300 relative z-10">
+                                            <div className="text-[10px] text-(--green-light) tracking-[.15em] mb-4 uppercase flex items-center gap-2">
+                                                <div className="w-3 h-px bg-(--green-light)" />
+                                                {newCards.length} Módulo{newCards.length > 1 ? 's' : ''} de memoria extraído{newCards.length > 1 ? 's' : ''}
                                             </div>
 
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -178,16 +196,21 @@ export default function LevelComplete({
                                                         <div
                                                             key={card.id}
                                                             onClick={() => { setSelectedCardIdx(idx); setIsFlipped(false); }}
-                                                            className="flex items-center gap-3 p-3 bg-[#0a0f16] border cursor-pointer hover:bg-[rgba(255,255,255,0.03)] transition-colors"
-                                                            style={{ borderColor: r.border }}
+                                                            className="flex items-center gap-3 p-3 bg-black/40 border border-transparent hover:border-(--green-base) transition-all duration-300 group/item cursor-pointer shadow-lg"
+                                                            style={{
+                                                                borderColor: `${r.color}33`,
+                                                                boxShadow: `0 4px 15px -5px ${r.color}22`
+                                                            }}
                                                         >
-                                                            <HardDriveIcon size={16} color={r.color} className="opacity-70" />
+                                                            <div className="w-10 h-10 bg-(--bg-void) rounded-xs flex items-center justify-center border border-[#1a2636] group-hover/item:border-(--green-base) transition-colors">
+                                                                <HardDriveIcon size={18} style={{ color: r.color }} className="opacity-80 group-hover/item:opacity-100 transition-opacity" />
+                                                            </div>
                                                             <div className="flex-1 overflow-hidden">
-                                                                <div className="text-[9px] font-bold tracking-widest uppercase truncate" style={{ color: r.color }}>
+                                                                <div className="text-[10px] font-bold tracking-widest uppercase truncate leading-tight" style={{ color: r.color }}>
                                                                     {card.name}
                                                                 </div>
-                                                                <div className="text-[8px] text-(--text-muted) opacity-60 mt-0.5 tracking-widest uppercase">
-                                                                    Click para analizar
+                                                                <div className="text-[8px] text-(--text-muted) mt-1 tracking-widest uppercase flex items-center gap-1">
+                                                                    <div className="w-1 h-1 rounded-full bg-(--text-ghost)" /> ver detalles
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -199,35 +222,36 @@ export default function LevelComplete({
 
                                     {/* ── CARTA SECRETA ── */}
                                     {secretCardUnlocked && (
-                                        <div className="border border-(--amber)/50 rounded-xs p-4 text-center relative overflow-hidden animate-[lc-slideUp_.5s_cubic-bezier(.16,1,.3,1)_both]"
+                                        <div className="border border-(--amber)/30 rounded-xs p-5 pb-6 text-center relative overflow-hidden animate-[lc-slideUp_.6s_ease-out_both] delay-500"
                                             style={{
-                                                background: 'linear-gradient(135deg, rgba(26,8,0,.8), rgba(65,36,2,.4))',
-                                                animationDelay: '1s'
+                                                background: 'linear-gradient(135deg, rgba(20,10,0,.9), rgba(40,25,0,.6))',
                                             }}>
-                                            <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent_30%,rgba(240,153,123,.06)_50%,transparent_70%)] animate-[lc-shimmer_3s_ease-in-out_infinite]" />
-                                            <div className="text-[10px] font-bold text-(--amber) tracking-widest mb-2 relative uppercase">
-                                                ★ Archivo especial
+                                            <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent_30%,rgba(240,153,123,.08)_50%,transparent_70%)] animate-[lc-shimmer_4s_linear_infinite]" />
+                                            <div className="text-[11px] font-bold text-(--amber) tracking-[.4em] mb-3 relative uppercase flex items-center justify-center gap-3">
+                                                <div className="h-px w-8 bg-(--amber) opacity-40" />
+                                                FRAGMENTO OCULTO
+                                                <div className="h-px w-8 bg-(--amber) opacity-40" />
                                             </div>
-                                            <div className="text-[11px] text-[#f0caa3] italic relative">
-                                                FRAG: &quot;Nunca me pediste ayuda. Lo resolviste todo solo.&quot;
+                                            <div className="text-[12px] text-[#f5d5b8] italic relative leading-relaxed max-w-[400px] mx-auto opacity-90">
+                                                &quot;Independencia total del sistema FRAG confirmada. Protocolo de genio activado.&quot;
                                             </div>
                                         </div>
                                     )}
 
                                     {/* ── OBJETOS DESBLOQUEADOS ── */}
                                     {newObjects.length > 0 && (
-                                        <div className="animate-[lc-slideUp_.5s_cubic-bezier(.16,1,.3,1)_both]" style={{ animationDelay: '1.2s' }}>
-                                            <div className="text-[10px] text-(--amber) tracking-[.14em] uppercase mb-3">
-                                                {newObjects.length === 1 ? '• 1 Objeto material' : `• ${newObjects.length} Objetos materiales`}
+                                        <div className="animate-[lc-slideUp_.6s_ease-out_both] delay-700 relative z-10">
+                                            <div className="text-[10px] text-(--amber) tracking-[.15em] uppercase mb-4 flex items-center gap-2">
+                                                <div className="w-3 h-px bg-(--amber)" />
+                                                {newObjects.length} Artefacto{newObjects.length > 1 ? 's' : ''} recuperado{newObjects.length > 1 ? 's' : ''}
                                             </div>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                 {newObjects.map((obj, i) => (
-                                                    <div key={obj.id} className="bg-[#0b1008] border border-[rgba(239,159,39,0.3)] rounded-xs py-3 px-4 flex flex-col gap-[6px]"
-                                                        style={{ animation: `lc-slideUp .4s cubic-bezier(.16,1,.3,1) ${1.4 + i * 0.1}s both` }}>
-                                                        <div className="text-[11px] text-(--amber) font-semibold tracking-[.05em]">
+                                                    <div key={obj.id} className="bg-black/30 border border-[#2a1d0a] rounded-xs py-3 px-4 flex flex-col gap-2 hover:bg-black/50 transition-colors">
+                                                        <div className="text-[11px] text-(--amber) font-bold tracking-widest uppercase">
                                                             {obj.name}
                                                         </div>
-                                                        <div className="text-[10px] text-[#b3b2a2] leading-relaxed">
+                                                        <div className="text-[10px] text-(--text-muted) leading-relaxed">
                                                             {obj.inventoryNote}
                                                         </div>
                                                     </div>
@@ -240,52 +264,56 @@ export default function LevelComplete({
 
                             {/* ── HINT DE REPASO DE FRAG ── */}
                             {reviewHint?.shouldShow && (
-                                <div className="border border-[rgba(127,119,221,.4)] bg-[#0d091a] rounded-xs p-5 animate-[lc-slideUp_.5s_cubic-bezier(.16,1,.3,1)_both]"
-                                    style={{ animationDelay: '1.4s' }}>
-                                    <div className="text-[9px] text-[#a49ee8] tracking-[.15em] mb-2 uppercase opacity-80 flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-[#a49ee8]" /> Sugerencia de optimización_
+                                <div className="border border-(--purple)/30 bg-[#0d091a] rounded-xs p-5 relative overflow-hidden animate-[lc-slideUp_.6s_ease-out_both] delay-500">
+                                    <div className="absolute top-0 right-0 w-20 h-20 bg-(--purple)/5 rounded-full" />
+                                    <div className="text-[10px] text-[#a49ee8] tracking-[.25em] mb-3 uppercase font-bold flex items-center gap-2">
+                                        <ActivityIcon size={12} /> SUGERENCIA_OPTIMIZACIÓN
                                     </div>
-                                    <div className="text-[11px] text-[#d6d4f0] leading-relaxed pl-4 border-l border-[rgba(127,119,221,.4)]">
+                                    <div className="text-[12px] text-[#d6d4f0] leading-relaxed pl-4 border-l-2 border-(--purple)/40">
                                         {reviewHint.message}
                                     </div>
                                 </div>
                             )}
 
                             {/* ── CONTENIDO PERSONALIZADO POR NIVEL (Ej: Stats de typing) ── */}
-                            {children}
+                            {children && (
+                                <div className="animate-[lc-slideUp_.6s_ease-out_both] delay-200">
+                                    {children}
+                                </div>
+                            )}
 
                             {/* ── BOTONES FINALES ── */}
-                            <div className="flex flex-wrap justify-end gap-3 mt-4 animate-[lc-slideUp_.5s_cubic-bezier(.16,1,.3,1)_both]" style={{ animationDelay: '1.5s' }}>
-                                <Button
-                                    onClick={onRetry}
-                                    variant="outline"
-                                    size="sm"
-                                >
-                                    <RotateCcwIcon size={16} />
-                                    reintentar
-                                </Button>
-                                <Button
-                                    onClick={onMap}
-                                    variant="outline"
-                                    size="sm"
-                                >
-                                    mapa
-                                </Button>
+                            <div className="flex flex-wrap items-center justify-between gap-4 mt-2 pt-6 border-t border-[#1a2636] animate-[lc-slideUp_.6s_ease-out_both] delay-900ms">
+                                <div className="flex gap-3">
+                                    <Button
+                                        onClick={onRetry}
+                                        variant="outline"
+                                        size="sm"
+                                        className="min-w-[120px]"
+                                    >
+                                        <RotateCcwIcon size={14} />
+                                        REINTENTAR
+                                    </Button>
+                                    <Button
+                                        onClick={onMap}
+                                        variant="outline"
+                                        size="sm"
+                                        className="min-w-[100px]"
+                                    >
+                                        MAPA
+                                    </Button>
+                                </div>
                                 <Button
                                     onClick={onNext}
-                                    size="sm"
+                                    size="md"
                                     variant="solid"
                                     icon={reviewHint?.shouldShow ? RotateCcwIcon : ChevronsRightIcon}
-                                    iconPosition={reviewHint?.shouldShow ? "right" : "right"}
+                                    iconPosition="right"
                                 >
                                     {reviewHint?.shouldShow ?
-                                        <>
-                                            repasar "{reviewHint.levelTitle}"
-                                        </>
+                                        `REPASAR "${reviewHint.levelTitle}"`
                                         :
-                                        <>
-                                            siguiente nivel
-                                        </>
+                                        "SIGUIENTE NIVEL"
                                     }
                                 </Button>
                             </div>
@@ -296,20 +324,29 @@ export default function LevelComplete({
 
             {/* OVERLAY DE VISTA DETALLADA DEL MÓDULO */}
             {selectedCardIdx !== null && newCards[selectedCardIdx] && (
-                <div className="fixed inset-0 z-300 bg-black/80 flex flex-col items-center justify-center p-4 backdrop-blur-[2px] animate-[lc-fadeIn_0.2s_ease-out_both] cursor-pointer"
+                <div className="fixed inset-0 z-300 bg-black/95 flex flex-col items-center justify-center p-4 transition-opacity duration-300 cursor-pointer"
                     onClick={() => setSelectedCardIdx(null)}>
-                    <div onClick={(e) => e.stopPropagation()} className="relative flex flex-col items-center gap-6">
-                        <Button variant="outline" className="hidden sm:flex absolute -top-12 -right-4 border-none hover:bg-(--bg-hover) p-2 text-(--text-muted) hover:text-(--green-light)" onClick={() => setSelectedCardIdx(null)}>
-                            <XIcon size={20} /> cerrar
+                    <div onClick={(e) => e.stopPropagation()} className="relative flex flex-col items-center gap-8 animate-[lc-cardAppear_.5s_cubic-bezier(.16,1,.3,1)_both]">
+                        <Button
+                            variant="ghost"
+                            className="absolute -top-16 right-0 text-(--text-muted) hover:text-(--red) transition-colors"
+                            onClick={() => setSelectedCardIdx(null)}
+                        >
+                            <XIcon size={24} /> CERRAR
                         </Button>
                         <DataCartridge
                             card={newCards[selectedCardIdx]}
                             flipped={isFlipped}
                             onClick={() => setIsFlipped(!isFlipped)}
-                            className="w-[240px] h-[336px] md:w-[280px] md:h-[465px]"
+                            className="w-[260px] h-[360px] md:w-[320px] md:h-[480px] shadow-[0_0_80px_rgba(0,0,0,1)]"
                         />
-                        <div className="text-[10px] text-(--green-muted) tracking-widest flex items-center gap-2 mt-4 animate-pulse">
-                            [ CLICK EN EL MÓDULO PARA LEER DATOS CACHÉ ]
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="text-[11px] text-(--green-light) tracking-[.4em] uppercase font-bold text-center">
+                                [ CLICK PARA ROTAR MÓDULO ]
+                            </div>
+                            <div className="text-[9px] text-(--text-muted) tracking-widest uppercase opacity-60">
+                                ESC_DATA: ACCESO_AUTORIZADO
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -319,76 +356,112 @@ export default function LevelComplete({
 }
 
 // ============================================================
-// ICONO DE ESTRELLA — con glow y animación de entrada
+// FUSION CELL (Mini Generadores de Energía)
 // ============================================================
 
-function StarIcon({ index, active, delay }: {
-    index: number
+const DataNode = memo(({ active, delay }: {
     active: boolean
     delay: number
-}) {
+}) => {
     return (
-        <div className="w-[44px] h-[44px] relative"
+        <div className="w-10 h-10 relative flex items-center justify-center"
             style={{
-                transition: `all .5s cubic-bezier(.34,1.56,.64,1) ${delay}s`,
-                transform: active ? 'scale(1)' : 'scale(0.5)',
-                opacity: active ? 1 : 0.12,
+                transition: `transform .7s cubic-bezier(.34,1.56,.64,1) ${delay}s, opacity .7s cubic-bezier(.34,1.56,.64,1) ${delay}s`,
+                transform: active ? 'scale(1) rotate(0deg)' : 'scale(0.6) rotate(-10deg)',
+                opacity: active ? 1 : 0.15,
             }}>
-            {/* Glow de fondo */}
-            {active && (
-                <div className="absolute -inset-2 rounded-full animate-[lc-starPulse_2s_ease-in-out_infinite] " />
-            )}
-            <svg viewBox="0 0 44 44" fill="none" className="relative z-10">
-                <polygon
-                    points="22,3 27,16 40,16 30,24 33,38 22,29 11,38 14,24 4,16 17,16"
-                    fill={active ? 'var(--amber)' : '#1a4d00'}
-                    stroke={active ? 'var(--amber)' : '#0d1f00'}
-                    strokeWidth="1"
+            
+            {/* SVG Balanced Node Structure */}
+            <svg viewBox="0 0 60 60" className="w-full h-full drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
+                {/* External Hexagonal Frame */}
+                <path 
+                    d="M30 4 L56 18 V42 L30 56 L4 42 V18 Z" 
+                    fill="#080c11" 
+                    stroke={active ? 'var(--amber)' : '#1a2636'} 
+                    strokeWidth="2"
+                    className="transition-colors duration-500"
                 />
-                {/* Brillo interior */}
+                
+                {/* Secondary inner contour */}
+                <path 
+                    d="M30 8 L52 20 V40 L30 52 L8 40 V20 Z" 
+                    fill="none" 
+                    stroke={active ? 'var(--amber)' : '#0d131a'} 
+                    strokeWidth="1" 
+                    strokeOpacity="0.2"
+                />
+
+                {/* Industrial Connectors (Top/Bottom) */}
+                <rect x="28" y="0" width="4" height="6" fill={active ? 'var(--amber)' : '#1a2636'} className="transition-colors" />
+                <rect x="28" y="54" width="4" height="6" fill={active ? 'var(--amber)' : '#1a2636'} className="transition-colors" />
+
+                {/* Central Energy Core */}
+                <circle cx="30" cy="30" r="10" 
+                    fill={active ? 'var(--amber)' : '#0d131a'} 
+                    className="transition-all duration-500"
+                />
+                
                 {active && (
-                    <polygon
-                        points="22,8 25,17 34,17 27,23 29,33 22,27 15,33 17,23 10,17 19,17"
-                        fill="rgba(136,196,77,.2)"
-                    />
+                    <>
+                        {/* Glow Core */}
+                        <circle cx="30" cy="30" r="6" fill="#fff" fillOpacity="0.3" className="animate-pulse" />
+                        
+                        {/* Power Indicator Light */}
+                        <circle cx="30" cy="18" r="1.5" fill="#fff" className="animate-[lc-blink_1.5s_infinite]" />
+                    </>
                 )}
+
+                {/* Technical text - very subtle */}
+                <text x="30" y="46" fontSize="4" fill={active ? 'var(--amber)' : '#1a2636'} textAnchor="middle" className="font-mono font-bold tracking-widest uppercase transition-colors">
+                    {active ? 'READY' : 'OFF'}
+                </text>
             </svg>
+
+            {/* Subtle glow foundation */}
+            {active && (
+                <div className="absolute inset-0 bg-(--amber) opacity-[0.05] rounded-full blur-[10px] animate-pulse" />
+            )}
         </div>
     )
-}
+})
 
-
+DataNode.displayName = 'DataNode'
 
 // ============================================================
-// PARTÍCULAS FLOTANTES — efecto sutil de fondo
+// PARTÍCULAS FLOTANTES — efecto sutil de fondo (Memoized)
 // ============================================================
 
-function FloatingParticles({ visible }: { visible: boolean }) {
+const FloatingParticles = memo(({ visible }: { visible: boolean }) => {
+    // Definimos las partículas fuera del componente para evitar cálculos en cada frame
+    const particles = useMemo(() => Array.from({ length: 8 }, (_, i) => ({
+        id: i,
+        left: `${10 + (i * 15) % 80}%`,
+        top: `${15 + (i * 20) % 70}%`,
+        size: 1 + (i % 2),
+        delay: i * 0.8,
+        duration: 5 + (i % 4) * 2,
+    })), [])
+
     if (!visible) return null
 
-    const particles = Array.from({ length: 12 }, (_, i) => ({
-        left: `${5 + (i * 7.3) % 90}%`,
-        top: `${10 + (i * 13.7) % 80}%`,
-        size: 1 + (i % 3),
-        delay: i * 0.4,
-        duration: 4 + (i % 3) * 2,
-    }))
-
     return (
-        <div className='absolute inset-0 overflow-hidden pointer-events-none'>
-            {particles.map((p, i) => (
+        <div className='absolute inset-0 overflow-hidden pointer-events-none z-0'>
+            {particles.map((p) => (
                 <div
-                    key={i}
-                    className="absolute rounded-full bg-(--green-light) opacity-0"
+                    key={p.id}
+                    className="absolute rounded-full bg-(--green-base) opacity-0"
                     style={{
                         left: p.left,
                         top: p.top,
                         width: `${p.size}px`,
                         height: `${p.size}px`,
                         animation: `lc-float ${p.duration}s ease-in-out ${p.delay}s infinite`,
+                        willChange: 'transform, opacity'
                     }}
                 />
             ))}
         </div>
     )
-}
+})
+
+FloatingParticles.displayName = 'FloatingParticles'

@@ -19,8 +19,8 @@ if (activeSprite) activeSprite.src = '/assets/sample_active.png'
 const wallSprite = typeof window !== 'undefined' ? new Image() : null
 if (wallSprite) wallSprite.src = '/assets/sample_wall.png'
 
-const brokenSprite = typeof window !== 'undefined' ? new Image() : null
-if (brokenSprite) brokenSprite.src = '/assets/sample_broken.png'
+const checkSprite = typeof window !== 'undefined' ? new Image() : null
+if (checkSprite) checkSprite.src = '/assets/sample_check.png'
 
 const genSprite = typeof window !== 'undefined' ? new Image() : null
 if (genSprite) genSprite.src = '/assets/sample_generator.png'
@@ -170,56 +170,125 @@ function drawRobot(
     }
 }
 
-function drawTargetMarker(ctx: CanvasRenderingContext2D, cx: number, cy: number, pulse: number) {
-    const r = 7 + pulse * 2
+function drawTargetMarker(ctx: CanvasRenderingContext2D, cx: number, cy: number, pulse: number, activated: boolean = false) {
+    ctx.save()
+    ctx.globalCompositeOperation = 'lighter'
+
+    // Colores dinámicos basados en si está activado o no 
+    const glowColor = activated ? '#00ffff' : '#ff8800'
+    const coreColor = activated ? '#ffffff' : '#ffcc66'
+
+    // Opacidad palpitante
+    const alpha = activated ? (0.4 + pulse * 0.2) : (0.6 + pulse * 0.4)
+    const baseColorStr = activated ? `rgba(18, 176, 187, ${alpha})` : `rgba(145, 54, 1, ${alpha})`
+    const secondaryColorStr = activated ? `rgba(0, 255, 255, ${0.1 + pulse * 0.1})` : `rgba(255, 140, 50, ${0.2 + pulse * 0.2})`
+
+    // 1. Haz de luz volumétrico (hacia arriba)
+    const beamH = 60 + pulse * 20
+    const beamW = 25 + pulse * 12
+    const beamGrad = ctx.createLinearGradient(cx, cy, cx, cy - beamH)
+    beamGrad.addColorStop(0, baseColorStr)
+    beamGrad.addColorStop(0.5, secondaryColorStr)
+    beamGrad.addColorStop(1, 'rgba(0, 0, 0, 0)')
+
+    ctx.fillStyle = beamGrad
     ctx.beginPath()
-    ctx.ellipse(cx, cy, r * 1.75, r, 0, 0, Math.PI * 2)
-    ctx.strokeStyle = `rgba(18, 176, 187, ${0.4 + pulse * 0.3})`
-    ctx.lineWidth = 1.5
+    ctx.ellipse(cx, cy, beamW / 2, beamW / 4, 0, 0, Math.PI * 2)
+    ctx.fill()
+
+    ctx.beginPath()
+    ctx.moveTo(cx - beamW / 3, cy)
+    ctx.lineTo(cx + beamW / 3, cy)
+    ctx.lineTo(cx + 1, cy - beamH)
+    ctx.lineTo(cx - 1, cy - beamH)
+    ctx.closePath()
+    ctx.fill()
+
+    // 2. Anillo de base palpitante
+    const r = 10 + pulse * 4
+    ctx.beginPath()
+    ctx.ellipse(cx, cy, r * 1.8, r, 0, 0, Math.PI * 2)
+    ctx.strokeStyle = baseColorStr
+    ctx.lineWidth = 2.5
     ctx.stroke()
 
+    // 3. Núcleo intenso con sombra de brillo
     ctx.beginPath()
-    ctx.ellipse(cx, cy, 5, 3, 0, 0, Math.PI * 2)
-    ctx.fillStyle = '#12b0bb99'
+    ctx.ellipse(cx, cy, 5, 2.5, 0, 0, Math.PI * 2)
+    ctx.fillStyle = coreColor
+    ctx.shadowBlur = 20 * pulse
+    ctx.shadowColor = glowColor
     ctx.fill()
 
-    ctx.beginPath()
-    ctx.ellipse(cx, cy, 21, 12, 0, 0, Math.PI * 2)
-    ctx.fillStyle = `rgba(18, 176, 187, ${0.06 + pulse * 0.04})`
-    ctx.fill()
-}
-
-function drawGeneratorIcon(ctx: CanvasRenderingContext2D, cx: number, cy: number, activated: boolean) {
-    ctx.save()
-    ctx.translate(cx, cy)
-    ctx.beginPath()
-    ctx.moveTo(-3, -7)
-    ctx.lineTo(2, -1)
-    ctx.lineTo(-1, -1)
-    ctx.lineTo(3, 7)
-    ctx.lineTo(-2, 1)
-    ctx.lineTo(1, 1)
-    ctx.closePath()
-
-    if (activated) {
-        ctx.fillStyle = '#ffffff'
-        ctx.shadowColor = '#EF9F27'
-        ctx.shadowBlur = 4
-    } else {
-        ctx.fillStyle = '#EF9F27'
-    }
-
-    ctx.fill()
     ctx.restore()
 }
 
-function drawBrokenIcon(ctx: CanvasRenderingContext2D, cx: number, cy: number) {
+
+
+function drawElectricDischarge(ctx: CanvasRenderingContext2D, cx: number, cy: number, pulse: number) {
     ctx.save()
-    ctx.translate(cx, cy - 2)
-    ctx.font = '10px monospace'
-    ctx.fillStyle = '#7F77DD80'
-    ctx.textAlign = 'center'
-    ctx.fillText('✗', 0, 4)
+
+    // 1. Glow base (Atmósfera eléctrica)
+    const hw = ISO.TILE_W / 2
+    const hh = ISO.TILE_H / 2
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, hw * 1.2)
+    grad.addColorStop(0, `rgba(18, 176, 187, ${0.15 * pulse})`)
+    grad.addColorStop(1, 'rgba(18, 176, 187, 0)')
+    ctx.fillStyle = grad
+    ctx.fillRect(cx - hw * 1.5, cy - hh * 3, hw * 3, hh * 4)
+
+    ctx.globalCompositeOperation = 'lighter'
+
+    // 2. Ondas Magnéticas (Anillos sutiles que suben)
+    const numRings = 2
+    const time = performance.now() * 0.002
+    for (let i = 0; i < numRings; i++) {
+        const ringOffset = (time + i / numRings) % 1
+        const ringAlpha = (1 - ringOffset) * 0.25
+        const ringScale = 0.4 + ringOffset * 0.7
+
+        ctx.beginPath()
+        ctx.ellipse(cx, cy - 2 - (ringOffset * 20), hw * ringScale, hh * ringScale, 0, 0, Math.PI * 2)
+        ctx.strokeStyle = `rgba(18, 176, 187, ${ringAlpha})`
+        ctx.lineWidth = 1
+        ctx.stroke()
+    }
+
+    // 3. Rayos Eléctricos (Flickering)
+    // Usamos Math.random para el parpadeo rápido típico de la electricidad
+    if (Math.random() > 0.8) {
+        ctx.strokeStyle = Math.random() > 0.7 ? '#ffffff88' : '#12b0bb66'
+        ctx.shadowColor = '#12b0bb88'
+        ctx.shadowBlur = 10 * pulse
+
+        const numBolts = 1 + Math.floor(Math.random() * 2)
+        for (let b = 0; b < numBolts; b++) {
+            ctx.lineWidth = 0.5 + Math.random() * 1.5
+            let lx = cx + (Math.random() - 0.5) * hw * 0.8
+            let ly = cy + (Math.random() - 0.5) * hh * 0.4
+            ctx.beginPath()
+            ctx.moveTo(lx, ly)
+
+            const segments = 3 + Math.floor(Math.random() * 3)
+            for (let s = 0; s < segments; s++) {
+                lx += (Math.random() - 0.5) * 14
+                ly -= 4 + Math.random() * 7
+                ctx.lineTo(lx, ly)
+            }
+            ctx.stroke()
+        }
+    }
+
+    // 4. Partículas/Chispas
+    if (Math.random() > 0.8) {
+        for (let p = 0; p < 2; p++) {
+            const px = cx + (Math.random() - 0.5) * hw
+            const py = cy - Math.random() * 25
+            ctx.fillStyle = '#ffffff'
+            ctx.fillRect(px, py, 1.2, 1.2)
+        }
+    }
+
     ctx.restore()
 }
 
@@ -315,9 +384,7 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
                 if (p.x < 0) p.x = canvasW
                 if (p.x > canvasW) p.x = 0
 
-                ctx.fillStyle = status === 'failed'
-                    ? `rgba(226, 75, 74, ${0.1 + Math.random() * 0.3})`
-                    : `rgba(85, 226, 0, ${0.05 + Math.random() * 0.2})`
+                ctx.fillStyle = `rgba(85, 226, 0, ${0.05 + Math.random() * 0.2})`
                 ctx.fillRect(p.x, p.y, p.s, p.s)
             }
             ctx.restore()
@@ -325,7 +392,7 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
             // Dibujar Grilla "Digital Echo"
             ctx.save()
             ctx.globalAlpha = 0.05 + pulse * 0.03
-            ctx.strokeStyle = '#55e200'
+            ctx.strokeStyle = '#55e20000'
             ctx.lineWidth = 0.5
             for (let i = 0; i <= cols; i++) {
                 const start = toIso(i, 0, offsetX, offsetY)
@@ -369,13 +436,13 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
                         if (isTop) {
                             if (tile.type === 'target') {
                                 highlight = true
-                                highlightColor = status === 'success' ? '#55e200' : isScanning ? '#7F77DD' : `rgba(13, 31, 0, ${0.4 + pulse * 0.4})`
+                                highlightColor = status === 'success' ? '#55e200' : isScanning ? '#12b0bb' : `rgba(145, 54, 1, ${0.4 + pulse * 0.4})`
 
                                 if (isScanning) {
                                     ctx.save()
                                     ctx.beginPath()
                                     ctx.ellipse(sx, sy - tz, 40 * pulse, 20 * pulse, 0, 0, Math.PI * 2)
-                                    ctx.strokeStyle = `rgba(127, 119, 221, ${0.4 - pulse * 0.4})`
+                                    ctx.strokeStyle = `rgba(18, 176, 187, ${0.4 - pulse * 0.4})`
                                     ctx.lineWidth = 1.5
                                     ctx.stroke()
                                     ctx.restore()
@@ -383,14 +450,14 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
                             }
                             if (isActivated) {
                                 highlight = true
-                                highlightColor = '#1a4d00'
+                                highlightColor = '#1a4d0000'
                             }
                         }
 
                         let imageToDraw: HTMLImageElement | null = null
-                        if (currentType === 'floor' || currentType === 'target') imageToDraw = (isTop && isActivated) ? activeSprite : floorSprite
+                        if (currentType === 'target') imageToDraw = (isTop && isActivated) ? activeSprite : checkSprite
+                        else if (currentType === 'floor') imageToDraw = (isTop && isActivated) ? activeSprite : floorSprite
                         else if (currentType === 'wall') imageToDraw = wallSprite
-                        else if (currentType === 'broken') imageToDraw = brokenSprite
                         else if (currentType === 'generator') imageToDraw = (isTop && isActivated) ? genActiveSprite : genSprite
                         else if (currentType === 'active') imageToDraw = activeSprite
 
@@ -398,8 +465,8 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
                             const imgX = sx - (ISO.TILE_W / 2)
                             const imgY = (sy - tz) - (ISO.TILE_H / 2)
 
-                            // Animación de "Levantamiento" si es éxito
-                            const finalTZ = (status === 'success' && isTop) ? tz + (Math.sin(elapsed * 4 + col + row) * 2) : tz
+                            // Eliminado efecto de levantamiento para optimizar recursos
+                            const finalTZ = tz
 
                             ctx.drawImage(imageToDraw, imgX, imgY - (finalTZ - tz), ISO.TILE_W, ISO.TILE_H + ISO.DEPTH + 1)
 
@@ -424,9 +491,8 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
                         }
 
                         if (isTop) {
-                            if (tile.type === 'target' && !isRobotHere && !isActivated) drawTargetMarker(ctx, sx, sy - tz, pulse)
-                            if (tile.type === 'generator') drawGeneratorIcon(ctx, sx, sy - tz, isActivated)
-                            if (tile.type === 'broken') drawBrokenIcon(ctx, sx, sy - tz)
+                            if (tile.type === 'target') drawTargetMarker(ctx, sx, sy - tz, pulse, isActivated)
+                            if (tile.type === 'wall') drawElectricDischarge(ctx, sx, sy - tz, pulse)
                         }
                     }
                 }
@@ -471,14 +537,6 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
                 ctx.fillStyle = `rgba(85, 226, 0, ${0.02 + pulse * 0.03})`; ctx.fillRect(0, 0, canvasW, canvasH)
             } else if (status === 'failed') {
                 ctx.fillStyle = `rgba(226, 75, 74, ${0.04 * (1 - pulse)})`; ctx.fillRect(0, 0, canvasW, canvasH)
-                // Glitch sutil: desplazamiento aleatorio de bloques
-                if (Math.random() > 0.98) {
-                    const blockY = Math.random() * canvasH
-                    const blockH = 5 + Math.random() * 20
-                    ctx.drawImage(ctx.canvas, 10, blockY, canvasW - 10, blockH, 0, blockY, canvasW - 10, blockH)
-                    ctx.fillStyle = 'rgba(255, 0, 0, 0.05)'
-                    ctx.fillRect(0, blockY, canvasW, blockH)
-                }
             }
 
             ctx.restore()
