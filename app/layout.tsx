@@ -40,7 +40,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         {/*<CRTOverlay />*/}
         <Header />
-        {children}
+        <div className="h-[calc(100vh-47px)] overflow-y-auto">
+          {children}
+        </div>
       </body>
     </html>
   );

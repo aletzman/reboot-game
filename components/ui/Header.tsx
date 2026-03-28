@@ -45,7 +45,7 @@ export function Header({ viewMenu, showStats }: HeaderProps) {
                                 <Link href="/game" className="text-[10px] font-bold font-mono text-(--text-muted) hover:text-(--green-light) transition-colors tracking-widest uppercase">MAPA_SISTEMA</Link>
                             </li>
                             <li>
-                                <Link href="/collection" className="text-[10px] font-bold font-mono text-(--text-muted) hover:text-(--green-light) transition-colors tracking-widest uppercase">COLECCIÓN</Link>
+                                <Link href="/game/collection" className="text-[10px] font-bold font-mono text-(--text-muted) hover:text-(--green-light) transition-colors tracking-widest uppercase">COLECCIÓN</Link>
                             </li>
                             <li>
                                 <Link href="#" className="text-[10px] font-bold font-mono text-(--text-muted) hover:text-(--green-light) transition-colors tracking-widest uppercase">BIO_DATA</Link>
