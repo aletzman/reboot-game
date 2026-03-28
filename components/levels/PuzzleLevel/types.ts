@@ -32,7 +32,7 @@ export interface MatchPair {
 
 export const PUZZLE_DATA: Record<string, PuzzleData> = {
     // MATCH — Verificación humana
-    'P-02': {
+    'P-01': {
         type: 'match',
         items: [
             { id: 'l1', text: '1, 2, 3, ?' },
@@ -258,7 +258,7 @@ export const PUZZLE_DATA: Record<string, PuzzleData> = {
 }
 
 export const MATCH_RIGHT: Record<string, { id: string; text: string }[]> = {
-    'P-02': [
+    'P-01': [
         { id: 'r1', text: '4' },
         { id: 'r2', text: 'B' },
         { id: 'r3', text: '□' },

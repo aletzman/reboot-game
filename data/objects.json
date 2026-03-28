@@ -17,7 +17,7 @@
       "id": "credencial_acceso",
       "name": "Credencial de acceso",
       "icon": "id_card",
-      "obtainedIn": "P-02",
+      "obtainedIn": "P-01",
       "description": "Una tarjeta de identificación del sistema. Tiene un chip que el sistema reconoce como humano verificado. Sin ella, ciertos terminales no responden.",
       "lore": "El chip almacena tu verificación biométrica. FRAG la generó durante la prueba de humanidad. Es la prueba de que no eres una IA.",
       "type": "key",

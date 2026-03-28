@@ -18,7 +18,7 @@ import objectsData from '@/data/objects.json'
 
 const SAVE_KEY = 'reboot_save'
 const SAVE_VERSION = 1
-const FREE_LEVELS = ['P-00', 'P-01', 'P-02'] // niveles sin login
+const FREE_LEVELS = ['P-00', 'P-01'] // niveles sin login
 
 // Niveles que requieren login para acceder (Acto IV en adelante)
 const LOGIN_REQUIRED_FROM = '4-01'
@@ -237,6 +237,19 @@ export function getActSummary(actNumber: ActNumber): ActSummary {
     completed,
     totalStars,
   }
+}
+
+export function isActUnlocked(actNumber: number): boolean {
+  if (actNumber <= 1) return true
+  const save = getSave()
+  if (!save) return actNumber <= 1
+  
+  // Logical progression: Act N is unlocked if Act N-1 is "completed" 
+  // (all regular levels finished)
+  const prevAct = getActSummary((actNumber - 1) as ActNumber)
+  return prevAct.completed || prevAct.levelIds.some(id => save.progress[id]?.completed) 
+  // actually let's just use a simpler check: if ANY level of the previous act is completed 
+  // or if it's the first act.
 }
 
 export function getCurrentAct(): ActNumber {
