@@ -32,7 +32,7 @@ export function ActCard({
       <div className="h-10 border-b border-[#1a1f26] bg-[#0c1015] flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <div className={`w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor] ${isLocked ? 'bg-(--text-ghost) text-(--text-ghost)' : completed ? 'bg-(--green-light) text-(--green-light) animate-pulse' : 'bg-(--amber) text-(--amber) animate-pulse'}`} />
-          <span className="text-[9px] font-mono text-(--text-muted) uppercase tracking-widest">
+          <span className="text-xs font-mono text-(--text-muted) uppercase tracking-widest">
             SECTOR_{number < 10 ? `0${number}` : number}
           </span>
         </div>
@@ -44,7 +44,7 @@ export function ActCard({
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8 relative flex flex-col min-h-[220px]">
+      <div className="flex-1 p-5 relative flex flex-col min-h-[220px]">
         {/* Decorative Grid Overlay - Warped */}
         <div className="absolute inset-0 opacity-10 pointer-events-none"
           style={{
@@ -60,7 +60,7 @@ export function ActCard({
             </h3>
             <div className="flex items-center gap-2 mt-3">
               {completed && <CheckCircle2Icon className="w-3 h-3 text-(--green-light)" />}
-              <span className={`text-[9px] font-mono uppercase tracking-widest ${isLocked ? 'text-(--text-ghost)' : 'text-(--green-muted)'}`}>
+              <span className={`text-[10px] font-mono uppercase tracking-widest ${isLocked ? 'text-(--text-ghost)' : 'text-(--green-muted)'}`}>
                 {completed ? 'Sincronización Total.' : isLocked ? 'Acceso Restringido' : 'Conexión Establecida'}
               </span>
             </div>
@@ -72,7 +72,7 @@ export function ActCard({
         <div className="mt-auto space-y-6 relative z-10">
           {/* Progress Bar */}
           <div className="space-y-2">
-            <div className="flex justify-between font-mono text-[9px] uppercase tracking-widest">
+            <div className="flex justify-between font-mono text-[10px] uppercase tracking-widest">
               <span className={isLocked ? 'text-(--text-ghost)' : 'text-(--text-muted)'}>INTEGRIDAD_RED</span>
               <span className={completed ? 'text-(--green-light) font-bold' : isLocked ? 'text-(--text-ghost)' : 'text-white font-bold'}>{completionPercentage}%</span>
             </div>
@@ -93,11 +93,11 @@ export function ActCard({
           {/* Stats Boxes */}
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-[#0c1015] border border-[#1a1f26] flex items-center justify-between p-3 shrink-0">
-              <span className="text-[9px] font-mono text-(--text-ghost) uppercase tracking-widest">Nodos</span>
+              <span className="text-[10px] font-mono text-(--text-ghost) uppercase tracking-widest">Nodos</span>
               <span className={`font-mono text-sm font-bold ${isLocked ? 'text-(--text-ghost)' : 'text-white'}`}>{levelIds.length}</span>
             </div>
             <div className={`bg-[#0c1015] border ${isLocked ? 'border-[#1a1f26]' : 'border-(--amber)/30 shadow-[0_0_10px_rgba(239,159,39,0.05)]'} flex items-center justify-between p-3 shrink-0`}>
-              <span className="text-[9px] font-mono text-(--text-ghost) uppercase tracking-widest">Rendimiento</span>
+              <span className="text-[10px] font-mono text-(--text-ghost) uppercase tracking-widest">Rendimiento</span>
               <div className="flex items-center gap-1">
                 <span className={`font-mono text-sm font-bold ${isLocked ? 'text-(--text-ghost)' : 'text-(--amber)'}`}>{totalStars}</span>
               </div>
@@ -117,13 +117,13 @@ export function ActCard({
       {/* Footer Area */}
       {!isLocked && (
         <div className="p-4 bg-[#0a0f14] border-t border-[#1a1f26] flex items-center justify-between group-hover:bg-(--green-darkest)/50 transition-colors">
-          <span className="text-[9px] font-mono text-(--green-light) uppercase tracking-[0.4em] font-bold">INICIAR_SECUENCIA</span>
+          <span className="text-[10px] font-mono text-(--green-light) uppercase tracking-[0.4em] font-bold">INICIAR_SECUENCIA</span>
           <ChevronRightIcon className="w-4 h-4 text-(--green-light) group-hover:translate-x-1 transition-transform" />
         </div>
       )}
       {isLocked && (
         <div className="p-4 bg-[#0a0f14] border-t border-[#1a1f26] flex items-center justify-center">
-          <span className="text-[9px] font-mono text-(--text-ghost) uppercase tracking-[0.4em] font-bold">ACCESO_DENEGADO</span>
+          <span className="text-[10px] font-mono text-(--text-ghost) uppercase tracking-[0.4em] font-bold">ACCESO_DENEGADO</span>
         </div>
       )}
     </>

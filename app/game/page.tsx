@@ -64,20 +64,12 @@ export default function GameMapPage() {
 
   return (
     <div className="flex-1 flex flex-col h-[calc(100vh-47px)] bg-(--bg-void) relative overflow-y-auto font-sans custom-scrollbar">
-      <div className="absolute inset-0 bg-(--bg-deep) opacity-50 z-0 select-none pointer-events-none">
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `radial-gradient(circle at center, var(--green-base) 1px, transparent 1px)`,
-            backgroundSize: '40px 40px'
-          }}
-        />
-      </div>
+
       <main className="flex-1 container mx-auto px-8 pb-12 pt-6 relative z-10">
         <header className="mb-14 relative flex flex-col gap-6">
-          <div className="w-full bg-linear-to-r from-[#0c1218] to-transparent border-l-4 border-(--green-base) p-6 rounded-r-md flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative overflow-hidden shadow-xl">
+          <div className="w-full  border-l-4 border-(--green-base) p-6 rounded-r-md flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative overflow-hidden shadow-xl">
             {/* Fondo simulando rejilla técnica sutil */}
-            <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,255,255,0.01)_3px)] pointer-events-none" />
+            <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,255,255,0.05)_3px)] pointer-events-none" />
             <div className="absolute top-0 right-0 w-64 h-full bg-[radial-gradient(ellipse_at_right,rgba(45,120,0,0.05),transparent_70%)] pointer-events-none" />
 
             {/* Decoración tech */}
