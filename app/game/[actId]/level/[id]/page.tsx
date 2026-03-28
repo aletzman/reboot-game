@@ -1,7 +1,6 @@
-// app/level/[id]/page.tsx
 import LevelPage from '@/components/levels/LevelPage'
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ actId: string, id: string }> }) {
     const { id } = await params
     return <LevelPage levelId={id} />
 }

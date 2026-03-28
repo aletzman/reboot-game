@@ -158,18 +158,24 @@ export default function LevelPage({ levelId }: PageProps) {
 
     function handleNext() {
         if (!completionResult?.nextLevelId) {
-            router.push('/game')
+            router.push(`/game/${level?.act ?? 0}`)
             return
         }
+
+        const nextLevel = getLevelById(completionResult.nextLevelId)
+        const targetAct = nextLevel?.act ?? level?.act ?? 0
+
         if (completionResult.suggestRedirect) {
-            router.push(`/level/${completionResult.suggestRedirect}`)
+            const suggestLevel = getLevelById(completionResult.suggestRedirect)
+            const suggestAct = suggestLevel?.act ?? targetAct
+            router.push(`/game/${suggestAct}/level/${completionResult.suggestRedirect}`)
         } else {
-            router.push(`/level/${completionResult.nextLevelId}`)
+            router.push(`/game/${targetAct}/level/${completionResult.nextLevelId}`)
         }
     }
 
     function handleGoToMap() {
-        router.push('/game')
+        router.push(`/game/${level?.act ?? 0}`)
     }
 
     function handleRetry() {
