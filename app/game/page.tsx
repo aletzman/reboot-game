@@ -59,7 +59,7 @@ export default function GameMapPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-47px)] bg-(--bg-void) relative overflow-y-auto font-sans custom-scrollbar">
+    <div className="flex-1 flex flex-col h-[calc(100vh-var(--header-height))] bg-(--bg-void) relative overflow-y-auto font-sans custom-scrollbar">
 
       <main className="flex-1 container mx-auto px-8 pb-12 pt-6 relative z-10">
         <header className="mb-14 relative flex flex-col gap-6">

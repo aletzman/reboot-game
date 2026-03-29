@@ -69,6 +69,8 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-data-mono);
   --font-title: var(--font-data-title);
+
+  --header-height: 55px;
 }
 
 
@@ -430,14 +432,28 @@ body {
 
 /* Rotación continua para elementos tecnológicos */
 @keyframes lc-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Pulso de núcleo */
 @keyframes lc-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.1); opacity: 1; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
 }
 
 /* Botón primario — hover con glow verde */

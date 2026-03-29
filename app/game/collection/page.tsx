@@ -9,7 +9,7 @@ import { LayersIcon, WrenchIcon, ArchiveIcon, CpuIcon, DatabaseIcon, BoxIcon, Ch
 
 export default function CollectionHubPage() {
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-47px)] bg-(--bg-void) relative overflow-y-auto font-sans custom-scrollbar">
+    <div className="flex-1 flex flex-col h-[calc(100vh-var(--header-height))] bg-(--bg-void) relative overflow-y-auto font-sans custom-scrollbar">
       {/* Background patterns - Cyberdeck style */}
       <div className="absolute inset-0 bg-(--bg-deep) opacity-50 z-0 select-none pointer-events-none">
         <div

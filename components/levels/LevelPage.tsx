@@ -232,7 +232,7 @@ export default function LevelPage({ levelId }: PageProps) {
     const reviewHint = getReviewHint(levelId)
 
     return (
-        <div className="flex flex-col h-[calc(100svh-47px)] bg-(--bg-void)">
+        <div className="flex flex-col h-[calc(100svh-var(--header-height))] bg-(--bg-void)">
             {showingTheory && level.theory && (
                 <TheoryOverlay theory={level.theory} onComplete={() => setShowingTheory(false)} />
             )}
