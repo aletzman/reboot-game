@@ -6,25 +6,14 @@ import Link from 'next/link'
 import { getActSummary, getLevelProgress, canAccessLevel } from '@/lib/gameState'
 import { ActSummary, ActNumber, Level } from '@/types/game'
 import { NavButton } from '@/components/ui/NavButton'
-import { ChevronLeftIcon, ChevronRightIcon, LockIcon, CheckCircle2Icon, PlayIcon } from 'lucide-react'
+import { LevelCard } from '@/components/map/LevelCard'
+import { ChevronLeftIcon } from 'lucide-react'
 
 interface ActMapClientProps {
   actId: string
   levels: Level[]
 }
 
-const typeLabels: Record<string, string> = {
-  noderoutine: 'RUTA_NODO',
-  logicassembly: 'ENSAMBLE_LÓGICO',
-  codeeditor: 'EDITOR_JS',
-  speedtyping: 'VELOCIDAD',
-  cinematic: 'CINEMÁTICA',
-  'puzzle-sort': 'PUZZLE_ORDEN',
-  'puzzle-fill': 'PUZZLE_RELLENO',
-  'puzzle-bug': 'PUZZLE_BUG',
-  'puzzle-match': 'PUZZLE_PAR',
-  review: 'REVISIÓN',
-}
 
 export default function ActMapClient({ actId, levels }: ActMapClientProps) {
   const router = useRouter()
@@ -55,7 +44,7 @@ export default function ActMapClient({ actId, levels }: ActMapClientProps) {
     )
   }
 
-  const actProgress = Math.round((act.totalStars / (levels.length * 3 || 1)) * 100)
+  const actProgress = Math.round((act.totalStars / (act.maxStars || 1)) * 100)
 
   return (
     <div className="flex-1 flex flex-col h-[calc(100vh-var(--header-height))] bg-(--bg-void) relative overflow-y-auto font-sans custom-scrollbar">
@@ -120,14 +109,14 @@ export default function ActMapClient({ actId, levels }: ActMapClientProps) {
             {/* Stats panel */}
             <div className="relative z-10 flex gap-4">
               <div className="bg-[#080c11] border border-[#1a2636] p-4 rounded-xs shadow-[inset_0_2px_15px_rgba(0,0,0,0.8)] min-w-[130px]">
-                <span className="text-[8px] text-(--text-ghost) font-mono tracking-widest uppercase block mb-2">RENDIMIENTO</span>
+                <span className="text-[10px] text-(--text-muted)/80 font-mono tracking-widest uppercase block mb-2">RENDIMIENTO</span>
                 <div className="flex items-end gap-1">
                   <span className="text-2xl font-mono font-black text-(--amber) leading-none">{act.totalStars}</span>
-                  <span className="text-[10px] font-mono text-[#1a2636] mb-0.5">/ {levels.length * 3}</span>
+                  <span className="text-sm font-mono text-(--text-muted)/50 mb-0.5">/ {act.maxStars}</span>
                 </div>
               </div>
               <div className="bg-[#080c11] border border-[#1a2636] p-4 rounded-xs shadow-[inset_0_2px_15px_rgba(0,0,0,0.8)] min-w-[130px]">
-                <span className="text-[8px] text-(--text-ghost) font-mono tracking-widest uppercase block mb-2">INTEGRIDAD</span>
+                <span className="text-[10px] text-(--text-muted)/80 font-mono tracking-widest uppercase block mb-2">INTEGRIDAD</span>
                 <div className="flex items-end gap-2">
                   <span className={`text-2xl font-mono font-black leading-none ${actProgress === 100 ? 'text-(--green-light)' : 'text-white'}`}>{actProgress}%</span>
                 </div>
@@ -145,103 +134,20 @@ export default function ActMapClient({ actId, levels }: ActMapClientProps) {
         </header>
 
         {/* Level List */}
-        <div className="flex flex-col gap-3 pb-20">
+        <div className="flex flex-col gap-4 pb-24">
           {levels.map((level, index) => {
             const prog = getLevelProgress(level.id)
             const access = canAccessLevel(level.id)
-            const isLocked = !access.allowed
-            const isCompleted = prog?.completed ?? false
-            const stars = prog?.stars ?? 0
-            const typeLabel = level.isReview ? 'REVISIÓN' : (typeLabels[level.type] || level.type.toUpperCase())
-
-            const card = (
-              <div
-                className={`group relative flex items-stretch bg-(--bg-surface) border transition-all duration-300 overflow-hidden shadow-lg
-                  ${isLocked
-                    ? 'border-[#1a2636] opacity-50 cursor-not-allowed grayscale'
-                    : isCompleted
-                      ? 'border-(--green-base)/40 hover:border-(--green-base) hover:-translate-y-0.5'
-                      : 'border-[#1a2636] hover:border-(--cyan) hover:-translate-y-0.5'}
-                `}
-              >
-                {/* Left Index Strip */}
-                <div className={`w-14 shrink-0 flex flex-col items-center justify-center border-r gap-1 font-mono
-                  ${isLocked
-                    ? 'bg-[#080c11] border-[#1a2636] text-[#1a2636]'
-                    : isCompleted
-                      ? 'bg-(--green-darkest) border-(--green-base)/30 text-(--green-light)'
-                      : 'bg-[#0c1218] border-[#1a2636] text-(--cyan)'}
-                `}>
-                  <span className="text-[9px] tracking-widest font-bold opacity-60">{String(index + 1).padStart(2, '0')}</span>
-                  {isCompleted && <CheckCircle2Icon className="w-4 h-4 text-(--green-light)" />}
-                  {isLocked && <LockIcon className="w-3.5 h-3.5 text-[#1a2636]" />}
-                  {!isLocked && !isCompleted && <PlayIcon className="w-3.5 h-3.5 fill-current" />}
-                </div>
-
-                {/* Main Content */}
-                <div className="flex-1 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 px-6">
-                  <div className="flex flex-col gap-1.5 min-w-0">
-                    <div className="flex items-center gap-3">
-                      <h3 className={`text-base font-black font-(family-name:--font-title) uppercase leading-none truncate
-                        ${isLocked ? 'text-(--text-ghost)' : 'text-white group-hover:text-(--green-light) transition-colors'}
-                      `}>
-                        {level.title}
-                      </h3>
-                      {level.isReview && (
-                        <span className="px-2 py-0.5 text-[8px] font-mono font-black uppercase tracking-widest bg-(--purple)/20 text-(--purple) border border-(--purple)/30">
-                          REVIEW
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className={`text-[9px] font-mono uppercase tracking-widest ${isLocked ? 'text-[#1a2636]' : 'text-(--text-muted)'}`}>
-                        TIPO::{typeLabel}
-                      </span>
-                      <span className="text-[9px] font-mono text-[#1a2636]">|</span>
-                      <span className={`text-[9px] font-mono uppercase tracking-widest ${isLocked ? 'text-[#1a2636]' : 'text-(--text-ghost)'}`}>
-                        ID::{level.id}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-6 shrink-0">
-                    {/* Stars */}
-                    {!isLocked && (
-                      <div className="flex gap-[3px]">
-                        {[1, 2, 3].map((s) => (
-                          <div
-                            key={s}
-                            className={`w-3 h-5 skew-x-[-15deg] transition-all duration-300 ${s <= stars ? 'bg-(--amber) shadow-[0_0_8px_var(--amber)]' : 'bg-[#1a2636]'}`}
-                          />
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Action indicator */}
-                    {!isLocked && (
-                      <ChevronRightIcon className={`w-5 h-5 transition-all duration-300 ${isCompleted ? 'text-(--green-base) group-hover:text-(--green-light)' : 'text-(--text-ghost) group-hover:text-(--cyan)'} group-hover:translate-x-1`} />
-                    )}
-                  </div>
-                </div>
-
-                {/* Active level left accent */}
-                {!isLocked && !isCompleted && (
-                  <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-(--cyan) shadow-[0_0_10px_var(--cyan)]" />
-                )}
-                {isCompleted && (
-                  <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-(--green-base) shadow-[0_0_8px_var(--green-base)]" />
-                )}
-              </div>
-            )
-
-            if (isLocked) {
-              return <div key={level.id}>{card}</div>
-            }
 
             return (
-              <Link key={level.id} href={`/game/${act.number}/level/${level.id}`} className="outline-none">
-                {card}
-              </Link>
+              <LevelCard
+                key={level.id}
+                level={level}
+                index={index}
+                progress={prog}
+                access={access}
+                actNumber={act.number}
+              />
             )
           })}
         </div>
