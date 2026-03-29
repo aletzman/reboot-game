@@ -1,6 +1,8 @@
 import type { GameObject, ObjectType } from '@/types/game'
 
-const BASE = '/api/objects'
+import { getBaseUrl } from './baseUrl'
+
+const BASE = () => `${getBaseUrl()}/api/objects`
 
 export interface ObjectsResponse {
   total: number
@@ -23,7 +25,7 @@ export async function getObjects(filters?: {
   if (filters?.required !== undefined) params.set('required', String(filters.required))
 
   const query = params.toString()
-  const res = await fetch(`${BASE}${query ? `?${query}` : ''}`)
+  const res = await fetch(`${BASE()}${query ? `?${query}` : ''}`, { cache: 'force-cache' })
 
   if (!res.ok) throw new Error(`Error al obtener objetos: ${res.statusText}`)
 
@@ -35,7 +37,7 @@ export async function getObjects(filters?: {
  * Obtiene un objeto específico por su ID.
  */
 export async function getObjectById(id: string): Promise<GameObject | null> {
-  const res = await fetch(`${BASE}/${encodeURIComponent(id)}`)
+  const res = await fetch(`${BASE()}/${encodeURIComponent(id)}`, { cache: 'force-cache' })
 
   if (res.status === 404) return null
   if (!res.ok) throw new Error(`Error al obtener objeto: ${res.statusText}`)

@@ -1,12 +1,14 @@
 import type { Dialogues } from '@/types/game'
 
-const BASE = '/api/dialogues'
+import { getBaseUrl } from './baseUrl'
+
+const BASE = () => `${getBaseUrl()}/api/dialogues`
 
 /**
  * Obtiene todos los diálogos del juego (FRAG + narrativa).
  */
 export async function getDialogues(): Promise<Dialogues> {
-  const res = await fetch(BASE)
+  const res = await fetch(BASE(), { cache: 'force-cache' })
 
   if (!res.ok) throw new Error(`Error al obtener diálogos: ${res.statusText}`)
 

@@ -1,6 +1,8 @@
 import type { RoadmapPhase } from '@/types/game'
 
-const BASE = '/api/roadmap'
+import { getBaseUrl } from './baseUrl'
+
+const BASE = () => `${getBaseUrl()}/api/roadmap`
 
 export interface Roadmap {
   fase1_el_lenguaje: RoadmapPhase
@@ -14,7 +16,7 @@ export interface Roadmap {
  * Obtiene el roadmap pedagógico completo.
  */
 export async function getRoadmap(): Promise<Roadmap> {
-  const res = await fetch(BASE)
+  const res = await fetch(BASE(), { cache: 'force-cache' })
 
   if (!res.ok) throw new Error(`Error al obtener roadmap: ${res.statusText}`)
 

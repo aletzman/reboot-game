@@ -1,6 +1,8 @@
 import type { GlossaryTerm } from '@/types/game'
 
-const BASE = '/api/glossary'
+import { getBaseUrl } from './baseUrl'
+
+const BASE = () => `${getBaseUrl()}/api/glossary`
 
 export interface GlossaryResponse {
   total: number
@@ -19,7 +21,7 @@ export async function getGlossary(search?: string): Promise<GlossaryTerm[]> {
   if (search) params.set('search', search)
 
   const query = params.toString()
-  const res = await fetch(`${BASE}${query ? `?${query}` : ''}`)
+  const res = await fetch(`${BASE()}${query ? `?${query}` : ''}`, { cache: 'force-cache' })
 
   if (!res.ok) throw new Error(`Error al obtener glosario: ${res.statusText}`)
 
@@ -31,7 +33,7 @@ export async function getGlossary(search?: string): Promise<GlossaryTerm[]> {
  * Obtiene un término específico por su ID.
  */
 export async function getGlossaryTerm(id: string): Promise<GlossaryTerm | null> {
-  const res = await fetch(`${BASE}/${encodeURIComponent(id)}`)
+  const res = await fetch(`${BASE()}/${encodeURIComponent(id)}`, { cache: 'force-cache' })
 
   if (res.status === 404) return null
   if (!res.ok) throw new Error(`Error al obtener término: ${res.statusText}`)

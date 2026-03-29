@@ -1,6 +1,7 @@
 import type { Level, LevelType } from '@/types/game'
+import { getBaseUrl } from './baseUrl'
 
-const BASE = '/api/levels'
+const BASE = () => `${getBaseUrl()}/api/levels`
 
 export interface LevelsResponse {
   total: number
@@ -23,7 +24,7 @@ export async function getLevels(filters?: {
   if (filters?.type) params.set('type', filters.type)
 
   const query = params.toString()
-  const res = await fetch(`${BASE}${query ? `?${query}` : ''}`)
+  const res = await fetch(`${BASE()}${query ? `?${query}` : ''}`, { cache: 'force-cache' })
 
   if (!res.ok) throw new Error(`Error al obtener niveles: ${res.statusText}`)
 
@@ -35,7 +36,7 @@ export async function getLevels(filters?: {
  * Obtiene un nivel específico por su ID.
  */
 export async function getLevelById(id: string): Promise<Level | null> {
-  const res = await fetch(`${BASE}/${encodeURIComponent(id)}`)
+  const res = await fetch(`${BASE()}/${encodeURIComponent(id)}`, { cache: 'force-cache' })
 
   if (res.status === 404) return null
   if (!res.ok) throw new Error(`Error al obtener nivel: ${res.statusText}`)
