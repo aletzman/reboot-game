@@ -27,6 +27,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { NavigationFooter } from "@/components/ui/NavigationFooter";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -37,12 +39,13 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${dataMono.variable} ${fontTitle.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        {<CRTOverlay />}
+      <body className="min-h-full flex flex-col overflow-y-hidden">
+        <CRTOverlay />
         <Header />
-        <div className="h-[calc(100vh-var(--header-height))] overflow-y-auto">
+        <main className="h-[calc(100svh-calc(var(--header-height)+var(--footer-height)))] overflow-y-hidden pb-16">
           {children}
-        </div>
+        </main>
+        <NavigationFooter />
       </body>
     </html>
   );
