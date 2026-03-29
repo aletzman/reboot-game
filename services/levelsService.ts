@@ -1,61 +1,50 @@
+import { unstable_cache } from 'next/cache'
+import { supabasePublic } from '@/lib/supabase/public'
 import type { Level, LevelType } from '@/types/game'
-import { getBaseUrl } from './baseUrl'
 
-const BASE = () => `${getBaseUrl()}/api/levels`
+export const getLevels = unstable_cache(
+  async (filters?: { act?: number; type?: LevelType }): Promise<Level[]> => {
+    let query = supabasePublic.from('levels').select('*')
 
-export interface LevelsResponse {
-  total: number
-  levels: Level[]
-}
+    if (filters?.act !== undefined) {
+      query = query.eq('act', filters.act)
+    }
+    if (filters?.type) {
+      query = query.eq('type', filters.type)
+    }
 
-export interface SingleLevelResponse {
-  level: Level
-}
+    const { data, error } = await query
+    if (error) throw new Error(`Error al obtener niveles: ${error.message}`)
 
-/**
- * Obtiene todos los niveles, opcionalmente filtrados por acto y/o tipo.
- */
-export async function getLevels(filters?: {
-  act?: number
-  type?: LevelType
-}): Promise<Level[]> {
-  const params = new URLSearchParams()
-  if (filters?.act !== undefined) params.set('act', String(filters.act))
-  if (filters?.type) params.set('type', filters.type)
+    // Optional: Sort by acts or identifiers if the column order isn't guaranteed
+    return data as Level[]
+  },
+  ['levels_list'],
+  { revalidate: 3600, tags: ['levels'] }
+)
 
-  const query = params.toString()
-  const res = await fetch(`${BASE()}${query ? `?${query}` : ''}`, { cache: 'force-cache', next: { revalidate: 3600 } })
+export const getLevelById = unstable_cache(
+  async (id: string): Promise<Level | null> => {
+    const { data, error } = await supabasePublic
+      .from('levels')
+      .select('*')
+      .eq('id', id)
+      .single()
 
-  if (!res.ok) throw new Error(`Error al obtener niveles: ${res.statusText}`)
+    if (error && error.code !== 'PGRST116') {
+      throw new Error(`Error al obtener nivel: ${error.message}`)
+    }
 
-  const data: LevelsResponse = await res.json()
+    return data as Level | null
+  },
+  ['level_by_id'],
+  { revalidate: 3600, tags: ['levels'] }
+)
 
-  return data.levels
-}
-
-/**
- * Obtiene un nivel específico por su ID.
- */
-export async function getLevelById(id: string): Promise<Level | null> {
-  const res = await fetch(`${BASE()}/${encodeURIComponent(id)}`, { cache: 'force-cache', next: { revalidate: 3600 } })
-
-  if (res.status === 404) return null
-  if (!res.ok) throw new Error(`Error al obtener nivel: ${res.statusText}`)
-
-  const data: SingleLevelResponse = await res.json()
-  return data.level
-}
-
-/**
- * Obtiene todos los niveles de un acto específico.
- */
 export async function getLevelsByAct(act: number): Promise<Level[]> {
   return getLevels({ act })
 }
 
-/**
- * Obtiene todos los niveles de un tipo específico.
- */
 export async function getLevelsByType(type: LevelType): Promise<Level[]> {
   return getLevels({ type })
 }

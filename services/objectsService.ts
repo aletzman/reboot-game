@@ -1,61 +1,49 @@
+import { unstable_cache } from 'next/cache'
+import { supabasePublic } from '@/lib/supabase/public'
 import type { GameObject, ObjectType } from '@/types/game'
 
-import { getBaseUrl } from './baseUrl'
+export const getObjects = unstable_cache(
+  async (filters?: { type?: ObjectType; required?: boolean }): Promise<GameObject[]> => {
+    let query = supabasePublic.from('objects').select('*')
 
-const BASE = () => `${getBaseUrl()}/api/objects`
+    if (filters?.type) {
+      query = query.eq('type', filters.type)
+    }
+    if (filters?.required !== undefined) {
+      query = query.eq('required', filters.required)
+    }
 
-export interface ObjectsResponse {
-  total: number
-  objects: GameObject[]
-}
+    const { data, error } = await query
+    if (error) throw new Error(`Error al obtener objetos: ${error.message}`)
 
-export interface SingleObjectResponse {
-  object: GameObject
-}
+    return data as GameObject[]
+  },
+  ['objects_list'],
+  { revalidate: 3600, tags: ['objects'] }
+)
 
-/**
- * Obtiene todos los objetos, opcionalmente filtrados por tipo y/o requerimiento.
- */
-export async function getObjects(filters?: {
-  type?: ObjectType
-  required?: boolean
-}): Promise<GameObject[]> {
-  const params = new URLSearchParams()
-  if (filters?.type) params.set('type', filters.type)
-  if (filters?.required !== undefined) params.set('required', String(filters.required))
+export const getObjectById = unstable_cache(
+  async (id: string): Promise<GameObject | null> => {
+    const { data, error } = await supabasePublic
+      .from('objects')
+      .select('*')
+      .eq('id', id)
+      .single()
 
-  const query = params.toString()
-  const res = await fetch(`${BASE()}${query ? `?${query}` : ''}`, { cache: 'force-cache', next: { revalidate: 3600 } })
+    if (error && error.code !== 'PGRST116') { // PGRST116 is no rows returned on zero or 1 row expectation
+      throw new Error(`Error al obtener objeto: ${error.message}`)
+    }
 
-  if (!res.ok) throw new Error(`Error al obtener objetos: ${res.statusText}`)
+    return data as GameObject | null
+  },
+  ['object_by_id'],
+  { revalidate: 3600, tags: ['objects'] }
+)
 
-  const data: ObjectsResponse = await res.json()
-  return data.objects
-}
-
-/**
- * Obtiene un objeto específico por su ID.
- */
-export async function getObjectById(id: string): Promise<GameObject | null> {
-  const res = await fetch(`${BASE()}/${encodeURIComponent(id)}`, { cache: 'force-cache', next: { revalidate: 3600 } })
-
-  if (res.status === 404) return null
-  if (!res.ok) throw new Error(`Error al obtener objeto: ${res.statusText}`)
-
-  const data: SingleObjectResponse = await res.json()
-  return data.object
-}
-
-/**
- * Obtiene solo los objetos requeridos (llaves, accesos).
- */
 export async function getRequiredObjects(): Promise<GameObject[]> {
   return getObjects({ required: true })
 }
 
-/**
- * Obtiene objetos filtrados por tipo.
- */
 export async function getObjectsByType(type: ObjectType): Promise<GameObject[]> {
   return getObjects({ type })
 }

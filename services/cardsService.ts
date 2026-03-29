@@ -1,61 +1,49 @@
+import { unstable_cache } from 'next/cache'
+import { supabasePublic } from '@/lib/supabase/public'
 import type { Card, CardRarity } from '@/types/game'
 
-import { getBaseUrl } from './baseUrl'
+export const getCards = unstable_cache(
+  async (filters?: { rarity?: CardRarity; actName?: string }): Promise<Card[]> => {
+    let query = supabasePublic.from('cards').select('*')
 
-const BASE = () => `${getBaseUrl()}/api/cards`
+    if (filters?.rarity) {
+      query = query.eq('rarity', filters.rarity)
+    }
+    if (filters?.actName) {
+      query = query.eq('actName', filters.actName)
+    }
 
-export interface CardsResponse {
-  total: number
-  cards: Card[]
-}
+    const { data, error } = await query
+    if (error) throw new Error(`Error al obtener cartas: ${error.message}`)
 
-export interface SingleCardResponse {
-  card: Card
-}
+    return data as Card[]
+  },
+  ['cards_list'],
+  { revalidate: 3600, tags: ['cards'] }
+)
 
-/**
- * Obtiene todas las cartas, opcionalmente filtradas por rareza y/o acto.
- */
-export async function getCards(filters?: {
-  rarity?: CardRarity
-  actName?: string
-}): Promise<Card[]> {
-  const params = new URLSearchParams()
-  if (filters?.rarity) params.set('rarity', filters.rarity)
-  if (filters?.actName) params.set('actName', filters.actName)
+export const getCardById = unstable_cache(
+  async (id: string): Promise<Card | null> => {
+    const { data, error } = await supabasePublic
+      .from('cards')
+      .select('*')
+      .eq('id', id)
+      .single()
 
-  const query = params.toString()
-  const res = await fetch(`${BASE()}${query ? `?${query}` : ''}`, { cache: 'force-cache', next: { revalidate: 3600 } })
+    if (error && error.code !== 'PGRST116') {
+      throw new Error(`Error al obtener carta: ${error.message}`)
+    }
 
-  if (!res.ok) throw new Error(`Error al obtener cartas: ${res.statusText}`)
+    return data as Card | null
+  },
+  ['card_by_id'],
+  { revalidate: 3600, tags: ['cards'] }
+)
 
-  const data: CardsResponse = await res.json()
-  return data.cards
-}
-
-/**
- * Obtiene una carta específica por su ID.
- */
-export async function getCardById(id: string): Promise<Card | null> {
-  const res = await fetch(`${BASE()}/${encodeURIComponent(id)}`, { cache: 'force-cache', next: { revalidate: 3600 } })
-
-  if (res.status === 404) return null
-  if (!res.ok) throw new Error(`Error al obtener carta: ${res.statusText}`)
-
-  const data: SingleCardResponse = await res.json()
-  return data.card
-}
-
-/**
- * Obtiene cartas filtradas por rareza.
- */
 export async function getCardsByRarity(rarity: CardRarity): Promise<Card[]> {
   return getCards({ rarity })
 }
 
-/**
- * Obtiene cartas filtradas por nombre de acto.
- */
 export async function getCardsByAct(actName: string): Promise<Card[]> {
   return getCards({ actName })
 }
