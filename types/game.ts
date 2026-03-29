@@ -307,3 +307,59 @@ export type LevelAccessResult =
   | { allowed: true }
   | { allowed: false; reason: 'missing-objects'; objects: string[] }
   | { allowed: false; reason: 'locked'; requiredAct: number }
+
+// ------------------------------------------------------------
+// GLOSARIO
+// ------------------------------------------------------------
+
+export interface GlossaryTerm {
+  id: string
+  term: string
+  technical: string         // definición técnica
+  human: string             // analogía en lenguaje humano
+}
+
+// ------------------------------------------------------------
+// DIÁLOGOS
+// ------------------------------------------------------------
+
+export interface FragDialogues {
+  identity: {
+    full_name: string
+    nickname: string
+    build: string
+    designation: string
+    status: string
+    memory_integrity: string
+  }
+  intros: string[]
+  confirmations: string[]
+  outros: string[]
+  fail_reactions: string[]
+  success_reactions: string[]
+  ambient_tips: string[]
+  story_beats: { [key: string]: string }
+}
+
+export interface NarrativeDialogues {
+  [key: string]: string
+}
+
+export interface Dialogues {
+  frag: FragDialogues
+  narrative: NarrativeDialogues
+}
+
+// ------------------------------------------------------------
+// ROADMAP
+// ------------------------------------------------------------
+
+export interface RoadmapTopic {
+  nombre: string
+  subtemas: string[]
+}
+
+export interface RoadmapPhase {
+  semanas: string
+  temas: RoadmapTopic[]
+}
