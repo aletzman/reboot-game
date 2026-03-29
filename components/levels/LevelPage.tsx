@@ -8,9 +8,8 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import type { Level, LevelState } from '@/types/game'
+import type { Level, LevelState, Card, GameObject } from '@/types/game'
 import {
-    getLevelById,
     checkLevelAccess,
     initLevelState,
     completeLevel,
@@ -41,7 +40,10 @@ const TheoryOverlay = dynamic(() => import('@/components/levels/TheoryOverlay/Th
 // ------------------------------------------------------------
 
 interface PageProps {
-    levelId: string
+    initialLevel: Level
+    allLevels: Level[]
+    allCards: Card[]
+    allObjects: GameObject[]
 }
 
 type PageStatus =
@@ -57,7 +59,13 @@ type PageStatus =
 // COMPONENTE PRINCIPAL
 // ------------------------------------------------------------
 
-export default function LevelPage({ levelId }: PageProps) {
+export default function LevelPage({ 
+    initialLevel, 
+    allLevels, 
+    allCards, 
+    allObjects 
+}: PageProps) {
+    const levelId = initialLevel.id
     const router = useRouter()
 
     const [pageStatus, setPageStatus] = useState<PageStatus>('loading')
@@ -81,25 +89,20 @@ export default function LevelPage({ levelId }: PageProps) {
     // ------------------------------------------------------------
 
     useEffect(() => {
-        const found = getLevelById(levelId)
-        if (!found) {
-            setPageStatus('error')
-            return
-        }
-        setLevel(found)
+        // Al recibir los props del servidor, ya tenemos el level disponible
+        setLevel(initialLevel)
 
-        // verificar login si el nivel lo requiere
+        // verificar login
         if (requiresLogin(levelId)) {
             const save = getSave()
-            const isLoggedIn = !!save?.player?.name
-            if (!isLoggedIn) {
+            if (!save?.player?.name) {
                 setPageStatus('blocked-login')
                 return
             }
         }
 
-        // verificar acceso
-        const access = checkLevelAccess(levelId)
+        // verificar acceso dinámico recurriendo a los props
+        const access = checkLevelAccess(levelId, allLevels)
         if (!access.allowed) {
             if (access.blockedBy === 'missing-objects') {
                 setMissing(access.missingObjectNames ?? [])
@@ -112,13 +115,13 @@ export default function LevelPage({ levelId }: PageProps) {
             return
         }
 
-        setLevelState(initLevelState(found))
+        setLevelState(initLevelState(initialLevel))
         setPageStatus('playing')
 
-        if (found.theory && found.theory.length > 0) {
+        if (initialLevel.theory && initialLevel.theory.length > 0) {
             setShowingTheory(true)
         }
-    }, [levelId])
+    }, [levelId, initialLevel, allLevels])
 
     const [customCompletionContent, setCustomContent] = useState<React.ReactNode>(null)
 
@@ -128,7 +131,7 @@ export default function LevelPage({ levelId }: PageProps) {
 
     function handleComplete(stars: 0 | 1 | 2 | 3, usedFrag: boolean, customContent?: React.ReactNode) {
         if (!level) return
-        const result = completeLevel(levelId, stars, usedFrag)
+        const result = completeLevel(level, stars, usedFrag, allLevels, allCards, allObjects)
         setResult(result)
         setCustomContent(customContent)
 
@@ -162,15 +165,18 @@ export default function LevelPage({ levelId }: PageProps) {
             return
         }
 
-        const nextLevel = getLevelById(completionResult.nextLevelId)
+        const nextLevelId = completionResult.nextLevelId
+        const nextLevel = allLevels.find(l => l.id === nextLevelId)
         const targetAct = nextLevel?.act ?? level?.act ?? 0
 
         if (completionResult.suggestRedirect) {
-            const suggestLevel = getLevelById(completionResult.suggestRedirect)
+            const suggestLevel = allLevels.find(l => l.id === completionResult.suggestRedirect)
             const suggestAct = suggestLevel?.act ?? targetAct
             router.push(`/game/${suggestAct}/level/${completionResult.suggestRedirect}`)
+        } else if (nextLevelId) {
+            router.push(`/game/${targetAct}/level/${nextLevelId}`)
         } else {
-            router.push(`/game/${targetAct}/level/${completionResult.nextLevelId}`)
+            router.push(`/game/${targetAct}`)
         }
     }
 
@@ -239,7 +245,7 @@ export default function LevelPage({ levelId }: PageProps) {
 
     if (!level || !levelState) return <LoadingScreen />
 
-    const reviewHint = getReviewHint(levelId)
+    const reviewHint = getReviewHint(levelId, allLevels)
 
     return (
         <div className="flex flex-col h-[calc(100svh-var(--header-height))] bg-(--bg-void)">
