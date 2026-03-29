@@ -221,7 +221,7 @@ export async function ensureProfile(): Promise<boolean> {
       display_name: user.user_metadata?.full_name
         || user.user_metadata?.name
         || user.email?.split('@')[0]
-        || 'Superviviente',
+        || 'Operador',
       avatar_url: user.user_metadata?.avatar_url || null,
       provider: user.app_metadata?.provider || 'unknown',
     })

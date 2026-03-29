@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '@/lib/supabase/useAuth'
 import { syncSave, ensureProfile } from '@/lib/supabase/sync'
-import { LogIn, LogOut, Github, Loader2, CloudUpload, ChevronDown, Wifi } from 'lucide-react'
+import { getSave } from '@/lib/gameState'
+import { LogIn, LogOut, Github, Loader2, CloudUpload, ChevronDown, Wifi, ArrowLeftRight } from 'lucide-react'
 
 export function AuthButton() {
   const { user, loading, isAuthenticated, signInWithGoogle, signInWithGitHub, signOut } = useAuth()
@@ -63,13 +64,12 @@ export function AuthButton() {
         {/* ── BOTÓN PRINCIPAL ── */}
         <button
           onClick={() => setShowMenu(!showMenu)}
-          className="flex items-center gap-2.5 px-4 py-2 
-                     bg-linear-to-r from-(--bg-void) to-(--bg-elevated)
+          className="flex items-center gap-2.5 px-4 py-2  bg-(--bg-surface)
                      border border-(--green-dark)/40 hover:border-(--green-base)
                      text-(--green-light) hover:text-white
                      transition-all duration-300 rounded font-mono text-xs font-semibold uppercase tracking-wider
                      cursor-pointer group
-                     shadow-[0_0_12px_rgba(85,226,0,0.08)] hover:shadow-[0_0_20px_rgba(85,226,0,0.15)]"
+                     hover:shadow-[0_0_20px_rgba(85,226,0,0.15)]"
         >
           <div className="relative">
             <LogIn size={15} className="group-hover:scale-110 transition-transform" />
@@ -83,7 +83,7 @@ export function AuthButton() {
         {showMenu && (
           <div className="absolute right-0 top-full mt-2 w-72 
                           bg-(--bg-elevated) border border-(--green-dark)/30
-                          rounded-lg shadow-[0_8px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(85,226,0,0.06)]
+                          rounded-sm shadow-[0_8px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(85,226,0,0.06)]
                           z-9999 overflow-hidden animate-slide-up">
 
             {/* Header con línea de acento */}
@@ -106,10 +106,10 @@ export function AuthButton() {
               <button
                 onClick={() => { signInWithGoogle(); setShowMenu(false) }}
                 className="w-full flex items-center gap-3.5 px-3 py-3 
-                           hover:bg-(--green-darkest)/50 rounded-md
+                           hover:bg-(--green-darkest)/50 rounded-xs
                            transition-all duration-200 cursor-pointer group"
               >
-                <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shrink-0 
+                <div className="w-8 h-8 rounded-md bg-white flex items-center justify-center shrink-0 
                                 shadow-sm group-hover:shadow-[0_0_10px_rgba(255,255,255,0.15)] transition-shadow">
                   <svg viewBox="0 0 24 24" width="16" height="16">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -139,10 +139,10 @@ export function AuthButton() {
               <button
                 onClick={() => { signInWithGitHub(); setShowMenu(false) }}
                 className="w-full flex items-center gap-3.5 px-3 py-3 
-                           hover:bg-(--green-darkest)/50 rounded-md
+                           hover:bg-(--green-darkest)/50 rounded-xs
                            transition-all duration-200 cursor-pointer group"
               >
-                <div className="w-8 h-8 rounded-lg bg-[#24292e] flex items-center justify-center shrink-0 
+                <div className="w-8 h-8 rounded-md bg-[#171818] flex items-center justify-center shrink-0 
                                 border border-[#3a3f44] group-hover:border-[#555] transition-colors">
                   <Github size={16} className="text-white" />
                 </div>
@@ -161,7 +161,7 @@ export function AuthButton() {
             <div className="relative px-4 py-2.5 border-t border-(--bg-hover) bg-(--bg-surface)">
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-(--green-base) animate-pulse" />
-                <span className="text-[10px] font-mono text-(--text-muted) leading-relaxed">
+                <span className="text-xs font-sans text-(--text-muted)">
                   Tu progreso se sincroniza automáticamente
                 </span>
               </div>
@@ -175,6 +175,11 @@ export function AuthButton() {
   // ══════════════════════════════════════════════════
   // LOGUEADO
   // ══════════════════════════════════════════════════
+  const save = getSave()
+  const playerName = save?.player?.name && save?.player?.name !== 'Jugador' && save?.player?.name !== 'Superviviente'
+    ? save.player.name
+    : null
+
   const displayName = user?.user_metadata?.full_name
     || user?.user_metadata?.name
     || user?.email?.split('@')[0]
@@ -204,8 +209,8 @@ export function AuthButton() {
             </span>
           </div>
         )}
-        <span className="hidden sm:inline text-xs font-mono text-(--text-muted) group-hover:text-(--green-light) transition-colors max-w-[120px] truncate font-medium">
-          {displayName}
+        <span className="hidden sm:inline text-[13px] font-sans text-(--text-muted) group-hover:text-(--green-light) transition-colors max-w-[120px] truncate font-medium">
+          {playerName || displayName}
         </span>
         {syncing && <Loader2 size={12} className="text-(--green-muted) animate-spin" />}
         <ChevronDown size={12} className={`text-(--text-ghost) transition-transform duration-200 ${showMenu ? 'rotate-180' : ''}`} />
@@ -231,9 +236,11 @@ export function AuthButton() {
                 </div>
               )}
               <div className="flex flex-col min-w-0">
-                <span className="text-sm font-mono text-(--text-primary) truncate font-medium">{displayName}</span>
+                <span className="text-sm font-sans text-(--text-primary) truncate font-medium uppercase">
+                  {playerName || displayName}
+                </span>
                 <span className="text-[11px] font-mono text-(--text-muted) truncate">
-                  {user?.email || 'Enlace activo'}
+                  {playerName ? displayName : (user?.email || 'Enlace activo')}
                 </span>
               </div>
             </div>
@@ -246,7 +253,7 @@ export function AuthButton() {
               onClick={handleSync}
               disabled={syncing}
               className="w-full flex items-center gap-3 px-3 py-2.5
-                         hover:bg-(--green-darkest)/50 rounded-md
+                         hover:bg-(--green-darkest)/50 rounded-xs
                          transition-all duration-200 cursor-pointer group disabled:opacity-50"
             >
               {syncing ? (
@@ -255,11 +262,11 @@ export function AuthButton() {
                 <CloudUpload size={16} className="text-(--green-muted) group-hover:text-(--green-light) transition-colors shrink-0" />
               )}
               <div className="flex flex-col items-start gap-0.5">
-                <span className="text-sm font-mono text-(--text-primary) group-hover:text-(--green-light) transition-colors font-medium">
+                <span className="text-sm font-sans text-(--text-primary) group-hover:text-(--green-light) transition-colors font-medium">
                   {syncing ? 'Sincronizando...' : 'Sincronizar progreso'}
                 </span>
-                <span className="text-[10px] font-mono text-(--text-ghost) uppercase tracking-wider">
-                  Local ↔ Nube
+                <span className="flex items-center gap-2 text-[10px] font-mono text-(--text-muted) uppercase tracking-wider">
+                  Local <ArrowLeftRight size={12} className="text-(--green-muted)" /> Nube
                 </span>
               </div>
             </button>
@@ -274,7 +281,7 @@ export function AuthButton() {
                          transition-all duration-200 cursor-pointer group"
             >
               <LogOut size={16} className="text-(--red)/70 group-hover:text-(--red-light) transition-colors shrink-0" />
-              <span className="text-sm font-mono text-(--text-muted) group-hover:text-(--red-light) transition-colors font-medium">
+              <span className="text-sm font-sans text-(--text-muted) group-hover:text-(--red-light) transition-colors font-medium">
                 Cerrar sesión
               </span>
             </button>

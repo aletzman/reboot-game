@@ -286,7 +286,7 @@ function migrateSave(oldSave: Partial<GameSave>): GameSave {
   // por ahora solo actualiza la versión
   return {
     version: SAVE_VERSION,
-    player: oldSave.player ?? { name: 'Jugador', gender: 'él' },
+    player: oldSave.player ?? { name: '', gender: 'él' },
     progress: oldSave.progress ?? {},
     cards: oldSave.cards ?? [],
     objects: oldSave.objects ?? [],
