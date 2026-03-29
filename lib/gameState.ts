@@ -204,16 +204,21 @@ export function requiresLogin(levelId: string): boolean {
 
 export function getActSummary(actNumber: ActNumber): ActSummary {
   const save = getSave()
-  const actLevels = (levelsData.levels as { id: string; act: number; actName: string; isReview: boolean }[])
+  const actLevels = (levelsData.levels as { id: string; act: number; actName: string; isReview: boolean; maxStars?: number }[])
     .filter(l => l.act === actNumber)
 
-  const regularLevels = actLevels.filter(l => !l.isReview)
   const reviewLevel = actLevels.find(l => l.isReview)
-
-  const levelIds = regularLevels.map(l => l.id)
+  const levelIds = actLevels.map(l => l.id) // Include all levels, INCLUDING the review level
+  
   const completed = levelIds.every(id => save?.progress[id]?.completed ?? false)
+  
   const totalStars = levelIds.reduce(
     (acc, id) => acc + (save?.progress[id]?.stars ?? 0),
+    0
+  )
+
+  const maxStars = actLevels.reduce(
+    (acc, l) => acc + (l.maxStars || 3),
     0
   )
 
@@ -224,6 +229,7 @@ export function getActSummary(actNumber: ActNumber): ActSummary {
     reviewLevelId: reviewLevel?.id ?? null,
     completed,
     totalStars,
+    maxStars,
   }
 }
 

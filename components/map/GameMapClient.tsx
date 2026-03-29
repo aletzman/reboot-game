@@ -28,7 +28,8 @@ export default function GameMapClient({ levels }: GameMapClientProps) {
               levelIds: [],
               reviewLevelId: null,
               completed: false,
-              totalStars: 0
+              totalStars: 0,
+              maxStars: 0
             })
           }
 
@@ -41,6 +42,7 @@ export default function GameMapClient({ levels }: GameMapClientProps) {
           if (levelProgress) {
             act.totalStars += levelProgress.stars
           }
+          act.maxStars += (level.maxStars || 3)
         })
 
         // Update completion status for each act

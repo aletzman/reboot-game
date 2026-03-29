@@ -300,6 +300,7 @@ export interface ActSummary {
   reviewLevelId: string | null
   completed: boolean
   totalStars: number
+  maxStars: number
 }
 
 // Resultado de intentar acceder a un nivel
