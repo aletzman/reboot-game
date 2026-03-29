@@ -27,7 +27,7 @@ export default function ActMapClient({ actId, levels }: ActMapClientProps) {
     }
 
     // getActSummary lee localStorage → debe ejecutarse en el cliente
-    const summary = getActSummary(actNum)
+    const summary = getActSummary(actNum, levels)
     setAct(summary)
   }, [actId, router])
 
@@ -137,7 +137,7 @@ export default function ActMapClient({ actId, levels }: ActMapClientProps) {
         <div className="flex flex-col gap-4 pb-24">
           {levels.map((level, index) => {
             const prog = getLevelProgress(level.id)
-            const access = canAccessLevel(level.id)
+            const access = canAccessLevel(level.id, levels)
 
             return (
               <LevelCard

@@ -9,5 +9,6 @@ export const metadata = {
 export default async function GameMapPage() {
   const levels = await getLevels()
 
+
   return <GameMapClient levels={levels} />
 }

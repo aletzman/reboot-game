@@ -130,7 +130,7 @@ export default function GameMapClient({ levels }: GameMapClientProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32">
           {acts.map((act) => {
-            const unlocked = isActUnlocked(act.number)
+            const unlocked = isActUnlocked(act.number, levels)
             return (
               <ActCard
                 key={act.number}
