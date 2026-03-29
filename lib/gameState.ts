@@ -9,6 +9,7 @@ import type {
   ActNumber,
   ActSummary,
 } from '@/types/game'
+import * as access from '@/lib/game/access'
 import levelsData from '@/data/levels.json'
 import objectsData from '@/data/objects.json'
 
@@ -189,45 +190,12 @@ export function getObjects(): string[] {
 // ACCESO A NIVELES
 // ------------------------------------------------------------
 
-export function canAccessLevel(levelId: string): LevelAccessResult { 
-  const save = getSave()
-
-   const id = levelId.toUpperCase()  // ← normaliza aquí
-  
-  if (FREE_LEVELS.includes(id)) return { allowed: true }
-  
-  if (!getSave()) return { allowed: false, reason: 'locked', requiredAct: 0 }
-
-  // buscar el nivel en los datos
-  const level = (levelsData.levels as any[]).find(l => l.id === levelId)
-
-  if (!level) return { allowed: false, reason: 'locked', requiredAct: 0 }
-
-  // verificar objetos requeridos
-  const reqObjs = level.requiredObjects ?? []
-  const missingObjects = reqObjs.filter(
-    (objId: string) => !save!.objects.includes(objId)
-  )
-
-  if (missingObjects.length > 0) {
-    return { allowed: false, reason: 'missing-objects', objects: missingObjects }
-  }
-
-  return { allowed: true }
+export function canAccessLevel(levelId: string): LevelAccessResult {
+  return access.canAccessLevel(levelId, getSave())
 }
 
 export function requiresLogin(levelId: string): boolean {
-  // los actos 4, 5, 6 y 7 requieren login
-  return (
-    levelId.startsWith('4-') ||
-    levelId.startsWith('5-') ||
-    levelId.startsWith('6-') ||
-    levelId.startsWith('7-') ||
-    levelId === '4-R' ||
-    levelId === '5-R' ||
-    levelId === '6-R' ||
-    levelId === '7-R'
-  )
+  return access.requiresLogin(levelId)
 }
 
 // ------------------------------------------------------------
@@ -260,16 +228,7 @@ export function getActSummary(actNumber: ActNumber): ActSummary {
 }
 
 export function isActUnlocked(actNumber: number): boolean {
-  if (actNumber <= 1) return true
-  const save = getSave()
-  if (!save) return actNumber <= 1
-  
-  // Logical progression: Act N is unlocked if Act N-1 is "completed" 
-  // (all regular levels finished)
-  const prevAct = getActSummary((actNumber - 1) as ActNumber)
-  return prevAct.completed || prevAct.levelIds.some(id => save.progress[id]?.completed) 
-  // actually let's just use a simpler check: if ANY level of the previous act is completed 
-  // or if it's the first act.
+  return access.isActUnlocked(actNumber, getSave())
 }
 
 export function getCurrentAct(): ActNumber {

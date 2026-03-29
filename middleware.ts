@@ -1,5 +1,5 @@
 // ============================================================
-// Edge Middleware — refresca sesión de Supabase en cada request
+// Edge Middleware — refresca sesión y valida acceso
 // ============================================================
 
 import { type NextRequest } from 'next/server'
