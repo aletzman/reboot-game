@@ -53,27 +53,29 @@ export async function updateSession(request: NextRequest) {
 
     // 2. Verificación de Progreso Bloqueado
     if (user) {
-      const { data: row } = await supabase
-        .from('game_saves')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle()
+      // Necesitamos tanto el save como los niveles para validar acceso
+      const [saveRes, levelsRes] = await Promise.all([
+        supabase.from('game_saves').select('*').eq('user_id', user.id).maybeSingle(),
+        supabase.from('levels').select('*').order('id', { ascending: true })
+      ])
 
-      if (row) {
+      const row = saveRes.data
+      const levels = levelsRes.data || []
+
+      if (row && levels.length > 0) {
         const save: any = {
           progress: row.progress || {},
           objects: row.objects || [],
-          // Solo necesitamos lo básico para canAccessLevel
         }
 
         if (levelId) {
-          const access = canAccessLevel(levelId, save)
+          const access = canAccessLevel(levelId, save, levels)
           if (!access.allowed) {
             console.log(`[MIDDLEWARE] Bloqueando acceso a nivel ${levelId}`)
             return NextResponse.redirect(new URL(`/game/${actId}`, request.url))
           }
         } else {
-          if (!isActUnlocked(actId, save)) {
+          if (!isActUnlocked(actId, save, levels)) {
             console.log(`[MIDDLEWARE] Bloqueando acceso a Acto ${actId}`)
             return NextResponse.redirect(new URL('/game', request.url))
           }
