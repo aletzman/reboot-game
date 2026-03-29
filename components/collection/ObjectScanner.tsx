@@ -39,6 +39,8 @@ export function ObjectScanner({ type, id, isUnlocked, className }: ObjectScanner
                 `}
                 style={{
                     transformStyle: 'preserve-3d',
+                    backfaceVisibility: 'hidden',
+                    transform: 'translateZ(0)'
                 }}
             >
                 {/* Back Plate Decoration */}
