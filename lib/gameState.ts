@@ -63,6 +63,26 @@ export function setSave(save: GameSave): void {
   if (typeof window === 'undefined') return
   save.updatedAt = new Date().toISOString()
   localStorage.setItem(SAVE_KEY, JSON.stringify(save))
+  // Dispara sync debounced a Supabase (si hay sesión activa)
+  schedulCloudPush()
+}
+
+// ------------------------------------------------------------
+// AUTO-SYNC A SUPABASE (debounced)
+// ------------------------------------------------------------
+
+let pushTimer: ReturnType<typeof setTimeout> | null = null
+
+function schedulCloudPush() {
+  if (pushTimer) clearTimeout(pushTimer)
+  pushTimer = setTimeout(async () => {
+    try {
+      const { pushSaveToSupabase } = await import('@/lib/supabase/sync')
+      await pushSaveToSupabase()
+    } catch {
+      // Silencioso — si no hay sesión o falla la red, no pasa nada
+    }
+  }, 1500) // Espera 1.5s después del último cambio
 }
 
 export function deleteSave(): void {
@@ -319,72 +339,31 @@ function migrateSave(oldSave: Partial<GameSave>): GameSave {
 }
 
 // ------------------------------------------------------------
-// MIGRACIÓN A SUPABASE
+// MIGRACIÓN A SUPABASE — delegado al módulo sync
 // ------------------------------------------------------------
 
-export async function migrateToSupabase(userId: string): Promise<boolean> {
-  const save = getSave()
-  if (!save) return false
-
+/**
+ * @deprecated Usa `syncSave()` de `@/lib/supabase/sync` directamente.
+ * Se mantiene por retrocompatibilidad.
+ */
+export async function migrateToSupabase(_userId: string): Promise<boolean> {
   try {
-    const res = await fetch('/api/progress', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, save }),
-    })
-
-    if (!res.ok) return false
-
-    // el save local sigue siendo la fuente de verdad
-    // Supabase es el respaldo en la nube
-    setSave(save)
-    return true
+    const { syncSave } = await import('@/lib/supabase/sync')
+    return syncSave()
   } catch {
     return false
   }
 }
 
-export async function loadFromSupabase(userId: string): Promise<boolean> {
+/**
+ * @deprecated Usa `syncSave()` de `@/lib/supabase/sync` directamente.
+ * Se mantiene por retrocompatibilidad.
+ */
+export async function loadFromSupabase(_userId: string): Promise<boolean> {
   try {
-    const res = await fetch(`/api/progress?userId=${userId}`)
-    if (!res.ok) return false
-
-    const { save } = await res.json()
-    if (!save) return false
-
-    // fusiona: toma el progreso más avanzado entre local y Supabase
-    const local = getSave()
-    const merged = mergeSaves(local, save)
-    setSave(merged)
-    return true
+    const { syncSave } = await import('@/lib/supabase/sync')
+    return syncSave()
   } catch {
     return false
-  }
-}
-
-function mergeSaves(local: GameSave | null, remote: GameSave): GameSave {
-  if (!local) return remote
-
-  // toma el progreso más avanzado nivel por nivel
-  const mergedProgress: GameSave['progress'] = { ...remote.progress }
-
-  for (const [levelId, localProg] of Object.entries(local.progress)) {
-    const remoteProg = remote.progress[levelId]
-    if (!remoteProg || localProg.stars > remoteProg.stars) {
-      mergedProgress[levelId] = localProg
-    }
-  }
-
-  // une cartas y objetos sin duplicados
-  const mergedCards = [...new Set([...local.cards, ...remote.cards])]
-  const mergedObjects = [...new Set([...local.objects, ...remote.objects])]
-
-  return {
-    ...remote,
-    progress: mergedProgress,
-    cards: mergedCards,
-    objects: mergedObjects,
-    fragUsedTotal: Math.max(local.fragUsedTotal, remote.fragUsedTotal),
-    updatedAt: new Date().toISOString(),
   }
 }
