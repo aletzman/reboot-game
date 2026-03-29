@@ -1,16 +1,12 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
 import { getSave, isActUnlocked } from '@/lib/gameState'
 import { ActSummary } from '@/types/game'
 import levelsData from '@/data/levels.json'
 import { ActCard } from '@/components/map/ActCard'
-import { Header } from '@/components/ui/Header'
-import CRTOverlay from '@/components/ui/CRTOverlay'
 
 export default function GameMapPage() {
-  const router = useRouter()
   const [acts, setActs] = useState<ActSummary[]>([])
   const [loading, setLoading] = useState(true)
 
