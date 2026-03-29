@@ -12,7 +12,15 @@ import type { GameSave, LevelProgress } from '@/types/game'
 
 interface GameSaveRow {
   user_id: string
-  save_data: GameSave
+  version: number
+  player_name: string
+  player_gender: string
+  progress: any
+  cards: string[]
+  objects: string[]
+  frag_used_total: number
+  current_level_id: string
+  created_at: string
   updated_at: string
 }
 
@@ -33,7 +41,15 @@ export async function pushSaveToSupabase(): Promise<boolean> {
     .upsert(
       {
         user_id: user.id,
-        save_data: save,
+        version: save.version,
+        player_name: save.player.name,
+        player_gender: save.player.gender,
+        progress: save.progress,
+        cards: save.cards,
+        objects: save.objects,
+        frag_used_total: save.fragUsedTotal,
+        current_level_id: save.currentLevelId,
+        created_at: save.createdAt,
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'user_id' }
@@ -58,7 +74,7 @@ export async function pullSaveFromSupabase(): Promise<GameSave | null> {
 
   const { data, error } = await supabase
     .from('game_saves')
-    .select('save_data')
+    .select('*')
     .eq('user_id', user.id)
     .single()
 
@@ -69,7 +85,22 @@ export async function pullSaveFromSupabase(): Promise<GameSave | null> {
     return null
   }
 
-  return data.save_data as GameSave
+  const row = data as GameSaveRow
+
+  return {
+    version: row.version,
+    player: {
+      name: row.player_name,
+      gender: row.player_gender as 'él' | 'ella' | 'elle'
+    },
+    progress: row.progress,
+    cards: row.cards,
+    objects: row.objects,
+    fragUsedTotal: row.frag_used_total,
+    currentLevelId: row.current_level_id,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  }
 }
 
 // ------------------------------------------------------------
@@ -110,7 +141,15 @@ export async function syncSave(): Promise<boolean> {
     .upsert(
       {
         user_id: user.id,
-        save_data: merged,
+        version: merged.version,
+        player_name: merged.player.name,
+        player_gender: merged.player.gender,
+        progress: merged.progress,
+        cards: merged.cards,
+        objects: merged.objects,
+        frag_used_total: merged.fragUsedTotal,
+        current_level_id: merged.currentLevelId,
+        created_at: merged.createdAt,
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'user_id' }

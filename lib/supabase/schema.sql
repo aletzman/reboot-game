@@ -23,12 +23,20 @@ CREATE INDEX IF NOT EXISTS idx_profiles_id ON public.profiles(id);
 
 -- ╔══════════════════════════════════════════════════════════╗
 -- ║ TABLA: game_saves                                        ║
--- ║ Almacena el save completo del jugador como JSONB         ║
+-- ║ Almacena el progreso del jugador en columnas individuales║
 -- ╚══════════════════════════════════════════════════════════╝
 
 CREATE TABLE IF NOT EXISTS public.game_saves (
   user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  save_data JSONB NOT NULL DEFAULT '{}'::jsonb,
+  version INTEGER NOT NULL DEFAULT 1,
+  player_name TEXT NOT NULL DEFAULT 'Superviviente',
+  player_gender TEXT NOT NULL DEFAULT 'él',
+  progress JSONB NOT NULL DEFAULT '{}'::jsonb,
+  cards TEXT[] NOT NULL DEFAULT '{}'::text[],
+  objects TEXT[] NOT NULL DEFAULT '{}'::text[],
+  frag_used_total INTEGER NOT NULL DEFAULT 0,
+  current_level_id TEXT NOT NULL DEFAULT 'P-00',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
