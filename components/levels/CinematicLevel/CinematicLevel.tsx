@@ -18,7 +18,9 @@ export default function CinematicLevel({
     const [script, setScript] = useState<TextLine[]>(() => {
         const baseScript = CINEMATIC_SCRIPTS[level.id] ?? buildFallbackScript(level);
         const save = typeof window !== 'undefined' ? getSave() : null;
-        const savedName = save && save.player?.name !== 'Jugador' ? save.player.name : "";
+        const savedName = save && save.player?.name !== 'Jugador' && save.player?.name !== 'Superviviente' 
+            ? save.player.name 
+            : "";
 
         // Si al momento de Cargar el nivel ya está registrado y repite el nivel, cambiar los diálogos en la sección de la terminal
         if (level.id === 'P-00' && savedName) {
@@ -41,8 +43,10 @@ export default function CinematicLevel({
     });
 
     const existingSave = typeof window !== 'undefined' ? getSave() : null;
-    const defaultName = existingSave && existingSave.player?.name !== 'Jugador' ? existingSave.player.name : "";
-    const defaultGender = existingSave && existingSave.player?.name !== 'Jugador' ? existingSave.player.gender : " ";
+    const isDefaultName = !existingSave || existingSave.player?.name === 'Jugador' || existingSave.player?.name === 'Superviviente';
+    
+    const defaultName = !isDefaultName ? existingSave.player.name : "";
+    const defaultGender = !isDefaultName ? existingSave.player.gender : " ";
 
     const clock = useLiveClock()
 
@@ -134,7 +138,7 @@ export default function CinematicLevel({
     }
 
     function handleContinue() {
-        onComplete(0, false)
+        onComplete(3, false)
     }
 
     // ------------------------------------------------------------
