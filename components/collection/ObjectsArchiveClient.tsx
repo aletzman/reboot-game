@@ -300,19 +300,6 @@ export default function ObjectsArchiveClient({ initialObjects }: ObjectsArchiveC
           </div>
         )}
       </AnimatePresence>
-
-      {/* Footer HUD elements */}
-      <div className="fixed bottom-0 inset-x-0 py-2 px-8 bg-(--bg-surface) border-t border-(--bg-hover) flex justify-between items-center z-20 pointer-events-none">
-        <div className="flex gap-6 items-center">
-          <span className="text-[9px] font-mono text-(--text-ghost) uppercase tracking-[0.2em]">ITEM_BUFFER::SYNCED</span>
-          <div className="w-px h-12 bg-(--bg-hover) hidden md:block" />
-          <span className="text-[9px] font-mono text-(--amber) uppercase tracking-[0.2em] font-black opacity-60 animate-pulse">ALMACENAMIENTO_EXTERIOR</span>
-        </div>
-        <div className="flex gap-4">
-          <div className="w-1 h-1 bg-(--amber) rounded-full animate-ping" />
-          <span className="text-[9px] font-mono text-(--text-ghost) uppercase tracking-[0.2em]">HW_ID: {Math.random().toString(16).slice(2, 8).toUpperCase()}</span>
-        </div>
-      </div>
     </div>
   )
 }

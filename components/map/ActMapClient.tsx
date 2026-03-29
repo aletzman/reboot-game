@@ -152,19 +152,6 @@ export default function ActMapClient({ actId, levels }: ActMapClientProps) {
           })}
         </div>
       </main>
-
-      {/* Footer HUD */}
-      <div className="fixed bottom-0 inset-x-0 py-2 px-8 bg-(--bg-surface) border-t border-(--bg-hover) flex justify-between items-center z-20 pointer-events-none">
-        <div className="flex gap-6 items-center">
-          <span className="text-[9px] font-mono text-(--text-ghost) uppercase tracking-[0.2em]">FRAG_LINK::ESTABLE</span>
-          <div className="w-px h-12 bg-(--bg-hover) hidden md:block" />
-          <span className="text-[9px] font-mono text-(--green-muted) uppercase tracking-[0.2em] animate-pulse">MODO::NAVEGACIÓN_SECTOR</span>
-        </div>
-        <div className="flex gap-4">
-          <div className="w-1 h-1 bg-(--green-light) rounded-full animate-ping" />
-          <span className="text-[9px] font-mono text-(--text-ghost) uppercase tracking-[0.2em]">SISTEMA: OPERACIONAL</span>
-        </div>
-      </div>
     </div>
   )
 }

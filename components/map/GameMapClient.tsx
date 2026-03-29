@@ -141,24 +141,6 @@ export default function GameMapClient({ levels }: GameMapClientProps) {
           })}
         </div>
       </main>
-
-      {/* Retro HUD elements */}
-      <div className="fixed top-1/2 -right-4 border border-(--bg-hover) bg-(--bg-surface) p-2 rotate-90 z-20 pointer-events-none flex gap-4 pr-6">
-        <span className="text-[8px] font-mono text-(--text-ghost) uppercase tracking-widest">Buffer_Cache::OK</span>
-        <span className="text-[8px] font-mono text-(--text-ghost) uppercase tracking-widest">Signal::99%</span>
-      </div>
-
-      <div className="fixed bottom-0 inset-x-0 py-2 px-8 bg-(--bg-surface) border-t border-(--bg-hover) flex justify-between items-center z-20 pointer-events-none">
-        <div className="flex gap-6 items-center">
-          <span className="text-[9px] font-mono text-(--text-ghost) uppercase tracking-[0.2em]">FRAG_LINK::ESTABLE</span>
-          <div className="w-px h-12 bg-(--bg-hover) hidden md:block" />
-          <span className="text-[9px] font-mono text-(--green-muted) uppercase tracking-[0.2em] animate-pulse">MODO::NAVEGACIÓN_GLOBAL</span>
-        </div>
-        <div className="flex gap-4">
-          <div className="w-1 h-1 bg-(--green-light) rounded-full animate-ping" />
-          <span className="text-[9px] font-mono text-(--text-ghost) uppercase tracking-[0.2em]">SISTEMA: OPERACIONAL</span>
-        </div>
-      </div>
     </div>
   )
 }

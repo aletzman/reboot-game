@@ -83,7 +83,7 @@ export function CardRackSlot({ card, idx, isUnlocked, onSelect }: CardRackSlotPr
         </AnimatePresence>
 
         {/* RACK FRONT PANEL / CONNECTION BAR */}
-        <div className="absolute bottom-2 inset-x-2 h-16 z-25 pointer-events-none flex flex-col justify-end overflow-visible">
+        <div className="absolute bottom-0 inset-x-2 h-16 z-25 pointer-events-none flex flex-col justify-end overflow-visible">
 
           {/* Connecting Glow underneath the panel when connected */}
           {isConnected && (
