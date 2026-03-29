@@ -24,7 +24,7 @@ export default function GameMapClient({ levels }: GameMapClientProps) {
           if (!actMap.has(level.act)) {
             actMap.set(level.act, {
               number: level.act as ActNumber,
-              name: level.actName || `Sector ${level.act}`,
+              name: level.actName,
               levelIds: [],
               reviewLevelId: null,
               completed: false,
