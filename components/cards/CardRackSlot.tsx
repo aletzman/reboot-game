@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { LockIcon } from 'lucide-react'
 import { DataCartridge } from '@/components/cards/DataCartridge'

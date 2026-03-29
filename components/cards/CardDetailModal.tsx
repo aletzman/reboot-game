@@ -1,4 +1,3 @@
-import React from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { XIcon } from 'lucide-react'
 import { DataCartridge } from '@/components/cards/DataCartridge'
