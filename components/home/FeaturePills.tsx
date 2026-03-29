@@ -25,9 +25,9 @@ export default function FeaturePills() {
     const [visibleCount, setVisibleCount] = useState(0);
 
     useEffect(() => {
-        const baseDelay = 4000; // después del typing de la terminal
+        const baseDelay = 1500; // después del typing de la terminal
         const timers = features.map((_, i) =>
-            setTimeout(() => setVisibleCount(i + 1), baseDelay + i * 400)
+            setTimeout(() => setVisibleCount(i + 1), baseDelay + i * 200)
         );
         return () => timers.forEach(clearTimeout);
     }, []);

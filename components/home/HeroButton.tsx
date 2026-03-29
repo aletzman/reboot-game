@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronRight } from "lucide-react";
-import { getSave } from "@/lib/gameState";
+import { getSave, deleteSave } from "@/lib/gameState";
 import { getLevels } from "@/services/levelsService";
 
 export default function HeroButton() {
@@ -14,7 +14,7 @@ export default function HeroButton() {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        const timer = setTimeout(() => setVisible(true), 5500);
+        const timer = setTimeout(() => setVisible(true), 2300);
 
         // detectar save existente
         const save = getSave();
@@ -28,32 +28,34 @@ export default function HeroButton() {
 
     async function handleClick() {
         if (isLoading) return;
-        
+
         const save = getSave();
-        if (!save) {
-            router.push("/level/P-00");
-            return;
-        }
-        
-        let lastLevel = save.currentLevelId ?? "P-00";
+        let lastLevelId = save?.currentLevelId ?? "P-00";
 
-        // Si el nivel guardado ya está completado, ir al siguiente nivel
-        if (save.progress[lastLevel]?.completed) {
-            setIsLoading(true);
-            try {
-                const levels = await getLevels();
-                const currentIndex = levels.findIndex((l) => l.id === lastLevel);
+        setIsLoading(true);
+        try {
+            const levels = await getLevels();
+
+            // Si el nivel guardado ya está completado, ir al siguiente nivel
+            if (save && save.progress[lastLevelId]?.completed) {
+                const currentIndex = levels.findIndex((l) => l.id === lastLevelId);
                 if (currentIndex !== -1 && currentIndex + 1 < levels.length) {
-                    lastLevel = levels[currentIndex + 1].id;
+                    lastLevelId = levels[currentIndex + 1].id;
                 }
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setIsLoading(false);
             }
-        }
 
-        router.push(`/level/${lastLevel}`);
+            // Buscar el nivel para obtener su acto
+            const targetLevel = levels.find(l => l.id === lastLevelId) || levels[0];
+            const actId = targetLevel.act ?? 0;
+
+            router.push(`/game/${actId}/level/${lastLevelId}`);
+        } catch (err) {
+            console.error("Error redirecting to level:", err);
+            // Fallback en caso de error: ir al nivel P-00 en acto 0
+            router.push("/game/0/level/P-00");
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (
@@ -88,8 +90,8 @@ export default function HeroButton() {
             {hasSave && (
                 <button
                     onClick={() => {
-                        localStorage.removeItem("reboot_save");
-                        router.push("/level/P-00");
+                        deleteSave(); // imported from gameState
+                        router.push("/game");
                     }}
                     className="text-[10px] font-mono text-(--text-ghost) hover:text-(--text-muted) transition-colors mt-1 tracking-widest"
                 >

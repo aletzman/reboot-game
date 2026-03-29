@@ -76,8 +76,8 @@ export default function HomeClient() {
                         { text: "El silencio llegó de golpe." },
                         { text: "El mundo te necesita.", highlight: true },
                     ]}
-                    speed={30}
-                    delayBetweenLines={500}
+                    speed={10}
+                    delayBetweenLines={200}
                 />
             </div>
 
