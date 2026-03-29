@@ -8,10 +8,9 @@ import type {
   LevelAccessResult,
   ActNumber,
   ActSummary,
+  Level,
 } from '@/types/game'
 import * as access from '@/lib/game/access'
-import levelsData from '@/data/levels.json'
-import objectsData from '@/data/objects.json'
 
 // ------------------------------------------------------------
 // CONSTANTES
@@ -190,8 +189,8 @@ export function getObjects(): string[] {
 // ACCESO A NIVELES
 // ------------------------------------------------------------
 
-export function canAccessLevel(levelId: string): LevelAccessResult {
-  return access.canAccessLevel(levelId, getSave())
+export function canAccessLevel(levelId: string, levels: Level[]): LevelAccessResult {
+  return access.canAccessLevel(levelId, getSave(), levels)
 }
 
 export function requiresLogin(levelId: string): boolean {
@@ -202,10 +201,9 @@ export function requiresLogin(levelId: string): boolean {
 // ACTOS
 // ------------------------------------------------------------
 
-export function getActSummary(actNumber: ActNumber): ActSummary {
+export function getActSummary(actNumber: ActNumber, levels: Level[]): ActSummary {
   const save = getSave()
-  const actLevels = (levelsData.levels as { id: string; act: number; actName: string; isReview: boolean; maxStars?: number }[])
-    .filter(l => l.act === actNumber)
+  const actLevels = levels.filter(l => l.act === actNumber)
 
   const reviewLevel = actLevels.find(l => l.isReview)
   const levelIds = actLevels.map(l => l.id) // Include all levels, INCLUDING the review level
@@ -233,8 +231,8 @@ export function getActSummary(actNumber: ActNumber): ActSummary {
   }
 }
 
-export function isActUnlocked(actNumber: number): boolean {
-  return access.isActUnlocked(actNumber, getSave())
+export function isActUnlocked(actNumber: number, levels: Level[]): boolean {
+  return access.isActUnlocked(actNumber, getSave(), levels)
 }
 
 export function getCurrentAct(): ActNumber {
@@ -250,9 +248,8 @@ export function getCurrentAct(): ActNumber {
 // FAIL REDIRECT
 // ------------------------------------------------------------
 
-export function getFailRedirect(levelId: string): string | null {
-  const level = (levelsData.levels as { id: string; failRedirectTo: string | null }[])
-    .find(l => l.id === levelId)
+export function getFailRedirect(levelId: string, levels: Level[]): string | null {
+  const level = levels.find(l => l.id === levelId)
   return level?.failRedirectTo ?? null
 }
 
@@ -278,9 +275,9 @@ export function hasSecretCardCondition(): boolean {
 // ------------------------------------------------------------
 
 export function getObjectName(objectId: string): string {
-  const obj = (objectsData.objects as { id: string; name: string }[])
-    .find(o => o.id === objectId)
-  return obj?.name ?? objectId
+  // Sin objects.json, el nombre debe venir de la UI o de un fetch previo.
+  // Devolvemos el ID como fallback.
+  return objectId
 }
 
 // ------------------------------------------------------------
