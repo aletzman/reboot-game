@@ -15,10 +15,11 @@ export function ActCard({
   reviewLevelId,
   completed,
   totalStars,
+  maxStars: maxStarsProp,
   isLocked,
   onClick
 }: ActCardProps) {
-  const maxStars = levelIds.length * 3 + (reviewLevelId ? 3 : 0)
+  const maxStars = maxStarsProp // Use the one from GameMapClient instead of calculating it locally
   const completionPercentage = Math.round((totalStars / maxStars) * 100) || 0
 
   const baseStyles = "relative flex flex-col h-full bg-(--bg-surface) border border-[#1a2636] group transition-all duration-500 overflow-hidden shadow-2xl"
@@ -93,13 +94,13 @@ export function ActCard({
           {/* Stats Boxes */}
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-[#0c1015] border border-[#1a1f26] flex items-center justify-between p-3 shrink-0">
-              <span className="text-[10px] font-mono text-(--text-ghost) uppercase tracking-widest">Nodos</span>
+              <span className="text-[11px] font-mono text-(--text-muted)/80 uppercase tracking-widest">Nodos</span>
               <span className={`font-mono text-sm font-bold ${isLocked ? 'text-(--text-ghost)' : 'text-white'}`}>{levelIds.length}</span>
             </div>
             <div className={`bg-[#0c1015] border ${isLocked ? 'border-[#1a1f26]' : 'border-(--amber)/30 shadow-[0_0_10px_rgba(239,159,39,0.05)]'} flex items-center justify-between p-3 shrink-0`}>
-              <span className="text-[10px] font-mono text-(--text-ghost) uppercase tracking-widest">Rendimiento</span>
+              <span className="text-[11px] font-mono text-(--text-muted)/80 uppercase tracking-widest">Rendimiento</span>
               <div className="flex items-center gap-1">
-                <span className={`font-mono text-sm font-bold ${isLocked ? 'text-(--text-ghost)' : 'text-(--amber)'}`}>{totalStars}</span>
+                <span className={`font-mono text-sm font-bold ${isLocked ? 'text-(--text-ghost)' : 'text-(--amber)'}`}>{totalStars}/{maxStars}</span>
               </div>
             </div>
           </div>
