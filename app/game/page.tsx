@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { getSave, isActUnlocked } from '@/lib/gameState'
 import { ActSummary } from '@/types/game'
-import levelsData from '@/data/levels.json'
+import { getLevels } from '@/services/levelsService'
 import { ActCard } from '@/components/map/ActCard'
 
 export default function GameMapPage() {
@@ -11,11 +11,13 @@ export default function GameMapPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const generateActs = () => {
-      const actMap = new Map<number, ActSummary>()
-      const saveData = getSave()
+    const generateActs = async () => {
+      try {
+        const actMap = new Map<number, ActSummary>()
+        const saveData = getSave()
+        const levels = await getLevels()
 
-      levelsData.levels.forEach((level: any) => {
+        levels.forEach((level: any) => {
         if (!actMap.has(level.act)) {
           actMap.set(level.act, {
             number: level.act,
@@ -42,9 +44,13 @@ export default function GameMapPage() {
         act.completed = act.levelIds.every(id => saveData?.progress[id]?.completed)
       })
 
-      const sortedActs = Array.from(actMap.values()).sort((a, b) => a.number - b.number)
-      setActs(sortedActs)
-      setLoading(false)
+        const sortedActs = Array.from(actMap.values()).sort((a, b) => a.number - b.number)
+        setActs(sortedActs)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
     }
 
     generateActs()

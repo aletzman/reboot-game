@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { getActSummary, getLevelProgress, canAccessLevel } from '@/lib/gameState'
 import { ActSummary, ActNumber, Level } from '@/types/game'
-import levelsData from '@/data/levels.json'
 import { NavButton } from '@/components/ui/NavButton'
-import { ChevronLeftIcon, ChevronRightIcon, LockIcon, CheckCircle2Icon, CpuIcon, PlayIcon } from 'lucide-react'
+import { ChevronLeftIcon, ChevronRightIcon, LockIcon, CheckCircle2Icon, PlayIcon } from 'lucide-react'
 
 interface ActMapClientProps {
   actId: string
+  levels: Level[]
 }
 
 const typeLabels: Record<string, string> = {
@@ -26,11 +26,9 @@ const typeLabels: Record<string, string> = {
   review: 'REVISIÓN',
 }
 
-export default function ActMapClient({ actId }: ActMapClientProps) {
+export default function ActMapClient({ actId, levels }: ActMapClientProps) {
   const router = useRouter()
   const [act, setAct] = useState<ActSummary | null>(null)
-  const [levels, setLevels] = useState<Level[]>([])
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const actNum = parseInt(actId as string) as ActNumber
@@ -39,16 +37,12 @@ export default function ActMapClient({ actId }: ActMapClientProps) {
       return
     }
 
+    // getActSummary lee localStorage → debe ejecutarse en el cliente
     const summary = getActSummary(actNum)
     setAct(summary)
-
-    const actLevels = (levelsData.levels as any[]).filter(l => l.act === actNum)
-    setLevels(actLevels)
-
-    setLoading(false)
   }, [actId, router])
 
-  if (loading || !act) {
+  if (!act) {
     return (
       <div className="flex-1 bg-black flex items-center justify-center font-mono">
         <div className="flex flex-col items-center gap-6">
