@@ -4,6 +4,7 @@ import { CirclePower, Settings, User, Star } from "lucide-react";
 import { ButtonOption } from "./ButtonOption";
 import { AudioControls } from "./AudioControls";
 import { BackgroundAudio } from "./BackgroundAudio";
+import { AuthButton } from "./AuthButton";
 import { getSave, getTotalStars } from "@/lib/gameState";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -29,7 +30,7 @@ export function Header({ viewMenu, showStats }: HeaderProps) {
     }, [showStats]);
 
     return (
-        <header className="flex items-center justify-between p-2 px-4 bg-(--bg-surface) w-full relative z-10 border-b border-(--bg-hover)">
+        <header className="flex items-center justify-between p-2 px-4 bg-(--bg-surface) w-full relative z-9999  border-b border-(--bg-hover)">
             <BackgroundAudio src="/sounds/intro.mp3" />
 
             <div className="flex items-center gap-6">
@@ -72,6 +73,7 @@ export function Header({ viewMenu, showStats }: HeaderProps) {
 
                 <div className="flex items-center gap-4">
                     <AudioControls />
+                    <AuthButton />
 
                     {viewMenu && (
                         <div className="flex items-center gap-2">
