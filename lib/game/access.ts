@@ -12,8 +12,11 @@ export function canAccessLevel(levelId: string, save: GameSave | null): LevelAcc
   if (FREE_LEVELS.includes(id)) return { allowed: true }
   if (!save) return { allowed: false, reason: 'locked', requiredAct: 0 }
 
-  const level = (levelsData.levels as any[]).find(l => l.id === levelId)
-  if (!level) return { allowed: false, reason: 'locked', requiredAct: 0 }
+  const levels = levelsData.levels as any[]
+  const levelIndex = levels.findIndex(l => l.id === levelId)
+  if (levelIndex === -1) return { allowed: false, reason: 'locked', requiredAct: 0 }
+
+  const level = levels[levelIndex]
 
   // Verificar objetos requeridos
   const reqObjs = level.requiredObjects ?? []
@@ -27,12 +30,30 @@ export function canAccessLevel(levelId: string, save: GameSave | null): LevelAcc
 
   // Verificar que el acto esté desbloqueado
   if (!isActUnlocked(level.act, save)) {
-      return { allowed: false, reason: 'locked', requiredAct: level.act }
+    return { allowed: false, reason: 'locked', requiredAct: level.act }
   }
-  
-  // Si no es el primer nivel del acto, verificar que el anterior esté completado?
-  // Por ahora la regla general es el Acto.
-  
+
+  // 1. Si es el primer nivel del acto, ya pasó isActUnlocked
+  // Buscamos el primer nivel de este acto
+  const firstLevelOfAct = levels.find(l => l.act === level.act)
+  if (firstLevelOfAct && firstLevelOfAct.id === levelId) {
+    return { allowed: true }
+  }
+
+  // 2. Si no es el primero, el anterior debe estar completado
+  // Nota: Consideramos el anterior en el array de niveles
+  if (levelIndex > 0) {
+    const prevLevel = levels[levelIndex - 1]
+    
+    // Si el anterior es de otro acto, este sigue siendo el "primero" en lógica secuencial de este acto
+    if (prevLevel.act !== level.act) return { allowed: true }
+
+    const prevCompleted = save.progress[prevLevel.id]?.completed
+    if (!prevCompleted) {
+      return { allowed: false, reason: 'locked', requiredAct: level.act }
+    }
+  }
+
   return { allowed: true }
 }
 
@@ -44,15 +65,15 @@ export function isActUnlocked(actNumber: number, save: GameSave | null): boolean
   // o si el Acto N-1 está marcado como completado de alguna forma.
   // Regla simple: Al menos un nivel del acto anterior debe estar completado.
   // O mejor aún: el último nivel (Review) del acto anterior debe estar completado.
-  
+
   const prevActNumber = actNumber - 1
   const prevActLevels = (levelsData.levels as any[]).filter(l => l.act === prevActNumber)
-  
+
   if (prevActLevels.length === 0) return true // No hay niveles previos, asumimos desbloqueado
 
   // Si es Acto 1, chequeamos Acto 0 (P-00, P-01)
   if (prevActNumber === 0) {
-      return save.progress['P-01']?.completed || save.progress['P-00']?.completed
+    return save.progress['P-01']?.completed || save.progress['P-00']?.completed
   }
 
   // Para otros actos, buscamos el nivel de Review (X-R)

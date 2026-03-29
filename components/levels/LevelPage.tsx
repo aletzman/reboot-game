@@ -48,6 +48,7 @@ type PageStatus =
     | 'loading'
     | 'blocked-objects'
     | 'blocked-login'
+    | 'blocked-sequence'
     | 'playing'
     | 'complete'
     | 'error'
@@ -103,6 +104,8 @@ export default function LevelPage({ levelId }: PageProps) {
             if (access.blockedBy === 'missing-objects') {
                 setMissing(access.missingObjectNames ?? [])
                 setPageStatus('blocked-objects')
+            } else if (access.blockedBy === 'locked') {
+                setPageStatus('blocked-sequence')
             } else {
                 setPageStatus('error')
             }
@@ -209,6 +212,16 @@ export default function LevelPage({ levelId }: PageProps) {
                 items={missingObjects}
                 onBack={() => router.push('/game')}
                 onInventory={() => router.push('/collection')}
+            />
+        )
+    }
+
+    if (pageStatus === 'blocked-sequence') {
+        return (
+            <BlockedScreen
+                title="SISTEMA BLOQUEADO"
+                message="Completa los niveles anteriores de este sector para habilitar el acceso a este nodo."
+                onBack={() => router.push(`/game/${level?.act ?? 0}`)}
             />
         )
     }
