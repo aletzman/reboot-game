@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { LayersIcon, ChevronLeftIcon } from 'lucide-react'
 import { getUnlockedCards } from '@/lib/gameState'
-import cardsData from '@/data/cards.json'
+import { getCards } from '@/services/cardsService'
 import { Header } from '@/components/ui/Header'
 import { NavButton } from '@/components/ui/NavButton'
 import type { Card } from '@/types/game'
@@ -16,12 +16,24 @@ export default function CardsArchivePage() {
   const [unlockedIds, setUnlockedIds] = useState<string[]>([])
   const [selectedCard, setSelectedCard] = useState<Card | null>(null)
   const [isFlipped, setIsFlipped] = useState(false)
+  const [cards, setCards] = useState<Card[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     setUnlockedIds(getUnlockedCards())
+    getCards().then((data) => {
+      setCards(data)
+      setLoading(false)
+    }).catch(console.error)
   }, [])
 
-  const cards = cardsData.cards as Card[]
+  if (loading) {
+    return (
+      <div className="flex-1 bg-(--bg-void) flex items-center justify-center font-mono h-[calc(100vh-var(--header-height))]">
+        <div className="text-(--green-light) animate-pulse font-bold tracking-[0.5em]">CARGANDO MÓDULOS...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex-1 flex flex-col h-[calc(100vh-var(--header-height))] bg-(--bg-void) relative overflow-y-auto font-sans custom-scrollbar">

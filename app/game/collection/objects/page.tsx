@@ -40,17 +40,29 @@ const typeColors: Record<string, string> = {
   final: 'var(--purple)'
 }
 
-import objectsDataFromFile from '@/data/objects.json'
+import { getObjects as fetchObjects } from '@/services/objectsService'
 
 export default function ObjectsArchivePage() {
   const [unlockedIds, setUnlockedIds] = useState<string[]>([])
   const [selectedObject, setSelectedObject] = useState<GameObject | null>(null)
+  const [objects, setObjects] = useState<GameObject[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     setUnlockedIds(getObjects())
+    fetchObjects().then((data) => {
+      setObjects(data as GameObject[])
+      setLoading(false)
+    }).catch(console.error)
   }, [])
 
-  const objects = objectsDataFromFile.objects as GameObject[]
+  if (loading) {
+    return (
+      <div className="flex-1 bg-(--bg-void) flex items-center justify-center font-mono h-[calc(100vh-var(--header-height))]">
+        <div className="text-(--amber) animate-pulse font-bold tracking-[0.5em]">CARGANDO ARTEFACTOS...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex-1 flex flex-col h-[calc(100vh-var(--header-height))] bg-(--bg-void) relative overflow-y-auto font-sans custom-scrollbar">
@@ -236,7 +248,7 @@ export default function ObjectsArchivePage() {
 
                   <button
                     onClick={() => setSelectedObject(null)}
-                    className="text-(--text-ghost) hover:text-(--amber) transition-all flex items-center gap-2 group/close"
+                    className="text-(--text-ghost) hover:text-(--amber) transition-all flex items-center gap-2 group/close cursor-pointer"
                   >
                     <span className="font-mono text-[9px] uppercase tracking-widest group-hover:mr-2 transition-all">TERMINAR_REGISTRO</span>
                     <XIcon size={20} strokeWidth={1} />
