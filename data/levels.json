@@ -45,7 +45,7 @@
     {
       "id": "1-01",
       "act": 1,
-      "actName": "Boot.exe",
+      "actName": "La primera orden",
       "type": "noderoutine",
       "title": "Primeros Pasos",
       "description": "Lleva el robot a la celda marcada.",
@@ -72,7 +72,7 @@
     {
       "id": "1-02",
       "act": 1,
-      "actName": "Boot.exe",
+      "actName": "La primera orden",
       "type": "noderoutine",
       "title": "Doblando la esquina",
       "description": "El camino ya no es recto. Las direcciones son relativas a la perspectiva del robot.",
@@ -99,7 +99,7 @@
     {
       "id": "1-03",
       "act": 1,
-      "actName": "Boot.exe",
+      "actName": "La primera orden",
       "type": "noderoutine",
       "title": "Niveles de elevación",
       "description": "El mapa tiene diferentes alturas. Usa saltar para subir a un escalón y bajar para descender.",
@@ -126,7 +126,7 @@
     {
       "id": "1-04",
       "act": 1,
-      "actName": "Boot.exe",
+      "actName": "La primera orden",
       "type": "noderoutine",
       "title": "El pasillo largo",
       "description": "Un pasillo de 8 metros. El robot debe recorrerlo completo. Podrías dar 8 instrucciones, pero FRAG sugiere algo más eficiente.",
@@ -153,7 +153,7 @@
     {
       "id": "1-05",
       "act": 1,
-      "actName": "Boot.exe",
+      "actName": "La primera orden",
       "type": "puzzle-match",
       "title": "¿Cuál camino?",
       "description": "Dos caminos. Uno lleva al panel activo, el otro a un callejón sin salida. El robot no puede ver — tú decides.",
@@ -180,7 +180,7 @@
     {
       "id": "1-06",
       "act": 1,
-      "actName": "Boot.exe",
+      "actName": "La primera orden",
       "type": "noderoutine",
       "title": "Sector energético",
       "description": "Tres generadores. Deben activarse en orden específico o el circuito se sobrecarga. El orden importa.",
@@ -209,7 +209,7 @@
     {
       "id": "1-07",
       "act": 1,
-      "actName": "Boot.exe",
+      "actName": "La primera orden",
       "type": "noderoutine",
       "title": "El núcleo del sector",
       "description": "El núcleo de energía del sector norte. El reto más complejo hasta ahora: secuencias largas, repeticiones y decisiones en un solo mapa.",
@@ -238,7 +238,7 @@
     {
       "id": "1-08",
       "act": 1,
-      "actName": "Boot.exe",
+      "actName": "La primera orden",
       "type": "noderoutine",
       "title": "La colina",
       "description": "Un terreno escarpado requiere múltiples saltos y planeación cuidadosa para no chocar o caer incorrectamente.",
@@ -263,7 +263,7 @@
     {
       "id": "1-09",
       "act": 1,
-      "actName": "Boot.exe",
+      "actName": "La primera orden",
       "type": "noderoutine",
       "title": "Caída vertical",
       "description": "Bajar a gran velocidad usando saltos en serie para activar múltiples núcleos antes del sistema principal.",
@@ -288,7 +288,7 @@
     {
       "id": "1-R",
       "act": 1,
-      "actName": "Boot.exe",
+      "actName": "La primera orden",
       "type": "review",
       "title": "Protocolo de verificación — Acto I",
       "description": "Antes de avanzar al sector sur, el sistema exige verificar que dominas los fundamentos. Secuencia, loops, condicionales y orden de ejecución — todo en una sola prueba.",
@@ -327,7 +327,7 @@
     {
       "id": "2-01",
       "act": 2,
-      "actName": "Pseudocódigo",
+      "actName": "Palabras de maquina",
       "type": "logicassembly",
       "title": "Inyección Lógica",
       "description": "El sector 2 tiene sistemas más complejos. Las señales de radio ya no bastan — necesitas inyectar instrucciones directas en el bus de datos.",
@@ -356,7 +356,7 @@
     {
       "id": "2-02",
       "act": 2,
-      "actName": "Pseudocódigo",
+      "actName": "Palabras de maquina",
       "type": "puzzle-sort",
       "title": "Instrucciones desordenadas",
       "description": "Un robot anterior dejó las instrucciones mezcladas. El programa existe — solo está en el orden equivocado. Ordénalo.",
@@ -381,7 +381,7 @@
     {
       "id": "2-03",
       "act": 2,
-      "actName": "Pseudocódigo",
+      "actName": "Palabras de maquina",
       "type": "logicassembly",
       "title": "Subrutinas de Red",
       "description": "El circuito requiere la misma señal en 3 nodos diferentes. Definir un procedimiento y reutilizarlo optimizará nuestra huella en el sistema.",
@@ -408,7 +408,7 @@
     {
       "id": "2-04",
       "act": 2,
-      "actName": "Pseudocódigo",
+      "actName": "Palabras de maquina",
       "type": "puzzle-fill",
       "title": "El código incompleto",
       "description": "Un ingeniero dejó un programa casi terminado. Solo faltan algunas piezas — cajas vacías que necesitan un valor.",
@@ -436,7 +436,7 @@
     {
       "id": "2-05",
       "act": 2,
-      "actName": "Pseudocódigo",
+      "actName": "Palabras de maquina",
       "type": "puzzle-bug",
       "title": "El bug del sector",
       "description": "El sistema falla. Hay un error escondido en 8 líneas de pseudocódigo. Encuéntralo y corrígelo.",
@@ -463,7 +463,7 @@
     {
       "id": "2-06",
       "act": 2,
-      "actName": "Pseudocódigo",
+      "actName": "Palabras de maquina",
       "type": "speedtyping",
       "title": "Transmisión de emergencia",
       "description": "FRAG detecta una señal con información crítica. Se degrada rápido. Tienes 60 segundos para transcribirla.",
@@ -487,7 +487,7 @@
     {
       "id": "2-07",
       "act": 2,
-      "actName": "Pseudocódigo",
+      "actName": "Palabras de maquina",
       "type": "logicassembly",
       "title": "Reinicio del Núcleo Lógico",
       "description": "El corazón del sector 2 está apagado. Todo lo aprendido hasta ahora debe converger para reactivar los buses principales.",
@@ -566,7 +566,7 @@
     {
       "id": "2-R",
       "act": 2,
-      "actName": "Pseudocódigo",
+      "actName": "Palabras de maquina",
       "type": "review",
       "title": "Protocolo de verificación — Acto II",
       "description": "Antes de acceder al Laboratorio de Lenguajes, el sistema verifica que dominas el pseudocódigo completo.",
