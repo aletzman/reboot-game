@@ -4,54 +4,15 @@
 // ============================================================
 
 import type { Level, LevelType, Card, GameObject, LevelState } from '@/types/game'
-import levelsData from '@/data/levels.json'
-import cardsData from '@/data/cards.json'
-import objectsData from '@/data/objects.json'
 import {
-  canAccessLevel,
   saveProgress,
   unlockCard,
   unlockObject,
   getSave,
-  shouldSuggestRedirect,
-  getFailRedirect,
+  canAccessLevel,
 } from '@/lib/gameState'
 
-// ------------------------------------------------------------
-// OBTENER NIVEL POR ID
-// ------------------------------------------------------------
-
-// después
-export function getLevelById(id: string): Level | null {
-  const normalized = id.toUpperCase().replace('%2F', '/')
-  const level = (levelsData.levels as Level[]).find(
-    l => l.id.toUpperCase() === normalized
-  )
-  console.log(level)
-  return level ?? null
-}
-
-export function getAllLevels(): Level[] {
-  return levelsData.levels as Level[]
-}
-
-export function getLevelsByAct(act: number): Level[] {
-  return (levelsData.levels as Level[]).filter(l => l.act === act)
-}
-
-export function getNextLevelId(currentId: string): string | null {
-  const levels = levelsData.levels as Level[]
-  const idx = levels.findIndex(l => l.id === currentId)
-  if (idx === -1 || idx === levels.length - 1) return null
-  return levels[idx + 1].id
-}
-
-export function getPrevLevelId(currentId: string): string | null {
-  const levels = levelsData.levels as Level[]
-  const idx = levels.findIndex(l => l.id === currentId)
-  if (idx <= 0) return null
-  return levels[idx - 1].id
-}
+// Los buscadores de datos ahora deben venir de los servicios o ser pasados como parámetros.
 
 // ------------------------------------------------------------
 // COMPONENTE POR TIPO
@@ -109,13 +70,13 @@ export interface CompletionResult {
 }
 
 export function completeLevel(
-  levelId: string,
+  level: Level,
   stars: 0 | 1 | 2 | 3,
-  usedFrag: boolean
+  usedFrag: boolean,
+  allLevels: Level[],
+  allCards: Card[],
+  allObjects: GameObject[]
 ): CompletionResult {
-  const level = getLevelById(levelId)
-  if (!level) throw new Error(`Nivel no encontrado: ${levelId}`)
-
   const canonicalId = level.id
 
   // guardar progreso
@@ -124,7 +85,7 @@ export function completeLevel(
   // desbloquear cartas
   const newCards: Card[] = []
   for (const cardId of level.rewardCards) {
-    const card = getCardById(cardId)
+    const card = allCards.find(c => c.id === cardId)
     if (card) {
       unlockCard(cardId)
       newCards.push(card)
@@ -132,10 +93,9 @@ export function completeLevel(
   }
 
   // desbloquear objetos
-  // los objetos de repaso solo se dan con 3 estrellas
   const newObjects: GameObject[] = []
   for (const objId of level.rewardObjects) {
-    const obj = getObjectById(objId)
+    const obj = allObjects.find(o => o.id === objId)
     if (!obj) continue
 
     const needsThreeStars = level.isReview && obj.obtainCondition?.includes('3 estrellas')
@@ -145,14 +105,14 @@ export function completeLevel(
     newObjects.push(obj)
   }
 
-  // carta secreta — si nunca usó FRAG en todo el juego
+  // carta secreta
   const save = getSave()
   const secretCardUnlocked =
     !usedFrag &&
     (save?.fragUsedTotal ?? 0) === 0 &&
     canonicalId === '5-02'
 
-  // sugerir redirect si falló mucho en algún nivel relacionado
+  // sugerir redirect
   let suggestRedirect: string | null = null
   if (stars < 2 && level.failRedirectTo) {
     suggestRedirect = level.failRedirectTo
@@ -164,8 +124,14 @@ export function completeLevel(
     newObjects,
     secretCardUnlocked,
     suggestRedirect,
-    nextLevelId: getNextLevelId(canonicalId),
+    nextLevelId: getNextLevelId(canonicalId, allLevels),
   }
+}
+
+function getNextLevelId(currentId: string, allLevels: Level[]): string | null {
+  const idx = allLevels.findIndex(l => l.id === currentId)
+  if (idx === -1 || idx === allLevels.length - 1) return null
+  return allLevels[idx + 1].id
 }
 
 // ------------------------------------------------------------
@@ -179,21 +145,19 @@ export interface AccessCheck {
   message?: string
 }
 
-export function checkLevelAccess(levelId: string): AccessCheck {
-  const result = canAccessLevel(levelId)
+export function checkLevelAccess(levelId: string, allLevels: Level[]): AccessCheck {
+  const result = canAccessLevel(levelId, allLevels)
 
   if (result.allowed) return { allowed: true }
 
   if (result.reason === 'missing-objects') {
-    const names = result.objects.map(id => {
-      const obj = getObjectById(id)
-      return obj?.name ?? id
-    })
+    // Nota: El objeto nombre ahora se espera que venga de la UI o se asigne el ID
+    const names = result.objects
     return {
       allowed: false,
       blockedBy: 'missing-objects',
       missingObjectNames: names,
-      message: `Necesitas: ${names.join(', ')}`,
+      message: `Necesitas los objetos requeridos`,
     }
   }
 
@@ -215,17 +179,26 @@ export interface RepasHint {
   message: string | null
 }
 
-export function getReviewHint(levelId: string): RepasHint {
-  if (!shouldSuggestRedirect(levelId)) {
+export function getReviewHint(levelId: string, levels: Level[]): RepasHint {
+  const save = getSave()
+  if (!save) return { shouldShow: false, levelId: null, levelTitle: null, message: null }
+
+  // Buscamos si falló mucho
+  const progress = save.progress[levelId]
+  const shouldSuggest = (progress?.attempts ?? 0) >= 3 && !progress?.completed
+  
+  if (!shouldSuggest) {
     return { shouldShow: false, levelId: null, levelTitle: null, message: null }
   }
 
-  const redirectId = getFailRedirect(levelId)
+  const level = levels.find(l => l.id === levelId)
+  const redirectId = level?.failRedirectTo
+  
   if (!redirectId) {
     return { shouldShow: false, levelId: null, levelTitle: null, message: null }
   }
 
-  const redirectLevel = getLevelById(redirectId)
+  const redirectLevel = levels.find(l => l.id === redirectId)
   return {
     shouldShow: true,
     levelId: redirectId,
@@ -238,8 +211,7 @@ export function getReviewHint(levelId: string): RepasHint {
 // OBJETOS CONSULTABLES EN EL NIVEL
 // ------------------------------------------------------------
 
-export function getAvailableHintObjects(levelId: string): GameObject[] {
-  const level = getLevelById(levelId)
+export function getAvailableHintObjects(level: Level, allObjects: GameObject[]): GameObject[] {
   if (!level?.hintObjects) return []
 
   const save = getSave()
@@ -247,15 +219,13 @@ export function getAvailableHintObjects(levelId: string): GameObject[] {
 
   return level.hintObjects
     .filter(objId => save.objects.includes(objId))
-    .map(objId => getObjectById(objId))
-    .filter((obj): obj is GameObject => obj !== null)
+    .map(objId => allObjects.find(o => o.id === objId))
+    .filter((obj): obj is GameObject => obj !== undefined)
 }
 
-export function canUseHintObject(levelId: string, hintsUsed: number): boolean {
-  const level = getLevelById(levelId)
+export function canUseHintObject(level: Level, hintsUsed: number): boolean {
   if (!level?.hintObjects) return false
-  // máximo 2 consultas de objetos por nivel en el nivel final
-  const maxHints = levelId === '5-02' ? 2 : 99
+  const maxHints = level.id === '5-02' ? 2 : 99
   return hintsUsed < maxHints
 }
 
@@ -263,68 +233,6 @@ export function canUseHintObject(levelId: string, hintsUsed: number): boolean {
 // HELPERS DE DATOS
 // ------------------------------------------------------------
 
-export function getCardById(id: string): Card | null {
-  const card = (cardsData.cards as Card[]).find(c => c.id === id)
-  return card ?? null
-}
+// Estas funciones de ayuda se han eliminado por redundancia con los servicios.
 
-export function getObjectById(id: string): GameObject | null {
-  const obj = (objectsData.objects as GameObject[]).find(o => o.id === id)
-  return obj ?? null
-}
-
-export function getCardsByRarity(rarity: string): Card[] {
-  return (cardsData.cards as Card[]).filter(c => c.rarity === rarity)
-}
-
-export function getRequiredObjectsForLevel(levelId: string): GameObject[] {
-  const level = getLevelById(levelId)
-  if (!level) return []
-  return level.requiredObjects
-    .map(id => getObjectById(id))
-    .filter((obj): obj is GameObject => obj !== null)
-}
-
-// ------------------------------------------------------------
-// MAPA DEL MUNDO — estado de sectores
-// ------------------------------------------------------------
-
-export interface SectorInfo {
-  act: number
-  name: string
-  levels: Level[]
-  reviewLevel: Level | null
-  completedCount: number
-  totalCount: number
-  isUnlocked: boolean
-  isCompleted: boolean
-}
-
-export function getSectorInfo(actNumber: number): SectorInfo {
-  const save = getSave()
-  const allLevels = getLevelsByAct(actNumber)
-  const regularLevels = allLevels.filter(l => !l.isReview)
-  const reviewLevel = allLevels.find(l => l.isReview) ?? null
-
-  const completedCount = regularLevels.filter(
-    l => save?.progress[l.id]?.completed
-  ).length
-
-  // un sector está desbloqueado si el anterior está completo
-  const prevActCompleted = actNumber === 0
-    ? true
-    : getLevelsByAct(actNumber - 1)
-        .filter(l => !l.isReview)
-        .every(l => save?.progress[l.id]?.completed)
-
-  return {
-    act: actNumber,
-    name: allLevels[0]?.actName ?? '',
-    levels: regularLevels,
-    reviewLevel,
-    completedCount,
-    totalCount: regularLevels.length,
-    isUnlocked: prevActCompleted,
-    isCompleted: completedCount === regularLevels.length,
-  }
-}
+// Se eliminó getSectorInfo porque ahora GameMapClient genera los actos directamente con la data de la DB.
