@@ -19,7 +19,7 @@ import { requiresLogin, getSave } from '@/lib/gameState'
 import LevelComplete from '@/components/ui/LevelComplete'
 import FragAssistant from '@/components/frag/FragAssistant'
 import { getDialogues } from '@/services/dialoguesService'
-import { Radio, X as CloseIcon } from 'lucide-react'
+import { Radio } from 'lucide-react'
 
 // ------------------------------------------------------------
 // IMPORTS DINÁMICOS — cada componente solo carga cuando se necesita

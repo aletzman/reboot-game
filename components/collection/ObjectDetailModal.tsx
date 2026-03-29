@@ -1,8 +1,9 @@
 "use client"
 
 import { motion, AnimatePresence } from 'motion/react'
-import { XIcon, ZapIcon, CpuIcon, TerminalIcon, DatabaseIcon, ActivityIcon, AlertCircleIcon } from 'lucide-react'
+import { ZapIcon, CpuIcon, TerminalIcon, DatabaseIcon, ActivityIcon, AlertCircleIcon } from 'lucide-react'
 import { ObjectScanner } from '@/components/collection/ObjectScanner'
+import { CloseButton } from '@/components/ui/CloseButton'
 import type { GameObject } from '@/types/game'
 
 interface ObjectDetailModalProps {
@@ -64,13 +65,7 @@ export function ObjectDetailModal({ selectedObject, onClose }: ObjectDetailModal
                                 <div className="flex gap-1 opacity-20">
                                     {[...Array(4)].map((_, i) => <div key={i} className="w-2 h-0.5 bg-white" />)}
                                 </div>
-                                <button
-                                    onClick={onClose}
-                                    className="ml-4 h-full px-4 bg-(--red)/10 hover:bg-(--red) border-l border-[#1c212b] group/close transition-all flex items-center gap-2 cursor-pointer"
-                                >
-                                    <span className="text-[8px] font-mono text-(--red) group-hover:text-white font-black uppercase tracking-widest">ESC</span>
-                                    <XIcon size={14} className="text-(--red) group-hover:text-white" strokeWidth={3} />
-                                </button>
+                                <CloseButton onClick={onClose} className="ml-2 -mt-1.5" size='sm' />
                             </div>
                         </div>
 

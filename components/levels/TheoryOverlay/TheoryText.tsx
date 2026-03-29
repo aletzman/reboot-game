@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'motion/react'
-import { Info, HelpCircle, GraduationCap, X } from 'lucide-react'
+import { Info, HelpCircle, GraduationCap } from 'lucide-react'
+import { CloseButton } from '@/components/ui/CloseButton'
 import { getGlossary } from '@/services/glossaryService'
 
 interface GlossaryTerm {
@@ -138,12 +139,10 @@ function TheoryTerm({ term }: { term: GlossaryTerm }) {
                                             REF_DB / {term.id.toUpperCase()}
                                         </span>
                                     </div>
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
-                                        className="text-(--text-ghost) hover:text-(--red) transition-colors p-1"
-                                    >
-                                        <X size={14} />
-                                    </button>
+                                        <CloseButton 
+                                            size="sm" 
+                                            onClick={() => setIsOpen(false)} 
+                                        />
                                 </div>
 
                                 {/* Mode Toggle - Switch style */}

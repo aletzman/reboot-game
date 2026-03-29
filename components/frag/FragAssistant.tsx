@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { X, Activity, ShieldAlert, Cpu, ArrowRight } from 'lucide-react'
+import { Activity, ShieldAlert, Cpu, ArrowRight } from 'lucide-react'
+import { CloseButton } from '@/components/ui/CloseButton'
 import { getDialogues } from '@/services/dialoguesService'
 
 // ------------------------------------------------------------
@@ -142,12 +143,10 @@ export default function FragAssistant({ hint, onUse, feedback, autoOpen = false 
                             </div>
                         </div>
                     </div>
-                    <button
-                        onClick={() => { setFragState('idle'); setIsDismissed(true); }}
-                        className="p-1.5 rounded-lg hover:bg-white/5 transition-all border border-transparent hover:border-white/10 group cursor-pointer active:scale-90"
-                    >
-                        <X className="w-4 h-4 text-(--text-ghost) group-hover:text-(--purple) transition-colors" />
-                    </button>
+                    <CloseButton 
+                        size="sm" 
+                        onClick={() => { setFragState('idle'); setIsDismissed(true); }} 
+                    />
                 </div>
 
                 {fragState === 'confirming' ? (

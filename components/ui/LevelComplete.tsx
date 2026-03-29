@@ -9,7 +9,7 @@
 import React, { useState, useEffect, useMemo, memo } from 'react'
 import type { Card, GameObject } from '@/types/game'
 import { Button } from './Button'
-import { RotateCcwIcon, HardDriveIcon, XIcon, ChevronsRightIcon, DatabaseIcon, CpuIcon, ActivityIcon } from 'lucide-react'
+import { RotateCcwIcon, HardDriveIcon, ChevronsRightIcon, DatabaseIcon, CpuIcon, ActivityIcon } from 'lucide-react'
 import { DataCartridge, RARITY_STYLES } from '@/components/cards/DataCartridge'
 import { CardDetailModal } from '@/components/cards/CardDetailModal'
 

@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react'
-import { XIcon } from 'lucide-react'
+import { CloseButton } from '@/components/ui/CloseButton'
 import { DataCartridge } from '@/components/cards/DataCartridge'
 import type { Card } from '@/types/game'
 
@@ -26,19 +26,17 @@ export function CardDetailModal({ selectedCard, isFlipped, onClose, onFlip }: Ca
             className="relative flex flex-col items-center gap-10"
           >
             {/* Header info bubble */}
-            <div className="absolute -top-16 left-1/2 -translate-x-1/2 flex items-center gap-4 whitespace-nowrap">
+            <div className="absolute -top-5 left-1/2 -translate-x-1/2 flex items-center gap-4 whitespace-nowrap">
               <div className="px-4 py-1.5 bg-(--green-darkest) border border-(--green-base) text-[10px] text-(--green-light) font-bold uppercase tracking-[0.2em] shadow-[0_0_20px_var(--green-darkest)]">
                 LÓGICA_DE_MEMORIA_AISLADA
               </div>
             </div>
 
             {/* Close Button UI */}
-            <button
-              className="absolute -top-16 right-0 md:-right-16 p-2 text-(--text-muted) hover:text-(--red) transition-all hover:rotate-90"
+            <CloseButton
               onClick={onClose}
-            >
-              <XIcon size={32} strokeWidth={1} />
-            </button>
+              className="absolute -top-20 right-0 md:right-0"
+            />
 
             {/* THE CARD */}
             <div className="relative">
