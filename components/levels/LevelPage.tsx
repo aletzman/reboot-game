@@ -15,14 +15,11 @@ import {
     initLevelState,
     completeLevel,
     getReviewHint,
-    getAvailableHintObjects,
-    LEVEL_COMPONENT_MAP,
 } from '@/lib/levelEngine'
 import { requiresLogin, getSave } from '@/lib/gameState'
-import { Header as GameHeader } from '@/components/ui/Header'
 import LevelComplete from '@/components/ui/LevelComplete'
 import FragAssistant from '@/components/frag/FragAssistant'
-import dialogues from '@/data/dialogues.json'
+import { getDialogues } from '@/services/dialoguesService'
 import { Radio, X as CloseIcon } from 'lucide-react'
 
 // ------------------------------------------------------------
@@ -298,12 +295,14 @@ function renderLevelComponent(
 // ------------------------------------------------------------
 
 function LoadingScreen() {
-    const [tip, setTip] = useState<string>(dialogues.frag.ambient_tips[0])
+    const [tip, setTip] = useState<string>('')
 
     useEffect(() => {
-        const tips = dialogues.frag.ambient_tips
-        const randomTip = tips[Math.floor(Math.random() * tips.length)]
-        setTip(randomTip)
+        getDialogues().then(data => {
+            const tips = data.frag.ambient_tips
+            const randomTip = tips[Math.floor(Math.random() * tips.length)]
+            setTip(randomTip)
+        }).catch(console.error)
     }, [])
 
     return (
@@ -386,75 +385,5 @@ function BlockedScreen({ title, message, items, onBack, onInventory, onLogin }: 
                 )}
             </div>
         </div>
-    )
-}
-
-function NarrativeBanner({ text }: { text: string }) {
-    const [visible, setVisible] = useState(true)
-    const isFrag = text.toUpperCase().startsWith('FRAG:') || text.startsWith('// FRAG')
-    const displayText = isFrag ? text.replace(/^FRAG:\s*/i, '').replace(/^\/\/\s*FRAG\s*/i, '') : text
-    const identity = dialogues.frag.identity
-
-    if (!visible) return null
-
-    return (
-        <>
-            {/* Overlay para cerrar al hacer click fuera */}
-            <div
-                className="fixed inset-0 z-190 bg-transparent cursor-default pointer-events-auto"
-                onClick={() => setVisible(false)}
-            />
-            <div className="fixed top-20 left-1/2 -translate-x-1/2 z-200 w-full max-w-[500px] px-6 py-4 pointer-events-none group">
-                <div className={`
-                    bg-(--bg-elevated)/95 backdrop-blur-xl border border-(--purple)/40 rounded-xl p-5 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] pointer-events-auto relative overflow-hidden transition-all hover:scale-[1.02]
-                    ${isFrag ? 'border-l-4 border-l-(--purple)' : 'border-t-2 border-t-(--purple)'}
-                `}>
-                    <div className="absolute inset-0 pointer-events-none opacity-5">
-                        <div className="w-full h-[2px] bg-(--purple) animate-[scan_4s_linear_infinite]" />
-                    </div>
-
-                    <div className="flex items-center justify-between border-b border-(--purple)/10 pb-2 mb-4">
-                        <div className="flex items-center gap-2.5 text-(--purple)">
-                            <Radio size={14} className={isFrag ? "animate-pulse" : ""} />
-                            <div className="flex flex-col">
-                                <span className="font-mono text-[10px] font-bold tracking-[0.2em] uppercase">
-                                    {isFrag ? identity.full_name : "SISTEMA_LOCAL"}
-                                </span>
-                                {isFrag && (
-                                    <span className="font-mono text-[7px] opacity-60 tracking-wider">INTEGRIDAD: {identity.memory_integrity}</span>
-                                )}
-                            </div>
-                        </div>
-                        <button onClick={() => setVisible(false)} className="text-(--text-ghost) hover:text-(--red) transition-colors p-1">
-                            <CloseIcon size={14} />
-                        </button>
-                    </div>
-
-                    <div className={`font-mono text-[14px] text-(--text-primary) leading-relaxed ${isFrag ? 'italic pl-2' : ''}`}>
-                        {isFrag && <span className="text-(--purple) font-mono mr-2">[{">"}]</span>}
-                        {displayText}
-                    </div>
-
-                    <div className="flex justify-between items-end mt-5">
-                        <div className="flex gap-1">
-                            <div className="w-1 h-1 bg-(--purple)/30 rounded-full" />
-                            <div className="w-1 h-1 bg-(--purple)/60 rounded-full" />
-                            <div className="w-1 h-1 bg-(--purple) rounded-full animate-pulse" />
-                        </div>
-                        <button onClick={() => setVisible(false)} className="font-mono text-[9px] text-(--purple)/60 hover:text-(--purple) transition-all uppercase tracking-[.3em]">
-                            [ ARCHIVAR_DATOS ]
-                        </button>
-                    </div>
-                </div>
-
-                <style dangerouslySetInnerHTML={{
-                    __html: `
-                    @keyframes scan {
-                        0% { transform: translateY(-100%); }
-                        100% { transform: translateY(400%); }
-                    }
-                `}} />
-            </div>
-        </>
     )
 }

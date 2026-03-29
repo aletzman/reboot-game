@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { getSave } from "@/lib/gameState";
-import levelsData from "@/data/levels.json";
+import { getLevels } from "@/services/levelsService";
 
 export default function HeroButton() {
     const router = useRouter();
     const [visible, setVisible] = useState(false);
     const [hasSave, setHasSave] = useState(false);
     const [saveInfo, setSaveInfo] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => setVisible(true), 5500);
@@ -25,7 +26,9 @@ export default function HeroButton() {
         return () => clearTimeout(timer);
     }, []);
 
-    function handleClick() {
+    async function handleClick() {
+        if (isLoading) return;
+        
         const save = getSave();
         if (!save) {
             router.push("/level/P-00");
@@ -36,10 +39,17 @@ export default function HeroButton() {
 
         // Si el nivel guardado ya está completado, ir al siguiente nivel
         if (save.progress[lastLevel]?.completed) {
-            const levels = levelsData.levels;
-            const currentIndex = levels.findIndex((l) => l.id === lastLevel);
-            if (currentIndex !== -1 && currentIndex + 1 < levels.length) {
-                lastLevel = levels[currentIndex + 1].id;
+            setIsLoading(true);
+            try {
+                const levels = await getLevels();
+                const currentIndex = levels.findIndex((l) => l.id === lastLevel);
+                if (currentIndex !== -1 && currentIndex + 1 < levels.length) {
+                    lastLevel = levels[currentIndex + 1].id;
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setIsLoading(false);
             }
         }
 
@@ -58,12 +68,13 @@ export default function HeroButton() {
         >
             <button
                 onClick={handleClick}
-                className="btn-glow group relative flex items-center gap-3 px-10 py-4 bg-(--green-base) text-(--bg-deep) text-lg font-bold font-mono rounded-xs transition-all duration-300 ease-in-out hover:bg-(--green-light) hover:scale-105 active:scale-95 cursor-pointer"
+                disabled={isLoading}
+                className="btn-glow group relative flex items-center gap-3 px-10 py-4 bg-(--green-base) text-(--bg-deep) text-lg font-bold font-mono rounded-xs transition-all duration-300 ease-in-out hover:bg-(--green-light) hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 <span className="relative z-10 tracking-wider">
-                    {hasSave ? "CONTINUAR" : "DESPERTAR"}
+                    {isLoading ? "CARGANDO..." : hasSave ? "CONTINUAR" : "DESPERTAR"}
                 </span>
-                <ChevronRight className="relative z-10 size-5 transition-transform duration-300 group-hover:translate-x-1" />
+                <ChevronRight className={`relative z-10 size-5 transition-transform duration-300 ${!isLoading && 'group-hover:translate-x-1'}`} />
             </button>
 
             {/* Texto debajo del botón */}

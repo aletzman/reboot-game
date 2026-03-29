@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { X, Activity, ShieldAlert, Cpu, ArrowRight } from 'lucide-react'
-import dialogues from '@/data/dialogues.json'
+import { getDialogues } from '@/services/dialoguesService'
 
 // ------------------------------------------------------------
 // TIPOS
@@ -28,15 +28,17 @@ export default function FragAssistant({ hint, onUse, feedback, autoOpen = false 
     const [reactionText, setReactionText] = useState('')
     const containerRef = useRef<HTMLDivElement>(null)
 
-    // Memorizar diálogos para evitar cambios en rerenders
-    const fragDialogues = dialogues.frag
-    const { identity } = fragDialogues
+    const [fragDialogues, setFragDialogues] = useState<any>(null)
+
+    useEffect(() => {
+        getDialogues().then(data => setFragDialogues(data.frag)).catch(console.error)
+    }, [])
 
     const randomIntro = useMemo(() =>
-        fragDialogues.intros[Math.floor(Math.random() * fragDialogues.intros.length)], []
+        fragDialogues ? fragDialogues.intros[Math.floor(Math.random() * fragDialogues.intros.length)] : '', [fragDialogues]
     )
     const randomConfirmation = useMemo(() =>
-        fragDialogues.confirmations[Math.floor(Math.random() * fragDialogues.confirmations.length)], []
+        fragDialogues ? fragDialogues.confirmations[Math.floor(Math.random() * fragDialogues.confirmations.length)] : '', [fragDialogues]
     )
 
     // Typewriter del hint
@@ -105,6 +107,9 @@ export default function FragAssistant({ hint, onUse, feedback, autoOpen = false 
 
     if (isDismissed) return null
     if (fragState === 'idle') return null
+    if (!fragDialogues) return null
+
+    const identity = fragDialogues.identity
 
     return (
         <div className={containerClasses} ref={containerRef}>

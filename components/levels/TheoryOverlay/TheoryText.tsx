@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'motion/react'
 import { Info, HelpCircle, GraduationCap, X } from 'lucide-react'
-import glossaryData from '@/data/glossary.json'
+import { getGlossary } from '@/services/glossaryService'
 
 interface GlossaryTerm {
     id: string
@@ -13,17 +13,24 @@ interface GlossaryTerm {
     human: string
 }
 
-const glossary: GlossaryTerm[] = glossaryData.terms
-
-// Pre-calculate regex outside of render cycle
-const sortedTerms = [...glossary].sort((a, b) => b.term.length - a.term.length)
-const combinedPattern = new RegExp(`(\\*[^\\*]+\\*)|\\b(${sortedTerms.map(t => t.term).join('|')})\\b`, 'gi')
-
 interface TheoryTextProps {
     text: string
 }
 
 export function TheoryText({ text }: TheoryTextProps) {
+    const [glossary, setGlossary] = useState<GlossaryTerm[]>([])
+    const [combinedPattern, setCombinedPattern] = useState<RegExp | null>(null)
+
+    useEffect(() => {
+        getGlossary().then((data: GlossaryTerm[]) => {
+            setGlossary(data)
+            const sortedTerms = [...data].sort((a, b) => b.term.length - a.term.length)
+            setCombinedPattern(new RegExp(`(\\*[^\\*]+\\*)|\\b(${sortedTerms.map(t => t.term).join('|')})\\b`, 'gi'))
+        }).catch(console.error)
+    }, [])
+
+    if (!combinedPattern) return <span>{text}</span>
+
     // Split text using the combined pattern
     const parts = text.split(combinedPattern).filter(part => part !== undefined)
 
