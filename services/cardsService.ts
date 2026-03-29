@@ -25,7 +25,7 @@ export async function getCards(filters?: {
   if (filters?.actName) params.set('actName', filters.actName)
 
   const query = params.toString()
-  const res = await fetch(`${BASE()}${query ? `?${query}` : ''}`, { cache: 'force-cache' })
+  const res = await fetch(`${BASE()}${query ? `?${query}` : ''}`, { cache: 'force-cache', next: { revalidate: 3600 } })
 
   if (!res.ok) throw new Error(`Error al obtener cartas: ${res.statusText}`)
 
@@ -37,7 +37,7 @@ export async function getCards(filters?: {
  * Obtiene una carta específica por su ID.
  */
 export async function getCardById(id: string): Promise<Card | null> {
-  const res = await fetch(`${BASE()}/${encodeURIComponent(id)}`, { cache: 'force-cache' })
+  const res = await fetch(`${BASE()}/${encodeURIComponent(id)}`, { cache: 'force-cache', next: { revalidate: 3600 } })
 
   if (res.status === 404) return null
   if (!res.ok) throw new Error(`Error al obtener carta: ${res.statusText}`)

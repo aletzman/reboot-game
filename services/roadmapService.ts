@@ -16,7 +16,7 @@ export interface Roadmap {
  * Obtiene el roadmap pedagógico completo.
  */
 export async function getRoadmap(): Promise<Roadmap> {
-  const res = await fetch(BASE(), { cache: 'force-cache' })
+  const res = await fetch(BASE(), { cache: 'force-cache', next: { revalidate: 3600 } })
 
   if (!res.ok) throw new Error(`Error al obtener roadmap: ${res.statusText}`)
 
