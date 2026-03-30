@@ -84,14 +84,15 @@ export function CardRackSlot({ card, idx, isUnlocked, isSelected, onSelect }: Ca
 
         {/* RACK FRONT PANEL / CONNECTION BAR (HATCH MECHANISM) */}
         <div
-          className={`absolute bottom-0 inset-x-2 h-16 z-25 pointer-events-none flex flex-col justify-end overflow-visible transition-all duration-500 ease-in-out`}
+          className={`absolute bottom-0 inset-x-2 h-16 z-25 flex flex-col justify-end overflow-visible transition-all duration-500 ease-in-out`}
           style={{
             transformOrigin: 'bottom',
             perspective: '1000px',
             transform: isSelected ? 'perspective(1000px) rotateX(-65deg) translateY(10px)' : 'perspective(1000px) rotateX(0deg) translateY(0)',
             opacity: isSelected ? 0.7 : 1,
             // Delay the closing just enough to let the card land first
-            transitionDelay: isSelected ? '0ms' : '200ms'
+            transitionDelay: isSelected ? '0ms' : '200ms',
+            pointerEvents: isSelected ? 'none' : 'auto'
           }}
         >
 
@@ -108,6 +109,8 @@ export function CardRackSlot({ card, idx, isUnlocked, isSelected, onSelect }: Ca
             {/* Tornillos */}
             <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-black border border-white/10 shadow-inner" />
             <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-black border border-white/10 shadow-inner" />
+
+
 
             {/* Status LED of the Rack itself */}
             <div className="absolute bottom-2 left-2 flex items-center gap-1.5">

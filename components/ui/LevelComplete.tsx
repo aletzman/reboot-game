@@ -1,9 +1,3 @@
-// ============================================================
-// REBOOT — components/ui/LevelComplete.tsx
-// Modal que aparece al terminar un nivel
-// Muestra estrellas, cartas desbloqueadas, objetos y opciones
-// ============================================================
-
 'use client'
 
 import React, { useState, useEffect, useMemo, memo } from 'react'
@@ -12,10 +6,6 @@ import { Button } from './Button'
 import { RotateCcwIcon, HardDriveIcon, ChevronsRightIcon, DatabaseIcon, CpuIcon, ActivityIcon } from 'lucide-react'
 import { DataCartridge, RARITY_STYLES } from '@/components/cards/DataCartridge'
 import { CardDetailModal } from '@/components/cards/CardDetailModal'
-
-// ------------------------------------------------------------
-// TIPOS
-// ------------------------------------------------------------
 
 interface ReviewHint {
     shouldShow: boolean
@@ -35,10 +25,6 @@ interface LevelCompleteProps {
     onRetry: () => void
     children?: React.ReactNode
 }
-
-// ------------------------------------------------------------
-// COMPONENTE PRINCIPAL
-// ------------------------------------------------------------
 
 export default function LevelComplete({
     stars,
@@ -331,10 +317,6 @@ export default function LevelComplete({
     )
 }
 
-// ============================================================
-// FUSION CELL (Mini Generadores de Energía)
-// ============================================================
-
 const DataNode = memo(({ active, delay }: {
     active: boolean
     delay: number
@@ -346,24 +328,24 @@ const DataNode = memo(({ active, delay }: {
                 transform: active ? 'scale(1) rotate(0deg)' : 'scale(0.6) rotate(-10deg)',
                 opacity: active ? 1 : 0.15,
             }}>
-            
+
             {/* SVG Balanced Node Structure */}
             <svg viewBox="0 0 60 60" className="w-full h-full drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
                 {/* External Hexagonal Frame */}
-                <path 
-                    d="M30 4 L56 18 V42 L30 56 L4 42 V18 Z" 
-                    fill="#080c11" 
-                    stroke={active ? 'var(--amber)' : '#1a2636'} 
+                <path
+                    d="M30 4 L56 18 V42 L30 56 L4 42 V18 Z"
+                    fill="#080c11"
+                    stroke={active ? 'var(--amber)' : '#1a2636'}
                     strokeWidth="2"
                     className="transition-colors duration-500"
                 />
-                
+
                 {/* Secondary inner contour */}
-                <path 
-                    d="M30 8 L52 20 V40 L30 52 L8 40 V20 Z" 
-                    fill="none" 
-                    stroke={active ? 'var(--amber)' : '#0d131a'} 
-                    strokeWidth="1" 
+                <path
+                    d="M30 8 L52 20 V40 L30 52 L8 40 V20 Z"
+                    fill="none"
+                    stroke={active ? 'var(--amber)' : '#0d131a'}
+                    strokeWidth="1"
                     strokeOpacity="0.2"
                 />
 
@@ -372,16 +354,16 @@ const DataNode = memo(({ active, delay }: {
                 <rect x="28" y="54" width="4" height="6" fill={active ? 'var(--amber)' : '#1a2636'} className="transition-colors" />
 
                 {/* Central Energy Core */}
-                <circle cx="30" cy="30" r="10" 
-                    fill={active ? 'var(--amber)' : '#0d131a'} 
+                <circle cx="30" cy="30" r="10"
+                    fill={active ? 'var(--amber)' : '#0d131a'}
                     className="transition-all duration-500"
                 />
-                
+
                 {active && (
                     <>
                         {/* Glow Core */}
                         <circle cx="30" cy="30" r="6" fill="#fff" fillOpacity="0.3" className="animate-pulse" />
-                        
+
                         {/* Power Indicator Light */}
                         <circle cx="30" cy="18" r="1.5" fill="#fff" className="animate-[lc-blink_1.5s_infinite]" />
                     </>
@@ -395,17 +377,13 @@ const DataNode = memo(({ active, delay }: {
 
             {/* Subtle glow foundation */}
             {active && (
-                <div className="absolute inset-0 bg-(--amber) opacity-[0.05] rounded-full blur-[10px] animate-pulse" />
+                <div className="absolute inset-0 bg-(--amber) opacity-[0.05] rounded-full animate-pulse" />
             )}
         </div>
     )
 })
 
 DataNode.displayName = 'DataNode'
-
-// ============================================================
-// PARTÍCULAS FLOTANTES — efecto sutil de fondo (Memoized)
-// ============================================================
 
 const FloatingParticles = memo(({ visible }: { visible: boolean }) => {
     // Definimos las partículas fuera del componente para evitar cálculos en cada frame
