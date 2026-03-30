@@ -1,16 +1,6 @@
-// ============================================================
-// REBOOT — components/cards/DataCartridge.tsx
-// Componente premium que representa una tarjeta física de datos (cartucho)
-// ============================================================
-
 'use client'
 
-import React from 'react'
 import type { Card } from '@/types/game'
-
-// ------------------------------------------------------------
-// ESTILOS DE RAREZA
-// ------------------------------------------------------------
 
 export const RARITY_STYLES: Record<string, { color: string, glow: string, label: string }> = {
     common: {
@@ -35,10 +25,6 @@ export const RARITY_STYLES: Record<string, { color: string, glow: string, label:
     }
 }
 
-// ------------------------------------------------------------
-// PROPS
-// ------------------------------------------------------------
-
 interface DataCartridgeProps {
     card: Card
     flipped?: boolean
@@ -48,10 +34,6 @@ interface DataCartridgeProps {
     delay?: number
     className?: string
 }
-
-// ------------------------------------------------------------
-// COMPONENTE
-// ------------------------------------------------------------
 
 export function DataCartridge({
     card,

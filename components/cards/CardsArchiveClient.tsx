@@ -1,9 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { ChevronLeftIcon } from 'lucide-react'
 import { getUnlockedCards } from '@/lib/gameState'
-import { NavButton } from '@/components/ui/NavButton'
 import { SectorHeader } from '@/components/map/SectorHeader'
 import type { Card } from '@/types/game'
 
