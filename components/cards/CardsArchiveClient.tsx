@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { flushSync } from 'react-dom'
 import { getUnlockedCards } from '@/lib/gameState'
 import { SectorHeader } from '@/components/map/SectorHeader'
 import type { Card } from '@/types/game'
@@ -67,21 +68,47 @@ export default function CardsArchiveClient({ initialCards }: CardsArchiveClientP
                 card={card}
                 idx={idx}
                 isUnlocked={isUnlocked}
+                isSelected={selectedCard?.id === card.id}
                 onSelect={(card) => {
-                  setSelectedCard(card);
-                  setIsFlipped(false);
+                  const updateState = () => {
+                    setSelectedCard(card);
+                    setIsFlipped(false);
+                  }
+                  // @ts-ignore
+                  if (!document.startViewTransition) {
+                    updateState();
+                    return;
+                  }
+                  // @ts-ignore
+                  document.startViewTransition(() => {
+                    flushSync(() => {
+                      updateState();
+                    });
+                  });
                 }}
               />
             )
           })}
         </div>
       </main>
-
+      
       {/* MODAL */}
       <CardDetailModal
         selectedCard={selectedCard}
         isFlipped={isFlipped}
-        onClose={() => setSelectedCard(null)}
+        onClose={() => {
+          // @ts-ignore
+          if (!document.startViewTransition) {
+            setSelectedCard(null);
+            return;
+          }
+          // @ts-ignore
+          document.startViewTransition(() => {
+            flushSync(() => {
+              setSelectedCard(null);
+            });
+          });
+        }}
         onFlip={() => setIsFlipped(!isFlipped)}
       />
     </div>

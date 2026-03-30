@@ -10,10 +10,11 @@ interface CardRackSlotProps {
   card: Card
   idx: number
   isUnlocked: boolean
+  isSelected: boolean
   onSelect: (c: Card) => void
 }
 
-export function CardRackSlot({ card, idx, isUnlocked, onSelect }: CardRackSlotProps) {
+export function CardRackSlot({ card, idx, isUnlocked, isSelected, onSelect }: CardRackSlotProps) {
   const [isHovered, setIsHovered] = useState(false)
 
   // Determine LED status: On when it's unlocked and not actively being pulled out.
@@ -61,29 +62,38 @@ export function CardRackSlot({ card, idx, isUnlocked, onSelect }: CardRackSlotPr
         </div>
 
         {/* THE CARD - Positioned BEHIND the bar front panel */}
-        <AnimatePresence>
-          {isUnlocked && (
-            <div
-              className={`absolute z-15 left-2 right-2 cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isHovered ? '-translate-y-8 drop-shadow-[0_20px_40px_rgba(0,0,0,1)]' : 'translate-y-0 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]'}`}
-              style={{
-                bottom: '4px',
-                height: 'calc(100% - 10px)'
-              }}
-              onClick={() => onSelect(card)}
-            >
-              <DataCartridge
-                card={card}
-                isPowered={isConnected}
-                detailed={false}
-                delay={0}
-                className="w-full h-full"
-              />
-            </div>
-          )}
-        </AnimatePresence>
+        {isUnlocked && !isSelected && (
+          <div
+            className={`absolute z-15 left-2 right-2 cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isHovered ? '-translate-y-8 drop-shadow-[0_20px_40px_rgba(0,0,0,1)]' : 'translate-y-0 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]'}`}
+            style={{
+              bottom: '4px',
+              height: 'calc(100% - 10px)'
+            }}
+            onClick={() => onSelect(card)}
+          >
+            <DataCartridge
+              card={card}
+              isPowered={isConnected}
+              detailed={false}
+              delay={0}
+              className="w-full h-full"
+              viewTransitionId={`cartridge-${card.id}`}
+            />
+          </div>
+        )}
 
-        {/* RACK FRONT PANEL / CONNECTION BAR */}
-        <div className="absolute bottom-0 inset-x-2 h-16 z-25 pointer-events-none flex flex-col justify-end overflow-visible">
+        {/* RACK FRONT PANEL / CONNECTION BAR (HATCH MECHANISM) */}
+        <div 
+          className={`absolute bottom-0 inset-x-2 h-16 z-25 pointer-events-none flex flex-col justify-end overflow-visible transition-all duration-500 ease-in-out`}
+          style={{
+            transformOrigin: 'bottom',
+            perspective: '1000px',
+            transform: isSelected ? 'perspective(1000px) rotateX(-65deg) translateY(10px)' : 'perspective(1000px) rotateX(0deg) translateY(0)',
+            opacity: isSelected ? 0.7 : 1,
+            // Delay the closing just enough to let the card land first
+            transitionDelay: isSelected ? '0ms' : '200ms'
+          }}
+        >
 
           {/* Connecting Glow underneath the panel when connected */}
           {isConnected && (
