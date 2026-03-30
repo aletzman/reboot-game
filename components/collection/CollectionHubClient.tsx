@@ -4,10 +4,11 @@ import Link from 'next/link'
 import { motion } from 'motion/react'
 import { NavButton } from '@/components/ui/NavButton'
 import { WrenchIcon, CpuIcon, DatabaseIcon, BoxIcon, ChevronLeftIcon } from 'lucide-react'
+import { SectorHeader } from '@/components/map/SectorHeader'
 
 export default function CollectionHubClient() {
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-var(--header-height))] bg-(--bg-void) relative overflow-y-auto font-sans custom-scrollbar">
+    <div className="flex-1 flex flex-col bg-(--bg-void) relative font-sans ">
       {/* Background patterns - Cyberdeck style */}
       <div className="absolute inset-0 bg-(--bg-deep) opacity-50 z-0 select-none pointer-events-none">
         <div
@@ -27,64 +28,24 @@ export default function CollectionHubClient() {
         />
       </div>
 
-      <main className="flex-1 container mx-auto px-8 pb-12 pt-6 relative z-10 flex flex-col">
-        <header className="mb-14 relative flex flex-col gap-6">
-          <div className="flex items-center gap-6">
-            <NavButton href="/game" icon={ChevronLeftIcon}>
-              VOLVER AL MAPA
-            </NavButton>
-          </div>
-
-          <div className="w-full bg-linear-to-r from-[#0c1218] to-transparent border-l-4 border-(--green-base) p-6 rounded-r-md flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative overflow-hidden shadow-xl">
-            {/* Fondo simulando rejilla técnica sutil */}
-            <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,255,255,0.01)_3px)] pointer-events-none" />
-            <div className="absolute top-0 right-0 w-64 h-full bg-[radial-gradient(ellipse_at_right,rgba(45,120,0,0.05),transparent_70%)] pointer-events-none" />
-
-            {/* Decoración tech */}
-            <div className="absolute top-0 left-0 w-8 h-px bg-(--green-light) shadow-[0_0_5px_var(--green-light)]" />
-            <div className="absolute bottom-0 left-0 w-16 h-px bg-(--green-light) shadow-[0_0_5px_var(--green-light)]" />
-
-            <div className="relative z-10 flex flex-col gap-3">
-              <div className="flex items-center gap-3 font-mono">
-                <div className="w-2 h-2 rounded-full bg-(--green-base) animate-pulse shadow-[0_0_8px_var(--green-base)]" />
-                <span className="text-[10px] text-(--green-muted) uppercase font-black tracking-[0.4em] leading-none text-nowrap">
-                  SYS.ARCHIVE // TERMINAL CENTRAL
-                </span>
-              </div>
-
-              <div className="flex items-end gap-4">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black font-(family-name:--font-title) tracking-tighter text-white uppercase leading-none drop-shadow-md">
-                  ARCHIVO<span className="text-(--green-light)">.</span>DB
-                </h1>
-                <div className="hidden lg:flex flex-col gap-0.5 opacity-20 mb-1">
-                  <div className="w-16 h-1 bg-white" />
-                  <div className="w-12 h-[2px] bg-white" />
-                  <div className="flex gap-1 h-3 mt-0.5">
-                    <div className="w-1 h-full bg-white" />
-                    <div className="w-3 h-full bg-white" />
-                    <div className="w-0.5 h-full bg-white" />
-                    <div className="w-2 h-full bg-(--green-base)" />
-                  </div>
-                </div>
-              </div>
-              <p className="text-(--text-muted) max-w-xl font-mono text-[10px] leading-relaxed uppercase tracking-widest mt-2 opacity-80">
-                Índice de fragmentos recuperados del proyecto <span className="text-white">GÉNESIS</span>.<br />
-                Integridad de la base de datos: <span className="text-(--green-light) animate-pulse">SINCRO_ACTIVA</span>
-              </p>
-            </div>
-
-            <div className="relative z-10 hidden md:flex flex-col items-end gap-2 bg-[#080c11] border border-[#1a2636] p-4 rounded-xs shadow-[inset_0_2px_15px_rgba(0,0,0,0.8)] min-w-[200px]">
-              <div className="flex items-center gap-3 opacity-60">
-                <DatabaseIcon className="w-8 h-8 text-(--green-light) animate-pulse" strokeWidth={1} />
-                <div className="flex flex-col">
-                  <span className="text-[8px] text-(--green-light) font-mono tracking-widest uppercase">CONNECTION_SECURE</span>
-                  <span className="text-[14px] text-white font-mono tracking-widest uppercase font-black">ONLINE</span>
-                </div>
+      <main className="flex-1 container mx-auto px-8 relative z-10 flex flex-col">
+        <SectorHeader
+          actId="DB"
+          actName="ARCHIVO"
+          idLabel="SYS"
+          tag="ARCHIVE_ACCESS"
+          subtitle="ÍNDICE DE FRAGMENTOS RECUPERADOS // PROYECTO GÉNESIS"
+        >
+          <div className="hidden md:flex flex-col items-center justify-center gap-2 border-l border-[#1a2636]/60 p-5 md:p-6 bg-[#0c1218]/40">
+            <div className="flex items-center gap-3 opacity-60">
+              <DatabaseIcon className="w-6 h-6 text-(--green-light) animate-pulse" strokeWidth={1} />
+              <div className="flex flex-col">
+                <span className="text-[7px] text-(--green-light) font-mono tracking-widest uppercase">DB_INTEGRITY</span>
+                <span className="text-[12px] text-white font-mono tracking-widest uppercase font-black">SINCRO_ACTIVA</span>
               </div>
             </div>
           </div>
-        </header>
-
+        </SectorHeader>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 flex-1 items-stretch max-w-6xl mx-auto w-full pb-20">
 
           {/* Section: Cards - "Knowledge Modules" */}
