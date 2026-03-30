@@ -186,3 +186,24 @@ export function LevelCard({ level, index, progress, access, actNumber }: LevelCa
     </Link>
   )
 }
+export function LevelCardSkeleton() {
+  return (
+    <div className="flex items-stretch bg-(--bg-surface) border border-[#1a2636] h-32 animate-pulse rounded-xs overflow-hidden opacity-40">
+      <div className="w-16 shrink-0 bg-[#080c11] border-r border-[#1a2636]" />
+      <div className="flex-1 p-6 px-8 flex flex-col justify-center gap-4">
+        <div className="h-6 w-48 bg-[#1a2636] rounded-xs" />
+        <div className="flex gap-4">
+          <div className="h-3 w-32 bg-[#1a2636] rounded-xs" />
+          <div className="h-3 w-24 bg-[#1a2636] rounded-xs" />
+        </div>
+      </div>
+      <div className="w-32 shrink-0 p-6 flex items-center justify-center">
+        <div className="flex gap-1">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="w-4 h-6 skew-x-[-20deg] bg-[#1a2636] rounded-px" />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
