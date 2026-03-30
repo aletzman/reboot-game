@@ -2,10 +2,13 @@
 
 import { motion } from 'motion/react'
 import { KeyIcon, LightbulbIcon, ArchiveIcon, InboxIcon } from 'lucide-react'
+import Image from 'next/image'
+import { useState } from 'react'
 
 interface ObjectScannerProps {
     type: 'lore' | 'key' | 'hint' | 'final'
     id: string
+    icon: string
     isUnlocked: boolean
     className?: string
 }
@@ -24,9 +27,13 @@ const typeColors: Record<string, string> = {
     final: 'var(--purple)'
 }
 
-export function ObjectScanner({ type, id, isUnlocked, className }: ObjectScannerProps) {
-    const Icon = typeIcons[type] || InboxIcon
+export function ObjectScanner({ type, id, icon, isUnlocked, className }: ObjectScannerProps) {
+    const IconFallback = typeIcons[type] || InboxIcon
     const color = typeColors[type] || 'var(--amber)'
+    const [imgError, setImgError] = useState(false)
+
+    // Construct image path
+    const imagePath = `/assets/objects/${icon}.webp`
 
     return (
         <div className={`relative ${className} group`} style={{ perspective: '1000px' }}>
@@ -64,7 +71,7 @@ export function ObjectScanner({ type, id, isUnlocked, className }: ObjectScanner
                 <div className="absolute inset-0 flex items-center justify-center p-8">
                     {/* Ring decoration */}
                     <div className={`
-                        absolute w-24 h-24 border border-dashed rounded-full transition-all duration-1000
+                        absolute w-28 h-28 border border-dashed rounded-full transition-all duration-1000
                         ${isUnlocked ? 'border-(--amber) opacity-20 group-hover:opacity-40 group-hover:animate-spin' : 'border-(--text-ghost) opacity-10'}
                     `} />
 
@@ -74,17 +81,39 @@ export function ObjectScanner({ type, id, isUnlocked, className }: ObjectScanner
                             rotateZ: [0, 2, -2, 0]
                         } : {}}
                         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                        className="relative z-10"
+                        className="relative z-10 w-24 h-24 flex items-center justify-center"
                     >
-                        <Icon
-                            strokeWidth={0.5}
-                            className={`w-16 h-16 transition-colors duration-500`}
-                            style={{ color: isUnlocked ? color : 'var(--text-ghost)' }}
-                        />
+                        {isUnlocked && !imgError ? (
+                            <div className="relative w-full h-full">
+                                <Image
+                                    src={imagePath}
+                                    alt={id}
+                                    fill
+                                    className="object-contain drop-shadow-[0_0_15px_rgba(239,159,39,0.3)]"
+                                    onError={() => setImgError(true)}
+                                />
+                                {/* Glow effect */}
+                                <div className="absolute inset-0 blur-[20px] opacity-30 pointer-events-none scale-110">
+                                    <Image
+                                        src={imagePath}
+                                        alt=""
+                                        fill
+                                        className="object-contain"
+                                        aria-hidden="true"
+                                    />
+                                </div>
+                            </div>
+                        ) : (
+                            <IconFallback
+                                strokeWidth={0.5}
+                                className={`w-16 h-16 transition-colors duration-500`}
+                                style={{ color: isUnlocked ? color : 'var(--text-ghost)' }}
+                            />
+                        )}
 
-                        {isUnlocked && (
+                        {isUnlocked && imgError && (
                             <div className="absolute inset-0 blur-[15px] scale-150 opacity-20 pointer-events-none" style={{ color: color }}>
-                                <Icon strokeWidth={1} className="w-full h-full" />
+                                <IconFallback strokeWidth={1} className="w-full h-full" />
                             </div>
                         )}
                     </motion.div>

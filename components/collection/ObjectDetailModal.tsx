@@ -89,6 +89,7 @@ export function ObjectDetailModal({ selectedObject, onClose }: ObjectDetailModal
                                     <ObjectScanner
                                         type={selectedObject.type}
                                         id={selectedObject.id}
+                                        icon={selectedObject.icon}
                                         isUnlocked={true}
                                         className="w-48 h-48 shadow-[0_0_30px_rgba(239,159,39,0.05)]"
                                     />
