@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { useState, useEffect, memo, ViewTransition } from 'react'
 import { LockIcon } from 'lucide-react'
 import { DataCartridge } from '@/components/cards/DataCartridge'
 import type { Card } from '@/types/game'
@@ -14,13 +13,19 @@ interface CardRackSlotProps {
   onSelect: (c: Card) => void
 }
 
-export function CardRackSlot({ card, idx, isUnlocked, isSelected, onSelect }: CardRackSlotProps) {
+export const CardRackSlot = memo(({ card, idx, isUnlocked, isSelected, onSelect }: CardRackSlotProps) => {
   const [isHovered, setIsHovered] = useState(false)
 
-  // Determine LED status: On when it's unlocked and not actively being pulled out.
+  // FIX: When card returns from modal (isSelected goes false), 
+  // reset hover so it slides back into its slot immediately.
+  useEffect(() => {
+    if (!isSelected) {
+      setIsHovered(false)
+    }
+  }, [isSelected])
+
   const isConnected = isUnlocked && !isHovered
 
-  // Define rarity glow colour based on custom properties as used in the cartridge
   const glowColor = isUnlocked ? (
     card.rarity === 'legendary' ? '#ffdd00' :
       card.rarity === 'epic' ? 'var(--purple)' :
@@ -29,21 +34,19 @@ export function CardRackSlot({ card, idx, isUnlocked, isSelected, onSelect }: Ca
   ) : 'var(--text-ghost)'
 
   return (
-    <motion.div
-      className="flex flex-col pt-4 relative group/rackslot"
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: idx * 0.03 }}
+    <div
+      className="flex flex-col pt-4 relative group/rackslot animate-[fade-in-up_0.4s_ease-out_both]"
+      style={{ animationDelay: `${idx * 15}ms` }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Background connector traces tracing from the top */}
-      <div className="absolute top-0 inset-x-0 h-4 flex justify-center opacity-20 group-hover/rackslot:opacity-40 transition-opacity">
+      {/* Background connector traces */}
+      <div className="absolute top-0 inset-x-0 h-4 flex justify-center opacity-10 group-hover/rackslot:opacity-30 transition-opacity">
         <div className="w-px h-full bg-(--green-base) mx-auto" />
       </div>
 
       {/* RACK CASE UNIT */}
-      <div className="relative z-10 w-full aspect-2/3 bg-linear-to-b from-[#0c1218] to-[#040608] border border-[#1a2636] shadow-2xl p-2 pb-10 rounded-xs transition-all">
+      <div className="relative z-10 w-full aspect-2/3 bg-linear-to-b from-[#0c1218] to-[#040608] border border-[#1a2636] shadow-2xl p-2 pb-10 rounded-xs">
 
         {/* Visual Slot Hole */}
         <div className="absolute inset-2 bottom-6 bg-[#010203] shadow-[inset_0_5px_20px_rgba(0,0,0,1)] rounded-xs overflow-hidden border border-[#0a0f14]">
@@ -52,51 +55,46 @@ export function CardRackSlot({ card, idx, isUnlocked, isSelected, onSelect }: Ca
               <LockIcon className="w-5 h-5 text-[#1a2636]" strokeWidth={1.5} />
             </div>
           )}
-
-          {/* Internal Connector Pins visible when card is extracted or locked */}
-          <div className="absolute bottom-0 inset-x-2 h-4 border-t border-[#1a2636]/50 flex justify-between px-1 opacity-20">
+          <div className="absolute bottom-0 inset-x-2 h-4 border-t border-[#1a2636]/40 flex justify-between px-1 opacity-20">
             {[...Array(14)].map((_, i) => (
-              <div key={`pin-${i}`} className="w-[4%] h-[80%] bg-[#d4af37] rounded-sm mt-auto shadow-[0_0_2px_#d4af37]" />
+              <div key={`pin-${i}`} className="w-[4%] h-[80%] bg-[#d4af37] rounded-sm mt-auto" />
             ))}
           </div>
         </div>
 
-        {/* THE CARD - Positioned BEHIND the bar front panel */}
+        {/* THE CARD — ViewTransition for shared element morphing */}
         {isUnlocked && !isSelected && (
-          <div
-            className={`absolute z-15 left-2 right-2 cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isHovered ? '-translate-y-8 drop-shadow-[0_20px_40px_rgba(0,0,0,1)]' : 'translate-y-0 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]'}`}
-            style={{
-              bottom: '4px',
-              height: 'calc(100% - 10px)'
-            }}
-            onClick={() => onSelect(card)}
-          >
-            <DataCartridge
-              card={card}
-              isPowered={isConnected}
-              detailed={false}
-              delay={0}
-              className="w-full h-full"
-              viewTransitionId={`cartridge-${card.id}`}
-            />
-          </div>
+          <ViewTransition name={`cartridge-${card.id}`}>
+            <div
+              className={`absolute z-15 left-2 right-2 cursor-pointer transition-transform duration-500 will-change-transform ease-[cubic-bezier(0.16,1,0.3,1)] ${isHovered ? '-translate-y-8' : 'translate-y-0'}`}
+              style={{
+                bottom: '4px',
+                height: 'calc(100% - 10px)'
+              }}
+              onClick={() => onSelect(card)}
+            >
+              <DataCartridge
+                card={card}
+                isPowered={isConnected}
+                detailed={false}
+                delay={0}
+                className="w-full h-full"
+              />
+            </div>
+          </ViewTransition>
         )}
 
-        {/* RACK FRONT PANEL / CONNECTION BAR (HATCH MECHANISM) */}
+        {/* RACK FRONT PANEL / CONNECTION BAR */}
         <div
-          className={`absolute bottom-0 inset-x-2 h-16 z-25 flex flex-col justify-end overflow-visible transition-all duration-500 ease-in-out`}
+          className="absolute bottom-0 inset-x-2 h-16 z-25 flex flex-col justify-end overflow-visible transition-all duration-300 ease-in-out"
           style={{
             transformOrigin: 'bottom',
             perspective: '1000px',
             transform: isSelected ? 'perspective(1000px) rotateX(-65deg) translateY(10px)' : 'perspective(1000px) rotateX(0deg) translateY(0)',
             opacity: isSelected ? 0.7 : 1,
-            // Delay the closing just enough to let the card land first
-            transitionDelay: isSelected ? '0ms' : '200ms',
             pointerEvents: isSelected ? 'none' : 'auto'
           }}
         >
-
-          {/* Connecting Glow underneath the panel when connected */}
           {isConnected && (
             <div
               className="absolute bottom-10 inset-x-4 h-4 opacity-30 transition-opacity duration-300"
@@ -105,14 +103,9 @@ export function CardRackSlot({ card, idx, isUnlocked, isSelected, onSelect }: Ca
           )}
 
           <div className={`h-11 bg-linear-to-b from-[#0c1218] to-[#06080b] border-t border-[#2a3a4c] shadow-[0_-10px_30px_rgba(0,0,0,1)] relative flex flex-col items-center justify-center px-2 transition-colors ${isConnected ? 'border-t-[1.5px]' : ''}`} style={{ borderTopColor: isConnected ? glowColor : '#2a3a4c' }}>
-
-            {/* Tornillos */}
             <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-black border border-white/10 shadow-inner" />
             <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-black border border-white/10 shadow-inner" />
 
-
-
-            {/* Status LED of the Rack itself */}
             <div className="absolute bottom-2 left-2 flex items-center gap-1.5">
               <div
                 className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${isConnected ? 'animate-pulse' : ''}`}
@@ -144,14 +137,14 @@ export function CardRackSlot({ card, idx, isUnlocked, isSelected, onSelect }: Ca
         <div className="absolute -right-1.5 top-2 bottom-8 w-1 bg-[#1a2636]/20 border-r border-[#1a2636]/40" />
       </div>
 
-      {/* Connection lines to the label (Module wiring) */}
-      <div className="flex flex-col items-center opacity-60">
-        <div className={`w-0.5 h-4 transition-colors duration-300`} style={{ backgroundColor: isConnected ? glowColor : '#1a2636' }} />
-        <div className={`w-4 h-0.5 transition-colors duration-300`} style={{ backgroundColor: isConnected ? glowColor : '#1a2636' }} />
-        <div className={`w-0.5 h-2 transition-colors duration-300`} style={{ backgroundColor: isConnected ? glowColor : '#1a2636' }} />
+      {/* Connection lines */}
+      <div className="flex flex-col items-center opacity-40">
+        <div className="w-0.5 h-4 transition-colors duration-300" style={{ backgroundColor: isConnected ? glowColor : '#1a2636' }} />
+        <div className="w-4 h-0.5 transition-colors duration-300" style={{ backgroundColor: isConnected ? glowColor : '#1a2636' }} />
+        <div className="w-0.5 h-2 transition-colors duration-300" style={{ backgroundColor: isConnected ? glowColor : '#1a2636' }} />
       </div>
 
-      {/* Label below the rack unit */}
+      {/* Label */}
       <div className={`px-2 py-1 border text-center rounded-xs transition-colors duration-300 z-10 w-[90%] mx-auto ${isUnlocked ? (isHovered ? 'bg-[#141b24] border-(--green-base)/30' : 'bg-[#0a0f14] border-white/5') : 'bg-black border-red-900/20'}`}>
         <h3 className={`text-[9px] font-black uppercase tracking-widest line-clamp-1 ${isUnlocked ? (isHovered ? 'text-(--green-light)' : 'text-white') : 'text-[#1a1a1a]'}`}>
           {isUnlocked ? card.name : 'ENCRYPTED'}
@@ -160,6 +153,13 @@ export function CardRackSlot({ card, idx, isUnlocked, isSelected, onSelect }: Ca
           {isUnlocked ? `MOD//${card.concept.substring(0, 6)}` : 'UNKNOWN_MOD'}
         </div>
       </div>
-    </motion.div>
+    </div>
   )
-}
+}, (prev, next) => {
+  return prev.card.id === next.card.id &&
+    prev.isUnlocked === next.isUnlocked &&
+    prev.isSelected === next.isSelected &&
+    prev.idx === next.idx
+})
+
+CardRackSlot.displayName = 'CardRackSlot'

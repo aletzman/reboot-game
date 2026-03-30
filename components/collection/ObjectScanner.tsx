@@ -3,7 +3,7 @@
 import { motion } from 'motion/react'
 import { KeyIcon, LightbulbIcon, ArchiveIcon, InboxIcon } from 'lucide-react'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, memo } from 'react'
 
 interface ObjectScannerProps {
     type: 'lore' | 'key' | 'hint' | 'final'
@@ -27,7 +27,7 @@ const typeColors: Record<string, string> = {
     final: 'var(--purple)'
 }
 
-export function ObjectScanner({ type, id, icon, isUnlocked, className }: ObjectScannerProps) {
+export const ObjectScanner = memo(({ type, id, icon, isUnlocked, className }: ObjectScannerProps) => {
     const IconFallback = typeIcons[type] || InboxIcon
     const color = typeColors[type] || 'var(--amber)'
     const [imgError, setImgError] = useState(false)
@@ -153,4 +153,6 @@ export function ObjectScanner({ type, id, icon, isUnlocked, className }: ObjectS
             `}</style>
         </div>
     )
-}
+})
+
+ObjectScanner.displayName = 'ObjectScanner'

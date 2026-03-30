@@ -1,9 +1,10 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, memo } from 'react'
 import { motion } from 'motion/react'
 import { InboxIcon, KeyIcon, LightbulbIcon, ArchiveIcon } from 'lucide-react'
-import { getObjects as getUnlockedIds } from '@/lib/gameState'
+import { hasObject, getObjects as getUnlockedIds } from '@/lib/gameState'
+import { isDemoModeActive } from '@/lib/store/useDemoStore'
 import { ObjectScanner } from '@/components/collection/ObjectScanner'
 import { ObjectDetailModal } from '@/components/collection/ObjectDetailModal'
 import { SectorHeader } from '@/components/map/SectorHeader'
@@ -29,14 +30,24 @@ interface ObjectsArchiveClientProps {
   initialObjects: GameObject[]
 }
 
-export default function ObjectsArchiveClient({ initialObjects }: ObjectsArchiveClientProps) {
+const ObjectsArchiveClient = ({ initialObjects }: ObjectsArchiveClientProps) => {
   const [unlockedIds, setUnlockedIds] = useState<string[]>([])
   const [selectedObject, setSelectedObject] = useState<GameObject | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    setUnlockedIds(getUnlockedIds())
+    const ids = getUnlockedIds()
+    // Si estamos en modo demo, simulamos que todos los objetos están desbloqueados
+    if (isDemoModeActive()) {
+      setUnlockedIds(initialObjects.map(o => o.id))
+    } else {
+      setUnlockedIds(ids)
+    }
     setLoading(false)
+  }, [initialObjects])
+
+  const handleSelect = useCallback((obj: GameObject) => {
+    setSelectedObject(obj)
   }, [])
 
   if (loading) {
@@ -106,7 +117,7 @@ export default function ObjectsArchiveClient({ initialObjects }: ObjectsArchiveC
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-10 gap-y-12 pb-32 relative z-10">
             {initialObjects.map((obj, idx) => {
-              const isUnlocked = unlockedIds.includes(obj.id)
+              const isUnlocked = hasObject(obj.id)
               const color = typeColors[obj.type] || 'var(--amber)'
 
               return (
@@ -115,7 +126,7 @@ export default function ObjectsArchiveClient({ initialObjects }: ObjectsArchiveC
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: idx * 0.05 }}
-                  onClick={() => isUnlocked && setSelectedObject(obj)}
+                  onClick={() => isUnlocked && handleSelect(obj)}
                   className="flex flex-col group"
                 >
                   {/* The Caddy Hardware */}
@@ -157,3 +168,5 @@ export default function ObjectsArchiveClient({ initialObjects }: ObjectsArchiveC
     </div>
   )
 }
+
+export default memo(ObjectsArchiveClient)
