@@ -31,8 +31,8 @@ export function HubCard({ href, title, subtitle, description, tag, id, color, ic
 
   return (
     <CardWrapper {...(wrapperProps as any)} className={`h-full ${isEmpty ? 'cursor-not-allowed' : 'group'}`}>
-      < div
-        className={`relative h-full min-h-[550px] flex flex-col bg-(--bg-surface) border-r-4 border-l-4 transition-all duration-500 overflow-hidden shadow-2xl ${isEmpty
+      <div
+        className={`relative h-full min-h-[500px] flex flex-col bg-(--bg-surface) border-r-4 border-l-4 transition-all duration-500 overflow-hidden shadow-2xl ${isEmpty
           ? 'opacity-40 grayscale border-[#0d1117]'
           : 'border-[#1a2636] group-hover:border-(--bg-hover)'
           }`}
@@ -58,22 +58,22 @@ export function HubCard({ href, title, subtitle, description, tag, id, color, ic
 
         <div className="flex-1 flex flex-col ml-6 mr-6 relative">
           {/* CABINET TOP HEADER */}
-          <div className="h-14 border-b border-[#1a1f26] bg-[#0c1015] flex items-center justify-between px-6 relative z-20">
+          <div className="h-12 border-b border-[#1a1f26] bg-[#0c1015] flex items-center justify-between px-6 relative z-20">
             <div className="flex items-center gap-3">
               <div className={`w-2 h-4 skew-x-[-15deg] transition-all duration-500 ${isEmpty
                 ? 'bg-(--text-ghost)'
                 : (isGreen ? 'bg-(--green-light) shadow-[0_0_8px_var(--green-light)]' : 'bg-(--amber) shadow-[0_0_8px_var(--amber)]')
                 }`} />
               <div className="flex flex-col">
-                <span className={`text-sm font-mono font-black uppercase tracking-widest ${isEmpty ? 'text-(--text-ghost)' : 'text-white/90'}`}>{tag}</span>
-                <span className="text-[10px] font-mono text-(--text-muted) uppercase tracking-tighter">{id}</span>
+                <span className={`text-xs font-mono font-black uppercase tracking-widest ${isEmpty ? 'text-(--text-ghost)' : 'text-white/90'}`}>{tag}</span>
+                <span className="text-[9px] font-mono text-(--text-muted) uppercase tracking-tighter">{id}</span>
               </div>
             </div>
-            <Icon className={`w-4 h-4 transition-colors ${isEmpty ? 'text-black/40' : 'text-(--text-ghost) group-hover:text-white'}`} strokeWidth={1.5} />
+            <Icon className={`w-3.5 h-3.5 transition-colors ${isEmpty ? 'text-black/40' : 'text-(--text-ghost) group-hover:text-white'}`} strokeWidth={1.5} />
           </div>
 
           {/* MAIN VISUAL CHAMBER - Recessed Effect */}
-          <div className={`flex-1 relative overflow-hidden flex items-center justify-center p-8 border-b border-[#1a1f26] ${isEmpty ? 'bg-black/80' : 'bg-black/60 shadow-[inset_0_20px_50px_black]'}`}>
+          <div className={`h-[160px] flex-none relative overflow-hidden flex items-center justify-center p-6 border-b border-[#1a1f26] ${isEmpty ? 'bg-black/80' : 'bg-black/60 shadow-[inset_0_20px_50px_black]'}`}>
             {/* Background Technical Noise */}
             {!isEmpty && (
               <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
@@ -108,35 +108,35 @@ export function HubCard({ href, title, subtitle, description, tag, id, color, ic
           </div>
 
           {/* INFO MODULE */}
-          <div className="p-6 relative z-20 flex-none h-[180px] bg-linear-to-b from-transparent to-black/40">
-            <div className="flex flex-col gap-4">
+          <div className="p-6 px-5 relative z-20 flex-1 bg-linear-to-b from-transparent to-black/40 flex flex-col justify-start">
+            <div className="flex flex-col gap-3">
               <div>
-                <h2 className={`text-2xl font-black tracking-widest uppercase mb-1 ${isEmpty ? 'text-white/20' : 'text-white'}`}>
+                <h2 className={`text-xl font-black tracking-widest uppercase mb-1 ${isEmpty ? 'text-white/20' : 'text-white'}`}>
                   {isEmpty ? 'VACÍO' : title}
                 </h2>
                 <div className="flex items-center gap-2">
-                  <div className="h-px w-8 bg-white/10" />
-                  <span className={`text-[10px] font-mono uppercase tracking-[0.4em] transition-colors`} style={{ color: isEmpty ? 'var(--text-ghost)' : accentColor }}>
+                  <div className="h-px w-6 bg-white/10" />
+                  <span className={`text-[9px] font-mono uppercase tracking-[0.4em] transition-colors`} style={{ color: isEmpty ? 'var(--text-ghost)' : accentColor }}>
                     {isEmpty ? 'RACK_UNIT_AVAILABLE' : subtitle}
                   </span>
                 </div>
               </div>
 
-              <p className={`text-(--text-muted) font-mono text-[11px] leading-relaxed uppercase tracking-wider transition-opacity max-w-sm ${isEmpty ? 'opacity-20' : 'opacity-60 group-hover:opacity-100'}`}>
+              <p className={`text-(--text-muted) font-mono text-[10px] leading-relaxed uppercase tracking-wider transition-opacity max-w-sm ${isEmpty ? 'opacity-20' : 'opacity-60 group-hover:opacity-100'}`}>
                 {isEmpty ? 'SISTEMA DE ALMACENAMIENTO DISPONIBLE. ASIGNACIÓN DE HARDWARE PENDIENTE.' : description}
               </p>
             </div>
 
             {/* STATUS LIGHTS */}
-            <div className="absolute bottom-6 right-8 flex gap-1.5">
-              <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${isEmpty ? 'bg-red-900/40' : 'animate-pulse'}`} style={{ backgroundColor: isEmpty ? undefined : accentColor }} />
-              <div className="w-1.5 h-1.5 rounded-full bg-white/5" />
-              <div className="w-1.5 h-1.5 rounded-full bg-white/5" />
+            <div className="absolute bottom-5 right-8 flex gap-1.5">
+              <div className={`w-1 h-1 rounded-full transition-all duration-300 ${isEmpty ? 'bg-red-900/40' : 'animate-pulse'}`} style={{ backgroundColor: isEmpty ? undefined : accentColor }} />
+              <div className="w-1 h-1 rounded-full bg-white/5" />
+              <div className="w-1 h-1 rounded-full bg-white/5" />
             </div>
           </div>
 
           {/* ACTION PANEL (Footer) */}
-          <div className={`h-16 border-t border-[#1a1f26] bg-[#0c1015] flex items-center justify-between px-8 relative overflow-hidden transition-colors ${!isEmpty && 'group-hover:bg-black/80'}`}>
+          <div className="h-14 border-t border-[#1a1f26] bg-[#0c1015] flex items-center justify-between px-8 relative overflow-hidden transition-colors group-hover:bg-black/80">
             <div className="flex items-center gap-3">
               <div className="flex flex-col">
                 <span className="text-[7px] font-mono text-(--text-ghost) uppercase tracking-widest">UNIT_STATUS</span>

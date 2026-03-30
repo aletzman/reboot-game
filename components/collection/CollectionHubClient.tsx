@@ -59,27 +59,27 @@ export default function CollectionHubClient() {
             color="green"
             icon={CpuIcon}
             visualContent={
-              <div className="relative flex items-center justify-center">
+              <div className="relative flex items-center justify-center scale-90">
                 {/* Orbital Rings */}
-                <div className="absolute w-[280px] h-[280px] border border-(--green-base)/20 rounded-full animate-[spin_20s_linear_infinite]" />
-                <div className="absolute w-[220px] h-[220px] border border-dashed border-(--green-base)/30 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
-                <div className="absolute w-[160px] h-[160px] border border-(--green-base)/40 rounded-full" />
+                <div className="absolute w-[150px] h-[150px] border border-(--green-base)/20 rounded-full animate-[spin_20s_linear_infinite]" />
+                <div className="absolute w-[120px] h-[120px] border border-dashed border-(--green-base)/30 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
+                <div className="absolute w-[80px] h-[80px] border border-(--green-base)/40 rounded-full" />
 
                 {/* Main Icon with Glow */}
                 <motion.div
                   animate={{
-                    y: [0, -10, 0],
+                    y: [0, -6, 0],
                     scale: [1, 1.05, 1],
                     filter: ['drop-shadow(0 0 10px rgba(85,226,0,0.2))', 'drop-shadow(0 0 25px rgba(85,226,0,0.4))', 'drop-shadow(0 0 10px rgba(85,226,0,0.2))']
                   }}
                   transition={{ duration: 5, repeat: Infinity }}
-                  className="relative z-10 w-32 h-32 text-(--green-light)"
+                  className="relative z-10 w-20 h-20 text-(--green-light)"
                 >
                   <CpuIcon strokeWidth={0.5} className="w-full h-full" />
                 </motion.div>
 
                 {/* Vertical Data Stream */}
-                <div className="absolute h-96 w-px bg-linear-to-b from-transparent via-(--green-base) to-transparent opacity-20" />
+                <div className="absolute h-40 w-px bg-linear-to-b from-transparent via-(--green-base) to-transparent opacity-20" />
 
                 {/* Floating Bits */}
                 {[...Array(8)].map((_, i) => (
@@ -101,7 +101,7 @@ export default function CollectionHubClient() {
           {/* Section: Objects - "Found Artifacts" */}
           <HubCard
             href="/game/collection/objects"
-            title="ARTEFACTOS RECUPERADOS"
+            title="OBJETOS RECUPERADOS"
             subtitle="Hardware Analysis"
             description="HERRAMIENTAS, CREDENCIALES Y FRAGMENTOS ARQUITECTÓNICOS RECUPERADOS DE LOS SECTORES EXTERNOS."
             tag="RACK_02"
@@ -109,18 +109,18 @@ export default function CollectionHubClient() {
             color="amber"
             icon={WrenchIcon}
             visualContent={
-              <div className="relative flex items-center justify-center">
+              <div className="relative flex items-center justify-center scale-90">
                 {/* Heavy Industrial Grid */}
                 <div className="absolute inset-0 opacity-10"
                   style={{
                     backgroundImage: `linear-gradient(var(--bg-hover) 2px, transparent 2px), linear-gradient(90deg, var(--bg-hover) 2px, transparent 2px)`,
-                    backgroundSize: '40px 40px',
-                    transform: 'perspective(600px) rotateX(45deg) scale(2)'
+                    backgroundSize: '30px 30px',
+                    transform: 'perspective(600px) rotateX(45deg) scale(1.5)'
                   }}
                 />
 
                 {/* Magnetic Containment Field */}
-                <div className="absolute w-[260px] h-[180px] border-2 border-dashed border-(--amber)/20 rounded-[40px] animate-pulse" />
+                <div className="absolute w-[180px] h-[100px] border-2 border-dashed border-(--amber)/20 rounded-[40px] animate-pulse" />
 
                 {/* Main Icon with Industrial Glow */}
                 <motion.div
@@ -130,7 +130,7 @@ export default function CollectionHubClient() {
                     filter: ['drop-shadow(0 0 5px rgba(239,159,39,0.1))', 'drop-shadow(0 0 20px rgba(239,159,39,0.3))', 'drop-shadow(0 0 5px rgba(239,159,39,0.1))']
                   }}
                   transition={{ duration: 6, repeat: Infinity }}
-                  className="relative z-10 w-32 h-32 text-(--amber)"
+                  className="relative z-10 w-20 h-20 text-(--amber)"
                 >
                   <WrenchIcon strokeWidth={0.5} className="w-full h-full" />
                 </motion.div>

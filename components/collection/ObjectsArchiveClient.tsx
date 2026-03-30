@@ -62,7 +62,7 @@ export default function ObjectsArchiveClient({ initialObjects }: ObjectsArchiveC
       <main className="flex-1 container mx-auto px-8 pb-12 relative z-10 flex flex-col">
         <SectorHeader
           actId="02"
-          actName="ARTEFACTOS"
+          actName="OBJETOS"
           idLabel="RACK"
           tag="INVENTARIO_FISICO"
           subtitle="ANÁLISIS DE HARDWARE // RESIDUOS DEL REFUGIO"
