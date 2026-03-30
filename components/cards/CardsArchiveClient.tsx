@@ -18,7 +18,6 @@ interface CardsArchiveClientProps {
 export default function CardsArchiveClient({ initialCards }: CardsArchiveClientProps) {
   const [unlockedIds, setUnlockedIds] = useState<string[]>([])
   const [selectedCard, setSelectedCard] = useState<Card | null>(null)
-  const [isFlipped, setIsFlipped] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -72,7 +71,6 @@ export default function CardsArchiveClient({ initialCards }: CardsArchiveClientP
                 onSelect={(card) => {
                   const updateState = () => {
                     setSelectedCard(card);
-                    setIsFlipped(false);
                   }
                   // @ts-ignore
                   if (!document.startViewTransition) {
@@ -95,7 +93,6 @@ export default function CardsArchiveClient({ initialCards }: CardsArchiveClientP
       {/* MODAL */}
       <CardDetailModal
         selectedCard={selectedCard}
-        isFlipped={isFlipped}
         onClose={() => {
           // @ts-ignore
           if (!document.startViewTransition) {
@@ -109,7 +106,6 @@ export default function CardsArchiveClient({ initialCards }: CardsArchiveClientP
             });
           });
         }}
-        onFlip={() => setIsFlipped(!isFlipped)}
       />
     </div>
   )

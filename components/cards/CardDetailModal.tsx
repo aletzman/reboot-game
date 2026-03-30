@@ -4,17 +4,15 @@ import type { Card } from '@/types/game'
 
 interface CardDetailModalProps {
   selectedCard: Card | null
-  isFlipped: boolean
   onClose: () => void
-  onFlip: () => void
 }
 
-export function CardDetailModal({ selectedCard, isFlipped, onClose, onFlip }: CardDetailModalProps) {
+export function CardDetailModal({ selectedCard, onClose }: CardDetailModalProps) {
   if (!selectedCard) return null;
 
   return (
     <div
-      className="fixed inset-0 z-9999 flex flex-col items-center justify-center p-4 cursor-pointer bg-(--bg-void)/60"
+      className="fixed inset-0 z-9999 flex flex-col items-center justify-center p-4 bg-(--bg-void)/60"
       onClick={onClose}
     >
       <div
@@ -38,19 +36,12 @@ export function CardDetailModal({ selectedCard, isFlipped, onClose, onFlip }: Ca
         <div className="relative">
           <DataCartridge
             card={selectedCard}
-            flipped={isFlipped}
             isPowered={false}
             detailed={true}
-            onClick={onFlip}
+            onClick={onClose}
             viewTransitionId={`cartridge-${selectedCard.id}`}
             className="w-[280px] h-[390px] md:w-[360px] md:h-[540px] shadow-[0_0_100px_rgba(0,0,0,0.8)]"
           />
-        </div>
-
-        <div className="flex flex-col items-center gap-3">
-          <div className="text-[11px] text-(--green-light) tracking-[.4em] uppercase font-bold text-center animate-pulse">
-            [ ANALIZANDO_ESTRUCTURA_DE_DATOS ]
-          </div>
         </div>
       </div>
     </div>

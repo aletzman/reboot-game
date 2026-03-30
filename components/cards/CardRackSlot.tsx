@@ -83,7 +83,7 @@ export function CardRackSlot({ card, idx, isUnlocked, isSelected, onSelect }: Ca
         )}
 
         {/* RACK FRONT PANEL / CONNECTION BAR (HATCH MECHANISM) */}
-        <div 
+        <div
           className={`absolute bottom-0 inset-x-2 h-16 z-25 pointer-events-none flex flex-col justify-end overflow-visible transition-all duration-500 ease-in-out`}
           style={{
             transformOrigin: 'bottom',
@@ -98,7 +98,7 @@ export function CardRackSlot({ card, idx, isUnlocked, isSelected, onSelect }: Ca
           {/* Connecting Glow underneath the panel when connected */}
           {isConnected && (
             <div
-              className="absolute bottom-10 inset-x-4 h-4 blur-md opacity-30 transition-opacity duration-300"
+              className="absolute bottom-10 inset-x-4 h-4 opacity-30 transition-opacity duration-300"
               style={{ backgroundColor: glowColor }}
             />
           )}
@@ -128,7 +128,7 @@ export function CardRackSlot({ card, idx, isUnlocked, isSelected, onSelect }: Ca
             <div className="w-[60%] h-px bg-white/5 mt-1 relative">
               {isConnected && (
                 <div
-                  className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-1/3 blur-[1px]"
+                  className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-1/3"
                   style={{ backgroundColor: glowColor }}
                 />
               )}
@@ -149,7 +149,7 @@ export function CardRackSlot({ card, idx, isUnlocked, isSelected, onSelect }: Ca
       </div>
 
       {/* Label below the rack unit */}
-      <div className={`px-2 py-1 border text-center rounded-xs transition-colors duration-300 backdrop-blur-sm z-10 w-[90%] mx-auto ${isUnlocked ? (isHovered ? 'bg-[#141b24] border-(--green-base)/30' : 'bg-[#0a0f14] border-white/5') : 'bg-black border-red-900/20'}`}>
+      <div className={`px-2 py-1 border text-center rounded-xs transition-colors duration-300 z-10 w-[90%] mx-auto ${isUnlocked ? (isHovered ? 'bg-[#141b24] border-(--green-base)/30' : 'bg-[#0a0f14] border-white/5') : 'bg-black border-red-900/20'}`}>
         <h3 className={`text-[9px] font-black uppercase tracking-widest line-clamp-1 ${isUnlocked ? (isHovered ? 'text-(--green-light)' : 'text-white') : 'text-[#1a1a1a]'}`}>
           {isUnlocked ? card.name : 'ENCRYPTED'}
         </h3>

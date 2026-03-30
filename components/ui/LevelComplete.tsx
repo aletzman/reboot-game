@@ -52,7 +52,6 @@ export default function LevelComplete({
     children
 }: LevelCompleteProps) {
     const [selectedCardIdx, setSelectedCardIdx] = useState<number | null>(null)
-    const [isFlipped, setIsFlipped] = useState(false)
     const [visibleStars, setVisible] = useState(0)
     const [backdropReady, setBackdropReady] = useState(false)
     const [panelReady, setPanelReady] = useState(false)
@@ -196,7 +195,7 @@ export default function LevelComplete({
                                                     return (
                                                         <div
                                                             key={card.id}
-                                                            onClick={() => { setSelectedCardIdx(idx); setIsFlipped(false); }}
+                                                            onClick={() => { setSelectedCardIdx(idx); }}
                                                             className="flex items-center gap-3 p-3 bg-black/40 border border-transparent hover:border-(--green-base) transition-all duration-300 group/item cursor-pointer shadow-lg"
                                                             style={{
                                                                 borderColor: `${r.color}33`,
@@ -326,9 +325,7 @@ export default function LevelComplete({
             {/* OVERLAY DE VISTA DETALLADA DEL MÓDULO */}
             <CardDetailModal
                 selectedCard={selectedCardIdx !== null ? newCards[selectedCardIdx] : null}
-                isFlipped={isFlipped}
                 onClose={() => setSelectedCardIdx(null)}
-                onFlip={() => setIsFlipped(!isFlipped)}
             />
         </div>
     )
