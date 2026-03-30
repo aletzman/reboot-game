@@ -7,8 +7,11 @@ import type { GameSave, LevelAccessResult, Level } from '@/types/game'
 export function canAccessLevel(
   levelId: string, 
   save: GameSave | null, 
-  levels: Level[]
+  levels: Level[],
+  demoMode = false
 ): LevelAccessResult {
+  if (demoMode) return { allowed: true }
+
   const id = levelId.toUpperCase()
   const FREE_LEVELS = ['P-00', 'P-01']
 
@@ -31,7 +34,7 @@ export function canAccessLevel(
   }
 
   // Verificar que el acto esté desbloqueado
-  if (!isActUnlocked(level.act, save, levels)) {
+  if (!isActUnlocked(level.act, save, levels, demoMode)) {
     return { allowed: false, reason: 'locked', requiredAct: level.act }
   }
 
@@ -62,8 +65,10 @@ export function canAccessLevel(
 export function isActUnlocked(
   actNumber: number, 
   save: GameSave | null, 
-  levels: Level[]
+  levels: Level[],
+  demoMode = false
 ): boolean {
+  if (demoMode) return true
   if (actNumber <= 0) return true
   if (!save) return false
 

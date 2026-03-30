@@ -8,6 +8,7 @@ import { AuthButton } from "./AuthButton";
 import { getSave, getTotalStars } from "@/lib/gameState";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useDemoStore } from "@/lib/store/useDemoStore";
 
 interface HeaderProps {
     viewMenu?: boolean;
@@ -16,6 +17,15 @@ interface HeaderProps {
 
 export function Header({ viewMenu, showStats }: HeaderProps) {
     const [stats, setStats] = useState<{ name: string; stars: number } | null>(null);
+    const { demoMode, toggleDemoMode: _toggleDemoMode } = useDemoStore();
+
+    const toggleDemoMode = () => {
+        _toggleDemoMode();
+        // Recargamos la página para que todos los stores locales y el middleware se refresquen
+        if (typeof window !== 'undefined') {
+            window.location.reload();
+        }
+    }
 
     useEffect(() => {
         if (showStats) {
@@ -38,6 +48,25 @@ export function Header({ viewMenu, showStats }: HeaderProps) {
                     <div className="w-2 h-2 rounded-full bg-(--green-light) group-hover:animate-ping" />
                     <h1 className="text-sm font-bold font-mono text-(--green-light) tracking-tighter">REBOOT_SYS_V1.0</h1>
                 </Link>
+
+                <div className="flex items-center gap-4 ml-4 px-4 border-l border-(--bg-hover)">
+                    <button
+                        onClick={toggleDemoMode}
+                        className={`group flex items-center gap-2 px-2 py-1 rounded border transition-all duration-300 ${
+                            demoMode
+                                ? "bg-(--amber) border-transparent text-(--bg-void) shadow-[0_0_10px_rgba(239,159,39,0.5)]"
+                                : "bg-transparent border-(--bg-hover) text-(--text-muted) hover:border-(--amber) hover:text-(--amber)"
+                        }`}
+                        title="DEMO_MODE: Bypass all progress checks"
+                    >
+                        <div className={`w-1.5 h-1.5 rounded-full ${
+                            demoMode ? "bg-(--bg-void) animate-pulse" : "bg-current opacity-30"
+                        }`} />
+                        <span className="text-[10px] font-mono font-bold tracking-widest uppercase">
+                            {demoMode ? "DEMO_ACTIVE" : "DEMO_OFF"}
+                        </span>
+                    </button>
+                </div>
 
                 {viewMenu && (
                     <nav className="hidden md:block">
