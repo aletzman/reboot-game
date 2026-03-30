@@ -9,6 +9,8 @@ import type { Card } from '@/types/game'
 import { CardRackSlot } from '@/components/cards/CardRackSlot'
 import { CardDetailModal } from '@/components/cards/CardDetailModal'
 
+import { Loading } from '@/components/ui/Loading'
+
 interface CardsArchiveClientProps {
   initialCards: Card[]
 }
@@ -25,11 +27,7 @@ export default function CardsArchiveClient({ initialCards }: CardsArchiveClientP
   }, [])
 
   if (loading) {
-    return (
-      <div className="flex-1 bg-(--bg-void) flex items-center justify-center font-mono h-[calc(100vh-var(--header-height))]">
-        <div className="text-(--green-light) animate-pulse font-bold tracking-[0.5em]">CARGANDO MÓDULOS...</div>
-      </div>
-    )
+    return <Loading message="CARGANDO MÓDULOS..." icon="database" />
   }
 
   return (

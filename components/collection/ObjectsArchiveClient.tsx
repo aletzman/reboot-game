@@ -9,6 +9,8 @@ import { ObjectDetailModal } from '@/components/collection/ObjectDetailModal'
 import { NavButton } from '@/components/ui/NavButton'
 import type { GameObject } from '@/types/game'
 
+import { Loading } from '@/components/ui/Loading'
+
 const typeIcons: Record<string, any> = {
   lore: InboxIcon,
   key: KeyIcon,
@@ -38,11 +40,7 @@ export default function ObjectsArchiveClient({ initialObjects }: ObjectsArchiveC
   }, [])
 
   if (loading) {
-    return (
-      <div className="flex-1 bg-(--bg-void) flex items-center justify-center font-mono h-[calc(100vh-var(--header-height))]">
-        <div className="text-(--amber) animate-pulse font-bold tracking-[0.5em]">CARGANDO ARTEFACTOS...</div>
-      </div>
-    )
+    return <Loading message="CARGANDO ARTEFACTOS..." variant="amber" icon="archive" />
   }
 
   return (

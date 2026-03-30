@@ -5,6 +5,8 @@ import { getSave, isActUnlocked } from '@/lib/gameState'
 import { ActSummary, Level, ActNumber } from '@/types/game'
 import { ActCard } from '@/components/map/ActCard'
 
+import { Loading } from '@/components/ui/Loading'
+
 interface GameMapClientProps {
   levels: Level[]
 }
@@ -63,11 +65,7 @@ export default function GameMapClient({ levels }: GameMapClientProps) {
   }, [levels])
 
   if (loading) {
-    return (
-      <div className="flex-1 bg-(--bg-deep) flex items-center justify-center font-mono text-(--green-light)">
-        <div className="animate-pulse">CARGANDO_MAPA_SISTEMA...</div>
-      </div>
-    )
+    return <Loading message="CARGANDO_MAPA_SISTEMA..." icon="network" />
   }
 
   return (

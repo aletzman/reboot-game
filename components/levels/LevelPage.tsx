@@ -20,6 +20,7 @@ import LevelComplete from '@/components/ui/LevelComplete'
 import FragAssistant from '@/components/frag/FragAssistant'
 import { getDialogues } from '@/services/dialoguesService'
 import { Radio } from 'lucide-react'
+import { Loading } from '@/components/ui/Loading'
 
 // ------------------------------------------------------------
 // IMPORTS DINÁMICOS — cada componente solo carga cuando se necesita
@@ -314,49 +315,13 @@ function renderLevelComponent(
 // ------------------------------------------------------------
 
 function LoadingScreen() {
-    const [tip, setTip] = useState<string>('')
-
-    useEffect(() => {
-        getDialogues().then(data => {
-            const tips = data.frag.ambient_tips
-            const randomTip = tips[Math.floor(Math.random() * tips.length)]
-            setTip(randomTip)
-        }).catch(console.error)
-    }, [])
-
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-(--bg-void) font-mono gap-6 p-8">
-            <div className="relative">
-                <div className="w-12 h-12 border-2 border-(--purple)/30 border-t-(--purple) rounded-full animate-spin" />
-                <div className="absolute inset-0 bg-(--purple)/20 blur-xl rounded-full animate-pulse" />
-            </div>
-
-            <div className="flex flex-col items-center gap-2 max-w-[400px] text-center">
-                <div className="text-(--purple) text-[11px] tracking-[.25em] uppercase font-bold animate-pulse">
-                    Sincronizando con FRAG...
-                </div>
-                <div className="h-px w-24 bg-linear-to-r from-transparent via-(--purple)/40 to-transparent my-2" />
-                <div className="text-(--text-muted) text-[12px] italic leading-relaxed px-4">
-                    "{tip}"
-                </div>
-            </div>
-
-            <div className="absolute bottom-12 flex flex-col items-center gap-1 opacity-40">
-                <span className="text-[10px] text-(--text-ghost) tracking-widest uppercase font-bold">Cargando Búferes del Sector</span>
-                <div className="w-48 h-1 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-(--purple) animate-[loadingBar_2s_infinite]" />
-                </div>
-            </div>
-
-            <style dangerouslySetInnerHTML={{
-                __html: `
-                @keyframes loadingBar {
-                    0% { width: 0%; transform: translateX(-100%); }
-                    50% { width: 40%; transform: translateX(50%); }
-                    100% { width: 100%; transform: translateX(200%); }
-                }
-            `}} />
-        </div>
+        <Loading 
+            message="Sincronizando con FRAG..." 
+            variant="frag" 
+            showTips={true} 
+            icon="cpu"
+        />
     )
 }
 
