@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { getActSummary, getLevelProgress, canAccessLevel } from '@/lib/gameState'
-import { ActSummary, ActNumber, Level } from '@/types/game'
+import { isDemoModeActive } from '@/lib/store/useDemoStore'
+import { ActSummary, ActNumber, Level, LevelProgress } from '@/types/game'
 import { LevelCard, LevelCardSkeleton } from '@/components/map/LevelCard'
 
 interface ActMapClientProps {
@@ -40,8 +41,18 @@ export default function ActMapClient({ actId, levels }: ActMapClientProps) {
     <div className="w-full pb-24">
       <div className="flex flex-col gap-4 relative z-10">
         {levels.map((level: Level, index: number) => {
-          const prog = getLevelProgress(level.id)
+          let prog = getLevelProgress(level.id)
           const access = canAccessLevel(level.id, levels)
+
+          if (isDemoModeActive()) {
+            prog = {
+              completed: true,
+              stars: 3,
+              usedFrag: false,
+              attempts: 1,
+              completedAt: new Date().toISOString()
+            } as LevelProgress
+          }
 
           return (
             <LevelCard

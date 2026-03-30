@@ -81,7 +81,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${dataMono.variable} ${fontTitle.variable} h-full antialiased`}
     >
       <body className=" flex flex-col h-svh">
-        <CRTOverlay />
+        {/* <CRTOverlay /> */}
         <Header />
         <main className="mt-(--header-height) max-h-[calc(100svh-var(--header-height))] pb-16 custom-scrollbar overflow-y-auto">
           {children}

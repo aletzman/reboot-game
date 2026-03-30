@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { getSave, isActUnlocked } from '@/lib/gameState'
+import { isDemoModeActive } from '@/lib/store/useDemoStore'
 import { ActSummary, Level, ActNumber } from '@/types/game'
 import { ActCard } from '@/components/map/ActCard'
 import { SectorHeader } from '@/components/map/SectorHeader'
@@ -50,7 +51,12 @@ export default function GameMapClient({ levels }: GameMapClientProps) {
 
         // Update completion status for each act
         actMap.forEach(act => {
-          act.completed = act.levelIds.every(id => progress?.[id]?.completed ?? false)
+          if (isDemoModeActive()) {
+            act.completed = true
+            act.totalStars = act.maxStars
+          } else {
+            act.completed = act.levelIds.every(id => progress?.[id]?.completed ?? false)
+          }
         })
 
         const sortedActs = Array.from(actMap.values()).sort((a, b) => a.number - b.number)

@@ -11,6 +11,7 @@ import type {
   Level,
 } from '@/types/game'
 import * as access from '@/lib/game/access'
+import { isDemoModeActive } from '@/lib/store/useDemoStore'
 
 // ------------------------------------------------------------
 // CONSTANTES
@@ -158,6 +159,7 @@ export function unlockCard(cardId: string): void {
 }
 
 export function hasCard(cardId: string): boolean {
+  if (isDemoModeActive()) return true
   return getSave()?.cards.includes(cardId) ?? false
 }
 
@@ -178,6 +180,7 @@ export function unlockObject(objectId: string): void {
 }
 
 export function hasObject(objectId: string): boolean {
+  if (isDemoModeActive()) return true
   return getSave()?.objects.includes(objectId) ?? false
 }
 
@@ -190,7 +193,7 @@ export function getObjects(): string[] {
 // ------------------------------------------------------------
 
 export function canAccessLevel(levelId: string, levels: Level[]): LevelAccessResult {
-  return access.canAccessLevel(levelId, getSave(), levels)
+  return access.canAccessLevel(levelId, getSave(), levels, isDemoModeActive())
 }
 
 export function requiresLogin(levelId: string): boolean {
@@ -232,7 +235,7 @@ export function getActSummary(actNumber: ActNumber, levels: Level[]): ActSummary
 }
 
 export function isActUnlocked(actNumber: number, levels: Level[]): boolean {
-  return access.isActUnlocked(actNumber, getSave(), levels)
+  return access.isActUnlocked(actNumber, getSave(), levels, isDemoModeActive())
 }
 
 export function getCurrentAct(): ActNumber {

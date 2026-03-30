@@ -36,8 +36,10 @@ export function Loading({
 	const [tip, setTip] = useState<string>('')
 	const [rotation, setRotation] = useState(0)
 	const [progress, setProgress] = useState(0)
+	const [isMounted, setIsMounted] = useState(false)
 
 	useEffect(() => {
+		setIsMounted(true)
 		if (showTips) {
 			getDialogues().then(data => {
 				const tips = data.frag.ambient_tips
@@ -73,7 +75,7 @@ export function Loading({
 
 			{/* ── AMBIENT DATA STREAMS (Background) ── */}
 			<div className="absolute inset-0 opacity-10 pointer-events-none select-none">
-				{[...Array(6)].map((_, i) => (
+				{isMounted && [...Array(6)].map((_, i) => (
 					<div
 						key={i}
 						className="absolute text-[10px] whitespace-nowrap animate-slide-down"
