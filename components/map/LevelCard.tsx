@@ -114,25 +114,31 @@ export function LevelCard({ level, index, progress, access, actNumber }: LevelCa
         </div>
 
         <div className="flex items-center gap-10 shrink-0 self-end md:self-center">
-          {/* Performance indicator (Stars) */}
+          {/* Performance indicator (Energy Batteries) */}
           {!isLocked && (
-            <div className="flex flex-col items-end gap-1.5">
-              <span className="text-[10px] font-mono text-(--text-muted)/70 font-semibold uppercase tracking-widest">EFICIENCIA DE EJECUCIÓN</span>
-              <div className="flex gap-[4px]">
-                {[1, 2, 3].map((s) => (
-                  <div key={s} className="relative group/star">
-                    {s <= stars && (
-                      <div className="absolute inset-0 bg-(--amber) blur-md opacity-30 group-hover/star:opacity-60 transition-opacity" />
-                    )}
-                    <div
-                      className={`w-4 h-6 skew-x-[-20deg] border transition-all duration-500
-                        ${s <= stars
-                          ? 'bg-(--amber) border-(--amber) shadow-[0_0_10px_var(--amber)]'
-                          : 'bg-[#0c1218] border-[#1a1f26]'}
-                      `}
-                    />
-                  </div>
-                ))}
+            <div className="flex flex-col items-end gap-1.5 grayscale-[0.5] group-hover:grayscale-0 transition-all">
+              <span className="text-[8px] font-bold text-(--text-muted)/60 tracking-[0.2em] uppercase font-mono">CONSUMO_ENERGÍA</span>
+              <div className="flex gap-2">
+                {[1, 2, 3].map((n) => {
+                  const isActive = n <= stars;
+                  return (
+                    <div key={n} className="relative w-3.5 h-5 border border-[#1a202c] bg-black flex flex-col justify-end ppx shadow-[inset_0_0_4px_rgba(0,0,0,1)]">
+                      <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-0.5 bg-[#1a202c]" />
+                      <div
+                        className={`w-full transition-all duration-700 border-t
+                          ${isActive
+                            ? 'h-full bg-(--green-base) border-(--green-base) shadow-[0_0_8px_rgba(45,120,0,0.1)]'
+                            : 'h-1 bg-red-900/70 border-red-800/50'
+                          }
+                        `}
+                      >
+                        {isActive && (
+                          <div className="w-full h-full opacity-10 bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,rgba(0,0,0,1)_2px,rgba(0,0,0,1)_4px)]" />
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -198,9 +204,11 @@ export function LevelCardSkeleton() {
         </div>
       </div>
       <div className="w-32 shrink-0 p-6 flex items-center justify-center">
-        <div className="flex gap-1">
+        <div className="flex gap-2 opacity-20">
           {[1, 2, 3].map(i => (
-            <div key={i} className="w-4 h-6 skew-x-[-20deg] bg-[#1a2636] rounded-px" />
+            <div key={i} className="relative w-3.5 h-5 border border-[#1a2636] bg-black">
+              <div className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-1.5 h-px bg-[#1a2636]" />
+            </div>
           ))}
         </div>
       </div>

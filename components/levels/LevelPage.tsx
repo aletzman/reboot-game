@@ -270,6 +270,7 @@ export default function LevelPage({
             {showComplete && completionResult && (
                 <LevelComplete
                     stars={completionResult.stars}
+                    levelType={level.type}
                     newCards={completionResult.newCards}
                     newObjects={completionResult.newObjects}
                     secretCardUnlocked={completionResult.secretCardUnlocked}

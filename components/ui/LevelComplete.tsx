@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo, memo } from 'react'
 import type { Card, GameObject } from '@/types/game'
 import { Button } from './Button'
 import { RotateCcwIcon, HardDriveIcon, ChevronsRightIcon, DatabaseIcon, CpuIcon, ActivityIcon } from 'lucide-react'
-import { DataCartridge, RARITY_STYLES } from '@/components/cards/DataCartridge'
+import { RARITY_STYLES } from '@/components/cards/DataCartridge'
 import { CardDetailModal } from '@/components/cards/CardDetailModal'
 
 interface ReviewHint {
@@ -16,6 +16,7 @@ interface ReviewHint {
 
 interface LevelCompleteProps {
     stars: 0 | 1 | 2 | 3
+    levelType?: string
     newCards: Card[]
     newObjects: GameObject[]
     secretCardUnlocked: boolean
@@ -28,6 +29,7 @@ interface LevelCompleteProps {
 
 export default function LevelComplete({
     stars,
+    levelType = 'noderoutine',
     newCards,
     newObjects,
     secretCardUnlocked,
@@ -66,47 +68,79 @@ export default function LevelComplete({
         return () => clearInterval(interval)
     }, [stars])
 
-    const starMessage = useMemo(() => {
-        if (stars === 3) return 'FRAG: "Sincronización perfecta. Has recuperado todos los datos del sector."'
-        if (stars === 2) return 'FRAG: "Buen trabajo. Conexión estable, aunque se detectaron redundancias."'
-        if (stars === 1) return 'FRAG: "Conexión mínima establecida. Los datos son legibles pero incompletos."'
-        return 'FRAG: "Registro de nivel guardado. El núcleo sigue inestable."'
-    }, [stars])
+    const feedback = useMemo(() => {
+        const type = (levelType || 'noderoutine').toLowerCase();
+
+        const map: Record<string, any> = {
+            noderoutine: {
+                3: { title: 'RUTA PERFECTA', desc: '¡Increíble! Usaste las tarjetas exactas para llegar al objetivo.', frag: 'Sincronización total. El robot no dio ni un solo paso innecesario.' },
+                2: { title: 'BUEN CAMINO', desc: 'El robot llegó bien, pero usaste algunas tarjetas de más.', frag: 'Conexión estable. Podrías intentar hacerlo con menos instrucciones la próxima vez.' },
+                1: { title: 'DANDO VUELTAS', desc: 'Usaste demasiadas tarjetas. El robot dio rodeos innecesarios.', frag: 'Los datos llegaron, pero el consumo de energía fue muy alto por las vueltas.' },
+                0: { title: 'ERROR DE RUTA', desc: 'El robot no pudo completar su camino.', frag: 'Se perdió la señal. Revisa el orden de tus tarjetas.' }
+            },
+            speedtyping: {
+                3: { title: '¡SÚPER RÁPIDO!', desc: 'Escribes con mucha fluidez. El código cargó al instante.', frag: 'Impresionante. Escribes más rápido que mi procesador central.' },
+                2: { title: 'BUEN RITMO', desc: 'Vas por buen camino, aunque algunas letras te detuvieron.', frag: 'Bien hecho. Con un poco más de práctica serás un experto tecleando.' },
+                1: { title: 'PASO A PASO', desc: 'El código tardó un poco en cargar. ¡No te desesperes!', frag: 'Paciencia. Lo importante es que cada letra sea la correcta.' },
+                0: { title: 'CONEXIÓN LENTA', desc: 'Tardaste demasiado en escribir el código.', frag: 'Intenta calentar los dedos antes de empezar la siguiente carga.' }
+            },
+            codeeditor: {
+                3: { title: 'CÓDIGO LIMPIO', desc: '¡Excelente! Escribiste todo de forma clara y directa.', frag: 'Algoritmo perfecto. Has logrado que el robot entienda todo a la primera.' },
+                2: { title: 'CASI PERFECTO', desc: 'Funciona bien, pero podrías intentar usar menos líneas.', frag: 'Buen trabajo. Un código más corto es más fácil de leer para el sistema.' },
+                1: { title: 'UN POCO LÍO', desc: 'El código es un poco confuso y al robot le costó entenderlo.', frag: 'Funciona, pero el procesador se calentó un poco intentando descifrarlo.' },
+                0: { title: 'ERROR DE TEXTO', desc: 'Hay algo mal escrito en el código que no deja que funcione.', frag: 'Revisa bien los puntos y comas. Un pequeño error detiene todo.' }
+            },
+            logicassembly: {
+                3: { title: 'PIEZAS EN ORDEN', desc: '¡Todo encaja! El circuito funciona a la perfección.', frag: 'Lógica impecable. Has restaurado la conexión del sector por completo.' },
+                2: { title: 'BIEN ARMADO', desc: 'El sistema funciona, aunque algunas piezas están un poco apretadas.', frag: 'Nodo activo. Se nota que entiendes cómo fluye la energía por aquí.' },
+                1: { title: 'CONEXIÓN DÉBIL', desc: 'Lograste que funcione, pero el armado es un poco confuso.', frag: 'La señal es un poco inestable. Intenta ordenar mejor las piezas lógicas.' },
+                0: { title: 'CIRCUITO ROTO', desc: 'Las piezas no están conectadas correctamente.', frag: 'No hay flujo de datos. Revisa las conexiones de cada bloque.' }
+            }
+        };
+
+        // Fallback para puzzles y otros
+        const defaultSet = map.noderoutine;
+        if (type.startsWith('puzzle')) {
+            return {
+                3: { title: '¡QUÉ AGUDEZA!', desc: 'Resolviste el enigma rápidamente y sin fallar ni una vez.', frag: '¡Eres un genio! Has desbloqueado el acceso al sistema central.' },
+                2: { title: 'BUEN OJO', desc: 'Te tomó un par de intentos, pero lograste dar con la respuesta.', frag: 'El sistema aceptó tu respuesta. No estuvo mal para ser el primer intento.' },
+                1: { title: 'DUDAS AL INICIO', desc: 'Te costó un poco, pero finalmente entendiste el patrón.', frag: 'Criptografía superada. La persistencia es la clave de todo buen programador.' },
+                0: { title: 'NO ENCAJA', desc: 'Aún no logras descifrar este patrón de datos.', frag: 'No te rindas. A veces la solución está justo frente a tus ojos.' }
+            }[stars];
+        }
+
+        const selectedType = map[type] || defaultSet;
+        return selectedType[stars] || defaultSet[stars];
+    }, [stars, levelType])
 
     const hasRewards = newCards.length > 0 || secretCardUnlocked || newObjects.length > 0;
-
-    // ------------------------------------------------------------
-    // RENDER
-    // ------------------------------------------------------------
 
     return (
         <div
             className={`fixed inset-0 z-200 flex items-center justify-center p-4 transition-colors duration-700 ease-out ${backdropReady ? 'bg-black/80' : 'bg-black/0'}`}
         >
-            {/* Partículas flotando — efecto sutil (Memoized) */}
             <FloatingParticles visible={backdropReady} />
 
-            <div className={`relative w-full max-w-[680px] bg-[#0c1218] rounded-sm p-[2px] border border-[#1a2636] shadow-[0_0_100px_rgba(0,0,0,0.9)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${panelReady ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-8'}`}>
+            <div className={`relative w-full max-w-[720px] bg-[#0c1218] rounded-sm p-[2px] border border-[#1a2636] shadow-[0_0_100px_rgba(0,0,0,0.9)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${panelReady ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-8'}`}>
 
-                {/* Decoración Corners */}
+                {/* Corners */}
                 <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-(--green-base) z-30" />
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-(--green-base) z-30" />
 
-                {/* Scanline Effect Overlay ONLY inside the modal for performance */}
                 <div className="absolute inset-0 pointer-events-none z-20 opacity-[0.03] overflow-hidden rounded-sm">
                     <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,white_3px)] w-full h-full" />
                 </div>
 
                 <div className="relative bg-(--bg-void) border border-(--bg-hover) shadow-inner flex flex-col font-mono overflow-hidden">
-                    <div className="relative px-6 py-6 max-h-[85vh] overflow-y-auto custom-scrollbar flex flex-col gap-6 z-10">
+                    <div className="relative px-6 py-6 max-h-[90vh] overflow-y-auto custom-scrollbar flex flex-col gap-6 z-10">
 
-                        {/* ── HEADER TERMINAL ── */}
+                        {/* ── HEADER ── */}
                         <div className="relative z-20 flex items-center justify-between border-b border-[#1a2636] pb-4 mb-2">
                             <div className="flex flex-col gap-1">
                                 <div className="text-[9px] text-(--green-muted) tracking-[0.3em] uppercase flex items-center gap-2">
                                     <ActivityIcon size={10} /> SIS_STATUS // COMPLETE
                                 </div>
-                                <div className="text-[18px] font-bold text-white tracking-[.15em] uppercase leading-none mt-1">
+                                <div className="text-[20px] font-bold text-white uppercase leading-none mt-1">
                                     Misión Finalizada
                                 </div>
                             </div>
@@ -120,45 +154,114 @@ export default function LevelComplete({
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-8 relative z-20 transition-all">
+                        <div className="flex flex-col gap-6 relative z-20">
 
-                            {/* ── CÉLULAS DE ENERGÍA Y ESTADO ── */}
-                            <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] gap-4">
-                                {/* CAJA CÉLULAS (FUSION CELLS) */}
-                                <div className="bg-[#080c11] border border-[#1a2636] px-4 py-5 flex flex-col items-center justify-center gap-4 rounded-xs shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)]">
-                                    <span className="text-[9px] text-(--text-muted) uppercase tracking-[.2em] leading-none block w-full text-center pb-3 border-b border-[#131d2a]">
-                                        Estatus_Sincronía
-                                    </span>
-                                    <div className="flex justify-center gap-3 mt-1">
-                                        {[1, 2, 3].map(n => (
-                                            <DataNode key={n} active={visibleStars >= n} delay={n * 0.1} />
-                                        ))}
+                            {/* ── PANEL DE DIAGNÓSTICO (HARDWARE + CLARIDAD EDUCATIVA - VERSIÓN LIMPIA) ── */}
+                            <div className="flex flex-col md:flex-row bg-[#020304] border-2 border-[#1a202c] overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] relative min-h-[240px] font-mono">
+
+                                {/* NOTA: Eliminado el overlay de textura CRT local de aquí, 
+                                   ya que el Layout global ya aplica uno.
+                                */}
+
+                                {/* PANEL IZQUIERDO: BATERÍAS Y CALIFICACIÓN CLARA */}
+                                <div className="w-full md:w-[320px] p-6 flex flex-col justify-between gap-6 bg-[#05070a] relative border-b-2 md:border-b-0 md:border-r-2 border-[#1a202c] shadow-[inset_-10px_0_20px_rgba(0,0,0,0.5)]">
+
+                                    <div className="relative z-10 w-full">
+                                        <div className="flex items-center justify-between border-b-2 border-[#1a202c] pb-2 mb-6">
+                                            <div className="flex items-center gap-2">
+                                                <div className={`w-2 h-2 ${visibleStars === 3 ? 'bg-(--green-base) animate-pulse' : visibleStars === 2 ? 'bg-amber-500' : 'bg-red-500'} shadow-[0_0_8px_currentColor]`} />
+                                                <span className="text-[10px] font-black text-white/50 tracking-[0.2em] uppercase">
+                                                    CONSUMO DE ENERGÍA
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Ranuras Físicas de Batería */}
+                                        <div className="flex justify-center items-center gap-4 h-20">
+                                            {[1, 2, 3].map(n => {
+                                                const isActive = n <= visibleStars;
+                                                return (
+                                                    <div key={n} className="relative w-12 h-16 border-2 border-[#1a202c] bg-black flex flex-col justify-end p-1 shadow-[inset_0_0_10px_rgba(0,0,0,1)]">
+                                                        <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-6 h-1 bg-[#1a202c]" />
+                                                        <div
+                                                            className={`w-full transition-all duration-700 border-t-2
+                                                                ${isActive
+                                                                    ? 'h-full bg-(--green-base)/40 border-(--green-base) shadow-[0_0_15px_rgba(45,120,0,0.5)]'
+                                                                    : 'h-2 bg-red-900/60 border-red-900/50'
+                                                                }
+                                                            `}
+                                                        >
+                                                            {/* Rayas internas de la batería (mantenidas por ser gráficas, no scanlines) */}
+                                                            {isActive && (
+                                                                <div className="w-full h-full opacity-30 bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,rgba(0,0,0,1)_4px,rgba(0,0,0,1)_8px)]" />
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+
+                                    {/* FEEDBACK EDUCATIVO DIRECTO Y CLARO */}
+                                    <div className={`relative z-10 w-full p-4 border-l-4 bg-black/80 flex flex-col gap-2
+                                        ${visibleStars === 3 ? 'border-(--green-base)' : visibleStars === 2 ? 'border-amber-500' : 'border-red-500'}`}>
+
+                                        <span className={`text-[12px] font-black uppercase
+                                            ${visibleStars === 3 ? 'text-(--green-base)' : visibleStars === 2 ? 'text-amber-500' : 'text-red-500'}`}>
+                                            {feedback.title}
+                                        </span>
+
+                                        {/* Usamos font-sans para máxima legibilidad pedagógica */}
+                                        <span className="text-[12px] text-white/70 leading-relaxed font-sans normal-case">
+                                            {feedback.desc}
+                                        </span>
                                     </div>
                                 </div>
 
-                                {/* CAJA REPORTE NÚCLEO */}
-                                <div className="flex flex-col justify-center bg-(--bg-surface) border-l-4 border-(--cyan) p-5 rounded-r-xs relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 p-2 opacity-10">
-                                        <ActivityIcon size={48} className="text-(--cyan)" />
-                                    </div>
-                                    <div className="text-[9px] text-(--purple) font-bold tracking-[.25em] mb-2 uppercase flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 bg-(--purple) rounded-full animate-pulse" /> FRAG_SYSTEM ANALYSIS
-                                    </div>
-                                    <div className={`text-[13px] leading-normal ${stars === 3 ? 'text-(--green-light)' : 'text-(--text-primary)'}`}>
-                                        {starMessage}
-                                    </div>
-                                    {reviewHint?.levelTitle && (
-                                        <div className="text-[9px] text-(--text-muted) mt-3 tracking-widest uppercase flex items-center gap-2">
-                                            <span className="text-(--text-ghost)">DB_SOURCE:</span> {reviewHint.levelTitle}
+                                {/* PANEL DERECHO: CONSOLA FRAG (El Mentor - Fondo Puro) */}
+                                <div className="flex-1 p-6 md:p-8 bg-black relative flex flex-col justify-center min-h-[220px]">
+
+                                    {/* NOTA: Eliminado el grid de fondo morado de aquí para máxima limpieza. */}
+
+                                    <div className="relative z-10 flex flex-col h-full justify-between">
+
+                                        {/* Header de la consola: Ahora es un Análisis de la Ruta */}
+                                        <div className="flex items-center gap-3 border-b border-[#1a202c] pb-3 mb-4">
+                                            <div className="bg-(--purple) text-black font-black text-[10px] px-2 py-0.5 tracking-widest">
+                                                FRAG_OS
+                                            </div>
+                                            <span className="text-[10px] text-(--purple)/80 tracking-[0.2em] uppercase font-bold">
+                                                ANÁLISIS DE APRENDIZAJE
+                                            </span>
                                         </div>
-                                    )}
+
+                                        {/* Mensaje de FRAG: Altamente legible sobre negro puro */}
+                                        <div className="flex-1 flex gap-4">
+                                            <div className="text-(--purple) font-black text-lg select-none mt-1">{">"}</div>
+                                            <div className="flex flex-col gap-4">
+                                                {/* Usamos un color más claro (purple-200) para no cansar la vista */}
+                                                <p className={`text-sm md:text-[15px] leading-relaxed tracking-wide font-medium
+                                                    ${stars === 3 ? 'text-purple-200' : 'text-white/90'}`}>
+                                                    {feedback.frag}
+                                                    <span className="inline-block w-2 h-4 bg-(--purple) animate-pulse ml-2 align-middle" />
+                                                </p>
+
+                                                {reviewHint?.levelTitle && (
+                                                    <div className="inline-flex w-fit items-center gap-3 text-[9px] text-white/40 tracking-[0.2em] uppercase bg-[#0a000a] border border-(--purple)/30 px-3 py-1.5 mt-2">
+                                                        <CpuIcon size={12} className="text-(--purple)/60" />
+                                                        <span>
+                                                            NIVEL: <span className="text-(--purple) font-bold">{reviewHint.levelTitle}</span>
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-
-                            {/* Contenedor de recompensas si hay alguna */}
+                            {/* RECOMPENSAS */}
                             {hasRewards && (
                                 <div className="border border-[#1a3810] bg-[#061006] p-5 rounded-xs flex flex-col gap-6 relative overflow-hidden group">
-                                    {/* Shimmer de fondo para rewards */}
                                     <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(85,226,0,0.03)_50%,transparent_75%)] bg-size-[200%_200%] animate-[lc-shimmer_6s_linear_infinite]" />
 
                                     <div className="text-[11px] text-(--green-base) uppercase font-bold tracking-[.3em] flex items-center gap-4 relative z-10">
@@ -167,12 +270,11 @@ export default function LevelComplete({
                                         <div className="h-px flex-1 bg-[linear-gradient(90deg,var(--green-base),transparent)] opacity-30" />
                                     </div>
 
-                                    {/* ── CARTAS DESBLOQUEADAS ── */}
                                     {newCards.length > 0 && (
                                         <div className="animate-[lc-slideUp_.6s_ease-out_both] delay-300 relative z-10">
                                             <div className="text-[10px] text-(--green-light) tracking-[.15em] mb-4 uppercase flex items-center gap-2">
                                                 <div className="w-3 h-px bg-(--green-light)" />
-                                                {newCards.length} Módulo{newCards.length > 1 ? 's' : ''} de memoria extraído{newCards.length > 1 ? 's' : ''}
+                                                {newCards.length} Módulo{newCards.length > 1 ? 's' : ''} extraído{newCards.length > 1 ? 's' : ''}
                                             </div>
 
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -182,9 +284,8 @@ export default function LevelComplete({
                                                         <div
                                                             key={card.id}
                                                             onClick={() => { setSelectedCardIdx(idx); }}
-                                                            className="flex items-center gap-3 p-3 bg-black/40 border border-transparent hover:border-(--green-base) transition-all duration-300 group/item cursor-pointer shadow-lg"
+                                                            className="flex items-center gap-3 p-3 bg-black/40 rounded-xs border border-(--border-color)/40 hover:border-(--green-base)/40 transition-all duration-300 group/item cursor-pointer shadow-lg"
                                                             style={{
-                                                                borderColor: `${r.color}33`,
                                                                 boxShadow: `0 4px 15px -5px ${r.color}22`
                                                             }}
                                                         >
@@ -206,25 +307,14 @@ export default function LevelComplete({
                                         </div>
                                     )}
 
-                                    {/* ── CARTA SECRETA ── */}
                                     {secretCardUnlocked && (
-                                        <div className="border border-(--amber)/30 rounded-xs p-5 pb-6 text-center relative overflow-hidden animate-[lc-slideUp_.6s_ease-out_both] delay-500"
-                                            style={{
-                                                background: 'linear-gradient(135deg, rgba(20,10,0,.9), rgba(40,25,0,.6))',
-                                            }}>
-                                            <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent_30%,rgba(240,153,123,.08)_50%,transparent_70%)] animate-[lc-shimmer_4s_linear_infinite]" />
-                                            <div className="text-[11px] font-bold text-(--amber) tracking-[.4em] mb-3 relative uppercase flex items-center justify-center gap-3">
-                                                <div className="h-px w-8 bg-(--amber) opacity-40" />
-                                                FRAGMENTO OCULTO
-                                                <div className="h-px w-8 bg-(--amber) opacity-40" />
-                                            </div>
-                                            <div className="text-[12px] text-[#f5d5b8] italic relative leading-relaxed max-w-[400px] mx-auto opacity-90">
-                                                &quot;Independencia total del sistema FRAG confirmada. Protocolo de genio activado.&quot;
-                                            </div>
+                                        <div className="border border-(--amber)/30 rounded-xs p-5 text-center relative overflow-hidden animate-[lc-slideUp_.6s_ease-out_both] delay-500"
+                                            style={{ background: 'linear-gradient(135deg, rgba(20,10,0,.9), rgba(40,25,0,.6))' }}>
+                                            <div className="text-[11px] font-bold text-(--amber) tracking-[.4em] mb-2 relative uppercase">FRAGMENTO OCULTO RECUPERADO</div>
+                                            <div className="text-[12px] text-[#f5d5b8] italic opacity-90">&quot;Independencia total del sistema FRAG confirmada.&quot;</div>
                                         </div>
                                     )}
 
-                                    {/* ── OBJETOS DESBLOQUEADOS ── */}
                                     {newObjects.length > 0 && (
                                         <div className="animate-[lc-slideUp_.6s_ease-out_both] delay-700 relative z-10">
                                             <div className="text-[10px] text-(--amber) tracking-[.15em] uppercase mb-4 flex items-center gap-2">
@@ -232,14 +322,10 @@ export default function LevelComplete({
                                                 {newObjects.length} Artefacto{newObjects.length > 1 ? 's' : ''} recuperado{newObjects.length > 1 ? 's' : ''}
                                             </div>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                {newObjects.map((obj, i) => (
-                                                    <div key={obj.id} className="bg-black/30 border border-[#2a1d0a] rounded-xs py-3 px-4 flex flex-col gap-2 hover:bg-black/50 transition-colors">
-                                                        <div className="text-[11px] text-(--amber) font-bold tracking-widest uppercase">
-                                                            {obj.name}
-                                                        </div>
-                                                        <div className="text-[10px] text-(--text-muted) leading-relaxed">
-                                                            {obj.inventoryNote}
-                                                        </div>
+                                                {newObjects.map((obj) => (
+                                                    <div key={obj.id} className="bg-black/30 border border-[#2a1d0a] rounded-xs py-3 px-4 flex flex-col gap-1">
+                                                        <div className="text-[11px] text-(--amber) font-bold tracking-widest uppercase">{obj.name}</div>
+                                                        <div className="text-[9px] text-(--text-muted)">{obj.inventoryNote}</div>
                                                     </div>
                                                 ))}
                                             </div>
@@ -248,10 +334,8 @@ export default function LevelComplete({
                                 </div>
                             )}
 
-                            {/* ── HINT DE REPASO DE FRAG ── */}
                             {reviewHint?.shouldShow && (
-                                <div className="border border-(--purple)/30 bg-[#0d091a] rounded-xs p-5 relative overflow-hidden animate-[lc-slideUp_.6s_ease-out_both] delay-500">
-                                    <div className="absolute top-0 right-0 w-20 h-20 bg-(--purple)/5 rounded-full" />
+                                <div className="border border-(--purple)/30 bg-[#0d091a] rounded-xs p-5 animate-[lc-slideUp_.6s_ease-out_both]">
                                     <div className="text-[10px] text-[#a49ee8] tracking-[.25em] mb-3 uppercase font-bold flex items-center gap-2">
                                         <ActivityIcon size={12} /> SUGERENCIA_OPTIMIZACIÓN
                                     </div>
@@ -261,33 +345,15 @@ export default function LevelComplete({
                                 </div>
                             )}
 
-                            {/* ── CONTENIDO PERSONALIZADO POR NIVEL (Ej: Stats de typing) ── */}
-                            {children && (
-                                <div className="animate-[lc-slideUp_.6s_ease-out_both] delay-200">
-                                    {children}
-                                </div>
-                            )}
+                            {children}
 
-                            {/* ── BOTONES FINALES ── */}
-                            <div className="flex flex-wrap items-center justify-between gap-4 mt-2 pt-6 border-t border-[#1a2636] animate-[lc-slideUp_.6s_ease-out_both] delay-900ms">
+                            {/* BOTONES */}
+                            <div className="flex flex-wrap items-center justify-between gap-4 mt-2 pt-6 border-t border-[#1a2636]">
                                 <div className="flex gap-3">
-                                    <Button
-                                        onClick={onRetry}
-                                        variant="outline"
-                                        size="sm"
-                                        className="min-w-[120px]"
-                                    >
-                                        <RotateCcwIcon size={14} />
-                                        REINTENTAR
+                                    <Button onClick={onRetry} variant="outline" size="sm" className="min-w-[120px]">
+                                        <RotateCcwIcon size={14} /> REINTENTAR
                                     </Button>
-                                    <Button
-                                        onClick={onMap}
-                                        variant="outline"
-                                        size="sm"
-                                        className="min-w-[100px]"
-                                    >
-                                        MAPA
-                                    </Button>
+                                    <Button onClick={onMap} variant="outline" size="sm" className="min-w-[100px]">MAPA</Button>
                                 </div>
                                 <Button
                                     onClick={onNext}
@@ -296,11 +362,7 @@ export default function LevelComplete({
                                     icon={reviewHint?.shouldShow ? RotateCcwIcon : ChevronsRightIcon}
                                     iconPosition="right"
                                 >
-                                    {reviewHint?.shouldShow ?
-                                        `REPASAR "${reviewHint.levelTitle}"`
-                                        :
-                                        "SIGUIENTE NIVEL"
-                                    }
+                                    {reviewHint?.shouldShow ? `REPASAR "${reviewHint.levelTitle}"` : "SIGUIENTE NIVEL"}
                                 </Button>
                             </div>
                         </div>
@@ -308,7 +370,6 @@ export default function LevelComplete({
                 </div>
             </div>
 
-            {/* OVERLAY DE VISTA DETALLADA DEL MÓDULO */}
             <CardDetailModal
                 selectedCard={selectedCardIdx !== null ? newCards[selectedCardIdx] : null}
                 onClose={() => setSelectedCardIdx(null)}
@@ -317,76 +378,7 @@ export default function LevelComplete({
     )
 }
 
-const DataNode = memo(({ active, delay }: {
-    active: boolean
-    delay: number
-}) => {
-    return (
-        <div className="w-10 h-10 relative flex items-center justify-center"
-            style={{
-                transition: `transform .7s cubic-bezier(.34,1.56,.64,1) ${delay}s, opacity .7s cubic-bezier(.34,1.56,.64,1) ${delay}s`,
-                transform: active ? 'scale(1) rotate(0deg)' : 'scale(0.6) rotate(-10deg)',
-                opacity: active ? 1 : 0.15,
-            }}>
-
-            {/* SVG Balanced Node Structure */}
-            <svg viewBox="0 0 60 60" className="w-full h-full drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
-                {/* External Hexagonal Frame */}
-                <path
-                    d="M30 4 L56 18 V42 L30 56 L4 42 V18 Z"
-                    fill="#080c11"
-                    stroke={active ? 'var(--amber)' : '#1a2636'}
-                    strokeWidth="2"
-                    className="transition-colors duration-500"
-                />
-
-                {/* Secondary inner contour */}
-                <path
-                    d="M30 8 L52 20 V40 L30 52 L8 40 V20 Z"
-                    fill="none"
-                    stroke={active ? 'var(--amber)' : '#0d131a'}
-                    strokeWidth="1"
-                    strokeOpacity="0.2"
-                />
-
-                {/* Industrial Connectors (Top/Bottom) */}
-                <rect x="28" y="0" width="4" height="6" fill={active ? 'var(--amber)' : '#1a2636'} className="transition-colors" />
-                <rect x="28" y="54" width="4" height="6" fill={active ? 'var(--amber)' : '#1a2636'} className="transition-colors" />
-
-                {/* Central Energy Core */}
-                <circle cx="30" cy="30" r="10"
-                    fill={active ? 'var(--amber)' : '#0d131a'}
-                    className="transition-all duration-500"
-                />
-
-                {active && (
-                    <>
-                        {/* Glow Core */}
-                        <circle cx="30" cy="30" r="6" fill="#fff" fillOpacity="0.3" className="animate-pulse" />
-
-                        {/* Power Indicator Light */}
-                        <circle cx="30" cy="18" r="1.5" fill="#fff" className="animate-[lc-blink_1.5s_infinite]" />
-                    </>
-                )}
-
-                {/* Technical text - very subtle */}
-                <text x="30" y="46" fontSize="4" fill={active ? 'var(--amber)' : '#1a2636'} textAnchor="middle" className="font-mono font-bold tracking-widest uppercase transition-colors">
-                    {active ? 'READY' : 'OFF'}
-                </text>
-            </svg>
-
-            {/* Subtle glow foundation */}
-            {active && (
-                <div className="absolute inset-0 bg-(--amber) opacity-[0.05] rounded-full animate-pulse" />
-            )}
-        </div>
-    )
-})
-
-DataNode.displayName = 'DataNode'
-
 const FloatingParticles = memo(({ visible }: { visible: boolean }) => {
-    // Definimos las partículas fuera del componente para evitar cálculos en cada frame
     const particles = useMemo(() => Array.from({ length: 8 }, (_, i) => ({
         id: i,
         left: `${10 + (i * 15) % 80}%`,
