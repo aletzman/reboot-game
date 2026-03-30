@@ -1,8 +1,6 @@
 'use client'
 
-import { useState } from 'react'
 import type { Card } from '@/types/game'
-import { CpuIcon, BarcodeIcon, WifiIcon, ShieldCheckIcon } from 'lucide-react'
 
 export const RARITY_STYLES: Record<string, { color: string, glow: string, label: string }> = {
     common: {
@@ -34,7 +32,6 @@ interface DataCartridgeProps {
     onClick?: () => void
     delay?: number
     className?: string
-    viewTransitionId?: string
 }
 
 export function DataCartridge({
@@ -44,12 +41,10 @@ export function DataCartridge({
     onClick,
     delay = 0,
     className = "w-[150px] h-[210px]",
-    viewTransitionId = ""
 }: DataCartridgeProps) {
     const rawRarity = RARITY_STYLES[card.rarity] ?? RARITY_STYLES.common
     const isLegendary = card.rarity === 'legendary'
 
-    // Rarity styles fixed for legendary gradient
     const rarity = {
         ...rawRarity,
         color: isLegendary ? 'var(--amber)' : rawRarity.color
@@ -62,21 +57,17 @@ export function DataCartridge({
             style={{
                 perspective: '1500px',
                 WebkitPerspective: '1500px',
-                // Explicit transition ID (e.g., from rack selection) or default for detailed view
-                viewTransitionName: viewTransitionId || (detailed ? `cartridge-${card.id}` : undefined),
-                // @ts-ignore
-                ['view-transition-name']: viewTransitionId || (detailed ? `cartridge-${card.id}` : undefined),
-            } as React.CSSProperties}
+                // ViewTransition name is now handled by parent <ViewTransition> component
+            }}
         >
             <div
                 className="w-full h-full relative"
                 style={{
-                    animation: `lc-cardAppear .6s cubic-bezier(.16,1,.3,1) ${delay}s both`,
                     transformStyle: 'preserve-3d',
                     WebkitTransformStyle: 'preserve-3d',
                 }}
             >
-                <div className={`w-full h-full relative`}
+                <div className="w-full h-full relative"
                     style={{
                         transformStyle: 'preserve-3d',
                         WebkitTransformStyle: 'preserve-3d',
@@ -84,7 +75,6 @@ export function DataCartridge({
                     }}>
 
                     {/* ═══════════ LADOS 3D (ESPESOR) ═══════════ */}
-                    {/* Lateral izquierdo */}
                     <div className="absolute left-0 top-[2%] bottom-[1%] w-[12px] bg-[#0c1015] border-y border-[#1a1f26]"
                         style={{
                             transformOrigin: 'left',
@@ -92,7 +82,6 @@ export function DataCartridge({
                             backgroundImage: 'linear-gradient(to right, rgba(0,0,0,0.5), transparent)',
                         }}
                     />
-                    {/* Lateral derecho */}
                     <div className="absolute right-0 top-[2%] bottom-[1%] w-[12px] bg-[#0c1015] border-y border-[#1a1f26]"
                         style={{
                             transformOrigin: 'right',
@@ -100,14 +89,12 @@ export function DataCartridge({
                             backgroundImage: 'linear-gradient(to left, rgba(0,0,0,0.5), transparent)',
                         }}
                     />
-                    {/* Superior */}
                     <div className="absolute left-0 right-0 top-0 h-[12px] bg-[#050608] border-x border-[#1a1f26]"
                         style={{
                             transformOrigin: 'top',
                             transform: 'translateZ(6px) rotateX(90deg)',
                         }}
                     />
-                    {/* Inferior */}
                     <div className="absolute left-0 right-0 bottom-0 h-[12px] bg-[#050608] border-x border-[#1a1f26]"
                         style={{
                             transformOrigin: 'bottom',
@@ -123,24 +110,23 @@ export function DataCartridge({
                             background: 'linear-gradient(165deg, #1f252d 0%, #0d1117 70%, #080a0d 100%)',
                             borderRadius: '6px 2px 2px 6px',
                             transform: 'translate3d(0, 0, 6px)',
-                            clipPath: 'polygon(0 0, 92% 0, 100% 8%, 100% 100%, 0 100%)', // Bevel en esquina sup-der
+                            clipPath: 'polygon(0 0, 92% 0, 100% 8%, 100% 100%, 0 100%)',
                             boxShadow: `
                                 0 15px 45px rgba(0,0,0,0.9), 
                                 inset 0 0 1px 1px rgba(255,255,255,0.08),
                                 inset 0 0 20px rgba(0,0,0,0.5)
                             `
                         }}>
-                        {/* Rivets/Bolts in corners for industrial feel */}
+                        {/* Rivets */}
                         <div className="absolute top-2 left-2 w-1 h-1 rounded-full bg-white/10 border border-black z-30" />
                         <div className="absolute bottom-2 left-2 w-1 h-1 rounded-full bg-white/10 border border-black z-30" />
                         <div className="absolute bottom-2 right-2 w-1 h-1 rounded-full bg-white/10 border border-black z-30 opacity-40" />
 
-                        {/* Rim Light / Subtle highlight on the main bevel edge */}
+                        {/* Rim Light */}
                         <div className="absolute inset-0 border border-white/5 pointer-events-none rounded-xs z-30" />
 
-                        {/* GRIP SUPERIOR (ASIDERO) */}
+                        {/* GRIP SUPERIOR */}
                         <div className={`${detailed ? 'h-32 pb-4 pt-8 px-6' : 'h-[18%] pt-1 pb-1.5 px-4'} w-full relative border-b border-black/60 flex flex-col justify-end items-center shrink-0 bg-[#161b22]`}>
-                            {/* Texture lines for grip with relief */}
                             <div className={`absolute inset-x-0 ${detailed ? 'top-6 gap-2 px-10' : 'top-0 gap-[2px] px-4 mt-1'} flex flex-col opacity-40 transition-all`}>
                                 {[...Array(3)].map((_, i) => (
                                     <div key={i} className="flex flex-col">
@@ -150,16 +136,13 @@ export function DataCartridge({
                                 ))}
                             </div>
 
-                            {/* Hot-Swap Slot Hole */}
                             <div className={`absolute ${detailed ? 'top-7.5 w-16 h-4' : 'top-2 w-8 h-1.5'} bg-black rounded-full shadow-inner opacity-40`} />
 
-                            {/* Status Indicators */}
                             <div className="w-full flex justify-between items-center z-10">
                                 <div className="flex items-center gap-1.5">
-                                    {/* 3D LED DOME (CÚPULA) */}
                                     <div className={`${detailed ? 'w-5 h-5' : 'w-2.5 h-2.5'} rounded-full bg-[#050608] shadow-[inset_0_1px_1px_rgba(0,0,0,0.8),0_1px_1px_rgba(255,255,255,0.05)] flex items-center justify-center relative overflow-visible`}>
                                         <div
-                                            className={`w-[80%] h-[80%] rounded-full transition-all duration-300 relative overflow-hidden`}
+                                            className="w-[80%] h-[80%] rounded-full transition-all duration-300 relative overflow-hidden"
                                             style={{
                                                 background: isPowered
                                                     ? `radial-gradient(circle at 30% 30%, var(--green-light) 0%, var(--green-base) 60%, var(--green-darkest) 100%)`
@@ -169,7 +152,6 @@ export function DataCartridge({
                                                     : 'inset 0 -1px 2px rgba(0,0,0,0.6)'
                                             }}
                                         >
-                                            {/* Specular Highlight (The 'glint' on the glass dome) */}
                                             <div className="absolute top-[15%] left-[15%] w-[30%] h-[30%] bg-white/40 rounded-full" />
                                         </div>
                                     </div>
@@ -178,23 +160,18 @@ export function DataCartridge({
                             </div>
                         </div>
 
-                        {/* CUERPO CENTRAL CON VENTILACIÓN */}
+                        {/* CUERPO CENTRAL */}
                         <div className="flex-1 relative overflow-hidden flex flex-col">
-                            {/* Side Ventilation Gills */}
-                            <div className={`absolute left-0 top-1/4 bottom-1/4 flex flex-col pointer-events-none opacity-40  ${detailed ? ' gap-4 w-2' : ' gap-1.5  w-1 '}`}>
+                            <div className={`absolute left-0 top-1/4 bottom-1/4 flex flex-col pointer-events-none opacity-40 ${detailed ? ' gap-4 w-2' : ' gap-1.5 w-1'}`}>
                                 {[...Array(8)].map((_, i) => (
                                     <div key={i} className={`w-full bg-black shadow-[0_1px_rgba(255,255,255,0.05)] ${detailed ? 'h-[2px]' : 'h-px'}`} />
                                 ))}
                             </div>
 
-                            {/* THE ETIQUETA / LABEL (Physical Sticker) */}
                             <div className="flex-1 m-2.5 mt-2 bg-[#050608] border border-white/5 shadow-[inset_0_2px_10px_rgba(0,0,0,1)] relative overflow-hidden flex flex-col group/label">
-
-                                {/* Sticker Background Texture */}
                                 <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay"
                                     style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '4px 4px' }} />
 
-                                {/* Header technical row */}
                                 <div className={`${detailed ? 'p-3' : 'p-1'} pb-0 flex justify-between items-start z-10`}>
                                     <div className="flex flex-col">
                                         <span className={`${detailed ? 'text-[10px]' : 'text-[2px]'} text-white/40 tracking-widest font-black opacity-80 uppercase`}>MOD_TYPE::0x{card.id.split('-').pop()}</span>
@@ -210,16 +187,13 @@ export function DataCartridge({
                                     </div>
                                 </div>
 
-                                {/* ART / CHIP AREA */}
                                 <div className={`flex-1 flex flex-col items-center justify-center relative ${detailed ? 'p-2' : 'p-0'}`}>
-                                    {/* Geometric Center Art */}
                                     <div className={`relative z-10 ${detailed ? 'mt-3 mb-3' : 'mt-1 mb-1'}`}>
                                         <div className={`${detailed ? 'w-32 h-32' : 'w-7 h-7'} rounded-sm border flex items-center justify-center relative overflow-hidden`}
                                             style={{
                                                 borderColor: isLegendary ? 'var(--amber)' : `var(--border-color)`,
                                                 background: `linear-gradient(45deg, ${rarity.color}05, transparent)`
                                             }}>
-                                            {/* Microchip tracks */}
                                             <div className="absolute inset-0 flex flex-col justify-around px-2 opacity-20">
                                                 {[...Array(6)].map((_, i) => <div key={i} className={`${detailed ? 'h-[2px]' : 'h-px'} w-full bg-current`} style={{ color: rarity.color }} />)}
                                             </div>
@@ -227,7 +201,6 @@ export function DataCartridge({
                                                 {[...Array(6)].map((_, i) => <div key={i} className={`${detailed ? 'w-[2px]' : 'w-px'} h-full bg-current`} style={{ color: rarity.color }} />)}
                                             </div>
 
-                                            {/* Icon or Graphic Placeholder */}
                                             <div className={`${detailed ? 'w-48 h-48' : 'w-7 h-7'} relative z-20 flex items-center justify-center`}>
                                                 <div className={`absolute inset-0 opacity-20 ${detailed ? 'scale-150' : ''}`} style={{ backgroundColor: rarity.color }} />
                                                 <span className={`${detailed ? 'text-8xl' : 'text-lg'} font-black filter drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]`} style={{ color: rarity.color }}>{card.name.charAt(0)}</span>
@@ -235,7 +208,6 @@ export function DataCartridge({
                                         </div>
                                     </div>
 
-                                    {/* Name & Concept */}
                                     <div className={`text-center z-10 w-full ${detailed ? 'px-6' : 'px-0'}`}>
                                         <h3 className={`font-black uppercase text-white leading-tight ${detailed ? 'text-3xl mb-1' : 'text-[8px] mb-px'} tracking-tight`}>
                                             {card.name}
@@ -247,7 +219,6 @@ export function DataCartridge({
                                     </div>
                                 </div>
 
-                                {/* Footer technical row */}
                                 <div className={`${detailed ? 'p-4' : 'p-2'} pt-1 mt-auto flex justify-between items-end z-10`}>
                                     <div className="flex flex-col gap-1">
                                         <div className={`${detailed ? 'gap-[6px]' : 'gap-[2px]'} flex`}>
@@ -270,7 +241,7 @@ export function DataCartridge({
                             </div>
                         </div>
 
-                        {/* PINES DE CONEXIÓN (PCB BLOCK) */}
+                        {/* PINES DE CONEXIÓN */}
                         <div className={`${detailed ? 'h-12 pt-2 px-8' : 'h-6 pt-1 px-4'} w-[92%] mx-auto bg-[#080a0d] border-t border-black relative overflow-hidden flex flex-col shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]`}>
                             <div className={`${detailed ? 'gap-[3px]' : 'gap-px'} flex-1 flex justify-between items-end`}>
                                 {[...Array(16)].map((_, i) => (
@@ -280,19 +251,16 @@ export function DataCartridge({
                                             boxShadow: `0 -1px ${detailed ? '10px' : '4px'} rgba(212, 174, 27, 0.3)`,
                                             opacity: i % 4 === 0 ? '0.6' : '1'
                                         }}>
-                                        {/* Divider line in middle of pin */}
                                         <div className="absolute inset-y-0 left-1/2 w-px bg-black opacity-15" />
                                     </div>
                                 ))}
                             </div>
-                            {/* Plastic reinforcement bar */}
                             <div className={`${detailed ? 'h-1 gap-8 px-16' : 'h-1 gap-4 px-8'} w-full bg-black/80 flex justify-center mt-auto`}>
                                 <div className="w-px h-full bg-white/10" />
                                 <div className="w-px h-full bg-white/10" />
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

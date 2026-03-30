@@ -631,3 +631,42 @@ body {
   background: var(--green-base);
   transition: width 0.3s ease;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   VIEW TRANSITIONS — Shared Element Animations (React 19)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Smooth morph animation for card transitions (rack ↔ modal) */
+::view-transition-group(*) {
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The old snapshot (card leaving rack) — fade out quickly */
+::view-transition-old(*) {
+  animation: vt-fade-out 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* The new snapshot (card appearing in modal) — fade in */
+::view-transition-new(*) {
+  animation: vt-fade-in 0.35s cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+@keyframes vt-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.01s !important;
+  }
+}
