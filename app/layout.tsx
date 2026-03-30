@@ -39,10 +39,10 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${dataMono.variable} ${fontTitle.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col overflow-y-hidden">
+      <body className=" flex flex-col max-h-[calc(100svh-var(--header-height))]">
         <CRTOverlay />
         <Header />
-        <main className="h-[calc(100svh-calc(var(--header-height)+var(--footer-height)))] overflow-y-hidden pb-16">
+        <main className="mt-(--header-height) overflow-y-auto pb-16 custom-scrollbar">
           {children}
         </main>
         <NavigationFooter />

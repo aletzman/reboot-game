@@ -30,7 +30,7 @@ export function Header({ viewMenu, showStats }: HeaderProps) {
     }, [showStats]);
 
     return (
-        <header className="flex items-center justify-between p-2 px-4 bg-(--bg-surface) w-full relative z-9999  border-b border-(--bg-hover)">
+        <header className="fixed flex items-center justify-between min-h-(--header-height) p-2 px-4 bg-(--bg-surface) w-full z-9999  border-b border-(--bg-hover)">
             <BackgroundAudio src="/sounds/intro.mp3" />
 
             <div className="flex items-center gap-6">
