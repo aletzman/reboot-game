@@ -169,7 +169,6 @@ export default function CollectionHubClient() {
           </Link>
         </div>
       </main>
-
     </div>
   )
 }

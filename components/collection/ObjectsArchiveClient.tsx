@@ -1,12 +1,11 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import { ChevronLeftIcon, InboxIcon, KeyIcon, LightbulbIcon, ArchiveIcon } from 'lucide-react'
+import { motion } from 'motion/react'
+import { InboxIcon, KeyIcon, LightbulbIcon, ArchiveIcon } from 'lucide-react'
 import { getObjects as getUnlockedIds } from '@/lib/gameState'
 import { ObjectScanner } from '@/components/collection/ObjectScanner'
 import { ObjectDetailModal } from '@/components/collection/ObjectDetailModal'
-import { NavButton } from '@/components/ui/NavButton'
 import { SectorHeader } from '@/components/map/SectorHeader'
 import type { GameObject } from '@/types/game'
 
@@ -87,44 +86,68 @@ export default function ObjectsArchiveClient({ initialObjects }: ObjectsArchiveC
           </div>
         </SectorHeader>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 pb-32">
-          {initialObjects.map((obj, idx) => {
-            const isUnlocked = unlockedIds.includes(obj.id)
-            const color = typeColors[obj.type] || 'var(--amber)'
+        {/* THE OBJECT RACK (Physical Storage Grid) */}
+        <div className="relative mt-8">
+          {/* Vertical Rack Rails (Background) */}
+          <div className="absolute inset-y-0 left-[-20px] w-4 py-10 opacity-20 hidden lg:flex lg:flex-col lg:justify-between">
+            {[...Array(10)].map((_, i) => (
+              <div key={i} className="w-4 h-4 rounded-full border-2 border-white/40 flex items-center justify-center">
+                <div className="w-1 h-1 bg-white/40 rounded-full" />
+              </div>
+            ))}
+          </div>
+          <div className="absolute inset-y-0 right-[-20px] w-4 py-10 opacity-20 hidden lg:flex lg:flex-col lg:justify-between">
+            {[...Array(10)].map((_, i) => (
+              <div key={i} className="w-4 h-4 rounded-full border-2 border-white/40 flex items-center justify-center">
+                <div className="w-1 h-1 bg-white/40 rounded-full" />
+              </div>
+            ))}
+          </div>
 
-            return (
-              <motion.div
-                key={obj.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: idx * 0.05 }}
-                whileHover={isUnlocked ? { scale: 1.05 } : {}}
-                onClick={() => isUnlocked && setSelectedObject(obj)}
-                className={`
-                  relative cursor-pointer transition-all duration-300
-                `}
-              >
-                <ObjectScanner
-                  type={obj.type}
-                  id={obj.id}
-                  icon={obj.icon}
-                  isUnlocked={isUnlocked}
-                  className="aspect-square bg-(--bg-elevated) shadow-2xl"
-                />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-10 gap-y-12 pb-32 relative z-10">
+            {initialObjects.map((obj, idx) => {
+              const isUnlocked = unlockedIds.includes(obj.id)
+              const color = typeColors[obj.type] || 'var(--amber)'
 
-                {/* Sub-label under scanner */}
-                {isUnlocked && (
-                  <div className="mt-4 px-2">
-                    <h3 className="text-xs font-black uppercase text-white tracking-widest mb-1 truncate group-hover:text-(--amber) transition-colors">{obj.name}</h3>
-                    <div className="flex justify-between items-center opacity-40 group-hover:opacity-100 transition-opacity">
-                      <span className="text-[8px] font-mono text-(--text-muted) uppercase">TIPO::{obj.type}</span>
-                      <div className="w-1.5 h-1.5 rounded-full bg-current" style={{ color: color }} />
+              return (
+                <motion.div
+                  key={obj.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: idx * 0.05 }}
+                  onClick={() => isUnlocked && setSelectedObject(obj)}
+                  className="flex flex-col group"
+                >
+                  {/* The Caddy Hardware */}
+                  <ObjectScanner
+                    type={obj.type}
+                    id={obj.id}
+                    icon={obj.icon}
+                    isUnlocked={isUnlocked}
+                    className={`aspect-square cursor-pointer transition-transform duration-300 ${isUnlocked ? 'hover:-translate-y-2' : ''}`}
+                  />
+
+                  {/* Identification & Type Slot (Below the caddy) */}
+                  <div className={`mt-3 px-3 py-1.5 border-l-2 transition-all duration-300 ${isUnlocked ? 'border-(--amber) bg-white/5' : 'border-white/5 bg-black/20 opacity-40'}`}>
+                    <div className="flex justify-between items-start mb-0.5">
+                      <h3 className={`text-[10px] font-black uppercase tracking-[0.15em] truncate ${isUnlocked ? 'text-white' : 'text-(--text-ghost)'}`}>
+                        {isUnlocked ? obj.name : 'Unknown Artifact'}
+                      </h3>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[7px] font-mono text-(--text-muted) uppercase tracking-widest">UNIT_{obj.type}</span>
+                      {isUnlocked && <div className="w-1.5 h-1.5 rounded-full shadow-[0_0_5px_currentColor]" style={{ color: color }} />}
                     </div>
                   </div>
-                )}
-              </motion.div>
-            )
-          })}
+                </motion.div>
+              )
+            })}
+          </div>
+
+          {/* Background horizontal shelves */}
+          <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03]">
+            <div className="w-full h-full" style={{ backgroundImage: 'linear-gradient(to bottom, transparent, transparent 159px, white 160px)', backgroundSize: '100% 160px' }} />
+          </div>
         </div>
       </main>
       <ObjectDetailModal
