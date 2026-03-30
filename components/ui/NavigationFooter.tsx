@@ -7,10 +7,10 @@ import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useState } from "react";
 
 const navItems = [
-    { href: "/game", label: "MAPA_SIS", icon: Map, color: "var(--green-light)" },
+    { href: "/game", label: "MAPA", icon: Map, color: "var(--green-light)" },
     { href: "/game/collection", label: "ALMACÉN", icon: Package, color: "var(--cyan)" },
-    { href: "/game/collection/cards", label: "CARTAS", icon: LayoutGrid, color: "var(--amber)" },
-    { href: "/game/collection/objects", label: "OBJETOS", icon: Box, color: "var(--blue)" },
+    { href: "/game/collection/cards", label: "MODULOS", icon: LayoutGrid, color: "var(--amber)" },
+    { href: "/game/collection/objects", label: "ARTEFACTOS", icon: Box, color: "var(--blue)" },
 ];
 
 export function NavigationFooter() {
