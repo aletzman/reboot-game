@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import type { LevelState, Command, CommandType } from '@/types/game'
-import { Button } from '@/components/ui/Button'
-import { ChevronsRightIcon, ShieldAlert, Cpu, Share2, Terminal, Database, ArrowRight } from 'lucide-react'
+import { ShieldAlert, Cpu, Share2, Terminal, Database, ArrowRight } from 'lucide-react'
 import { useAudioStore } from '@/store/audio.store'
 
 import { NodeRoutineLevelProps, ExtendedRobotState } from './types'
