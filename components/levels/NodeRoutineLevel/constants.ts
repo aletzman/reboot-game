@@ -19,9 +19,13 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     // ==========================================
     // FASE 1: SECUENCIAS BÁSICAS Y ORIENTACIÓN
     // ==========================================
-    '1-01': { // 1. El primer paso (Solo avanzar)
+    '1-01': { // Calibración Inicial — avanzar + activar en línea recta
         map: [
-            [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'target', x: 2, y: 0 }]
+            [
+                { type: 'floor', x: 0, y: 0 },
+                { type: 'floor', x: 1, y: 0 },
+                { type: 'target', x: 2, y: 0 },
+            ],
         ],
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 2, y: 0 }],
@@ -31,7 +35,11 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     },
     '1-02': { // 2. La caminata (Entender secuencias más largas)
         map: [
-            [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }, { type: 'floor', x: 3, y: 0 }, { type: 'target', x: 4, y: 0 }]
+            [{ type: 'floor', x: 0, y: 0 },
+            { type: 'floor', x: 1, y: 0 },
+            { type: 'floor', x: 2, y: 0 },
+            { type: 'floor', x: 3, y: 0 },
+            { type: 'target', x: 4, y: 0 }]
         ],
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 4, y: 0 }],
@@ -41,8 +49,13 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     },
     '1-03': { // 3. La primera esquina (Girar NO avanza)
         map: [
-            [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }],
-            [{ type: 'empty', x: 0, y: 1 }, { type: 'target', x: 1, y: 1 }]
+            [
+                { type: 'floor', x: 0, y: 0 },
+                { type: 'floor', x: 1, y: 0 }],
+            [
+                { type: 'empty', x: 0, y: 1 },
+                { type: 'target', x: 1, y: 1 }
+            ]
         ],
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 1, y: 1 }],
@@ -65,7 +78,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     '1-05': { // 5. La U (Giro de 180 grados)
         map: [
             [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }],
-            [{ type: 'floor', x: 0, y: 1 }, { type: 'wall', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }],
+            [{ type: 'empty', x: 0, y: 1 }, { type: 'empty', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }],
             [{ type: 'target', x: 0, y: 2 }, { type: 'floor', x: 1, y: 2 }, { type: 'floor', x: 2, y: 2 }]
         ],
         robotStart: { x: 0, y: 0, direction: 'east' },
@@ -90,9 +103,9 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     },
     '1-07': { // 7. El foso (Saltar hacia abajo)
         map: [
-            [{ type: 'floor', x: 0, y: 0, height: 2 }, { type: 'floor', x: 1, y: 0, height: 0 }, { type: 'target', x: 2, y: 0, height: 0 }]
+            [{ type: 'floor', x: 0, y: 0, height: 1 }, { type: 'floor', x: 1, y: 0, height: 0 }, { type: 'target', x: 2, y: 0, height: 0 }]
         ],
-        robotStart: { x: 0, y: 0, direction: 'east' },
+        robotStart: { x: 0, y: 0, height: 1, direction: 'east' },
         targets: [{ x: 2, y: 0 }],
         maxCommands: 3,
         uiLimitMain: 5,
@@ -110,14 +123,28 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     },
     '1-09': { // 9. Escalera de caracol
         map: [
-            [{ type: 'floor', x: 0, y: 0, height: 0 }, { type: 'floor', x: 1, y: 0, height: 1 }],
-            [{ type: 'empty', x: 0, y: 1 }, { type: 'target', x: 1, y: 1, height: 2 }]
+            [
+                { type: 'floor', x: 0, y: 0, height: 2 },
+                { type: 'floor', x: 1, y: 0, height: 3 },
+                { type: 'target', x: 2, y: 0, height: 4 },
+            ]
+            ,
+            [
+                { type: 'floor', x: 0, y: 1, height: 2 },
+                { type: 'floor', x: 1, y: 1, height: 0 },
+                { type: 'floor', x: 2, y: 1, height: 0 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 2, height: 2 },
+                { type: 'floor', x: 1, y: 2, height: 1 },
+                { type: 'floor', x: 2, y: 2, height: 0 }
+            ]
         ],
-        robotStart: { x: 0, y: 0, direction: 'east' },
-        targets: [{ x: 1, y: 1 }],
-        maxCommands: 4,
-        uiLimitMain: 6,
-        allowedCommands: ['turn-right', 'jump', 'activate'],
+        robotStart: { x: 2, y: 2, direction: 'west' },
+        targets: [{ x: 2, y: 2 }],
+        maxCommands: 8,
+        uiLimitMain: 10,
+        allowedCommands: ['turn-right', 'jump', 'activate', 'move'],
     },
     '1-10': { // 10. Parkour urbano (Saltos intermitentes con giros)
         map: [
@@ -125,7 +152,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
             [{ type: 'empty', x: 0, y: 1 }, { type: 'empty', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1, height: 0 }],
             [{ type: 'empty', x: 0, y: 2 }, { type: 'empty', x: 1, y: 2 }, { type: 'target', x: 2, y: 2, height: 1 }]
         ],
-        robotStart: { x: 0, y: 0, direction: 'east' },
+        robotStart: { x: 0, y: 0, height: 1, direction: 'east' },
         targets: [{ x: 2, y: 2 }],
         maxCommands: 7,
         uiLimitMain: 9,
