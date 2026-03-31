@@ -34,20 +34,22 @@ export function useAuth() {
   }, [])
 
   const signInWithGoogle = useCallback(async () => {
+    const baseUrl = window.location.origin
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${baseUrl}/auth/callback`,
       },
     })
     if (error) console.error('[REBOOT] Error Google login:', error.message)
   }, [supabase])
 
   const signInWithGitHub = useCallback(async () => {
+    const baseUrl = window.location.origin
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${baseUrl}/auth/callback`,
       },
     })
     if (error) console.error('[REBOOT] Error GitHub login:', error.message)
