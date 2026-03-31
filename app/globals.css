@@ -593,7 +593,7 @@ body {
   border-bottom: 1px solid var(--bg-hover);
   padding: 4px 12px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--text-ghost);
@@ -604,15 +604,14 @@ body {
 
 .hud-label {
   font-family: var(--font-mono);
-  font-size: 9px;
-  color: var(--text-ghost);
+  font-size: 10px;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
 
 .hud-value {
   font-family: var(--font-mono);
-  font-size: 9px;
   color: var(--green-light);
   text-shadow: 0 0 5px var(--green-dark);
 }
@@ -827,14 +826,18 @@ body {
 
 /* INDUSTRIAL/TECH UTILS */
 .clip-path-notch {
-  clip-path: polygon(
-    0 0,
-    calc(100% - 10px) 0,
-    100% 10px,
-    100% 100%,
-    10px 100%,
-    0 calc(100% - 10px)
-  );
+  clip-path: polygon(0 0,
+      calc(100% - 10px) 0,
+      100% 10px,
+      100% 100%,
+      10px 100%,
+      0 calc(100% - 10px));
+}
+
+.vertical-text {
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+  white-space: nowrap;
 }
 
 .noise-bg {
