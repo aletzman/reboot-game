@@ -4,12 +4,15 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import type { LevelState, Command, CommandType } from '@/types/game'
 import { ShieldAlert, Cpu, Share2, Terminal, Database, ArrowRight } from 'lucide-react'
 import { useAudioStore } from '@/store/audio.store'
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 import { NodeRoutineLevelProps, ExtendedRobotState } from './types'
 import { NODEROUTINE_MAPS, DEFAULT_MAP, MAX_COMMANDS, EXEC_SPEED } from './constants'
 import { sleep, flattenCommands, getNextPosition, turnLeft, turnRight, calcStars } from './utils'
 import { IsometricCanvas } from './IsometricCanvas'
 import { CommandPalette } from './CommandPalette'
+import { NODE_ROUTINE_TUTORIAL, TUTORIAL_CONFIG } from './tutorialSteps'
 
 export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, onStatusChange }: NodeRoutineLevelProps) {
     const mapData = NODEROUTINE_MAPS[level.id] ?? DEFAULT_MAP
@@ -65,6 +68,26 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
             return () => clearTimeout(timer)
         }
     }, [state.fragUsed, addLog])
+
+    // --------------------------------------------------------
+    // TUTORIAL (DRIVER.JS)
+    // --------------------------------------------------------
+    useEffect(() => {
+        // Solo lanzamos el tutorial en el primer nivel del Acto 1 por defecto
+        // O si el nivel tiene una marca de tutorial específica
+        if (level.id !== '1-01') return;
+
+        const timer = setTimeout(() => {
+            const driverObj = driver({
+                ...TUTORIAL_CONFIG,
+                steps: NODE_ROUTINE_TUTORIAL
+            });
+
+            driverObj.drive();
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, [level.id]);
 
     // --------------------------------------------------------
     // EJECUTAR SECUENCIA
@@ -242,7 +265,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
                                 <span className={`absolute inset-0 rounded-full ${isRunning ? 'bg-(--amber)' : 'bg-(--green-light)'} opacity-40`} />
                                 <span className={`relative block w-3 h-3 rounded-full ${isRunning ? 'bg-(--amber) animate-pulse' : 'bg-(--green-light)'} shadow-[0_0_10px_currentColor]`} />
                             </div>
-                            <h1 className="text-2xl font-mono font-bold tracking-tighter text-(--text-primary)">
+                            <h1 id="level-title" className="text-2xl font-mono font-bold tracking-tighter text-(--text-primary)">
                                 {level.title.toUpperCase()}
                             </h1>
                             <div className="px-2 py-0.5 border border-(--bg-hover) bg-(--bg-deep) text-[9px] font-mono text-(--text-ghost) rounded">
@@ -287,8 +310,8 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
                 <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0">
 
                     {/* Sección del Mapa (Centro-Derecha en Desktop) */}
-                    <div className="flex-3 flex flex-col gap-4 min-h-0">
-                        <div className="flex-1 flex items-center justify-center relative bg-(--bg-deep)/40 rounded-sm border border-(--bg-hover)/50 p-2 overflow-hidden shadow-inner">
+                    <div className="flex-3 flex flex-col gap-4 min-h-0 p-[2px]">
+                        <div id="game-canvas-container" className="flex-1 flex items-center justify-center relative bg-(--bg-deep)/40 rounded-sm border border-(--bg-hover)/50 p-2 overflow-hidden shadow-inner">
                             <IsometricCanvas
                                 mapData={mapData}
                                 robot={robot}
@@ -337,10 +360,10 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
                     </div>
 
                     {/* Sección de Diagnóstico y Logs (Derecha en Desktop) */}
-                    <div className="flex-1 flex flex-col gap-4 min-w-[280px]">
+                    <div className="flex-1 flex flex-col gap-4 min-w-[280px] p-[2px]">
 
                         {/* Objetivo del Nivel en Box táctico */}
-                        <div className="bg-(--bg-surface) border border-(--bg-hover) p-4 relative rounded-sm overflow-hidden min-h-[140px] flex flex-col">
+                        <div id="mission-objective" className="bg-(--bg-surface) border border-(--bg-hover) p-4 relative rounded-sm overflow-hidden min-h-[140px] flex flex-col">
                             <div className="absolute top-0 left-0 w-1 h-full bg-(--green-base)" />
                             <div className="flex justify-between items-center mb-3">
                                 <h3 className="text-[10px] font-mono font-bold text-(--text-ghost) uppercase tracking-widest flex items-center gap-2">
@@ -358,7 +381,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
                         </div>
 
                         {/* System Logs Realtime */}
-                        <div className="flex-1 bg-(--bg-deep) border border-(--bg-hover) rounded-sm flex flex-col overflow-hidden max-h-[300px]">
+                        <div id="system-logs" className="flex-1 bg-(--bg-deep) border border-(--bg-hover) rounded-sm flex flex-col overflow-hidden max-h-[300px]">
                             <div className="bg-(--bg-surface) px-3 py-1.5 border-b border-(--bg-hover) flex justify-between items-center">
                                 <span className="text-[10px] font-mono font-bold text-(--text-primary) tracking-widest uppercase flex items-center gap-2">
                                     <Terminal size={12} className="text-(--green-light)" />
