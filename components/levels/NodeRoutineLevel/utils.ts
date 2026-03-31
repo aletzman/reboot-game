@@ -20,9 +20,11 @@ export function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-export function flattenCommands(commands: Command[], f1Commands: Command[], activePanel: 'main' | 'f1' = 'main', depth = 0): FlatCommand[] {
-    if (depth > 20) return []
+export function flattenCommands(commands: Command[], f1Commands: Command[], f2Commands: Command[], activePanel: 'main' | 'f1' | 'f2' = 'main', depth = 0, callStack: Array<'main' | 'f1' | 'f2'> = ['main']): { flat: FlatCommand[]; overflow: boolean; involvedPanels: Array<'main' | 'f1' | 'f2'> } {
+    if (depth > 12) return { flat: [], overflow: true, involvedPanels: Array.from(new Set(callStack)) }
     const flat: FlatCommand[] = []
+    let overflow = false
+    let involvedPanels: Array<'main' | 'f1' | 'f2'> = []
 
     for (let idx = 0; idx < commands.length; idx++) {
         const cmd = commands[idx]
@@ -34,17 +36,25 @@ export function flattenCommands(commands: Command[], f1Commands: Command[], acti
                 flat.push(...previous)
                 flat.push({ cmd, originalIdx: idx, panel: activePanel })
             }
-        } else if (cmd.type === 'call-fn') {
+        } else if (cmd.type === 'call-fn' || cmd.type === 'call-f1') {
             flat.push({ cmd, originalIdx: idx, panel: activePanel })
             if (f1Commands.length > 0) {
-                const subFlat = flattenCommands(f1Commands, f1Commands, 'f1', depth + 1)
-                flat.push(...subFlat)
+                const sub = flattenCommands(f1Commands, f1Commands, f2Commands, 'f1', depth + 1, [...callStack, 'f1'])
+                flat.push(...sub.flat)
+                if (sub.overflow) { overflow = true; involvedPanels = sub.involvedPanels; break; }
+            }
+        } else if (cmd.type === 'call-f2') {
+            flat.push({ cmd, originalIdx: idx, panel: activePanel })
+            if (f2Commands.length > 0) {
+                const sub = flattenCommands(f2Commands, f1Commands, f2Commands, 'f2', depth + 1, [...callStack, 'f2'])
+                flat.push(...sub.flat)
+                if (sub.overflow) { overflow = true; involvedPanels = sub.involvedPanels; break; }
             }
         } else {
             flat.push({ cmd, originalIdx: idx, panel: activePanel })
         }
     }
-    return flat
+    return { flat, overflow, involvedPanels }
 }
 
 export function getNextPosition(robot: ExtendedRobotState, mapData: NodeRoutineLevelData, moveType: 'move' | 'jump' = 'move'): { x: number; y: number; height: number } | null {
@@ -78,10 +88,10 @@ export function getNextPosition(robot: ExtendedRobotState, mapData: NodeRoutineL
     return { x: nx, y: ny, height: destHeight }
 }
 
-export function calcStars(usedMain: number, usedF1: number, maxMain?: number, maxF1?: number): 1 | 2 | 3 {
+export function calcStars(usedMain: number, usedF1: number, usedF2: number, maxMain?: number, maxF1?: number, maxF2?: number): 1 | 2 | 3 {
     if (!maxMain) return 3
-    const totalUsed = usedMain + usedF1
-    const optimal = maxMain + (maxF1 || 0)
+    const totalUsed = usedMain + usedF1 + usedF2
+    const optimal = maxMain + (maxF1 || 0) + (maxF2 || 0)
 
     if (totalUsed <= optimal) return 3
     if (totalUsed <= optimal + 2) return 2

@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import type { LevelState, Command, CommandType } from '@/types/game'
-import { ShieldAlert, Cpu, Share2, Terminal, Database, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
+import { ShieldAlert, Cpu, Share2, Terminal, Database, ArrowRight, LayoutGrid } from 'lucide-react'
 import { useAudioStore } from '@/store/audio.store'
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
@@ -49,11 +50,12 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
 
     const [commands, setCommands] = useState<Command[]>([])
     const [commandsF1, setCommandsF1] = useState<Command[]>([])
-    const [activePanel, setActivePanel] = useState<'main' | 'f1'>('main')
+    const [commandsF2, setCommandsF2] = useState<Command[]>([])
+    const [activePanel, setActivePanel] = useState<'main' | 'f1' | 'f2'>('main')
     const [robot, setRobot] = useState<ExtendedRobotState>({ ...mapData.robotStart, isMoving: false, isJumping: false, prevX: mapData.robotStart.x, prevY: mapData.robotStart.y })
     const [activatedTiles, setActivated] = useState<Set<string>>(new Set())
     const [isRunning, setIsRunning] = useState(false)
-    const [executingIdx, setExecutingIdx] = useState<{ idx: number; panel: 'main' | 'f1' } | null>(null)
+    const [executingIdx, setExecutingIdx] = useState<{ idx: number; panel: 'main' | 'f1' | 'f2' } | null>(null)
     const [status, setStatus] = useState<LevelState['status']>('idle')
     const [isScanning, setIsScanning] = useState(false)
     const [repeatModalOpen, setRepeatModal] = useState(false)
@@ -100,7 +102,16 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
         onStatusChange('playing')
         addLog('EJECUTANDO RUTINA_PRINCIPAL...', 'info')
 
-        const flat = flattenCommands(commands, commandsF1)
+        const { flat, overflow, involvedPanels } = flattenCommands(commands, commandsF1, commandsF2)
+        if (overflow) {
+            addLog('!! ERROR: BUCLE_INFINITO_RECONOCIDO', 'err')
+            addLog('!! SECUENCIA_SIN_SALIDA: ABORTANDO...', 'err')
+            setStatus('failed')
+            onStatusChange('failed', 'infinite-loop', { involvedPanels })
+            setIsRunning(false)
+            return
+        }
+
         let currentRobot: ExtendedRobotState = { ...mapData.robotStart, isMoving: false, isJumping: false, height: mapData.robotStart.height || 0 }
         const activated = new Set<string>()
         let won = false
@@ -124,7 +135,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
                 if (!next) {
                     addLog('ERROR: COLISIÓN O MOVIMIENTO INVÁLIDO', 'err')
                     setStatus('failed')
-                    onStatusChange('failed')
+                    onStatusChange('failed', 'out-of-bounds')
                     setIsRunning(false)
                     setExecutingIdx(null)
                     return
@@ -177,7 +188,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
             addLog('ÉXITO: NODO_SINCRO_COMPLETA', 'success')
             setStatus('success')
             await sleep(600)
-            const stars = calcStars(commands.length, commandsF1.length, mapData.maxCommands, mapData.maxF1Commands)
+            const stars = calcStars(commands.length, commandsF1.length, commandsF2.length, mapData.maxCommands, mapData.maxF1Commands, mapData.maxF2Commands)
             onComplete(stars, state.fragUsed)
         } else {
             addLog('FALLO: OBJETIVOS_RESTANTES', 'err')
@@ -185,7 +196,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
             onStatusChange('failed')
         }
         setIsRunning(false)
-    }, [commands, commandsF1, isRunning, mapData, state.fragUsed, onComplete, addLog, onStatusChange])
+    }, [commands, commandsF1, commandsF2, isRunning, mapData, state.fragUsed, onComplete, addLog, onStatusChange])
 
     // --------------------------------------------------------
     // MANEJO DE COMANDOS
@@ -201,24 +212,29 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
         if (activePanel === 'main') {
             if (commands.length >= (mapData.uiLimitMain || MAX_COMMANDS)) return
             setCommands(prev => [...prev, { type }])
-        } else {
+        } else if (activePanel === 'f1') {
             if (commandsF1.length >= (mapData.uiLimitF1 || 8)) return
             setCommandsF1(prev => [...prev, { type }])
+        } else {
+            if (commandsF2.length >= (mapData.uiLimitF2 || 8)) return
+            setCommandsF2(prev => [...prev, { type }])
         }
     }
 
-    function handleRemoveCommand(idx: number, panel?: 'main' | 'f1') {
+    function handleRemoveCommand(idx: number, panel?: 'main' | 'f1' | 'f2') {
         if (status === 'failed' || status === 'success') handleReset()
         const targetPanel = panel || activePanel
         if (targetPanel === 'main') setCommands(prev => prev.filter((_, i) => i !== idx))
-        else setCommandsF1(prev => prev.filter((_, i) => i !== idx))
+        else if (targetPanel === 'f1') setCommandsF1(prev => prev.filter((_, i) => i !== idx))
+        else setCommandsF2(prev => prev.filter((_, i) => i !== idx))
     }
 
-    function handleClearCommands(panel?: 'main' | 'f1') {
+    function handleClearCommands(panel?: 'main' | 'f1' | 'f2') {
         if (status === 'failed' || status === 'success') handleReset()
         const targetPanel = panel || activePanel
         if (targetPanel === 'main') setCommands([])
-        else setCommandsF1([])
+        else if (targetPanel === 'f1') setCommandsF1([])
+        else setCommandsF2([])
         addLog('BUFFER LIMPÍADO', 'warn')
     }
 
@@ -236,9 +252,12 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
         if (activePanel === 'main') {
             if (commands.length >= (mapData.uiLimitMain || MAX_COMMANDS)) return
             setCommands(prev => [...prev, { type: 'repeat', times: repeatTimes, children: [] }])
-        } else {
+        } else if (activePanel === 'f1') {
             if (commandsF1.length >= (mapData.uiLimitF1 || 8)) return
             setCommandsF1(prev => [...prev, { type: 'repeat', times: repeatTimes, children: [] }])
+        } else {
+            if (commandsF2.length >= (mapData.uiLimitF2 || 8)) return
+            setCommandsF2(prev => [...prev, { type: 'repeat', times: repeatTimes, children: [] }])
         }
         setRepeatModal(false)
     }
@@ -257,59 +276,84 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
             </div>
 
             {/* PANEL IZQUIERDO — Interfaz Ciberdeck */}
-            <div className="flex-1 flex flex-col p-4 md:p-6 gap-4 relative z-10 overflow-hidden">
+            <div className="flex-1 flex flex-col p-3 md:p-0 gap-0 relative z-10 overflow-hidden">
+                <div className="relative group mb-8 select-none">
+                    {/* Console Header Unified Module */}
+                    <div className="flex flex-col md:flex-row items-stretch border border-(--border-muted-color) bg-(--bg-deep) overflow-hidden shadow-2xl">
 
-                {/* Tactical Header V2 */}
-                <div className="grid grid-cols-12 gap-4 border-b border-(--bg-hover) pb-4 mb-2 bg-(--bg-surface)/20 p-2 rounded-t-lg">
-                    <div className="col-span-12 md:col-span-5 flex flex-col">
-                        <div className="flex items-center gap-3 mb-1.5">
+                        {/* COMPARTIMENT 01: ACT IDENTIFICATION & NAVIGATION */}
+                        <Link
+                            href={`/game/${level.act}`}
+                            className="flex flex-col items-center justify-center p-3 border-b md:border-b-0 md:border-r border-(--border-muted-color) min-w-[75px] bg-black/30 hover:bg-(--bg-hover) transition-all group/act relative overflow-hidden"
+                            title={`Volver a ${level.actName}`}
+                        >
+                            {/* Scanning effect on hover */}
+                            <div className="absolute inset-x-0 h-0.5 bg-(--green-base) top-0 opacity-0 group-hover/act:opacity-30 group-hover/act:animate-pulse" />
+
+                            <span className="text-[8px] font-mono font-bold text-(--text-muted) mb-2 vertical-text tracking-[.4em] uppercase opacity-50 group-hover/act:text-(--green-light) group-hover/act:opacity-100 transition-all">IR_A_SECTOR</span>
+                            <div className="w-full h-px bg-(--border-muted-color) mb-2 opacity-20 group-hover/act:bg-(--green-base) transition-all" />
                             <div className="relative">
-                                <span className={`absolute inset-0 rounded-full ${isRunning ? 'bg-(--amber)' : 'bg-(--green-light)'} opacity-40`} />
-                                <span className={`relative block w-3 h-3 rounded-full ${isRunning ? 'bg-(--amber) animate-pulse' : 'bg-(--green-light)'} shadow-[0_0_10px_currentColor]`} />
+                                <span className="text-2xl font-mono font-black text-(--text-primary) leading-none group-hover/act:text-(--green-light) transition-all">0{level.act}</span>
+                                <LayoutGrid size={10} className="absolute -top-1 -right-3 text-(--green-base) opacity-0 group-hover/act:opacity-100 transition-all" />
                             </div>
-                            <h1 id="level-title" className="text-2xl font-mono font-bold tracking-tighter text-(--text-primary)">
-                                {level.title.toUpperCase()}
+                        </Link>
+
+                        {/* COMPARTIMENT 02: MISSION OPERATIONAL DATA */}
+                        <div className="flex-1 flex flex-col justify-center px-6 py-4 md:py-0 border-b md:border-b-0 md:border-r border-(--border-muted-color)">
+                            <h1 id="level-title" className="text-3xl md:text-4xl font-(family-name:--font-title) font-semibold text-white leading-none uppercase">
+                                {level.title}
                             </h1>
-                            <div className="px-2 py-0.5 border border-(--bg-hover) bg-(--bg-deep) text-[9px] font-mono text-(--text-ghost) rounded">
-                                ACT_0{level.act}_NODO
-                            </div>
+                            <span className="text-xs font-mono text-(--green-light) uppercase">NODE::{level.id}</span>
                         </div>
-                        <div className="flex flex-wrap gap-x-5 gap-y-1">
-                            <div className="flex items-center gap-2">
-                                <ShieldAlert size={10} className="text-(--amber)" />
-                                <span className="hud-label text-[10px]">AUTH:</span>
-                                <span className="text-[10px] font-mono text-(--green-light)">SYS_OPERATOR</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Cpu size={10} className="text-(--green-muted)" />
-                                <span className="hud-label text-[10px]">ADDR:</span>
-                                <span className="text-[10px] font-mono font-bold text-(--text-primary)">{level.id}</span>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div className="col-span-6 md:col-span-4 flex items-center justify-center border-x border-(--bg-hover)/30 px-4">
-                        <div className="w-full flex flex-col gap-1.5">
-                            <div className="flex justify-between items-end">
-                                <span className="text-[9px] font-mono text-(--text-ghost)">SIGNAL_STRENGTH</span>
-                                <span className="text-[9px] font-mono text-(--green-light)">98.4%</span>
-                            </div>
-                            <div className="h-1 w-full bg-(--bg-deep) rounded-full overflow-hidden border border-(--bg-hover)/50">
-                                <div className="h-full bg-linear-to-r from-(--green-dark) to-(--green-light) w-[98%]" />
-                            </div>
-                        </div>
-                    </div>
+                        {/* COMPARTIMENT 03: TELEMETRY & SYNC (User Approved Design) */}
+                        <div className="flex items-center justify-end p-4 md:min-w-[280px] bg-black/20">
+                            <div className="flex flex-col items-end gap-2 w-full">
+                                <span className="text-xs font-mono text-(--text-muted) uppercase tracking-widest font-black opacity-65">
+                                    STATUS
+                                </span>
 
-                    <div className="col-span-6 md:col-span-3 flex flex-col items-end justify-center">
-                        <div className="hud-label text-[9px] mb-1">DATA_STREAM:</div>
-                        <div className={`px-4 py-1.5 border-2 text-[11px] font-mono tracking-[.25em] font-bold shadow-sm transition-all duration-300 ${status === 'success' ? 'border-(--green-base) text-(--green-light) bg-(--green-darkest)' : status === 'failed' ? 'border-(--red) text-(--red) bg-(--red)/10' : isRunning ? 'border-(--amber) text-(--amber) bg-(--amber)/10' : 'border-(--bg-hover) text-(--text-ghost) bg-(--bg-deep)'}`}>
-                            {status === 'success' ? '>> REINICIO_OK' : status === 'failed' ? '!! FALLO_SEC' : isRunning ? '>> PROT_EJEC' : '>> MODO_STBY'}
+                                <div className="flex items-center gap-4">
+                                    <span className={`text-xs md:text-[13px] font-mono font-black tracking-widest transition-colors duration-300
+                                        ${status === 'success' ? 'text-(--green-light)' : status === 'failed' ? 'text-(--red)' : isRunning ? 'text-(--amber)' : 'text-(--text-primary)'}
+                                    `}>
+                                        {status === 'success' ? '>> SECUENCIA_OK' : status === 'failed' ? '!! ERROR_DE_EJECUCION' : isRunning ? '>> EJECUTANDO' : '>> EN_ESPERA'}
+                                    </span>
+
+                                    {/* Indicadores de hardware cuadrados robustos */}
+                                    <div className="flex gap-[3px]">
+                                        {[0, 1, 2].map((i) => {
+                                            let barColor = 'bg-(--bg-hover)'
+                                            let anim = ''
+
+                                            if (status === 'success') {
+                                                barColor = 'bg-(--green-base)'
+                                            } else if (status === 'failed') {
+                                                barColor = 'bg-(--red)'
+                                                anim = 'animate-pulse'
+                                            } else if (isRunning) {
+                                                barColor = 'bg-(--amber)'
+                                                anim = i === 0 ? 'animate-pulse' : i === 1 ? 'animate-pulse opacity-75' : 'animate-pulse opacity-40'
+                                            } else {
+                                                barColor = i === 0 ? 'bg-(--text-muted)' : 'bg-(--bg-hover)'
+                                            }
+
+                                            return (
+                                                <div
+                                                    key={i}
+                                                    className={`w-2 h-4 rounded-[1px] transition-colors duration-300 ${barColor} ${anim}`}
+                                                />
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Main Content Layout — Split View */}
-                <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0">
+                <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 p-4">
 
                     {/* Sección del Mapa (Centro-Derecha en Desktop) */}
                     <div className="flex-3 flex flex-col gap-4 min-h-0 p-[2px]">
@@ -345,17 +389,24 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
                         </div>
 
                         {/* Status Feedback Banner */}
-                        <div className="h-10 flex items-center justify-center overflow-hidden">
+                        <div className="h-12 flex items-center justify-center overflow-hidden">
                             {status === 'failed' && (
-                                <div className="w-full text-(--red) flex items-center gap-4 bg-(--red)/5 px-6 py-2 border border-(--red)/30 rounded-md animate-in slide-in-from-bottom-2 duration-300">
-                                    <ShieldAlert size={16} />
-                                    <span className="text-[11px] font-mono font-bold tracking-[.2em] uppercase">Anomalía_De_Secuencia: Re-calibrando buffers locales...</span>
+                                <div className="w-full h-full text-(--red) flex items-center gap-4 bg-(--red)/5 px-6 border-l-2 border-(--red)/50 animate-in slide-in-from-bottom-4 duration-500 overflow-hidden relative">
+                                    <div className="absolute top-0 right-0 p-1 opacity-20"><ShieldAlert size={40} /></div>
+                                    <div className="relative z-10 flex items-center gap-3">
+                                        <div className="w-1.5 h-1.5 bg-(--red) rounded-full animate-pulse shadow-[0_0_8px_var(--red)]" />
+                                        <span className="text-[12px] font-mono font-black tracking-[.25em] uppercase">ANOMALÍA_DE_SECUENCIA_RECONOCIDA</span>
+                                    </div>
                                 </div>
                             )}
                             {status === 'success' && (
-                                <div className="w-full text-(--green-light) flex items-center gap-4 bg-(--green-base)/10 px-6 py-2 border border-(--green-base)/40 rounded-md animate-in slide-in-from-bottom-2 duration-300">
-                                    <Share2 size={16} className="animate-pulse" />
-                                    <span className="text-[11px] font-mono font-bold tracking-[.2em] uppercase">Nivel_Sincronizado: Conexión establecida con el sector {level.act}</span>
+                                <div className="w-full h-full text-(--green-light) flex items-center gap-4 bg-(--green-base)/5 px-6 border-l-2 border-(--green-base)/50 animate-in slide-in-from-bottom-4 duration-500 overflow-hidden relative">
+                                    <div className="absolute top-0 right-0 p-1 opacity-20"><Share2 size={40} /></div>
+                                    <div className="relative z-10 flex items-center gap-3">
+                                        <div className="w-1.5 h-1.5 bg-(--green-light) rounded-full animate-pulse shadow-[0_0_8px_var(--green-light)]" />
+                                        <span className="text-[12px] font-mono font-black tracking-[.25em] uppercase">SISTEMA_SINCRONIZADO_CON_ÉXITO</span>
+                                    </div>
+                                    <span className="text-[10px] font-mono opacity-50 ml-auto hidden md:block tracking-widest">ACTUALIZANDO_DB_NODO_0{level.act}</span>
                                 </div>
                             )}
                         </div>
@@ -414,6 +465,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
             <CommandPalette
                 commands={commands}
                 commandsF1={commandsF1}
+                commandsF2={commandsF2}
                 activePanel={activePanel}
                 isRunning={isRunning}
                 executingIdx={executingIdx}

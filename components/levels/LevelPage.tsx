@@ -8,7 +8,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import type { Level, LevelState, Card, GameObject } from '@/types/game'
+import type { Level, LevelState, Card, GameObject, LevelFailContext } from '@/types/game'
 import {
     checkLevelAccess,
     initLevelState,
@@ -156,9 +156,32 @@ export default function LevelPage({
         } : prev)
     }
 
-    function handleStatusChange(status: LevelState['status']) {
-        setLevelState(prev => prev ? { ...prev, status } : prev)
+    function handleStatusChange(status: LevelState['status'], reason?: LevelState['failReason'], context?: LevelFailContext) {
+        setLevelState(prev => prev ? { ...prev, status, failReason: reason, failContext: context } : prev)
     }
+
+    // Al calcular el hint de FRAG, priorizamos los errores específicos
+    const fragErrorHint = useMemo(() => {
+        if (levelState?.status !== 'failed' || !levelState.failReason) return null
+        const ctx = levelState.failContext
+        
+        switch (levelState.failReason) {
+            case 'infinite-loop': {
+                const panels = ctx?.involvedPanels?.map(p => p.toUpperCase()).join(" y ") || "tus funciones"
+                return `¡Cuidado! Tu secuencia de órdenes ha caído en un camino sin salida que vuelve siempre al principio. Parece que ${panels} se están llamando entre sí sin poder parar. ¡Dales una forma de terminar!`
+            }
+            case 'out-of-bounds': {
+                const coords = ctx?.coords ? ` en las coordenadas X:${ctx.coords.x}, Y:${ctx.coords.y}` : ""
+                return `¡Uy! El robot ha intentado moverse a una zona sin conexión${coords}. Revisa bien tus giros y pasos para que siempre se mantenga dentro de las baldosas seguras.`
+            }
+            case 'timeout':
+                return "¡Vaya! El robot ha tardado demasiado tiempo en terminar su tarea. Puede que la lista de órdenes sea demasiado larga o que se haya quedado esperando algo que no sucede."
+            default:
+                return null
+        }
+    }, [levelState?.status, levelState?.failReason, levelState?.failContext])
+
+    const fragHintToDisplay = fragErrorHint || randomizedFragHint
 
     function handleNext() {
         if (!completionResult?.nextLevelId) {
@@ -260,7 +283,7 @@ export default function LevelPage({
 
             {level.fragAvailable && levelState.status === 'failed' && (
                 <FragAssistant
-                    hint={randomizedFragHint}
+                    hint={fragHintToDisplay}
                     onUse={handleFragUse}
                     autoOpen={true}
                     feedback="error"
@@ -291,7 +314,7 @@ function renderLevelComponent(
     state: LevelState,
     onComplete: (stars: 0 | 1 | 2 | 3, usedFrag: boolean, customContent?: React.ReactNode) => void,
     onFragUse: () => void,
-    onStatusChange: (status: LevelState['status']) => void,
+    onStatusChange: (status: LevelState['status'], reason?: LevelState['failReason']) => void,
 ) {
     const commonProps = { level, state, onComplete, onFragUse, onStatusChange }
 

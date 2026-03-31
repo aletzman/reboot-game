@@ -9,7 +9,8 @@ export const PALETTE_COMMANDS: { type: CommandType; label: string; icon: Forward
     { type: 'jump', label: 'saltar', icon: ChevronsUp, cssColor: 'var(--green-muted)' },
     { type: 'activate', label: 'activar', icon: Sun, cssColor: 'var(--amber)' },
     { type: 'repeat', label: 'repetir', icon: Repeat, cssColor: 'var(--purple)' },
-    { type: 'call-fn', label: 'Sub', icon: Package, cssColor: 'var(--cyan)' },
+    { type: 'call-f1', label: 'Sub F1', icon: Package, cssColor: 'var(--cyan)' },
+    { type: 'call-f2', label: 'Sub F2', icon: Package, cssColor: 'var(--purple)' },
 ]
 
 export const MAX_COMMANDS = 20
@@ -293,7 +294,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         maxCommands: 3,
         uiLimitMain: 3, // Obliga a llamar a F1 tres veces
         uiLimitF1: 3,   // F1: move, activate, move
-        allowedCommands: ['move', 'activate', 'call-fn'],
+        allowedCommands: ['move', 'activate', 'call-f1'],
     },
     '1-17': { // 17. Tres Islas (F1 con giro)
         map: [
@@ -307,7 +308,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         maxCommands: 5,
         uiLimitMain: 6,
         uiLimitF1: 5,
-        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-fn'],
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1'],
     },
     '1-18': { // 18. Cruz de Malta (F1 + Repeat en Main)
         map: [
@@ -318,10 +319,11 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         robotStart: { x: 1, y: 1, direction: 'north' },
         targets: [{ x: 1, y: 0 }, { x: 2, y: 1 }, { x: 1, y: 2 }, { x: 0, y: 1 }],
         allowF1: true,
+        allowF2: true,
         maxCommands: 4,
         uiLimitMain: 4,
         uiLimitF1: 5,
-        allowedCommands: ['move', 'turn-right', 'activate', 'call-fn', 'repeat'],
+        allowedCommands: ['move', 'turn-right', 'activate', 'call-f1', 'repeat', 'call-f2'],
     },
     '1-19': { // 19. El fractal de saltos
         map: [
@@ -333,7 +335,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         maxCommands: 3,
         uiLimitMain: 3,
         uiLimitF1: 4,
-        allowedCommands: ['move', 'jump', 'activate', 'call-fn', 'repeat'],
+        allowedCommands: ['move', 'jump', 'activate', 'call-f1', 'repeat'],
     },
     '1-20': { // 20. F1 con ida y vuelta
         map: [
@@ -346,7 +348,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         maxCommands: 4,
         uiLimitMain: 4,
         uiLimitF1: 6,
-        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-fn', 'repeat'],
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1', 'repeat'],
     },
     '1-21': { // 21. Laberinto en U doble
         map: [
@@ -360,7 +362,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         maxCommands: 5,
         uiLimitMain: 6,
         uiLimitF1: 6,
-        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-fn'],
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1'],
     },
     '1-22': { // 22. Montañas gemelas
         map: [
@@ -372,7 +374,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         maxCommands: 3,
         uiLimitMain: 3,
         uiLimitF1: 4,
-        allowedCommands: ['move', 'jump', 'activate', 'call-fn', 'repeat'],
+        allowedCommands: ['move', 'jump', 'activate', 'call-f1', 'repeat'],
     },
     '1-23': { // 23. Espiral exterior
         map: [
@@ -386,7 +388,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         maxCommands: 6,
         uiLimitMain: 6,
         uiLimitF1: 5,
-        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-fn', 'repeat'],
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1', 'repeat'],
     },
     '1-24': { // 24. La Antesala (Preparación para el boss)
         map: [
@@ -400,7 +402,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         maxCommands: 6,
         uiLimitMain: 5,
         uiLimitF1: 6,
-        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'call-fn', 'repeat'],
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'call-f1', 'repeat'],
     },
 
     // ==========================================
@@ -418,7 +420,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         maxCommands: 5,
         uiLimitMain: 5, // UI súper restrictiva.
         uiLimitF1: 5,
-        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'call-fn', 'repeat'],
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'call-f1', 'repeat'],
     }
 };
 export const DEFAULT_MAP: NodeRoutineLevelData = {

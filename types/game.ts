@@ -138,9 +138,18 @@ export interface GameSave {
 // ESTADO DE LA UI DEL NIVEL
 // ------------------------------------------------------------
 
+export interface LevelFailContext {
+  panel?: 'main' | 'f1' | 'f2'
+  command?: CommandType
+  coords?: { x: number; y: number }
+  involvedPanels?: Array<'main' | 'f1' | 'f2'>
+}
+
 export interface LevelState {
   level: Level
   status: 'idle' | 'playing' | 'success' | 'failed' | 'reviewing'
+  failReason?: 'generic' | 'timeout' | 'crash' | 'infinite-loop' | 'out-of-bounds'
+  failContext?: LevelFailContext
   stars: 0 | 1 | 2 | 3
   fragUsed: boolean
   fragAvailableThisRun: boolean
@@ -175,7 +184,9 @@ export type CommandType =
   | 'drop'
   | 'activate'
   | 'repeat'
-  | 'call-fn'
+  | 'call-fn' // deprecated soon
+  | 'call-f1'
+  | 'call-f2'
 
 export interface Command {
   type: CommandType
@@ -218,9 +229,12 @@ export interface NodeRoutineLevelData {
   maxCommands?: number     // Límite de comandos para obtener 3 estrellas
   allowedCommands?: CommandType[]
   allowF1?: boolean        // habilita el contenedor F1
+  allowF2?: boolean        // habilita el contenedor F2
   maxF1Commands?: number   // límite óptimo de comandos para F1 (para estrellas, opcional)
+  maxF2Commands?: number   // límite óptimo de comandos para F2
   uiLimitMain?: number     // Límite estricto de ranuras en la UI para MAIN
   uiLimitF1?: number       // Límite estricto de ranuras en la UI para F1
+  uiLimitF2?: number       // Límite estricto de ranuras en la UI para F2
 }
 
 // ------------------------------------------------------------
