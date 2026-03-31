@@ -5,12 +5,29 @@ import type { GameSave, LevelAccessResult, Level } from '@/types/game'
  */
 
 export function canAccessLevel(
-  levelId: string, 
-  save: GameSave | null, 
+  levelId: string,
+  save: GameSave | null,
   levels: Level[],
   demoMode = false
 ): LevelAccessResult {
-  if (demoMode) return { allowed: true }
+  // Demo mode limits: 6 sectors, 4 levels per sector
+  if (demoMode) {
+    const level = levels.find(l => l.id === levelId);
+    if (!level) return { allowed: false, reason: 'locked', requiredAct: 0 };
+
+    // Act 0 (P-00, P-01) is always allowed in demo
+    if (level.act === 0) return { allowed: true };
+
+    // Max 6 sectors
+    if (level.act > 5) return { allowed: false, reason: 'locked', requiredAct: level.act };
+
+    // Max 4 levels per sector (excluding act 0)
+    const actLevels = levels.filter(l => l.act === level.act);
+    const levelIndexInAct = actLevels.findIndex(l => l.id === levelId);
+    if (levelIndexInAct >= 3) return { allowed: false, reason: 'locked', requiredAct: level.act };
+
+    return { allowed: true };
+  }
 
   const id = levelId.toUpperCase()
   const FREE_LEVELS = ['P-00', 'P-01']
@@ -63,12 +80,12 @@ export function canAccessLevel(
 }
 
 export function isActUnlocked(
-  actNumber: number, 
-  save: GameSave | null, 
+  actNumber: number,
+  save: GameSave | null,
   levels: Level[],
   demoMode = false
 ): boolean {
-  if (demoMode) return true
+  if (demoMode) return actNumber <= 6;
   if (actNumber <= 0) return true
   if (!save) return false
 

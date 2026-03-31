@@ -159,7 +159,11 @@ export function unlockCard(cardId: string): void {
 }
 
 export function hasCard(cardId: string): boolean {
-  if (isDemoModeActive()) return true
+  if (isDemoModeActive()) {
+    // Solo las primeras 6 cartas en demo
+    const cardNum = parseInt(cardId.split('-')[1]);
+    return !isNaN(cardNum) && cardNum <= 6;
+  }
   return getSave()?.cards.includes(cardId) ?? false
 }
 
@@ -180,7 +184,18 @@ export function unlockObject(objectId: string): void {
 }
 
 export function hasObject(objectId: string): boolean {
-  if (isDemoModeActive()) return true
+  if (isDemoModeActive()) {
+    // Definimos 6 objetos básicos para el demo
+    const demoObjects = [
+      'linterna_rota', 
+      'credencial_acceso', 
+      'manual_logica', 
+      'llave_sector_2', 
+      'plano_diagrama_flujo', 
+      'diario_ingeniero'
+    ];
+    return demoObjects.includes(objectId);
+  }
   return getSave()?.objects.includes(objectId) ?? false
 }
 

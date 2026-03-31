@@ -36,18 +36,33 @@ export async function updateSession(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const demoMode = request.cookies.get('reboot_demo_mode')?.value === 'true'
 
-  // Si estamos en demoMode, permitimos todo y saltamos el resto de validaciones de acceso
-  if (demoMode) {
-    return supabaseResponse
-  }
-
   // Lógica de protección de rutas de Juego
-  const gamePathRegex = /^\/game\/(\d+)(?:\/level\/([^\/]+))?$/
+  const gamePathRegex = /^\/game\/(\d+)(?:\/level\/([^\/]+))?/
   const match = pathname.match(gamePathRegex)
 
   if (match) {
     const actId = parseInt(match[1], 10)
     const levelId = match[2]
+
+    // En modo demo, solo validamos contra los límites de demo
+    if (demoMode) {
+       // Necesitamos los niveles para validar acceso (los traemos de Supabase para consistencia con canAccessLevel)
+       const { data: levels } = await supabase.from('levels').select('*').order('id', { ascending: true })
+       
+       if (levels && levels.length > 0) {
+         if (levelId) {
+           const access = canAccessLevel(levelId, null, levels, true)
+           if (!access.allowed) {
+             return NextResponse.redirect(new URL(`/game/${actId}`, request.url))
+           }
+         } else {
+           if (!isActUnlocked(actId, null, levels, true)) {
+             return NextResponse.redirect(new URL('/game', request.url))
+           }
+         }
+       }
+       return supabaseResponse
+    }
 
     // 1. Verificación de Login obligatorio
     if (levelId && requiresLogin(levelId) && !user) {
