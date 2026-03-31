@@ -54,6 +54,112 @@ export const NODE_ROUTINE_TUTORIAL: DriveStep[] = [
 ];
 
 /**
+ * Tutorial para el nivel 1-11: Introducción a REPETIR (Bucles).
+ */
+export const REPEAT_TUTORIAL: DriveStep[] = [
+    {
+        element: '#command-bank',
+        popover: {
+            title: 'NUEVO BOTÓN: REPETIR',
+            description: 'He añadido un botón nuevo de color morado. Te ayudará a llegar muy lejos sin tener que usar tantas tarjetas.',
+            side: "left"
+        }
+    },
+    {
+        element: '#command-bank',
+        popover: {
+            title: '¿PARA QUÉ SIRVE?',
+            description: 'Este botón hace que el robot vuelva a hacer todo lo que ya habías puesto en tu lista. ¡Es como volver a empezar el camino!',
+            side: "left"
+        }
+    },
+    {
+        element: '#command-bank',
+        popover: {
+            title: 'ELIGE LAS VECES',
+            description: 'Cuando pulses el botón morado, elige cuántas veces quieres repetir.',
+            side: "left"
+        }
+    },
+    {
+        element: '#main-routine',
+        popover: {
+            title: 'EL ORDEN DEL CAMINO',
+            description: 'Primero pon tus flechas y, al final de todo, añade el botón de REPETIR. ¡Así el robot sabrá qué partes debe repetir!',
+            side: "left"
+        }
+    }
+];
+
+/**
+ * Tutorial para el nivel 1-16: Introducción a Funciones (SUB F1).
+ */
+export const FUNCTION_TUTORIAL: DriveStep[] = [
+    {
+        element: '#f1-routine',
+        popover: {
+            title: 'NUEVA CAJA: SUB F1',
+            description: 'He añadido esta caja azul. Es como un cajón especial donde puedes guardar un grupo de movimientos.',
+            side: "left"
+        }
+    },
+    {
+        element: '#f1-routine',
+        popover: {
+            title: '¿CÓMO SE USA?',
+            description: 'Pon aquí dentro las flechas que quieras. El robot las "aprenderá" para usarlas cuando tú se lo pidas.',
+            side: "left"
+        }
+    },
+    {
+        element: '#command-bank',
+        popover: {
+            title: 'USA LA TARJETA AZUL',
+            description: 'Ahora, pon la tarjeta azul de F1 en tu lista de arriba. Cuando el robot la lea, hará todo lo que guardaste en la caja azul.',
+            side: "left"
+        }
+    },
+    {
+        element: '#f1-routine',
+        popover: {
+            title: 'AHORRA ESPACIO',
+            description: 'Esto sirve para que el robot haga muchas cosas usando solo una tarjeta en la lista principal. ¡Es muy útil!',
+            side: "top"
+        }
+    }
+];
+
+/**
+ * Tutorial para el nivel 1-23: Introducción a SUB F2.
+ */
+export const FUNCTION_F2_TUTORIAL: DriveStep[] = [
+    {
+        element: '#f2-routine',
+        popover: {
+            title: 'OTRA CAJA MÁS: SUB F2',
+            description: '¡Ahora tienes dos cajones! He habilitado la caja morada SUB F2 para que guardes todavía más movimientos.',
+            side: "left"
+        }
+    },
+    {
+        element: '#command-bank',
+        popover: {
+            title: 'TARJETA MORADA',
+            description: 'Usa la tarjeta morada de F2 en tu lista para que el robot haga lo que guardaste en el segundo cajón.',
+            side: "left"
+        }
+    },
+    {
+        element: '#f2-routine',
+        popover: {
+            title: 'COMBÍNALAS TODAS',
+            description: 'Puedes usar F1 para una cosa y F2 para otra. ¡Incluso puedes meter una dentro de la otra para hacer trucos increíbles!',
+            side: "top"
+        }
+    }
+];
+
+/**
  * Configuración base de Driver.js para mantener la estética de REBOOT.
  */
 export const TUTORIAL_CONFIG = {

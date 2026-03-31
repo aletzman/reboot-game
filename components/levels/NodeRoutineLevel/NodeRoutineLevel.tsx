@@ -13,7 +13,7 @@ import { NODEROUTINE_MAPS, DEFAULT_MAP, MAX_COMMANDS, EXEC_SPEED } from './const
 import { sleep, flattenCommands, getNextPosition, turnLeft, turnRight, calcStars } from './utils'
 import { IsometricCanvas } from './IsometricCanvas'
 import { CommandPalette } from './CommandPalette'
-import { NODE_ROUTINE_TUTORIAL, TUTORIAL_CONFIG } from './tutorialSteps'
+import { NODE_ROUTINE_TUTORIAL, REPEAT_TUTORIAL, FUNCTION_TUTORIAL, FUNCTION_F2_TUTORIAL, TUTORIAL_CONFIG } from './tutorialSteps'
 
 export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, onStatusChange }: NodeRoutineLevelProps) {
     const mapData = NODEROUTINE_MAPS[level.id] ?? DEFAULT_MAP
@@ -75,14 +75,20 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
     // TUTORIAL (DRIVER.JS)
     // --------------------------------------------------------
     useEffect(() => {
-        // Solo lanzamos el tutorial en el primer nivel del Acto 1 por defecto
-        // O si el nivel tiene una marca de tutorial específica
-        if (level.id !== '1-01') return;
+        // Solo lanzamos el tutorial en niveles específicos
+        const tutorialSteps = {
+            '1-01': NODE_ROUTINE_TUTORIAL,
+            '1-11': REPEAT_TUTORIAL,
+            '1-16': FUNCTION_TUTORIAL,
+            '1-23': FUNCTION_F2_TUTORIAL,
+        }[level.id]
+
+        if (!tutorialSteps) return;
 
         const timer = setTimeout(() => {
             const driverObj = driver({
                 ...TUTORIAL_CONFIG,
-                steps: NODE_ROUTINE_TUTORIAL
+                steps: tutorialSteps
             });
 
             driverObj.drive();
@@ -481,7 +487,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
 
             {repeatModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/85 animate-in fade-in duration-300">
-                    <div className="bg-(--bg-surface) border border-(--green-base)/40 p-8 font-mono flex flex-col gap-6 min-w-[300px] shadow-[0_0_60px_rgba(45,120,0,0.2)] relative rounded-sm">
+                    <div id="repeat-modal" className="bg-(--bg-surface) border border-(--green-base)/40 p-8 font-mono flex flex-col gap-6 min-w-[300px] shadow-[0_0_60px_rgba(45,120,0,0.2)] relative rounded-sm">
                         <div className="absolute top-2 left-2 text-[8px] text-(--text-ghost) opacity-40 uppercase">Sys_Dialog_v4</div>
 
                         <div className="text-(--green-light) text-[11px] tracking-[.2em] uppercase border-b border-(--bg-hover) pb-3 flex items-center justify-between">
