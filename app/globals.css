@@ -632,17 +632,6 @@ body {
   transition: width 0.3s ease;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   VIEW TRANSITIONS — Shared Element Animations (React 19)
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Smooth morph animation for card transitions (rack ↔ modal) */
-::view-transition-group(*) {
-  animation-duration: 0.4s;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* The old snapshot (card leaving rack) — fade out quickly */
 ::view-transition-old(*) {
   animation: vt-fade-out 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
 }
@@ -653,20 +642,185 @@ body {
 }
 
 @keyframes vt-fade-out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes vt-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* Respect user motion preferences */
 @media (prefers-reduced-motion: reduce) {
+
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) {
     animation-duration: 0.01s !important;
   }
+}
+
+/* ──────────────────────────────────────────────────────────
+   DRIVER.JS: REBOOT "CLEAN IDE" THEME
+   ────────────────────────────────────────────────────────── */
+
+/* EL VELO */
+.driver-popover-mask {
+  fill: var(--bg-void) !important;
+  opacity: 0.75 !important;
+  transition: opacity 0.3s ease;
+}
+
+/* EL ELEMENTO ACTIVO */
+.driver-active-element {
+  outline: 1px solid var(--purple) !important;
+  outline-offset: 1px !important;
+  border-radius: 4px !important;
+  /* Resplandor súper sutil */
+  box-shadow: 0 0 0 4px rgba(127, 119, 221, 0.1) !important;
+  z-index: 100000 !important;
+}
+
+/* VENTANA PRINCIPAL */
+.driver-popover.reboot-tutorial-popover {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--bg-hover) !important;
+  border-radius: 4px !important;
+  /* Sombra elegante que le da profundidad sin ensuciar */
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.02) !important;
+  max-width: 360px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Flecha del globo */
+.reboot-tutorial-popover .driver-popover-arrow {
+  display: none !important;
+}
+
+/* CABECERA */
+.reboot-tutorial-popover .driver-popover-title {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font-title) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.1em !important;
+  padding: 16px 20px 8px !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* El "LED" de FRAG */
+.reboot-tutorial-popover .driver-popover-title::before {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--purple);
+  box-shadow: 0 0 8px var(--purple);
+}
+
+/* CUERPO DEL TEXTO  */
+.reboot-tutorial-popover .driver-popover-description {
+  padding: 0 20px 20px !important;
+  font-family: var(--font-sans) !important;
+  /* <--- Clave para que no se sienta pesado */
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  color: var(--text-muted) !important;
+  background: transparent !important;
+  margin: 0 !important;
+}
+
+/* <b> o <strong> en tu tutorial, se verán como código */
+.reboot-tutorial-popover .driver-popover-description strong,
+.reboot-tutorial-popover .driver-popover-description b {
+  color: var(--purple) !important;
+  font-family: var(--font-mono) !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  background: rgba(127, 119, 221, 0.1);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+/* FOOTER  */
+.reboot-tutorial-popover .driver-popover-footer {
+  background: var(--bg-elevated) !important;
+  border-top: 1px solid var(--border-muted-color) !important;
+  padding: 12px 20px !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+/* CONTROLES Y BOTONES */
+.reboot-tutorial-popover .driver-popover-progress-text {
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  color: var(--text-muted) !important;
+  letter-spacing: 0.1em !important;
+}
+
+.reboot-tutorial-popover .driver-popover-footer button {
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-radius: 4px !important;
+  text-shadow: none !important;
+  /* Suave */
+  padding: 8px 14px !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+.reboot-tutorial-popover .driver-popover-btn .driver-popover-btn-disabled {
+  opacity: 1;
+  cursor: not-allowed !important;
+}
+
+/* Botón Siguiente (Borde morado limpio, se rellena al pasar el mouse) */
+.reboot-tutorial-popover .driver-popover-next-btn {
+  background: transparent !important;
+  color: var(--purple) !important;
+  text-shadow: none !important;
+  border: 1px solid var(--purple) !important;
+}
+
+.reboot-tutorial-popover .driver-popover-next-btn:hover {
+  background: var(--purple) !important;
+  color: var(--bg-void) !important;
+  text-shadow: none !important;
+}
+
+/* Botón Anterior (Solo texto, sin caja, para no saturar) */
+.reboot-tutorial-popover .driver-popover-prev-btn {
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-muted) !important;
+  padding-left: 0 !important;
+  text-shadow: none !important;
+}
+
+.reboot-tutorial-popover .driver-popover-prev-btn:hover {
+  color: var(--text-primary) !important;
+  text-shadow: none !important;
 }
