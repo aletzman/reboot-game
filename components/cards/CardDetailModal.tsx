@@ -233,13 +233,7 @@ export function CardDetailModal({ selectedCard, onClose }: CardDetailModalProps)
               </span>
             </div>
             {/* BOTÓN DE DESCONEXIÓN (SIGKILL) */}
-            <button
-              onClick={onClose}
-              className="group flex items-center gap-2 bg-red-950/30 border border-red-900/80 px-4 py-1.5 text-red-500 hover:bg-red-900 hover:text-white transition-all cursor-pointer"
-            >
-              <span className="w-1.5 h-1.5 bg-red-500 rounded-full group-hover:shadow-[0_0_8px_white] animate-pulse" />
-              <span className="font-black tracking-widest text-[10px] md:text-xs">SIGKILL [X]</span>
-            </button>
+            <CloseButton onClick={onClose} />
           </header>
 
           {/* CONTENIDO PRINCIPAL SCROLLABLE */}
