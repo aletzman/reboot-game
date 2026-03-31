@@ -188,8 +188,8 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         ],
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 5, y: 0 }],
-        maxCommands: 2,
-        uiLimitMain: 3, // Solo cabe: Repeat, Move, Activate
+        maxCommands: 3,
+        uiLimitMain: 10, // Solo cabe: Repeat, Move, Activate
         allowedCommands: ['move', 'activate', 'repeat'],
     },
     '1-12': { // 12. Escalera al cielo (Repeat + Jump)
@@ -205,8 +205,8 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 4, y: 0 }],
         maxCommands: 3,
-        uiLimitMain: 3,
-        allowedCommands: ['jump', 'activate', 'repeat'],
+        uiLimitMain: 10,
+        allowedCommands: ['jump', 'activate', 'repeat', 'move'],
     },
     '1-13': { // 13. El Cuadrado (Repeat con patrones múltiples)
         map: [
@@ -229,7 +229,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 0, y: 2 }],
         maxCommands: 5,
-        uiLimitMain: 8,
+        uiLimitMain: 12,
         allowedCommands: ['move', 'turn-right', 'activate', 'repeat'],
     },
     '1-14': { // 14. Zig-Zag infinito (Patrón Move-Turn-Move-Turn)
@@ -255,7 +255,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         ],
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 3, y: 2 }],
-        maxCommands: 7,
+        maxCommands: 6,
         uiLimitMain: 10,
         allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'repeat'],
     },
@@ -272,75 +272,133 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         robotStart: { x: 0, y: 0, height: 1, direction: 'east' },
         targets: [{ x: 4, y: 0 }],
         maxCommands: 3,
-        uiLimitMain: 7,
-        allowedCommands: ['move', 'jump', 'activate', 'repeat'],
+        uiLimitMain: 12,
+        allowedCommands: ['move', 'jump', 'activate', 'repeat', 'turn-left', 'turn-right'],
     },
 
     // ==========================================
     // FASE 4: FUNCIONES (F1 / CALL-FN)
     // ==========================================
-    '1-16': { // 16. La primera Función (Avanzar y Activar x3)
+    '1-16': { // 16. La primera Función (Avanzar y Activar x2 + Terminal)
         map: [
             [
                 { type: 'floor', x: 0, y: 0 },
                 { type: 'generator', x: 1, y: 0 },
-                { type: 'generator', x: 3, y: 0 },
-                { type: 'target', x: 5, y: 0 }
+                { type: 'generator', x: 2, y: 0 },
+                { type: 'target', x: 3, y: 0 }
+            ]
+        ],
+        robotStart: { x: 0, y: 0, direction: 'east' },
+        targets: [{ x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }],
+        allowF1: true,
+        maxCommands: 4,
+        uiLimitMain: 6, // Obliga a llamar a F1 tres veces
+        uiLimitF1: 6,   // F1: move, activate, move
+        allowedCommands: ['move', 'activate', 'call-f1', 'repeat', 'turn-left', 'turn-right', 'jump'],
+    },
+    '1-17': { // 17. Tres Islas (F1 con giro)
+        map: [
+            [
+                { type: 'empty', x: 0, y: 0 },
+                { type: 'floor', x: 1, y: 0 },
+                { type: 'empty', x: 2, y: 0 },
+                { type: 'floor', x: 3, y: 0 },
+                { type: 'empty', x: 4, y: 0 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 1 },
+                { type: 'floor', x: 1, y: 1 },
+                { type: 'floor', x: 2, y: 1 },
+                { type: 'target', x: 3, y: 1 },
+                { type: 'floor', x: 4, y: 1 },
+            ],
+            [
+                { type: 'empty', x: 0, y: 2 },
+                { type: 'floor', x: 1, y: 2 },
+                { type: 'floor', x: 2, y: 2 },
+                { type: 'floor', x: 3, y: 2 },
+                { type: 'empty', x: 4, y: 2 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 3 },
+                { type: 'generator', x: 1, y: 3 },
+                { type: 'floor', x: 2, y: 3 },
+                { type: 'generator', x: 3, y: 3 },
+                { type: 'floor', x: 4, y: 3 },
+            ],
+            [
+                { type: 'empty', x: 0, y: 4 },
+                { type: 'floor', x: 1, y: 4 },
+                { type: 'empty', x: 2, y: 4 },
+                { type: 'floor', x: 3, y: 4 },
+                { type: 'empty', x: 4, y: 4 },
+            ]
+        ],
+        robotStart: { x: 2, y: 2, direction: 'south' },
+        targets: [{ x: 3, y: 3 }, { x: 1, y: 3 }, { x: 3, y: 1 }],
+        allowF1: true,
+        maxCommands: 12,
+        uiLimitMain: 10,
+        uiLimitF1: 10,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1', 'repeat', 'jump',],
+    },
+    '1-18': { // 18. Cruz de Malta (F1 + Repeat en Main)
+        map: [
+            [
+                { type: 'empty', x: 0, y: 0 },
+                { type: 'generator', x: 1, y: 0 },
+                { type: 'empty', x: 2, y: 0 }
+            ],
+            [
+                { type: 'generator', x: 0, y: 1 },
+                { type: 'floor', x: 1, y: 1 },
+                { type: 'generator', x: 2, y: 1 }
+            ],
+            [
+                { type: 'empty', x: 0, y: 2 },
+                { type: 'target', x: 1, y: 2 },
+                { type: 'empty', x: 2, y: 2 }
+            ]
+        ],
+        robotStart: { x: 1, y: 1, direction: 'north' },
+        targets: [{ x: 1, y: 0 }, { x: 2, y: 1 }, { x: 1, y: 2 }, { x: 0, y: 1 }],
+        allowF1: true,
+        maxCommands: 10,
+        uiLimitMain: 10,
+        uiLimitF1: 10,
+        allowedCommands: ['move', 'turn-right', 'activate', 'call-f1', 'repeat', "jump", 'turn-left'],
+    },
+    '1-19': { // 19. El fractal de saltos
+        map: [
+            [
+                { type: 'floor', x: 0, y: 0, height: 0 },
+                { type: 'generator', x: 1, y: 0, height: 1 },
+                { type: 'floor', x: 2, y: 0, height: 1 },
+                { type: 'generator', x: 3, y: 0, height: 2 },
+                { type: 'floor', x: 4, y: 0, height: 2 },
+                { type: 'target', x: 5, y: 0, height: 3 }
             ]
         ],
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 1, y: 0 }, { x: 3, y: 0 }, { x: 5, y: 0 }],
         allowF1: true,
-        maxCommands: 3,
-        uiLimitMain: 3, // Obliga a llamar a F1 tres veces
-        uiLimitF1: 3,   // F1: move, activate, move
-        allowedCommands: ['move', 'activate', 'call-f1'],
-    },
-    '1-17': { // 17. Tres Islas (F1 con giro)
-        map: [
-            [{ type: 'floor', x: 0, y: 0 }, { type: 'empty', x: 1, y: 0 }, { type: 'target', x: 2, y: 0 }],
-            [{ type: 'empty', x: 0, y: 1 }, { type: 'floor', x: 1, y: 1 }, { type: 'empty', x: 2, y: 1 }],
-            [{ type: 'target', x: 0, y: 2 }, { type: 'empty', x: 1, y: 2 }, { type: 'target', x: 2, y: 2 }]
-        ],
-        robotStart: { x: 1, y: 1, direction: 'north' },
-        targets: [{ x: 1, y: 0 }, { x: 2, y: 1 }, { x: 1, y: 2 }],
-        allowF1: true,
         maxCommands: 5,
-        uiLimitMain: 6,
-        uiLimitF1: 5,
-        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1'],
-    },
-    '1-18': { // 18. Cruz de Malta (F1 + Repeat en Main)
-        map: [
-            [{ type: 'empty', x: 0, y: 0 }, { type: 'target', x: 1, y: 0 }, { type: 'empty', x: 2, y: 0 }],
-            [{ type: 'target', x: 0, y: 1 }, { type: 'floor', x: 1, y: 1 }, { type: 'target', x: 2, y: 1 }],
-            [{ type: 'empty', x: 0, y: 2 }, { type: 'target', x: 1, y: 2 }, { type: 'empty', x: 2, y: 2 }]
-        ],
-        robotStart: { x: 1, y: 1, direction: 'north' },
-        targets: [{ x: 1, y: 0 }, { x: 2, y: 1 }, { x: 1, y: 2 }, { x: 0, y: 1 }],
-        allowF1: true,
-        allowF2: true,
-        maxCommands: 4,
-        uiLimitMain: 4,
-        uiLimitF1: 5,
-        allowedCommands: ['move', 'turn-right', 'activate', 'call-f1', 'repeat', 'call-f2'],
-    },
-    '1-19': { // 19. El fractal de saltos
-        map: [
-            [{ type: 'floor', x: 0, y: 0, height: 0 }, { type: 'target', x: 1, y: 0, height: 1 }, { type: 'floor', x: 2, y: 0, height: 1 }, { type: 'target', x: 3, y: 0, height: 2 }, { type: 'floor', x: 4, y: 0, height: 2 }, { type: 'target', x: 5, y: 0, height: 3 }]
-        ],
-        robotStart: { x: 0, y: 0, direction: 'east' },
-        targets: [{ x: 1, y: 0 }, { x: 3, y: 0 }, { x: 5, y: 0 }],
-        allowF1: true,
-        maxCommands: 3,
         uiLimitMain: 3,
         uiLimitF1: 4,
-        allowedCommands: ['move', 'jump', 'activate', 'call-f1', 'repeat'],
+        allowedCommands: ['move', 'jump', 'activate', 'call-f1', 'repeat', 'turn-left', 'turn-right'],
     },
     '1-20': { // 20. F1 con ida y vuelta
         map: [
-            [{ type: 'target', x: 0, y: 0 }, { type: 'empty', x: 1, y: 0 }, { type: 'target', x: 2, y: 0 }],
-            [{ type: 'floor', x: 0, y: 1 }, { type: 'floor', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }]
+            [
+                { type: 'target', x: 0, y: 0 },
+                { type: 'empty', x: 1, y: 0 },
+                { type: 'target', x: 2, y: 0 }
+            ],
+            [
+                { type: 'floor', x: 0, y: 1 },
+                { type: 'floor', x: 1, y: 1 },
+                { type: 'floor', x: 2, y: 1 }
+            ]
         ],
         robotStart: { x: 1, y: 1, direction: 'north' },
         targets: [{ x: 0, y: 0 }, { x: 2, y: 0 }],
@@ -348,61 +406,189 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         maxCommands: 4,
         uiLimitMain: 4,
         uiLimitF1: 6,
-        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1', 'repeat'],
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1', 'repeat', 'jump'],
     },
     '1-21': { // 21. Laberinto en U doble
         map: [
-            [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'empty', x: 2, y: 0 }, { type: 'empty', x: 3, y: 0 }],
-            [{ type: 'floor', x: 0, y: 1 }, { type: 'empty', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }, { type: 'floor', x: 3, y: 1 }],
-            [{ type: 'target', x: 0, y: 2 }, { type: 'empty', x: 1, y: 2 }, { type: 'target', x: 2, y: 2 }, { type: 'floor', x: 3, y: 2 }]
+            [
+                { type: 'floor', x: 0, y: 0 },
+                { type: 'floor', x: 1, y: 0 },
+                { type: 'floor', x: 2, y: 0 },
+                { type: 'empty', x: 3, y: 0 },
+                { type: 'floor', x: 4, y: 0 },
+                { type: 'floor', x: 5, y: 0 },
+                { type: 'floor', x: 6, y: 0 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 1 },
+                { type: 'empty', x: 1, y: 1 },
+                { type: 'floor', x: 2, y: 1 },
+                { type: 'empty', x: 3, y: 1 },
+                { type: 'floor', x: 4, y: 1 },
+                { type: 'empty', x: 5, y: 1 },
+                { type: 'floor', x: 6, y: 1 },
+            ],
+            [
+                { type: 'target', x: 0, y: 2 },
+                { type: 'empty', x: 1, y: 2 },
+                { type: 'floor', x: 2, y: 2 },
+                { type: 'floor', x: 3, y: 2 },
+                { type: 'generator', x: 4, y: 2 },
+                { type: 'empty', x: 5, y: 2 },
+                { type: 'floor', x: 6, y: 2 },
+            ]
         ],
-        robotStart: { x: 3, y: 1, direction: 'west' },
-        targets: [{ x: 0, y: 2 }, { x: 2, y: 2 }],
+        robotStart: { x: 6, y: 2, direction: 'north' },
+        targets: [{ x: 4, y: 2 }, { x: 0, y: 2 }],
         allowF1: true,
-        maxCommands: 5,
-        uiLimitMain: 6,
-        uiLimitF1: 6,
-        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1'],
+        maxCommands: 12,
+        uiLimitMain: 10,
+        uiLimitF1: 7,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1', 'repeat', 'jump'],
     },
     '1-22': { // 22. Montañas gemelas
         map: [
-            [{ type: 'floor', x: 0, y: 0, height: 0 }, { type: 'floor', x: 1, y: 0, height: 1 }, { type: 'target', x: 2, y: 0, height: 0 }, { type: 'floor', x: 3, y: 0, height: 1 }, { type: 'target', x: 4, y: 0, height: 0 }]
+            [
+                { type: 'generator', x: 0, y: 0 },
+                { type: 'floor', x: 1, y: 0, height: 1 },
+                { type: 'floor', x: 2, y: 0, height: 2 },
+                { type: 'floor', x: 3, y: 0, height: 1 },
+                { type: 'floor', x: 4, y: 0 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 1, height: 1 },
+                { type: 'empty', x: 1, y: 1 },
+                { type: 'empty', x: 2, y: 1, height: 2 },
+                { type: 'empty', x: 3, y: 1 },
+                { type: 'empty', x: 4, y: 1 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 2, height: 2 },
+                { type: 'empty', x: 1, y: 2 },
+                { type: 'empty', x: 2, y: 2 },
+                { type: 'empty', x: 3, y: 2 },
+                { type: 'empty', x: 4, y: 2 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 3, height: 1 },
+                { type: 'empty', x: 1, y: 3 },
+                { type: 'empty', x: 2, y: 3 },
+                { type: 'empty', x: 3, y: 3 },
+                { type: 'empty', x: 4, y: 3 },
+            ],
+            [
+                { type: 'generator', x: 0, y: 4 },
+                { type: 'floor', x: 1, y: 4, height: 1 },
+                { type: 'floor', x: 2, y: 4, height: 2 },
+                { type: 'floor', x: 3, y: 4, height: 1 },
+                { type: 'target', x: 4, y: 4 },
+            ]
         ],
-        robotStart: { x: 0, y: 0, direction: 'east' },
-        targets: [{ x: 2, y: 0 }, { x: 4, y: 0 }],
+        robotStart: { x: 4, y: 0, direction: 'west' },
+        targets: [{ x: 0, y: 0 }, { x: 0, y: 4 }, { x: 4, y: 4 }],
         allowF1: true,
-        maxCommands: 3,
+        maxCommands: 6,
         uiLimitMain: 3,
         uiLimitF1: 4,
-        allowedCommands: ['move', 'jump', 'activate', 'call-f1', 'repeat'],
+        allowedCommands: ['move', 'jump', 'activate', 'call-f1', 'repeat', 'turn-left', 'turn-right'],
     },
     '1-23': { // 23. Espiral exterior
         map: [
-            [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }, { type: 'target', x: 3, y: 0 }],
-            [{ type: 'empty', x: 0, y: 1 }, { type: 'empty', x: 1, y: 1 }, { type: 'empty', x: 2, y: 1 }, { type: 'floor', x: 3, y: 1 }],
-            [{ type: 'target', x: 0, y: 2 }, { type: 'floor', x: 1, y: 2 }, { type: 'floor', x: 2, y: 2 }, { type: 'floor', x: 3, y: 2 }]
+            [
+                { type: 'floor', x: 0, y: 0 },
+                { type: 'empty', x: 1, y: 0 },
+                { type: 'floor', x: 2, y: 0 },
+                { type: 'floor', x: 3, y: 0 },
+                { type: 'generator', x: 4, y: 0 },
+
+            ],
+            [
+                { type: 'floor', x: 0, y: 1 },
+                { type: 'empty', x: 1, y: 1 },
+                { type: 'floor', x: 2, y: 1 },
+                { type: 'empty', x: 3, y: 1 },
+                { type: 'floor', x: 4, y: 1 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 2 },
+                { type: 'wall', x: 1, y: 2 },
+                { type: 'target', x: 2, y: 2 },
+                { type: 'wall', x: 3, y: 2 },
+                { type: 'floor', x: 4, y: 2 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 3 },
+                { type: 'empty', x: 1, y: 3 },
+                { type: 'wall', x: 2, y: 3 },
+                { type: 'empty', x: 3, y: 3 },
+                { type: 'floor', x: 4, y: 3 },
+            ],
+            [
+                { type: 'generator', x: 0, y: 4 },
+                { type: 'floor', x: 1, y: 4 },
+                { type: 'floor', x: 2, y: 4 },
+                { type: 'floor', x: 3, y: 4 },
+                { type: 'generator', x: 4, y: 4 },
+            ],
         ],
-        robotStart: { x: 0, y: 2, direction: 'east' },
-        targets: [{ x: 3, y: 0 }, { x: 0, y: 2 }], // Activa el inicio y el fin
+        robotStart: { x: 0, y: 0, direction: 'south' },
+        targets: [{ x: 4, y: 0 }, { x: 0, y: 4 }, { x: 4, y: 4 }, { x: 2, y: 2 }], // Activa el inicio y el fin
         allowF1: true,
-        maxCommands: 6,
-        uiLimitMain: 6,
+        allowF2: true,
+        maxCommands: 13,
+        uiLimitMain: 12,
         uiLimitF1: 5,
-        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1', 'repeat'],
+        uiLimitF2: 5,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1', 'call-f2', 'repeat', 'jump'],
     },
     '1-24': { // 24. La Antesala (Preparación para el boss)
         map: [
-            [{ type: 'target', x: 0, y: 0, height: 2 }, { type: 'empty', x: 1, y: 0 }, { type: 'target', x: 2, y: 0, height: 2 }],
-            [{ type: 'floor', x: 0, y: 1, height: 1 }, { type: 'floor', x: 1, y: 1, height: 0 }, { type: 'floor', x: 2, y: 1, height: 1 }],
-            [{ type: 'floor', x: 0, y: 2, height: 0 }, { type: 'empty', x: 1, y: 2 }, { type: 'floor', x: 2, y: 2, height: 0 }]
+            [
+                { type: 'target', x: 0, y: 0, height: 4 },
+                { type: 'floor', x: 1, y: 0, height: 3 },
+                { type: 'floor', x: 2, y: 0, height: 2 },
+                { type: 'floor', x: 3, y: 0, height: 1 },
+                { type: 'floor', x: 4, y: 0 },
+
+            ],
+            [
+                { type: 'empty', x: 0, y: 1 },
+                { type: 'empty', x: 1, y: 1 },
+                { type: 'empty', x: 2, y: 1 },
+                { type: 'wall', x: 3, y: 1 },
+                { type: 'floor', x: 4, y: 1 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 2, height: 4 },
+                { type: 'floor', x: 1, y: 2, height: 3 },
+                { type: 'floor', x: 2, y: 2, height: 2 },
+                { type: 'floor', x: 3, y: 2, height: 1 },
+                { type: 'generator', x: 4, y: 2 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 3, height: 4 },
+                { type: 'empty', x: 1, y: 3 },
+                { type: 'empty', x: 2, y: 3 },
+                { type: 'wall', x: 3, y: 3 },
+                { type: 'wall', x: 4, y: 3 },
+            ],
+            [
+                { type: 'generator', x: 0, y: 4, height: 4 },
+                { type: 'floor', x: 1, y: 4, height: 3 },
+                { type: 'floor', x: 2, y: 4, height: 2 },
+                { type: 'floor', x: 3, y: 4, height: 1 },
+                { type: 'floor', x: 4, y: 4 },
+            ],
         ],
-        robotStart: { x: 1, y: 1, direction: 'west' },
-        targets: [{ x: 0, y: 0 }, { x: 2, y: 0 }],
+        robotStart: { x: 4, y: 4, direction: 'west' },
+        targets: [{ x: 0, y: 4 }, { x: 4, y: 2 }, { x: 0, y: 0 }],
         allowF1: true,
-        maxCommands: 6,
-        uiLimitMain: 5,
+        allowF2: true,
+        maxCommands: 14,
+        uiLimitMain: 9,
         uiLimitF1: 6,
-        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'call-f1', 'repeat'],
+        uiLimitF2: 6,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'call-f1', 'repeat', 'call-f2'],
     },
 
     // ==========================================

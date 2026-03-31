@@ -398,7 +398,7 @@
       "actName": "La primera orden",
       "type": "noderoutine",
       "title": "El Módulo F1",
-      "description": "Hay tres terminales que encender. Tienes un espacio en memoria casi nulo. Necesitas crear un 'atajo' mental para la máquina.",
+      "description": "Hay 2 focos que encender. Tienes un espacio en memoria casi nulo. Necesitas crear un 'atajo' mental para la máquina.",
       "narrative": "FRAG: \"Te he desbloqueado el contenedor F1. Es un bloque de memoria externa. Puedes guardar una secuencia ahí y llamarla usando la tarjeta 'F1'. Esto se llama Función.\"",
       "mechanic": "Introducción al contenedor de Funciones (F1). La bandeja MAIN no tiene espacio para resolver el nivel.",
       "concept": "funciones (F1)",
