@@ -3,7 +3,7 @@
 import { Command, CommandType, NodeRoutineLevelData } from '@/types/game'
 import { GameButton } from '@/components/ui/GameButton'
 import { Button } from '@/components/ui/Button'
-import { PlayIcon, StepForward, RotateCcwIcon, PackageOpen } from 'lucide-react'
+import { PlayIcon, StepForward, RotateCcwIcon } from 'lucide-react'
 import { PALETTE_COMMANDS, MAX_COMMANDS } from './constants'
 
 interface CommandPaletteProps {
@@ -15,8 +15,8 @@ interface CommandPaletteProps {
     mapData: NodeRoutineLevelData
     setActivePanel: (panel: 'main' | 'f1') => void
     onAddCommand: (type: CommandType) => void
-    onRemoveCommand: (idx: number) => void
-    onClearCommands: () => void
+    onRemoveCommand: (idx: number, panel?: 'main' | 'f1') => void
+    onClearCommands: (panel?: 'main' | 'f1') => void
     onExecute: () => void
     onReset: () => void
     status: 'idle' | 'playing' | 'success' | 'failed' | 'reviewing'
@@ -58,14 +58,34 @@ export function CommandPalette({
                         {currentTotal}/{totalLimit} UTS
                     </span>
                 </div>
-                <div className="memory-bar-container">
+                <div
+                    className="memory-bar-container w-full bg-[#010101] border border-[#141B24] rounded-[1px] relative overflow-hidden"
+                    style={{ height: '12px', padding: '2px' }}
+                >
+                    {/* Background segments track */}
+                    <div className="absolute inset-0 z-0 opacity-10 flex gap-[2px] px-[2px] py-[2px]">
+                        {Array.from({ length: 15 }).map((_, i) => (
+                            <div key={i} className="flex-1 h-full bg-[#E6EDF3]" />
+                        ))}
+                    </div>
+
+                    {/* Progress Fill */}
                     <div
-                        className="memory-bar-fill shadow-[0_0_8px_var(--green-base)]"
+                        className="h-full relative z-10 transition-all duration-500 ease-out"
                         style={{
                             width: `${usagePercent}%`,
-                            backgroundColor: usagePercent > 90 ? 'var(--red)' : usagePercent > 70 ? 'var(--amber)' : 'var(--green-base)'
+                            backgroundColor: usagePercent > 90 ? '#E24B4A' : usagePercent > 70 ? '#EF9F27' : '#55e200',
+                            boxShadow: `0 0 10px ${usagePercent > 90 ? '#E24B4A' : usagePercent > 70 ? '#EF9F27' : '#55e200'}80`,
+                            backgroundImage: 'linear-gradient(to bottom, rgba(255,255,255,0.2), transparent, rgba(0,0,0,0.2))'
                         }}
                     />
+
+                    {/* Block separation grid overlay */}
+                    <div className="absolute inset-0 z-20 pointer-events-none flex gap-[2px] px-[2px] py-[2px]">
+                        {Array.from({ length: 15 }).map((_, i) => (
+                            <div key={i} className="flex-1 h-full border-r border-[#010101]/40 last:border-0" />
+                        ))}
+                    </div>
                 </div>
             </div>
 
@@ -98,89 +118,155 @@ export function CommandPalette({
 
                 {/* Secuencia - PRINCIPAL */}
                 <section id="main-routine" className="flex flex-col cursor-pointer group" onClick={() => !isRunning && setActivePanel('main')}>
-                    <div className={`terminal-header mb-1 transition-colors ${activePanel === 'main' ? 'text-(--green-light) border-b-(--green-base)' : 'opacity-60'}`}>
+                    <div className={`terminal-header mb-2 transition-colors ${activePanel === 'main' ? 'text-(--green-light) border-b-(--green-base)' : 'opacity-60'}`}>
                         <div className="flex items-center gap-2">
-                            {activePanel === 'main' && <span className="w-1.5 h-1.5 bg-(--green-light) rounded-full animate-pulse" />}
-                            <span>ACCIONES A EJECUTAR</span>
+                            {activePanel === 'main' && <span className="w-1.5 h-1.5 bg-(--green-light) rounded-full animate-pulse shadow-[0_0_5px_var(--green-light)]" />}
+                            <span className="font-bold tracking-widest text-[11px]">01_BLOQUE_RUTINA</span>
                         </div>
                         {commands.length > 0 && !isRunning && activePanel === 'main' && (
-                            <button onClick={(e) => { e.stopPropagation(); onClearCommands(); }} className="hover:text-(--red) transition-colors text-[9px]">[BORRAR]</button>
+                            <button onClick={(e) => { e.stopPropagation(); onClearCommands('main'); }} className="hover:text-(--red) transition-colors text-[9px] font-mono">[RESET_SEC]</button>
                         )}
                     </div>
 
-                    <div className={`flex flex-wrap gap-[6px] min-h-[100px] bg-(--bg-deep) p-3 border transition-all content-start relative overflow-hidden ${activePanel === 'main' ? 'border-(--green-base)/50 shadow-[inset_0_0_15px_rgba(85,226,0,0.05)]' : 'border-(--bg-hover)'}`}>
-                        {commands.length === 0 && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-(--text-ghost) opacity-20 group-hover:opacity-40 transition-opacity">
-                                <PackageOpen size={24} strokeWidth={1} />
-                                <span className="text-[10px] mt-1 tracking-[.2em]">VOID_SECTOR</span>
+                    <div className={`relative min-h-[120px] bg-(--bg-deep) p-3 border-2 transition-all duration-300 grid grid-cols-5 gap-1.5 shadow-inner overflow-hidden ${activePanel === 'main'
+                        ? 'border-(--green-base)/40 shadow-[inset_0_0_25px_rgba(85,226,0,0.08)]'
+                        : 'border-(--bg-hover) bg-(--bg-deep)/50 grayscale-[0.4]'
+                        }`}>
+                        {/* Hardware background pattern */}
+                        <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none"
+                            style={{ backgroundImage: 'radial-gradient(var(--green-base) 0.5px, transparent 0.5px)', backgroundSize: '10px 10px' }} />
+
+                        {/* Slot Placeholders */}
+                        {Array.from({ length: mainLimit }).map((_, i) => (
+                            <div
+                                key={`slot-${i}`}
+                                className={`aspect-square border border-dashed rounded-[1px] flex items-center justify-center transition-colors duration-500 z-10 ${i < commands.length ? 'border-transparent opacity-100' : 'border-(--bg-hover) opacity-30'
+                                    } ${activePanel === 'main' && i === commands.length ? 'border-(--green-base)/30 bg-(--green-base)/5 animate-pulse' : ''}`}
+                            >
+                                {i >= commands.length && (
+                                    <span className="text-[7px] font-mono text-(--text-ghost) select-none">
+                                        {(i + 1).toString().padStart(2, '0')}
+                                    </span>
+                                )}
                             </div>
-                        )}
-                        {commands.map((cmd, idx) => {
-                            const palette = PALETTE_COMMANDS.find(p => p.type === cmd.type)
-                            const isExec = executingIdx?.panel === 'main' && executingIdx.idx === idx
-                            const IconComp = palette?.icon
-                            return (
-                                <GameButton
-                                    key={idx}
-                                    variant="command"
-                                    active={isExec}
-                                    icon={<span className="text-[13px]">{IconComp && <IconComp size={13} />}</span>}
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        if (!isRunning && activePanel === 'main') onRemoveCommand(idx)
-                                    }}
-                                    disabled={isRunning}
-                                    accentColor={palette?.cssColor}
-                                    className="px-2 py-[5px] text-[10px] animate-fade-in-up"
-                                >
-                                    {cmd.type === 'repeat' && cmd.times ? `×${cmd.times}` : ''}
-                                </GameButton>
-                            )
-                        })}
+                        ))}
+
+                        {/* Actual Command Items */}
+                        <div className="absolute inset-0 z-20 p-3 grid grid-cols-6 gap-1.5 content-start pointer-events-none">
+                            {commands.map((cmd, idx) => {
+                                const palette = PALETTE_COMMANDS.find(p => p.type === cmd.type)
+                                const isExec = executingIdx?.panel === 'main' && executingIdx.idx === idx
+                                const IconComp = palette?.icon
+                                return (
+                                    <div key={idx} className="pointer-events-auto">
+                                        <GameButton
+                                            variant="command"
+                                            active={isExec}
+                                            icon={
+                                                <div className="relative flex items-center justify-center">
+                                                    {IconComp && <IconComp size={16} strokeWidth={2} />}
+                                                    {cmd.type === 'repeat' && cmd.times && (
+                                                        <div className="absolute -bottom-3 -right-3 text-(--amber) text-[10px] font-bold px-0.5 min-w-[10px] text-center leading-tight clip-path-notch opacity-90 z-30">
+                                                            <span className="text-[8px]">x</span>{cmd.times}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            }
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                if (!isRunning) {
+                                                    setActivePanel('main')
+                                                    onRemoveCommand(idx, 'main')
+                                                }
+                                            }}
+                                            disabled={isRunning}
+                                            accentColor={palette?.cssColor}
+                                            className="w-full aspect-square p-0 flex items-center justify-center text-[9px] animate-fade-in-up"
+                                        >
+                                            {null}
+                                        </GameButton>
+                                    </div>
+                                )
+                            })}
+                        </div>
                     </div>
                 </section>
 
                 {/* Secuencia - F1 */}
                 {mapData.allowF1 && (
                     <section id="f1-routine" className="flex flex-col cursor-pointer group" onClick={() => !isRunning && setActivePanel('f1')}>
-                        <div className={`terminal-header mb-1 transition-colors ${activePanel === 'f1' ? 'text-(--cyan) border-b-(--cyan)' : 'opacity-60'}`}>
+                        <div className={`terminal-header mb-2 transition-colors ${activePanel === 'f1' ? 'text-(--cyan) border-b-(--cyan)' : 'opacity-60'}`}>
                             <div className="flex items-center gap-2">
-                                {activePanel === 'f1' && <span className="w-1.5 h-1.5 bg-(--cyan) rounded-full animate-pulse" />}
-                                <span>02_SUB_F1</span>
+                                {activePanel === 'f1' && <span className="w-1.5 h-1.5 bg-(--cyan) rounded-full animate-pulse shadow-[0_0_5px_var(--cyan)]" />}
+                                <span className="font-bold tracking-widest text-[11px]">02_SUB_RUTINA_F1</span>
                             </div>
                             {commandsF1.length > 0 && !isRunning && activePanel === 'f1' && (
-                                <button onClick={(e) => { e.stopPropagation(); onClearCommands(); }} className="hover:text-(--red) transition-colors text-[9px]">[BORRAR]</button>
+                                <button onClick={(e) => { e.stopPropagation(); onClearCommands('f1'); }} className="hover:text-(--red) transition-colors text-[9px] font-mono">[RESET_F1]</button>
                             )}
                         </div>
 
-                        <div className={`flex flex-wrap gap-[6px] min-h-[60px] bg-(--bg-deep) p-3 border transition-all content-start relative ${activePanel === 'f1' ? 'border-(--cyan)/50 shadow-[inset_0_0_15px_rgba(25,200,212,0.05)]' : 'border-(--bg-hover)'}`}>
-                            {commandsF1.length === 0 && (
-                                <div className="absolute inset-0 flex items-center justify-center text-(--text-ghost) opacity-20 group-hover:opacity-40 transition-opacity">
-                                    <span className="text-[9px] tracking-[.3em]">EMPTY_SUB</span>
+                        <div className={`relative min-h-[80px] bg-(--bg-deep) p-3 border-2 transition-all duration-300 grid grid-cols-5 gap-1.5 shadow-inner overflow-hidden ${activePanel === 'f1'
+                            ? 'border-(--cyan)/40 shadow-[inset_0_0_25px_rgba(25,200,212,0.08)]'
+                            : 'border-(--bg-hover) bg-(--bg-deep)/50 grayscale-[0.4]'
+                            }`}>
+                            {/* Hardware background pattern (Cyan) */}
+                            <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none"
+                                style={{ backgroundImage: 'radial-gradient(var(--cyan) 0.5px, transparent 0.5px)', backgroundSize: '10px 10px' }} />
+
+                            {/* Slot Placeholders */}
+                            {Array.from({ length: f1Limit }).map((_, i) => (
+                                <div
+                                    key={`f1-slot-${i}`}
+                                    className={`aspect-square border border-dashed rounded-[1px] flex items-center justify-center transition-colors duration-500 z-10 ${i < commandsF1.length ? 'border-transparent opacity-100' : 'border-(--bg-hover) opacity-30'
+                                        } ${activePanel === 'f1' && i === commandsF1.length ? 'border-(--cyan)/30 bg-(--cyan)/5 animate-pulse' : ''}`}
+                                >
+                                    {i >= commandsF1.length && (
+                                        <span className="text-[7px] font-mono text-(--text-ghost) select-none">
+                                            {(i + 1).toString().padStart(2, '0')}
+                                        </span>
+                                    )}
                                 </div>
-                            )}
-                            {commandsF1.map((cmd, idx) => {
-                                const palette = PALETTE_COMMANDS.find(p => p.type === cmd.type)
-                                const isExec = executingIdx?.panel === 'f1' && executingIdx.idx === idx
-                                const IconComp = palette?.icon
-                                return (
-                                    <GameButton
-                                        key={`f1-${idx}`}
-                                        variant="command"
-                                        active={isExec}
-                                        icon={<span className="text-[13px]">{IconComp && <IconComp size={13} />}</span>}
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            if (!isRunning && activePanel === 'f1') onRemoveCommand(idx)
-                                        }}
-                                        disabled={isRunning}
-                                        accentColor={palette?.cssColor}
-                                        className="px-2 py-[5px] text-[10px] animate-fade-in-up"
-                                    >
-                                        {cmd.type === 'repeat' && cmd.times ? `×${cmd.times}` : ''}
-                                    </GameButton>
-                                )
-                            })}
+                            ))}
+
+                            {/* Actual Command Items */}
+                            <div className="absolute inset-0 z-20 p-3 grid grid-cols-6 gap-1.5 content-start pointer-events-none">
+                                {commandsF1.map((cmd, idx) => {
+                                    const palette = PALETTE_COMMANDS.find(p => p.type === cmd.type)
+                                    const isExec = executingIdx?.panel === 'f1' && executingIdx.idx === idx
+                                    const IconComp = palette?.icon
+                                    return (
+                                        <div key={`f1-${idx}`} className="pointer-events-auto">
+                                            <GameButton
+                                                key={`f1-btn-${idx}`}
+                                                variant="command"
+                                                active={isExec}
+                                                icon={
+                                                    <div className="relative flex items-center justify-center">
+                                                        {IconComp && <IconComp size={16} strokeWidth={2} />}
+                                                        {cmd.type === 'repeat' && cmd.times && (
+                                                            <div className="absolute -bottom-1.5 -right-1.5 bg-(--bg-void) border border-(--amber)/50 text-(--amber) text-[7.5px] font-bold px-0.5 min-w-[10px] text-center leading-tight clip-path-notch opacity-90 z-30">
+                                                                {cmd.times}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                }
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    if (!isRunning) {
+                                                        setActivePanel('f1')
+                                                        onRemoveCommand(idx, 'f1')
+                                                    }
+                                                }}
+                                                disabled={isRunning}
+                                                accentColor={palette?.cssColor}
+                                                className="w-full aspect-square p-0 flex items-center justify-center text-[9px] animate-fade-in-up"
+                                            >
+                                                {null}
+                                            </GameButton>
+                                        </div>
+                                    )
+                                })}
+                            </div>
                         </div>
                     </section>
                 )}
