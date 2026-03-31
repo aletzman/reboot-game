@@ -148,9 +148,21 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     },
     '1-10': { // 10. Parkour urbano (Saltos intermitentes con giros)
         map: [
-            [{ type: 'floor', x: 0, y: 0, height: 1 }, { type: 'floor', x: 1, y: 0, height: 0 }, { type: 'floor', x: 2, y: 0, height: 1 }],
-            [{ type: 'empty', x: 0, y: 1 }, { type: 'empty', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1, height: 0 }],
-            [{ type: 'empty', x: 0, y: 2 }, { type: 'empty', x: 1, y: 2 }, { type: 'target', x: 2, y: 2, height: 1 }]
+            [
+                { type: 'floor', x: 0, y: 0, height: 1 },
+                { type: 'floor', x: 1, y: 0, height: 0 },
+                { type: 'floor', x: 2, y: 0, height: 1 }
+            ],
+            [
+                { type: 'empty', x: 0, y: 1 },
+                { type: 'empty', x: 1, y: 1 },
+                { type: 'floor', x: 2, y: 1, height: 0 }
+            ],
+            [
+                { type: 'empty', x: 0, y: 2 },
+                { type: 'empty', x: 1, y: 2 },
+                { type: 'target', x: 2, y: 2, height: 1 }
+            ]
         ],
         robotStart: { x: 0, y: 0, height: 1, direction: 'east' },
         targets: [{ x: 2, y: 2 }],
@@ -164,17 +176,30 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     // ==========================================
     '1-11': { // 11. El pasillo infinito (Fuerza a usar Repeat por límite de UI)
         map: [
-            [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }, { type: 'floor', x: 3, y: 0 }, { type: 'floor', x: 4, y: 0 }, { type: 'target', x: 5, y: 0 }]
+            [
+                { type: 'floor', x: 0, y: 0 },
+                { type: 'floor', x: 1, y: 0 },
+                { type: 'floor', x: 2, y: 0 },
+                { type: 'floor', x: 3, y: 0 },
+                { type: 'floor', x: 4, y: 0 },
+                { type: 'target', x: 5, y: 0 }
+            ]
         ],
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 5, y: 0 }],
-        maxCommands: 3,
+        maxCommands: 2,
         uiLimitMain: 3, // Solo cabe: Repeat, Move, Activate
         allowedCommands: ['move', 'activate', 'repeat'],
     },
     '1-12': { // 12. Escalera al cielo (Repeat + Jump)
         map: [
-            [{ type: 'floor', x: 0, y: 0, height: 0 }, { type: 'floor', x: 1, y: 0, height: 1 }, { type: 'floor', x: 2, y: 0, height: 2 }, { type: 'floor', x: 3, y: 0, height: 3 }, { type: 'target', x: 4, y: 0, height: 4 }]
+            [
+                { type: 'floor', x: 0, y: 0, height: 0 },
+                { type: 'floor', x: 1, y: 0, height: 1 },
+                { type: 'floor', x: 2, y: 0, height: 2 },
+                { type: 'floor', x: 3, y: 0, height: 3 },
+                { type: 'target', x: 4, y: 0, height: 4 }
+            ]
         ],
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 4, y: 0 }],
@@ -184,36 +209,69 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     },
     '1-13': { // 13. El Cuadrado (Repeat con patrones múltiples)
         map: [
-            [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }],
-            [{ type: 'floor', x: 0, y: 1 }, { type: 'empty', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }],
-            [{ type: 'target', x: 0, y: 2 }, { type: 'floor', x: 1, y: 2 }, { type: 'floor', x: 2, y: 2 }]
+            [
+                { type: 'floor', x: 0, y: 0 },
+                { type: 'floor', x: 1, y: 0 },
+                { type: 'floor', x: 2, y: 0 }
+            ],
+            [
+                { type: 'wall', x: 0, y: 1 },
+                { type: 'empty', x: 1, y: 1 },
+                { type: 'floor', x: 2, y: 1 }
+            ],
+            [
+                { type: 'target', x: 0, y: 2 },
+                { type: 'floor', x: 1, y: 2 },
+                { type: 'floor', x: 2, y: 2 }
+            ]
         ],
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 0, y: 2 }],
-        maxCommands: 4,
-        uiLimitMain: 5,
+        maxCommands: 5,
+        uiLimitMain: 8,
         allowedCommands: ['move', 'turn-right', 'activate', 'repeat'],
     },
     '1-14': { // 14. Zig-Zag infinito (Patrón Move-Turn-Move-Turn)
         map: [
-            [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'empty', x: 2, y: 0 }, { type: 'empty', x: 3, y: 0 }],
-            [{ type: 'empty', x: 0, y: 1 }, { type: 'floor', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }, { type: 'empty', x: 3, y: 1 }],
-            [{ type: 'empty', x: 0, y: 2 }, { type: 'empty', x: 1, y: 2 }, { type: 'floor', x: 2, y: 2 }, { type: 'target', x: 3, y: 2 }]
+            [
+                { type: 'floor', x: 0, y: 0 },
+                { type: 'floor', x: 1, y: 0 },
+                { type: 'wall', x: 2, y: 0 },
+                { type: 'empty', x: 3, y: 0 }
+            ],
+            [
+                { type: 'empty', x: 0, y: 1 },
+                { type: 'floor', x: 1, y: 1 },
+                { type: 'floor', x: 2, y: 1 },
+                { type: 'empty', x: 3, y: 1 }
+            ],
+            [
+                { type: 'empty', x: 0, y: 2 },
+                { type: 'empty', x: 1, y: 2 },
+                { type: 'floor', x: 2, y: 2 },
+                { type: 'target', x: 3, y: 2 }
+            ]
         ],
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 3, y: 2 }],
-        maxCommands: 5,
-        uiLimitMain: 6,
+        maxCommands: 7,
+        uiLimitMain: 10,
         allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'repeat'],
     },
     '1-15': { // 15. Pilares repetitivos (Jump + Move en bucle)
         map: [
-            [{ type: 'floor', x: 0, y: 0, height: 1 }, { type: 'floor', x: 1, y: 0, height: 0 }, { type: 'floor', x: 2, y: 0, height: 1 }, { type: 'floor', x: 3, y: 0, height: 0 }, { type: 'target', x: 4, y: 0, height: 1 }]
+            [
+                { type: 'floor', x: 0, y: 0, height: 1 },
+                { type: 'floor', x: 1, y: 0, height: 0 },
+                { type: 'floor', x: 2, y: 0, height: 1 },
+                { type: 'floor', x: 3, y: 0, height: 0 },
+                { type: 'target', x: 4, y: 0, height: 1 }
+            ]
         ],
-        robotStart: { x: 0, y: 0, direction: 'east' },
+        robotStart: { x: 0, y: 0, height: 1, direction: 'east' },
         targets: [{ x: 4, y: 0 }],
-        maxCommands: 4,
-        uiLimitMain: 4,
+        maxCommands: 3,
+        uiLimitMain: 7,
         allowedCommands: ['move', 'jump', 'activate', 'repeat'],
     },
 
@@ -222,7 +280,12 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     // ==========================================
     '1-16': { // 16. La primera Función (Avanzar y Activar x3)
         map: [
-            [{ type: 'floor', x: 0, y: 0 }, { type: 'target', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }, { type: 'target', x: 3, y: 0 }, { type: 'floor', x: 4, y: 0 }, { type: 'target', x: 5, y: 0 }]
+            [
+                { type: 'floor', x: 0, y: 0 },
+                { type: 'generator', x: 1, y: 0 },
+                { type: 'generator', x: 3, y: 0 },
+                { type: 'target', x: 5, y: 0 }
+            ]
         ],
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 1, y: 0 }, { x: 3, y: 0 }, { x: 5, y: 0 }],

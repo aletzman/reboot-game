@@ -2,7 +2,6 @@
 
 import { Command, CommandType, NodeRoutineLevelData } from '@/types/game'
 import { GameButton } from '@/components/ui/GameButton'
-import { ButtonOption } from '@/components/ui/ButtonOption'
 import { Button } from '@/components/ui/Button'
 import { PlayIcon, StepForward, RotateCcwIcon, PackageOpen } from 'lucide-react'
 import { PALETTE_COMMANDS, MAX_COMMANDS } from './constants'
@@ -72,9 +71,9 @@ export function CommandPalette({
 
             <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-6 p-4">
                 {/* Paleta de comandos */}
-                <section>
+                <section id="command-bank">
                     <div className="terminal-header mb-3">
-                        <span>// BANCO_COMANDOS</span>
+                        <span>// ACCIONES_DISPONIBLES</span>
                         <span className="opacity-40">EXT.V4</span>
                     </div>
                     <div className="grid grid-cols-2 gap-[6px]">
@@ -98,11 +97,11 @@ export function CommandPalette({
                 </section>
 
                 {/* Secuencia - PRINCIPAL */}
-                <section className="flex flex-col cursor-pointer group" onClick={() => !isRunning && setActivePanel('main')}>
+                <section id="main-routine" className="flex flex-col cursor-pointer group" onClick={() => !isRunning && setActivePanel('main')}>
                     <div className={`terminal-header mb-1 transition-colors ${activePanel === 'main' ? 'text-(--green-light) border-b-(--green-base)' : 'opacity-60'}`}>
                         <div className="flex items-center gap-2">
                             {activePanel === 'main' && <span className="w-1.5 h-1.5 bg-(--green-light) rounded-full animate-pulse" />}
-                            <span>01_MAIN_ROUTINE</span>
+                            <span>ACCIONES A EJECUTAR</span>
                         </div>
                         {commands.length > 0 && !isRunning && activePanel === 'main' && (
                             <button onClick={(e) => { e.stopPropagation(); onClearCommands(); }} className="hover:text-(--red) transition-colors text-[9px]">[BORRAR]</button>
@@ -143,7 +142,7 @@ export function CommandPalette({
 
                 {/* Secuencia - F1 */}
                 {mapData.allowF1 && (
-                    <section className="flex flex-col cursor-pointer group" onClick={() => !isRunning && setActivePanel('f1')}>
+                    <section id="f1-routine" className="flex flex-col cursor-pointer group" onClick={() => !isRunning && setActivePanel('f1')}>
                         <div className={`terminal-header mb-1 transition-colors ${activePanel === 'f1' ? 'text-(--cyan) border-b-(--cyan)' : 'opacity-60'}`}>
                             <div className="flex items-center gap-2">
                                 {activePanel === 'f1' && <span className="w-1.5 h-1.5 bg-(--cyan) rounded-full animate-pulse" />}
@@ -190,6 +189,7 @@ export function CommandPalette({
             {/* Panel de Control Inferior */}
             <div className="p-4 bg-(--bg-deep)/80 border-t border-(--bg-hover) flex flex-col gap-2">
                 <Button
+                    id="execute-button"
                     variant="solid"
                     size="sm"
                     onClick={onExecute}
@@ -201,7 +201,7 @@ export function CommandPalette({
                     {status === 'failed' ? 'SISTEMA BLOQUEADO' : isRunning ? 'PROCESANDO...' : 'EJECUTAR RUTINA'}
                 </Button>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div id="execution-controls" className="grid grid-cols-2 gap-2">
                     <Button
                         variant="ghost"
                         size="xs"

@@ -1,9 +1,3 @@
-// ============================================================
-// REBOOT — components/ui/GameButton.tsx
-// Botón compacto para interfaces de niveles de juego.
-// Misma identidad visual que Button.tsx pero optimizado
-// para paletas de comandos, secuencias y controles in-game.
-// ============================================================
 
 import React from "react";
 
@@ -74,11 +68,11 @@ export function GameButton({
         ? "scale-[1.02] z-10" // Pequeño efecto 3D/Z al activarse
         : "";
 
-    const accentClasses = accentColor 
-        ? (active 
-            ? "border-[var(--accent-base)]!" 
+    const accentClasses = accentColor
+        ? (active
+            ? "border-[var(--accent-base)]!"
             : "border-[var(--accent-border)]! hover:border-[var(--accent-border-hover)]!"
-          )
+        )
         : "";
 
     const disabledStyles = disabled
