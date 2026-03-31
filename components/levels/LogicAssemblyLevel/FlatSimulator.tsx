@@ -19,10 +19,10 @@ export function FlatSimulator({
     isExecuting,
     onFinish
 }: FlatSimulatorProps) {
-    const [robot, setRobot] = useState({ 
-        x: map.start.x, 
-        y: map.start.y, 
-        dir: map.start.dir as Direction 
+    const [robot, setRobot] = useState({
+        x: map.start.x,
+        y: map.start.y,
+        dir: map.start.dir as Direction
     })
     const [activated, setActivated] = useState<string[]>([])
     const [currentStep, setCurrentStep] = useState(-1)
@@ -43,8 +43,8 @@ export function FlatSimulator({
         }
     }, [isExecuting, map, blocks])
 
-    const flatInstructions = useCallback((program: LogicAssemblyBlock[], allBlocks: LogicAssemblyBlock[]): {type: LogicAssemblyBlockType, value?: string | number}[] => {
-        let result: {type: LogicAssemblyBlockType, value?: string | number}[] = []
+    const flatInstructions = useCallback((program: LogicAssemblyBlock[], allBlocks: LogicAssemblyBlock[]): { type: LogicAssemblyBlockType, value?: string | number }[] => {
+        let result: { type: LogicAssemblyBlockType, value?: string | number }[] = []
         for (const b of program) {
             if (b.type === 'REPETIR' && b.children) {
                 const times = parseInt(b.value as string) || 1
@@ -77,15 +77,15 @@ export function FlatSimulator({
         const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
 
         for (let i = 0; i < queue.length; i++) {
-            if (id !== executionRef.current || !isExecuting) return 
+            if (id !== executionRef.current || !isExecuting) return
             const inst = queue[i]
             setCurrentStep(i)
-            await delay(400) 
-            if (id !== executionRef.current || !isExecuting) return 
+            await delay(400)
+            if (id !== executionRef.current || !isExecuting) return
 
             if (inst.type === 'MOVER') {
                 const dist = parseInt(inst.value as string) || 1
-                for(let step=0; step<dist; step++) {
+                for (let step = 0; step < dist; step++) {
                     let nx = cx
                     let ny = cy
                     if (cd === 'up') ny--
@@ -132,7 +132,7 @@ export function FlatSimulator({
     return (
         <div className="flex flex-col gap-4">
             {/* Grid Display */}
-            <div 
+            <div
                 className="bg-black/90 p-4 border border-white/5 shadow-2xl relative overflow-hidden aspect-square flex flex-col items-center justify-center rounded-lg"
                 style={{
                     backgroundImage: 'radial-gradient(circle at center, #1a1a1a 0%, #000 100%)'
@@ -140,33 +140,32 @@ export function FlatSimulator({
             >
                 {/* CRT Effect lines */}
                 <div className="absolute inset-0 pointer-events-none bg-repeating-linear-gradient(transparent 0px, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px) opacity-20" />
-                
+
                 {/* Grid */}
-                <div 
+                <div
                     className="grid gap-1"
-                    style={{ 
+                    style={{
                         gridTemplateColumns: `repeat(${map.grid[0].length}, 1fr)`,
-                        width: '100%' 
+                        width: '100%'
                     }}
                 >
                     {map.grid.map((row, y) => row.map((cell, x) => {
                         const isObjective = map.objective.some(o => o.x === x && o.y === y)
                         const isRobot = robot.x === x && robot.y === y
                         const isActivated = activated.includes(`${x}-${y}`)
-                        
+
                         return (
-                            <div 
+                            <div
                                 key={`${x}-${y}`}
-                                className={`w-full aspect-square border relative flex items-center justify-center transition-all duration-300 ${
-                                    cell === 1 ? 'bg-white/10 border-white/5' : 
-                                    isObjective ? 'bg-(--green-darkest)/20 border-(--green-base)/30' : 
-                                    'border-white/5'
-                                }`}
+                                className={`w-full aspect-square border relative flex items-center justify-center transition-all duration-300 ${cell === 1 ? 'bg-white/5 border-white/5' :
+                                    isObjective ? (isActivated ? 'bg-(--green-base)/20 border-(--green-light)/30' : 'bg-black/20 border-white/5') :
+                                        'border-white/5'
+                                    }`}
                             >
                                 {isObjective && (
                                     <div className={`w-2 h-2 rounded-full transition-all duration-500 ${isActivated ? 'bg-(--green-light) shadow-[0_0_10px_var(--green-light)] scale-125' : 'bg-(--green-base)/40 animate-pulse'}`} />
                                 )}
-                                
+
                                 {isRobot && (
                                     <div className="absolute z-10 transition-all duration-300" style={{
                                         transform: `rotate(${robot.dir === 'up' ? 0 : robot.dir === 'right' ? 90 : robot.dir === 'down' ? 180 : 270}deg)`
@@ -183,10 +182,13 @@ export function FlatSimulator({
                     }))}
                 </div>
 
-                {/* Overlays */}
+                {/* ERROR OVERLAY */}
                 {error && (
-                    <div className="absolute inset-0 bg-red-950/40 flex items-center justify-center backdrop-blur-sm">
-                        <span className="font-mono text-xs text-(--red) font-bold tracking-[0.3em] uppercase animate-pulse">{error}</span>
+                    <div className="absolute inset-0 bg-red-950/60 z-40 flex items-center justify-center backdrop-blur-[2px] animate-in fade-in duration-300">
+                        <div className="flex flex-col items-center gap-2">
+                            <span className="font-mono text-[10px] text-(--red) font-black tracking-[0.4em] uppercase animate-shake">{error}</span>
+                            <div className="w-12 h-px bg-(--red) opacity-50" />
+                        </div>
                     </div>
                 )}
             </div>

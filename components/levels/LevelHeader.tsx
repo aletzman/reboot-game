@@ -6,9 +6,10 @@ interface LevelHeaderProps {
     level: Level
     status: LevelState['status']
     isRunning: boolean
+    children?: React.ReactNode
 }
 
-export function LevelHeader({ level, status, isRunning }: LevelHeaderProps) {
+export function LevelHeader({ level, status, isRunning, children }: LevelHeaderProps) {
     return (
         <div className="flex flex-col md:flex-row items-stretch border border-(--border-muted-color) bg-(--bg-deep) overflow-hidden shadow-2xl relative z-20">
             {/* COMPARTIMENT 01: ACT IDENTIFICATION & NAVIGATION */}
@@ -37,10 +38,16 @@ export function LevelHeader({ level, status, isRunning }: LevelHeaderProps) {
             </div>
 
             {/* COMPARTIMENT 03: TELEMETRY & SYNC */}
-            <div className="flex items-center justify-end p-4 md:min-w-[280px] bg-black/20">
-                <div className="flex flex-col items-end gap-2 w-full">
-                    <span className="text-xs font-mono text-(--text-muted) uppercase tracking-widest font-black opacity-65">
-                        STATUS
+            <div className="flex items-center justify-end p-4 min-w-fit md:min-w-[280px] bg-black/20 gap-6">
+                {children && (
+                    <div className="flex items-center">
+                        {children}
+                    </div>
+                )}
+                
+                <div className="flex flex-col items-end gap-2">
+                    <span className="text-[8px] font-mono text-(--text-muted) uppercase tracking-[0.3em] font-black opacity-65 leading-none">
+                        MISSION_STATUS
                     </span>
 
                     <div className="flex items-center gap-4">

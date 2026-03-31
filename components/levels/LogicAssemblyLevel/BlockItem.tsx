@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { useDroppable } from '@dnd-kit/react'
 import { useSortable } from '@dnd-kit/react/sortable'
-import { PackageOpen, GripVertical, ChevronUp, ChevronDown, Plus } from 'lucide-react'
+import { PackageOpen, GripVertical, ChevronUp, ChevronDown, Plus, Minus } from 'lucide-react'
 import { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
 import { BlockDef } from './types'
 import { BLOCK_DEFS } from './constants'
@@ -181,15 +181,36 @@ export function BlockItem({
                         {/* Input de Valor */}
                         {def.hasValue && (
                             <div className="flex items-center gap-2">
+                                {/* Custom Number Stepper */}
                                 {def.valueType === 'number' && (
-                                    <input
-                                        type="number"
-                                        min={1} max={20}
-                                        value={block.value as number}
-                                        onChange={e => onValueChange(block.id, parseInt(e.target.value) || 1)}
-                                        disabled={disabled}
-                                        className="bg-black/60 rounded-sm px-2 py-1 font-mono text-[12px] w-14 outline-none border border-white/10 focus:border-(--green-base) text-(--green-muted) text-center"
-                                    />
+                                    <div className="flex items-stretch bg-black/60 rounded-sm border border-white/10 overflow-hidden h-9 shadow-inner group/stepper focus-within:border-(--green-base)/50 transition-all">
+                                        <button
+                                            onClick={() => !disabled && onValueChange(block.id, Math.max(1, (block.value as number) - 1))}
+                                            disabled={disabled || (block.value as number) <= 1}
+                                            className="px-2.5 flex items-center justify-center hover:bg-white/5 text-(--text-ghost) hover:text-(--red) disabled:opacity-20 transition-all border-r border-white/5 active:scale-90"
+                                            title="Disminuir"
+                                        >
+                                            <Minus size={14} strokeWidth={3} />
+                                        </button>
+                                        
+                                        <div className="w-10 flex items-center justify-center bg-black/20 relative">
+                                            <span className="font-mono text-[13px] font-black text-(--green-light) tabular-nums">
+                                                {block.value}
+                                            </span>
+                                            {/* Micro decoración decorativa */}
+                                            <div className="absolute inset-x-1 top-0.5 h-px bg-white/5" />
+                                            <div className="absolute inset-x-1 bottom-0.5 h-px bg-white/5" />
+                                        </div>
+
+                                        <button
+                                            onClick={() => !disabled && onValueChange(block.id, Math.min(20, (block.value as number) + 1))}
+                                            disabled={disabled || (block.value as number) >= 20}
+                                            className="px-2.5 flex items-center justify-center hover:bg-white/5 text-(--text-ghost) hover:text-(--green-light) disabled:opacity-20 transition-all border-l border-white/5 active:scale-90"
+                                            title="Aumentar"
+                                        >
+                                            <Plus size={14} strokeWidth={3} />
+                                        </button>
+                                    </div>
                                 )}
                                 {def.valueType === 'direction' && (
                                     <select
