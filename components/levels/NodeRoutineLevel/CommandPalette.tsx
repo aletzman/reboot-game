@@ -247,8 +247,8 @@ export function CommandPalette({
                                                     <div className="relative flex items-center justify-center">
                                                         {IconComp && <IconComp size={16} strokeWidth={2} />}
                                                         {cmd.type === 'repeat' && cmd.times && (
-                                                            <div className="absolute -bottom-1.5 -right-1.5 bg-(--bg-void) border border-(--amber)/50 text-(--amber) text-[7.5px] font-bold px-0.5 min-w-[10px] text-center leading-tight clip-path-notch opacity-90 z-30">
-                                                                {cmd.times}
+                                                            <div className="absolute -bottom-3 -right-3 text-(--amber) text-[10px] font-bold px-0.5 min-w-[10px] text-center leading-tight opacity-90 z-30">
+                                                                <span className="text-[8px]">x</span>{cmd.times}
                                                             </div>
                                                         )}
                                                     </div>
@@ -326,8 +326,8 @@ export function CommandPalette({
                                                     <div className="relative flex items-center justify-center">
                                                         {IconComp && <IconComp size={16} strokeWidth={2} />}
                                                         {cmd.type === 'repeat' && cmd.times && (
-                                                            <div className="absolute -bottom-1.5 -right-1.5 bg-(--bg-void) border border-(--amber)/50 text-(--amber) text-[7.5px] font-bold px-0.5 min-w-[10px] text-center leading-tight clip-path-notch opacity-90 z-30">
-                                                                {cmd.times}
+                                                            <div className="absolute -bottom-3 -right-3 text-(--amber) text-[10px] font-bold px-0.5 min-w-[10px] text-center leading-tight opacity-90 z-30">
+                                                                <span className="text-[8px]">x</span>{cmd.times}
                                                             </div>
                                                         )}
                                                     </div>
