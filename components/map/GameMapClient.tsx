@@ -51,9 +51,10 @@ export default function GameMapClient({ levels }: GameMapClientProps) {
 
         // Update completion status for each act
         actMap.forEach(act => {
-          if (isDemoModeActive()) {
+          if (isDemoModeActive() && act.number <= 6) {
             act.completed = true
-            act.totalStars = act.maxStars
+            // En demo, solo se cuentan las estrellas de los primeros 4 niveles
+            act.totalStars = 4 * 3 // 4 niveles * 3 estrellas
           } else {
             act.completed = act.levelIds.every(id => progress?.[id]?.completed ?? false)
           }

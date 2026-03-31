@@ -22,7 +22,7 @@ export default function CardsArchiveClient({ initialCards }: CardsArchiveClientP
   useEffect(() => {
     const ids = getUnlockedCards()
     if (isDemoModeActive()) {
-      setUnlockedIds(initialCards.map(c => c.id))
+      setUnlockedIds(initialCards.slice(0, 6).map(c => c.id))
     } else {
       setUnlockedIds(ids)
     }

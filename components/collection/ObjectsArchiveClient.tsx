@@ -37,9 +37,9 @@ const ObjectsArchiveClient = ({ initialObjects }: ObjectsArchiveClientProps) => 
 
   useEffect(() => {
     const ids = getUnlockedIds()
-    // Si estamos en modo demo, simulamos que todos los objetos están desbloqueados
+    // Si estamos en modo demo, simulamos que solo los primeros 6 objetos están desbloqueados
     if (isDemoModeActive()) {
-      setUnlockedIds(initialObjects.map(o => o.id))
+      setUnlockedIds(initialObjects.slice(0, 6).map(o => o.id))
     } else {
       setUnlockedIds(ids)
     }

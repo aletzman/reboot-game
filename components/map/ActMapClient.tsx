@@ -44,7 +44,7 @@ export default function ActMapClient({ actId, levels }: ActMapClientProps) {
           let prog = getLevelProgress(level.id)
           const access = canAccessLevel(level.id, levels)
 
-          if (isDemoModeActive()) {
+          if (isDemoModeActive() && index < 4 && act.number <= 6) {
             prog = {
               completed: true,
               stars: 3,
