@@ -1,5 +1,5 @@
 import { ForwardRefExoticComponent, RefAttributes } from 'react'
-import { CornerUpLeft, CornerUpRight, MoveRightIcon, LucideProps, ChevronsUp, FunctionSquare, Repeat, Sun } from 'lucide-react'
+import { CornerUpLeft, CornerUpRight, MoveRightIcon, LucideProps, ChevronsUp, FunctionSquare, Repeat, Sun, Package } from 'lucide-react'
 import { CommandType, NodeRoutineLevelData } from '@/types/game'
 
 export const PALETTE_COMMANDS: { type: CommandType; label: string; icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; cssColor: string }[] = [
@@ -9,7 +9,7 @@ export const PALETTE_COMMANDS: { type: CommandType; label: string; icon: Forward
     { type: 'jump', label: 'saltar', icon: ChevronsUp, cssColor: 'var(--green-muted)' },
     { type: 'activate', label: 'activar', icon: Sun, cssColor: 'var(--amber)' },
     { type: 'repeat', label: 'repetir', icon: Repeat, cssColor: 'var(--purple)' },
-    { type: 'call-fn', label: 'F1', icon: FunctionSquare, cssColor: 'var(--cyan)' },
+    { type: 'call-fn', label: 'Sub', icon: Package, cssColor: 'var(--cyan)' },
 ]
 
 export const MAX_COMMANDS = 20
