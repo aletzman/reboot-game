@@ -9,6 +9,7 @@ import { flatBlocks, makeBlock, updateBlockValueInTree, removeBlockFromTree, add
 import { BlockItem } from './BlockItem'
 import { PseudocodeSummary } from './PseudocodeSummary'
 import { FlatSimulator } from './FlatSimulator'
+import { LevelHeader } from '../LevelHeader'
 
 
 
@@ -166,7 +167,14 @@ export default function LogicAssemblyLevel({
             onDragStart={handleDragStart}
             onDragEnd={(e, m) => handleReorder(e, m)}
         >
-            <div className="flex-1 flex flex-col md:flex-row bg-(--bg-void) min-h-[75vh] border border-(--bg-hover) rounded-xl overflow-hidden shadow-2xl relative">
+            <div className={`flex-1 flex flex-col w-full h-full p-4 lg:p-6 overflow-hidden bg-(--bg-void) transition-all duration-700 ${feedback === 'correct' ? 'brightness-125 saturate-150' : ''}`}>
+                
+                {/* Header de misión estandarizado */}
+                <div className="mb-6 select-none">
+                    <LevelHeader level={level} status={state.status} isRunning={isExecuting} />
+                </div>
+
+                <div className="flex-1 flex flex-col md:flex-row min-h-[70vh] border border-(--bg-hover) rounded-xl overflow-hidden shadow-2xl relative bg-(--bg-void)">
 
                 {/* Overlay de bloqueo global cuando hay ejecución o error */}
                 {isInteractionDisabled && (
@@ -366,6 +374,7 @@ export default function LogicAssemblyLevel({
                     </div>
                 ) : null}
             </DragOverlay>
+            </div>
         </DragDropProvider>
     )
 }

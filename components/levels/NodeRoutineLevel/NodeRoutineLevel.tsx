@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import type { LevelState, Command, CommandType } from '@/types/game'
-import Link from 'next/link'
-import { ShieldAlert, Cpu, Share2, Terminal, Database, ArrowRight, LayoutGrid } from 'lucide-react'
+import { ShieldAlert, Cpu, Share2, Terminal, Database, ArrowRight } from 'lucide-react'
 import { useAudioStore } from '@/store/audio.store'
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
@@ -14,6 +13,7 @@ import { sleep, flattenCommands, getNextPosition, turnLeft, turnRight, calcStars
 import { IsometricCanvas } from './IsometricCanvas'
 import { CommandPalette } from './CommandPalette'
 import { NODE_ROUTINE_TUTORIAL, REPEAT_TUTORIAL, FUNCTION_TUTORIAL, FUNCTION_F2_TUTORIAL, TUTORIAL_CONFIG } from './tutorialSteps'
+import { LevelHeader } from '../LevelHeader'
 
 export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, onStatusChange }: NodeRoutineLevelProps) {
     const mapData = NODEROUTINE_MAPS[level.id] ?? DEFAULT_MAP
@@ -284,78 +284,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
             {/* PANEL IZQUIERDO — Interfaz Ciberdeck */}
             <div className="flex-1 flex flex-col p-3 md:p-0 gap-0 relative z-10 overflow-hidden">
                 <div className="relative group mb-8 select-none">
-                    {/* Console Header Unified Module */}
-                    <div className="flex flex-col md:flex-row items-stretch border border-(--border-muted-color) bg-(--bg-deep) overflow-hidden shadow-2xl">
-
-                        {/* COMPARTIMENT 01: ACT IDENTIFICATION & NAVIGATION */}
-                        <Link
-                            href={`/game/${level.act}`}
-                            className="flex flex-col items-center justify-center p-3 border-b md:border-b-0 md:border-r border-(--border-muted-color) min-w-[75px] bg-black/30 hover:bg-(--bg-hover) transition-all group/act relative overflow-hidden"
-                            title={`Volver a ${level.actName}`}
-                        >
-                            {/* Scanning effect on hover */}
-                            <div className="absolute inset-x-0 h-0.5 bg-(--green-base) top-0 opacity-0 group-hover/act:opacity-30 group-hover/act:animate-pulse" />
-
-                            <span className="text-[8px] font-mono font-bold text-(--text-muted) mb-2 vertical-text tracking-[.4em] uppercase opacity-50 group-hover/act:text-(--green-light) group-hover/act:opacity-100 transition-all">IR_A_SECTOR</span>
-                            <div className="w-full h-px bg-(--border-muted-color) mb-2 opacity-20 group-hover/act:bg-(--green-base) transition-all" />
-                            <div className="relative">
-                                <span className="text-2xl font-mono font-black text-(--text-primary) leading-none group-hover/act:text-(--green-light) transition-all">0{level.act}</span>
-                                <LayoutGrid size={10} className="absolute -top-1 -right-3 text-(--green-base) opacity-0 group-hover/act:opacity-100 transition-all" />
-                            </div>
-                        </Link>
-
-                        {/* COMPARTIMENT 02: MISSION OPERATIONAL DATA */}
-                        <div className="flex-1 flex flex-col justify-center px-6 py-4 md:py-0 border-b md:border-b-0 md:border-r border-(--border-muted-color)">
-                            <h1 id="level-title" className="text-3xl md:text-4xl font-(family-name:--font-title) font-semibold text-white leading-none uppercase">
-                                {level.title}
-                            </h1>
-                            <span className="text-xs font-mono text-(--green-light) uppercase">NODE::{level.id}</span>
-                        </div>
-
-                        {/* COMPARTIMENT 03: TELEMETRY & SYNC (User Approved Design) */}
-                        <div className="flex items-center justify-end p-4 md:min-w-[280px] bg-black/20">
-                            <div className="flex flex-col items-end gap-2 w-full">
-                                <span className="text-xs font-mono text-(--text-muted) uppercase tracking-widest font-black opacity-65">
-                                    STATUS
-                                </span>
-
-                                <div className="flex items-center gap-4">
-                                    <span className={`text-xs md:text-[13px] font-mono font-black tracking-widest transition-colors duration-300
-                                        ${status === 'success' ? 'text-(--green-light)' : status === 'failed' ? 'text-(--red)' : isRunning ? 'text-(--amber)' : 'text-(--text-primary)'}
-                                    `}>
-                                        {status === 'success' ? '>> SECUENCIA_OK' : status === 'failed' ? '!! ERROR_DE_EJECUCION' : isRunning ? '>> EJECUTANDO' : '>> EN_ESPERA'}
-                                    </span>
-
-                                    {/* Indicadores de hardware cuadrados robustos */}
-                                    <div className="flex gap-[3px]">
-                                        {[0, 1, 2].map((i) => {
-                                            let barColor = 'bg-(--bg-hover)'
-                                            let anim = ''
-
-                                            if (status === 'success') {
-                                                barColor = 'bg-(--green-base)'
-                                            } else if (status === 'failed') {
-                                                barColor = 'bg-(--red)'
-                                                anim = 'animate-pulse'
-                                            } else if (isRunning) {
-                                                barColor = 'bg-(--amber)'
-                                                anim = i === 0 ? 'animate-pulse' : i === 1 ? 'animate-pulse opacity-75' : 'animate-pulse opacity-40'
-                                            } else {
-                                                barColor = i === 0 ? 'bg-(--text-muted)' : 'bg-(--bg-hover)'
-                                            }
-
-                                            return (
-                                                <div
-                                                    key={i}
-                                                    className={`w-2 h-4 rounded-[1px] transition-colors duration-300 ${barColor} ${anim}`}
-                                                />
-                                            )
-                                        })}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <LevelHeader level={level} status={status} isRunning={isRunning} />
                 </div>
 
                 {/* Main Content Layout — Split View */}
