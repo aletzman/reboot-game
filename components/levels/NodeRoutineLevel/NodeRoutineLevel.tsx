@@ -207,15 +207,17 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
         }
     }
 
-    function handleRemoveCommand(idx: number) {
+    function handleRemoveCommand(idx: number, panel?: 'main' | 'f1') {
         if (status === 'failed' || status === 'success') handleReset()
-        if (activePanel === 'main') setCommands(prev => prev.filter((_, i) => i !== idx))
+        const targetPanel = panel || activePanel
+        if (targetPanel === 'main') setCommands(prev => prev.filter((_, i) => i !== idx))
         else setCommandsF1(prev => prev.filter((_, i) => i !== idx))
     }
 
-    function handleClearCommands() {
+    function handleClearCommands(panel?: 'main' | 'f1') {
         if (status === 'failed' || status === 'success') handleReset()
-        if (activePanel === 'main') setCommands([])
+        const targetPanel = panel || activePanel
+        if (targetPanel === 'main') setCommands([])
         else setCommandsF1([])
         addLog('BUFFER LIMPÍADO', 'warn')
     }
