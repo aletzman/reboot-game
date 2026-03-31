@@ -44,13 +44,16 @@ export function NavigationFooter() {
     const [mounted, setMounted] = useState(false);
     const [isMinimized, setIsMinimized] = useState(false);
 
+    const isLevel = pathname.includes("/level/");
     useEffect(() => {
         setMounted(true);
-    }, []);
+        if (isLevel) {
+            setIsMinimized(true);
+        }
+    }, [isLevel]);
 
     if (!mounted || pathname === "/") return null;
 
-    const isLevel = pathname.includes("/level/");
     const pathParts = pathname.split("/");
     const actId = pathParts.length > 2 && pathParts[1] === "game" ? pathParts[2] : null;
 

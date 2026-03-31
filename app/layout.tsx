@@ -81,9 +81,14 @@ export default function RootLayout({
       className={`${geistSans.variable} ${dataMono.variable} ${fontTitle.variable} h-full antialiased`}
     >
       <body className=" flex flex-col h-svh">
+        {/* ─── CAPA 1: FONDO (Micro-grid mucho más sutil) ─── */}
+        <div className="absolute inset-0 opacity-25
+        bg-[linear-gradient(to_right,var(--border-muted-color)_1px,transparent_1px),linear-gradient(to_bottom,var(--border-muted-color)_1px,transparent_1px)] 
+        bg-size-[32px_32px]" />
+
         {/* <CRTOverlay /> */}
         <Header />
-        <main className="mt-(--header-height) max-h-[calc(100svh-var(--header-height))] pb-16 custom-scrollbar overflow-y-auto">
+        <main className="mt-(--header-height) h-svh custom-scrollbar overflow-y-auto">
           {children}
         </main>
         <NavigationFooter />
