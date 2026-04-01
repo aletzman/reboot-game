@@ -41,33 +41,33 @@ export default function TerminalTyping({ lines, speed = 35, delayBetweenLines = 
     }, [visibleLines, lines, speed, delayBetweenLines]);
 
     return (
-        <div className="flex flex-col gap-1 bg-(--bg-deep) p-4 font-mono text-sm">
+        <div className="flex flex-col gap-1.5 bg-[#050608] p-5 font-mono text-sm shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] min-h-[120px]">
             {/* Líneas ya completadas (sin la última cuando typing está completo) */}
             {lines.slice(0, isTypingDone ? lines.length - 1 : visibleLines).map((line, i) => (
                 <p
                     key={i}
-                    className={`${line.highlight ? "text-(--green-light) font-semibold" : "text-(--text-muted)"} transition-opacity duration-300`}
+                    className={`${line.highlight ? "text-(--green-light) font-bold drop-shadow-[0_0_5px_rgba(85,226,0,0.5)]" : "text-(--text-muted)"} transition-opacity duration-300 tracking-wide`}
                 >
-                    <span className="text-(--green-muted) mr-2">&gt;</span>
+                    <span className="text-(--text-ghost) mr-2 select-none">&gt;</span>
                     {line.text}
                 </p>
             ))}
 
             {/* Línea que se está escribiendo */}
             {!isTypingDone && visibleLines < lines.length && (
-                <p className={`${lines[visibleLines].highlight ? "text-(--green-light) font-semibold" : "text-(--text-muted)"}`}>
-                    <span className="text-(--green-muted) mr-2">&gt;</span>
+                <p className={`${lines[visibleLines].highlight ? "text-(--green-light) font-bold drop-shadow-[0_0_5px_rgba(85,226,0,0.5)]" : "text-(--text-muted)"} tracking-wide`}>
+                    <span className="text-(--text-ghost) mr-2 select-none">&gt;</span>
                     {currentText}
-                    <span className="inline-block w-2 h-4 bg-(--green-light) ml-0.5 animate-cursor align-middle" />
+                    <span className="inline-block w-2 h-4 bg-(--green-base) shadow-[0_0_8px_var(--green-base)] ml-1 animate-pulse align-middle" />
                 </p>
             )}
 
             {/* Última línea con cursor final parpadeante */}
             {isTypingDone && (
-                <p className="text-(--green-light) font-semibold">
-                    <span className="text-(--green-muted) mr-2">&gt;</span>
+                <p className="text-(--green-light) font-bold drop-shadow-[0_0_5px_rgba(85,226,0,0.5)] tracking-wide">
+                    <span className="text-(--text-ghost) mr-2 select-none">&gt;</span>
                     {lines[lines.length - 1]?.text}
-                    <span className="inline-block w-2 h-4 bg-(--green-light) ml-0.5 animate-cursor align-middle" />
+                    <span className="inline-block w-2 h-4 bg-(--green-base) shadow-[0_0_8px_var(--green-base)] ml-1 animate-pulse align-middle" />
                 </p>
             )}
         </div>

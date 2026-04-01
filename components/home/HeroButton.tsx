@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Play } from "lucide-react";
 import { getSave, deleteSave } from "@/lib/gameState";
 import { getLevels } from "@/services/levelsService";
+import { CommandButton } from "../ui/CommandButton";
 
 export default function HeroButton() {
     const router = useRouter();
@@ -16,7 +17,6 @@ export default function HeroButton() {
     useEffect(() => {
         const timer = setTimeout(() => setVisible(true), 2300);
 
-        // detectar save existente
         const save = getSave();
         if (save) {
             setHasSave(true);
@@ -36,7 +36,6 @@ export default function HeroButton() {
         try {
             const levels = await getLevels();
 
-            // Si el nivel guardado ya está completado, ir al siguiente nivel
             if (save && save.progress[lastLevelId]?.completed) {
                 const currentIndex = levels.findIndex((l) => l.id === lastLevelId);
                 if (currentIndex !== -1 && currentIndex + 1 < levels.length) {
@@ -44,14 +43,12 @@ export default function HeroButton() {
                 }
             }
 
-            // Buscar el nivel para obtener su acto
             const targetLevel = levels.find(l => l.id === lastLevelId) || levels[0];
             const actId = targetLevel.act ?? 0;
 
             router.push(`/game/${actId}/level/${lastLevelId}`);
         } catch (err) {
             console.error("Error redirecting to level:", err);
-            // Fallback en caso de error: ir al nivel P-00 en acto 0
             router.push("/game/0/level/P-00");
         } finally {
             setIsLoading(false);
@@ -60,54 +57,64 @@ export default function HeroButton() {
 
     return (
         <div
-            className="transition-all duration-1000 ease-out flex flex-col items-center gap-2"
+            className="transition-all duration-1000 ease-out flex flex-col items-center gap-4 w-full"
             style={{
                 opacity: visible ? 1 : 0,
                 transform: visible
                     ? "translateY(0) scale(1)"
-                    : "translateY(20px) scale(0.95)",
+                    : "translateY(15px) scale(0.98)",
             }}
         >
-            {/* Botón Primario: Siempre al mapa (o despertar si no hay save) */}
+            {/* ─── BOTÓN PRINCIPAL (Limpio y Directo) ─── */}
             <button
                 onClick={() => router.push("/game")}
-                className="btn-glow group relative flex items-center gap-3 px-10 py-4 bg-(--green-base) text-(--bg-deep) text-lg font-bold font-mono rounded-xs transition-all duration-300 ease-in-out hover:bg-(--green-light) hover:scale-105 active:scale-95 cursor-pointer"
+                className="group flex items-center justify-center gap-3 px-10 py-2.5 bg-(--green-base) hover:bg-(--green-light) text-[#050608] transition-all duration-300 active:scale-95 cursor-pointer rounded-sm shadow-[0_0_15px_rgba(85,226,0,0.2)] hover:shadow-[0_0_25px_rgba(85,226,0,0.4)]"
             >
-                <span className="relative z-10 tracking-wider">
-                    {hasSave ? "ENTRAR AL JUEGO" : "DESPERTAR"}
+                <Play size={18} className="fill-current opacity-90" />
+                <span className="font-mono text-lg font-black tracking-widest uppercase mt-0.5">
+                    {hasSave ? "CONTINUAR PARTIDA" : "NUEVA PARTIDA"}
                 </span>
-                <ChevronRight className={`relative z-10 size-5 transition-transform duration-300 group-hover:translate-x-1`} />
+                <ChevronRight size={20} className="transition-transform duration-300 group-hover:translate-x-1.5 opacity-90" strokeWidth={3} />
             </button>
 
-            {/* Texto debajo del botón */}
-            <p className="text-center text-[10px] font-mono text-(--text-ghost) tracking-widest mt-1">
-                {hasSave && saveInfo
-                    ? `// PARTIDA GUARDADA — ${saveInfo.toUpperCase()}`
-                    : "PRESS TO INITIALIZE PROTOCOL"}
-            </p>
+            {/* ─── SECCIÓN INFERIOR (Light y minimalista) ─── */}
+            {hasSave ? (
+                <div className="flex flex-col items-center gap-2 mt-2">
+                    {/* Info de guardado clara */}
+                    <p className="text-xs font-sans text-(--text-muted) flex items-center gap-2">
+                        Progreso guardado: <span className="text-(--green-light) font-semibold">Sector {saveInfo}</span>
+                    </p>
 
-            {/* Botón secundario — continuar partida si ya tiene save */}
-            {hasSave && (
-                <div className="flex gap-4 mt-2">
-                    <button
-                        onClick={handleContinue}
-                        disabled={isLoading}
-                        className="text-[10px] font-mono text-(--green-muted) hover:text-(--green-light) transition-colors tracking-widest flex items-center gap-1"
-                    >
-                        [ {isLoading ? "CARGANDO..." : "continuar partida"} ]
-                    </button>
-                    <button
-                        onClick={() => {
-                            if (confirm("¿Estás seguro de que quieres borrar tu progreso? Esta acción no se puede deshacer.")) {
-                                deleteSave();
-                                window.location.reload();
-                            }
-                        }}
-                        className="text-[10px] font-mono text-(--red)/50 hover:text-(--red) transition-colors tracking-widest"
-                    >
-                        [ reset ]
-                    </button>
+                    {/* Acciones secundarias sin cajas ni fondos */}
+                    <div className="flex items-center gap-4 mt-1">
+                        <CommandButton
+                            onClick={handleContinue}
+                            disabled={isLoading}
+                            size="xs"
+                        >
+                            {isLoading ? "Cargando..." : "Cargar nivel actual"}
+                        </CommandButton>
+
+                        <span className="text-(--border-color) text-[10px]">|</span>
+
+                        <CommandButton
+                            variant="danger"
+                            size="xs"
+                            onClick={() => {
+                                if (confirm("¿Estás seguro de que quieres borrar tu progreso? Esta acción no se puede deshacer.")) {
+                                    deleteSave();
+                                    window.location.reload();
+                                }
+                            }}
+                        >
+                            Borrar partida
+                        </CommandButton>
+                    </div>
                 </div>
+            ) : (
+                <p className="text-xs font-mono text-(--text-ghost) tracking-widest mt-2 opacity-60">
+                    SISTEMA LISTO PARA INICIAR
+                </p>
             )}
         </div>
     );

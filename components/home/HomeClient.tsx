@@ -27,7 +27,7 @@ export default function HomeClient() {
             />
 
             {/* Logo con animación de entrada */}
-            <div className="animate-fade-in-up mt-12 mb-4" style={{ animationDelay: "0.2s" }}>
+            <div className="animate-fade-in-up mt-4 mb-4" style={{ animationDelay: "0.2s" }}>
                 <Logo width={120} height={80} />
             </div>
 
@@ -82,13 +82,13 @@ export default function HomeClient() {
             </div>
 
             {/* Separador con glow */}
-            <div className="separator-glow w-full max-w-2xl mt-12 mb-8" />
+            <div className="separator-glow w-full max-w-2xl mt-8 mb-8" />
 
             {/* Features con animación secuencial */}
             <FeaturePills />
 
             {/* Separador con glow */}
-            <div className="separator-glow w-full max-w-md mt-10 mb-10" />
+            <div className="separator-glow w-full max-w-md mt-8 mb-8" />
 
             {/* Botón CTA con glow */}
             <HeroButton />
