@@ -5,8 +5,9 @@ import { motion } from 'motion/react'
 
 interface CloseButtonProps {
     onClick: (e?: React.MouseEvent) => void
-    size?: 'sm' | 'md' | 'lg'
+    size?: 'xs' | 'sm' | 'md' | 'lg'
     className?: string
+    disabled?: boolean
 }
 
 /**
@@ -17,16 +18,19 @@ interface CloseButtonProps {
 export function CloseButton({
     onClick,
     size = 'md',
-    className = ""
+    className = "",
+    disabled = false
 }: CloseButtonProps) {
     // Square Size mapping
     const sizeClasses = {
+        xs: 'w-5 h-5',
         sm: 'w-6 h-6',
         md: 'w-8 h-8 md:w-9 md:h-9',
         lg: 'w-11 h-11 md:w-12 md:h-12'
     };
 
     const iconSizes = {
+        xs: 10,
         sm: 12,
         md: 16,
         lg: 20
@@ -45,6 +49,7 @@ export function CloseButton({
                 ${className}
             `}
             aria-label="Close"
+            disabled={disabled}
         >
 
             {/* Visual Hardware Notches — Standardized Corner Markers */}

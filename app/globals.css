@@ -7,63 +7,83 @@
   --bg-elevated: #0F1318;
   --bg-hover: #141B24;
 
-  --border-color: #3b3c3d;
-  --border-muted-color: #111212;
+  /* =========================================
+     BORDES (AJUSTADOS PARA INTEGRACIÓN)
+     ========================================= */
+  --border-color: #2D333B;
+  /* Gris con subtono azul oscuro */
+  --border-muted-color: #1A1E23;
+  /* Casi invisible, para sombras/separadores */
 
-  /* verde ácido principal */
+  /* =========================================
+     VERDE ÁCIDO (PANTALLA FÓSFORO)
+     ========================================= */
   --green-darkest: #0d1f00;
   --green-dark: #1a4d00;
   --green-base: #2d7800;
   --green-light: #55e200;
   --green-muted: #88c44d;
 
-  /* texto general */
+  /* =========================================
+     TEXTO GENERAL (ALTO CONTRASTE)
+     ========================================= */
   --text-primary: #E6EDF3;
   --text-muted: #8B949E;
   --text-ghost: #3D444D;
 
-  /* semánticos */
+  /* =========================================
+     SEMÁNTICOS (ESTADOS Y RAREZAS)
+     ========================================= */
   --amber: #EF9F27;
-  /* cartas raras */
+  /* cartas raras / advertencias / isRunning */
   --purple: #7F77DD;
   /* FRAG, épicas */
   --red: #E24B4A;
+  /* error crítico */
   --red-light: #f67c7c;
   --red-dark: #7a1515;
   --red-muted: #b42b2b;
-  /* error */
   --blue: #2e4ada;
   /* info, comunes */
-
   --cyan: #19c8d4;
+  /* F1 / Subrutinas / Enfoque secundario */
 
-  /* LOGICASSEMBLY BLOCK RECYCLED TECH PALETTE */
-  /* Colores desaturados para el tema post-apocalíptico */
-  --block-mover: #66cc00;
-  /* Verde oliva/bosque */
-  --block-girar: #33cccc;
-  /* Turquesa apagado */
-  --block-repetir: #8a66cc;
-  /* Violeta ceniza */
-  --block-si: #3385cc;
-  /* Azul acero */
-  --block-funcion: #cc8533;
-  /* Ámbar oxidado */
-  --block-llamar: #ccac33;
-  /* Oro viejo */
-  --block-activar: #cc334d;
-  /* Rojo desgastado */
-  --block-asignar: #7fa1dd;
-  /* Azul lavanda */
+  /* =========================================
+     LOGICASSEMBLY BLOCK RECYCLED TECH PALETTE
+     Colores desaturados para la chatarra tecnológica
+     ========================================= */
 
-  --block-mover-dark: #336600;
-  --block-girar-dark: #006666;
-  --block-repetir-dark: #553399;
-  --block-si-dark: #114488;
-  --block-funcion-dark: #995511;
-  --block-llamar-dark: #997711;
-  --block-activar-dark: #991133;
-  --block-asignar-dark: #334466;
+  /* Mover: Verde militar desgastado */
+  --block-mover: #5C9933;
+  --block-mover-dark: #2F5217;
+
+  /* Girar: Cobre oxidado / Pátina */
+  --block-girar: #3B9999;
+  --block-girar-dark: #1A4D4D;
+
+  /* Repetir: Violeta ceniza */
+  --block-repetir: #785EAA;
+  --block-repetir-dark: #3A2C59;
+
+  /* Si (Condicional): Azul acero industrial */
+  --block-si: #477EB3;
+  --block-si-dark: #1D3B59;
+
+  /* Función: Óxido de hierro viejo */
+  --block-funcion: #B86B25;
+  --block-funcion-dark: #5C320E;
+
+  /* Llamar: Latón manchado / Oro viejo */
+  --block-llamar: #B3982E;
+  --block-llamar-dark: #594A12;
+
+  /* Activar: Pintura roja descascarada */
+  --block-activar: #B34054;
+  --block-activar-dark: #591D27;
+
+  /* Asignar: Cableado viejo / Azul lavanda */
+  --block-asignar: #6A8BBF;
+  --block-asignar-dark: #2D4160;
 
   /* Tipografías por defecto de Next.js (Geist es hermosa para este proyecto) */
   --font-sans: var(--font-geist-sans);
@@ -836,12 +856,27 @@ body {
 
 .vertical-text {
   writing-mode: vertical-lr;
-  transform: rotate(180deg);
-  white-space: nowrap;
 }
 
 .noise-bg {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   opacity: 0.03;
   pointer-events: none;
+}
+
+/* Cuadricula */
+
+.grid-bg {
+  background-image: linear-gradient(to right, var(--border-muted-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border-muted-color) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.25;
+
+}
+
+.bg-diagonal-lines {
+  background-color: var(--bg-void);
+  opacity: 0.8;
+  background-size: 10px 10px;
+  background-image: repeating-linear-gradient(45deg, var(--bg-deep) 0, var(--bg-deep) 1px, var(--bg-void) 0, var(--bg-void) 50%);
 }
