@@ -37,9 +37,9 @@ const ObjectsArchiveClient = ({ initialObjects }: ObjectsArchiveClientProps) => 
 
   useEffect(() => {
     const ids = getUnlockedIds()
-    // Si estamos en modo demo, simulamos que solo los primeros 6 objetos están desbloqueados
+    // Si estamos en modo demo, simulamos que solo los primeros 4 objetos están desbloqueados
     if (isDemoModeActive()) {
-      setUnlockedIds(initialObjects.slice(0, 6).map(o => o.id))
+      setUnlockedIds(initialObjects.slice(0, 4).map(o => o.id))
     } else {
       setUnlockedIds(ids)
     }
@@ -83,10 +83,10 @@ const ObjectsArchiveClient = ({ initialObjects }: ObjectsArchiveClientProps) => 
         >
           <div className="hidden md:flex flex-col items-end justify-center gap-2 border-l border-[#1a2636]/60 p-5 md:p-6 bg-[#0c1218]/40 min-w-[260px]">
             <div className="flex gap-[3px] w-full justify-between">
-              {Array.from({ length: 6 }).map((_, i) => (
+              {Array.from({ length: 4 }).map((_, i) => (
                 <div
                   key={i}
-                  className={`flex-1 h-3 skew-x-[-15deg] transition-all duration-500 ${i < (unlockedIds.length / initialObjects.length * 6) ? 'bg-(--amber) shadow-[0_0_8px_var(--amber)] brightness-150' : 'bg-[#1a2636]'}`}
+                  className={`flex-1 h-3 skew-x-[-15deg] transition-all duration-500 ${i < (unlockedIds.length / initialObjects.length * 4) ? 'bg-(--amber) shadow-[0_0_8px_var(--amber)] brightness-150' : 'bg-[#1a2636]'}`}
                 />
               ))}
             </div>
