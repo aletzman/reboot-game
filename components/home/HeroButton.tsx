@@ -26,7 +26,7 @@ export default function HeroButton() {
         return () => clearTimeout(timer);
     }, []);
 
-    async function handleClick() {
+    async function handleContinue() {
         if (isLoading) return;
 
         const save = getSave();
@@ -68,35 +68,46 @@ export default function HeroButton() {
                     : "translateY(20px) scale(0.95)",
             }}
         >
+            {/* Botón Primario: Siempre al mapa (o despertar si no hay save) */}
             <button
-                onClick={handleClick}
-                disabled={isLoading}
-                className="btn-glow group relative flex items-center gap-3 px-10 py-4 bg-(--green-base) text-(--bg-deep) text-lg font-bold font-mono rounded-xs transition-all duration-300 ease-in-out hover:bg-(--green-light) hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => router.push("/game")}
+                className="btn-glow group relative flex items-center gap-3 px-10 py-4 bg-(--green-base) text-(--bg-deep) text-lg font-bold font-mono rounded-xs transition-all duration-300 ease-in-out hover:bg-(--green-light) hover:scale-105 active:scale-95 cursor-pointer"
             >
                 <span className="relative z-10 tracking-wider">
-                    {isLoading ? "CARGANDO..." : hasSave ? "CONTINUAR" : "DESPERTAR"}
+                    {hasSave ? "ENTRAR AL JUEGO" : "DESPERTAR"}
                 </span>
-                <ChevronRight className={`relative z-10 size-5 transition-transform duration-300 ${!isLoading && 'group-hover:translate-x-1'}`} />
+                <ChevronRight className={`relative z-10 size-5 transition-transform duration-300 group-hover:translate-x-1`} />
             </button>
 
             {/* Texto debajo del botón */}
-            <p className="text-center text-[10px] font-mono text-(--text-ghost) tracking-widest">
+            <p className="text-center text-[10px] font-mono text-(--text-ghost) tracking-widest mt-1">
                 {hasSave && saveInfo
                     ? `// PARTIDA GUARDADA — ${saveInfo.toUpperCase()}`
                     : "PRESS TO INITIALIZE PROTOCOL"}
             </p>
 
-            {/* Botón secundario — nueva partida si ya tiene save */}
+            {/* Botón secundario — continuar partida si ya tiene save */}
             {hasSave && (
-                <button
-                    onClick={() => {
-                        deleteSave(); // imported from gameState
-                        router.push("/game");
-                    }}
-                    className="text-[10px] font-mono text-(--text-ghost) hover:text-(--text-muted) transition-colors mt-1 tracking-widest"
-                >
-                    [ nueva partida ]
-                </button>
+                <div className="flex gap-4 mt-2">
+                    <button
+                        onClick={handleContinue}
+                        disabled={isLoading}
+                        className="text-[10px] font-mono text-(--green-muted) hover:text-(--green-light) transition-colors tracking-widest flex items-center gap-1"
+                    >
+                        [ {isLoading ? "CARGANDO..." : "continuar partida"} ]
+                    </button>
+                    <button
+                        onClick={() => {
+                            if (confirm("¿Estás seguro de que quieres borrar tu progreso? Esta acción no se puede deshacer.")) {
+                                deleteSave();
+                                window.location.reload();
+                            }
+                        }}
+                        className="text-[10px] font-mono text-(--red)/50 hover:text-(--red) transition-colors tracking-widest"
+                    >
+                        [ reset ]
+                    </button>
+                </div>
             )}
         </div>
     );
