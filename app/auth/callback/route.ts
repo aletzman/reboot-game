@@ -11,7 +11,6 @@ export async function GET(request: Request) {
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/game'
 
-  // Limpiamos el baseUrl para evitar problemas con la redirección final
   const baseUrl = getBaseUrl().replace(/\/$/, '')
 
   if (code) {
