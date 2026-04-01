@@ -18,8 +18,8 @@ export function canAccessLevel(
     // Act 0 (P-00, P-01) is always allowed in demo
     if (level.act === 0) return { allowed: true };
 
-    // Max 6 sectors
-    if (level.act > 5) return { allowed: false, reason: 'locked', requiredAct: level.act };
+    // Max 4 sectors
+    if (level.act > 4) return { allowed: false, reason: 'locked', requiredAct: level.act };
 
     // Max 4 levels per sector (excluding act 0)
     const actLevels = levels.filter(l => l.act === level.act);
@@ -85,7 +85,7 @@ export function isActUnlocked(
   levels: Level[],
   demoMode = false
 ): boolean {
-  if (demoMode) return actNumber <= 6;
+  if (demoMode) return actNumber <= 4;
   if (actNumber <= 0) return true
   if (!save) return false
 
