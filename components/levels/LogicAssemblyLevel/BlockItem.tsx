@@ -118,114 +118,135 @@ export function BlockItem({
                 <div className="absolute -left-4 top-6 bottom-0 w-px border-l-2 border-dotted border-(--border-color)" />
             )}
 
-            {/* CONTENEDOR FÍSICO DEL BLOQUE */}
-            <div className="relative">
+
+            {/* CONTENEDOR FÍSICO (Cartucho Rugerizado REBOOT - Calibración de Luz Clara) */}
+            <div
+                className={`
+                    relative flex min-h-[50px] w-full rounded-[2px] bg-[#1F242D] /* <-- Más luz en el chasis principal */
+                    /* BISELADO ASIMÉTRICO: Los bordes de luz ahora son más claros para reflejar el nuevo fondo */
+                    border-t border-l  
+                    border-b-2 border-r-[3px] border-[#050608]
+                    transition-all duration-150 group
+                    ${isDragging
+                        ? 'shadow-[6px_6px_0_rgba(0,0,0,0.9)] -translate-y-1 -translate-x-1 z-50 ring-1 ring-[#363D4C]'
+                        : 'shadow-[3px_3px_0_rgba(0,0,0,0.8)] hover:bg-[#252B36]' /* <-- Hover más iluminado */
+                    }
+                    ${disabled ? 'opacity-50 grayscale' : ''}
+                `}
+            >
+                {/* 1. INDICADOR DE COLOR */}
                 <div
+                    className="w-[6px] h-full border-r border-[#050608] shadow-[inset_-2px_0_4px_rgba(0,0,0,0.4)]"
+                    style={{ backgroundColor: def.border }}
+                />
+
+                {/* 2. DRAG HANDLE (Placa metálica aclarada) */}
+                <div
+                    ref={handleRef}
                     className={`
-                        flex min-h-13 rounded-[2px] overflow-hidden bg-(--bg-elevated) border border-(--border-muted-color) group
-                        ${isDragging ? 'shadow-none border-(--green-muted)/30' : 'shadow-[0_4px_10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.02)]'}
+                        w-8 bg-[#161A20] /* <-- Placa base con más luz */
+                        border-r border-[#363D4C] flex flex-col items-center justify-between py-1.5
+                        cursor-grab active:cursor-grabbing touch-none relative
+                        ${disabled ? 'hidden' : ''}
                     `}
-                    style={{ borderLeft: `4px solid ${def.border}` }}
                 >
-                    {/* DRAG HANDLE (Textura Rugosa de Agarre) */}
-                    <div
-                        ref={handleRef}
-                        className={`
-                            w-8 bg-[#0a0c0f] border-r border-(--border-muted-color) flex items-center justify-center 
-                            cursor-grab active:cursor-grabbing hover:bg-[#12161c] transition-colors group/handle touch-none
-                            relative overflow-hidden
-                            ${disabled ? 'hidden' : ''}
-                        `}
-                    >
-                        {/* Patrón de estrías físicas */}
-                        <div className="absolute inset-0 opacity-[0.15] bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,#fff_2px,#fff_3px)] pointer-events-none mix-blend-overlay" />
-                        <GripVertical size={14} className="text-(--text-ghost) group-hover/handle:text-(--text-muted) transition-colors relative z-10" />
+                    {/* Tornillo superior */}
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#050608] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] flex items-center justify-center">
+                        <div className="w-px h-[3px] bg-[#363D4C] rotate-45" />
                     </div>
 
-                    {/* CUERPO DEL BLOQUE (Inputs y Controles) */}
-                    <div className="flex-1 p-2 flex flex-wrap items-center gap-3 relative overflow-hidden bg-linear-to-r from-transparent to-(--bg-surface)/30">
+                    {/* Estrías de agarre */}
+                    <div className="flex flex-col gap-[3px] w-full px-[5px] opacity-80">
+                        <div className="h-[2px] w-full bg-[#050608] border-b border-[#363D4C]" />
+                        <div className="h-[2px] w-full bg-[#050608] border-b border-[#363D4C]" />
+                        <div className="h-[2px] w-full bg-[#050608] border-b border-[#363D4C]" />
+                    </div>
 
-                        {/* Tornillos Industriales */}
-                        <div className="absolute top-1.5 right-1.5 w-1 h-1 rounded-full bg-black border border-(--border-color) shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]" />
-                        <div className="absolute bottom-1.5 right-1.5 w-1 h-1 rounded-full bg-black border border-(--border-color) shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]" />
-
-                        {/* Título / Definición */}
-                        <div className="flex flex-col pl-1">
-                            <span
-                                className="font-bold tracking-[0.2em] text-[11px] uppercase leading-none drop-shadow-md"
-                                style={{ color: def.border }}
-                            >
-                                {def.label}
-                            </span>
-                            <span className="font-mono text-[8px] text-(--text-muted) uppercase mt-0.5 opacity-60">
-                                {block.type}
-                            </span>
-                        </div>
-
-                        <div className="h-5 w-px bg-(--border-color) mx-1" />
-
-                        {/* INPUTS DE VALOR (Tu lógica intacta, estilos pulidos) */}
-                        {def.hasValue && (
-                            <div className="flex items-center gap-2">
-
-                                {/* Stepper de Números */}
-                                {def.valueType === 'number' && (
-                                    <div className="flex items-stretch bg-[#050608] rounded-sm border border-(--border-muted-color) overflow-hidden h-8 shadow-[inset_0_2px_5px_rgba(0,0,0,0.8)] group/stepper focus-within:border-(--green-muted) transition-colors">
-                                        <button
-                                            onClick={() => !disabled && onValueChange(block.id, Math.max(1, (block.value as number) - 1))}
-                                            disabled={disabled || (block.value as number) <= 1}
-                                            className="px-2 flex items-center justify-center bg-(--bg-surface) hover:bg-(--bg-hover) text-(--text-muted) hover:text-(--amber) disabled:opacity-20 transition-colors border-r border-(--border-color) active:bg-black"
-                                        >
-                                            <Minus size={12} strokeWidth={3} />
-                                        </button>
-                                        <div className="w-10 flex items-center justify-center relative">
-                                            <span className="font-mono text-[12px] font-black text-(--text-primary) tabular-nums drop-shadow-md">
-                                                {block.value}
-                                            </span>
-                                        </div>
-                                        <button
-                                            onClick={() => !disabled && onValueChange(block.id, Math.min(20, (block.value as number) + 1))}
-                                            disabled={disabled || (block.value as number) >= 20}
-                                            className="px-2 flex items-center justify-center bg-(--bg-surface) hover:bg-(--bg-hover) text-(--text-muted) hover:text-(--green-light) disabled:opacity-20 transition-colors border-l border-(--border-color) active:bg-black"
-                                        >
-                                            <Plus size={12} strokeWidth={3} />
-                                        </button>
-                                    </div>
-                                )}
-
-                                {/* Selects (Dirección / Función) */}
-                                {(def.valueType === 'direction' || (def.valueType === 'text' && block.type === 'LLAMAR')) && (
-                                    <div className="relative group/input flex">
-                                        <select
-                                            value={block.value as string}
-                                            onChange={e => onValueChange(block.id, e.target.value)}
-                                            disabled={disabled}
-                                            className="appearance-none bg-[#050608] rounded-sm pl-3 pr-8 h-8 font-mono text-[10px] min-w-[120px] outline-none border border-(--border-muted-color) focus:border-(--green-muted) text-(--text-primary) font-bold uppercase transition-colors shadow-[inset_0_2px_5px_rgba(0,0,0,0.8)] cursor-pointer"
-                                        >
-                                            {def.valueType === 'text' && <option value="" className="text-(--text-ghost)">-- SEL_FUNCIÓN --</option>}
-                                            {(def.valueOptions || availableFunctions).map(opt => (
-                                                <option key={opt} value={opt} className="bg-(--bg-elevated) text-white">{opt}</option>
-                                            ))}
-                                        </select>
-                                        <div className="absolute right-2 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none group-hover/input:text-(--green-light) transition-colors">
-                                            <ChevronDown size={12} strokeWidth={3} />
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Botón Eliminar (Apagado hasta hover) */}
-                        <CloseButton
-                            onClick={() => onRemove(block.id)}
-                            size='xs'
-                            disabled={disabled}
-                            className="ml-auto opacity-40 hover:opacity-100 hover:text-(--red) hover:bg-(--red)/10 transition-all mr-2"
-                        />
+                    {/* Tornillo inferior */}
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#050608] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] flex items-center justify-center">
+                        <div className="w-px h-[3px] bg-[#363D4C] -rotate-12" />
                     </div>
                 </div>
-            </div>
 
+                {/* 3. CUERPO DEL MÓDULO */}
+                <div className="flex-1 p-2 pl-3 flex flex-wrap items-center gap-3 relative overflow-hidden">
+
+                    {/* Título Stamped */}
+                    <div className="flex flex-col justify-center relative z-10 min-w-18">
+                        <span
+                            className="font-black tracking-[0.15em] text-[11px] uppercase leading-none drop-shadow-[0_2px_2px_rgba(0,0,0,1)]"
+                            style={{ color: def.border }}
+                        >
+                            {def.label}
+                        </span>
+                        <span className="font-mono text-[8px] text-(--text-muted) uppercase mt-[3px] font-bold">
+                            <span className="opacity-40">TIPO:</span> {block.type}
+                        </span>
+                    </div>
+
+                    {/* Separador físico */}
+                    <div className="h-6 w-[2px] bg-[#050608] mx-1 border-r border-[#363D4C] relative z-10" />
+
+                    {/* 4. INPUTS DE VALOR (Módulos LCD) */}
+                    {def.hasValue && (
+                        <div className="flex items-center gap-2 relative z-10">
+
+                            {/* Stepper Numérico Mecánico */}
+                            {def.valueType === 'number' && (
+                                <div className="flex items-stretch bg-[#050608] rounded-sm border-t border-l border-[#050608] border-b border-r overflow-hidden h-7 shadow-[inset_0_2px_4px_rgba(0,0,0,1)]">
+                                    <button
+                                        onClick={() => !disabled && onValueChange(block.id, Math.max(1, (block.value as number) - 1))}
+                                        disabled={disabled || (block.value as number) <= 1}
+                                        className="px-2 flex items-center justify-center bg-[#181C23] hover:bg-[#20252D] text-(--text-muted) hover:text-(--amber) active:bg-black border-r border-[#050608] transition-colors cursor-pointer"
+                                    >
+                                        <Minus size={12} strokeWidth={4} />
+                                    </button>
+                                    <div className="w-10 flex items-center justify-center relative bg-[#0A0C0F]">
+                                        <span className="font-mono text-[13px] font-bold text-white tabular-nums drop-shadow-[0_0_2px_rgba(255,255,255,0.3)]">
+                                            {block.value}
+                                        </span>
+                                    </div>
+                                    <button
+                                        onClick={() => !disabled && onValueChange(block.id, Math.min(20, (block.value as number) + 1))}
+                                        disabled={disabled || (block.value as number) >= 20}
+                                        className="px-2 flex items-center justify-center bg-[#181C23] hover:bg-[#20252D] text-(--text-muted) hover:text-(--green-light) active:bg-black border-l border-[#050608] transition-colors cursor-pointer"
+                                    >
+                                        <Plus size={12} strokeWidth={4} />
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Selectores */}
+                            {(def.valueType === 'direction' || (def.valueType === 'text' && block.type === 'LLAMAR')) && (
+                                <div className="relative flex">
+                                    <select
+                                        value={block.value as string}
+                                        onChange={e => onValueChange(block.id, e.target.value)}
+                                        disabled={disabled}
+                                        className="appearance-none bg-[#050608] rounded-sm border-t border-l border-[#050608] border-b border-r pl-3 pr-8 h-7 font-mono text-[10px] min-w-[120px] outline-none text-(--text-muted) hover:text-white focus:text-(--green-base) font-bold uppercase cursor-pointer shadow-[inset_0_2px_4px_rgba(0,0,0,1)] transition-colors"
+                                    >
+                                        {def.valueType === 'text' && <option value="" className="text-(--text-ghost)">-- SEL_FUNCIÓN --</option>}
+                                        {(def.valueOptions || availableFunctions).map(opt => (
+                                            <option key={opt} value={opt} className="bg-[#050608] text-white">{opt}</option>
+                                        ))}
+                                    </select>
+                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none">
+                                        <ChevronDown size={12} strokeWidth={4} />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Botón Eliminar */}
+                    <CloseButton
+                        onClick={() => onRemove(block.id)}
+                        size='xs'
+                        disabled={disabled}
+                        className="ml-auto opacity-0 group-hover:opacity-100 hover:text-white hover:bg-[#B34054] border border-transparent hover:border-[#050608] transition-all mr-2 rounded-sm"
+                    />
+                </div>
+            </div>
             {/* ===============================================================
                 BLOQUES HIJOS (RUTINAS ANIDADAS)
                 =============================================================== */}

@@ -1,5 +1,5 @@
 import { useDraggable } from '@dnd-kit/react'
-import { GripVertical, Cpu, Lock } from 'lucide-react'
+import { Cpu, Lock } from 'lucide-react'
 import { BlockDef } from './types'
 
 export function DraggablePaletteBlock({ def, disabled, maxReached, onClick }: { def: BlockDef, disabled: boolean, maxReached: boolean, onClick: () => void }) {
@@ -17,59 +17,73 @@ export function DraggablePaletteBlock({ def, disabled, maxReached, onClick }: { 
             onClick={onClick}
             disabled={isDisabled}
             className={`
-                group relative flex items-center p-3 text-left transition-all duration-200
-                cursor-grab overflow-hidden touch-none select-none rounded-[2px] not-[]:
-                bg-(--bg-elevated) border border-(--border-muted-color) 
-                shadow-[0_3px_6px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.03)] 
-                ${isDragging ? 'opacity-30 scale-95 shadow-none' : 'active:scale-[0.98] active:shadow-none'}
+                group relative flex items-center min-h-[46px] w-full text-left transition-all duration-150
+                cursor-grab overflow-hidden touch-none select-none rounded-[2px]
+                
+                /* BISELADO ASIMÉTRICO (Igual que el cartucho principal) */
+                border-t border-l border-b-2 border-r-[3px] border-[#050608]
+                
+                ${isDragging ? 'opacity-50 scale-95 shadow-none' : ''}
+                
+                /* ESTADOS FÍSICOS: Reposo, Hover y Agotado */
                 ${isDisabled
-                    ? 'cursor-not-allowed opacity-60 grayscale-40'
-                    : 'hover:bg-(--bg-hover) hover:border-(--border-muted-color) hover:shadow-[0_5px_15px_rgba(0,0,0,0.8)]'
+                    ? 'cursor-not-allowed opacity-60 grayscale bg-[#0A0C0F] shadow-[inset_0_4px_10px_rgba(0,0,0,0.9)] border-t-[#050608] border-l-[#050608] border-b-[#1A1D24] border-r-[#1A1D24]' // Se invierte el bisel, parece un hueco
+                    : 'bg-[#1A1D24] shadow-[3px_3px_0_rgba(0,0,0,0.6)] hover:bg-[#1F242D] hover:-translate-y-px hover:-translate-x-px hover:shadow-[4px_4px_0_rgba(0,0,0,0.8)] active:scale-[0.98] active:shadow-none active:translate-y-0 active:translate-x-0'
                 }
             `}
-            style={{
-                // Franja izquierda de color, simulando pintura industrial
-                borderLeftWidth: '4px',
-                borderLeftStyle: 'solid',
-                borderLeftColor: def.border
-            }}
         >
-            {/* Textura de "Agarre" (Drag Handle) */}
-            <div className={`flex items-center justify-center mr-3 transition-colors duration-200 
-                ${isDisabled ? 'text-(--text-ghost) opacity-20' : 'text-(--text-muted) opacity-50 group-hover:text-white group-hover:opacity-90'}
+            {/* 1. INDICADOR DE COLOR (Resina incrustada) */}
+            <div
+                className={`w-[5px] absolute left-0 top-0 bottom-0 border-r border-[#050608] transition-all 
+                    ${isDisabled ? 'grayscale opacity-20' : 'shadow-[inset_-1px_0_3px_rgba(0,0,0,0.4)]'}`
+                }
+                style={{ backgroundColor: def.border }}
+            />
+
+            {/* 2. PLACA DE AGARRE EN MINIATURA (Adiós GripVertical genérico) */}
+            <div className={`
+                w-6 ml-[5px] h-full absolute left-0 top-0 bottom-0
+                border-r border-[#363D4C] bg-[#12141A] 
+                flex flex-col items-center justify-center gap-[3px] py-1 
+                ${isDisabled ? 'opacity-30' : ''}
             `}>
-                <GripVertical size={14} />
+                {/* Estrías físicas en lugar del ícono */}
+                <div className="h-[2px] w-3.5 bg-[#050608] border-b border-[#363D4C]" />
+                <div className="h-[2px] w-3.5 bg-[#050608] border-b border-[#363D4C]" />
+                <div className="h-[2px] w-3.5 bg-[#050608] border-b border-[#363D4C]" />
             </div>
 
-            {/* Contenido del Bloque */}
-            <div className="flex flex-col flex-1 pointer-events-none">
-                <span className="font-mono text-[11px] font-black tracking-[0.2em] uppercase transition-colors"
-                    style={{ color: isDisabled ? 'var(--text-ghost)' : def.border }}>
+            {/* 3. CONTENIDO DEL BLOQUE (Desplazado para hacer espacio a la placa) */}
+            <div className="flex flex-col flex-1 pl-[42px] py-2 pointer-events-none relative z-10">
+                <span
+                    className="font-black tracking-[0.15em] text-[11px] uppercase leading-none drop-shadow-[0_2px_2px_rgba(0,0,0,1)] transition-colors"
+                    style={{ color: isDisabled ? '#4A5568' : def.border }}
+                >
                     {def.label}
                 </span>
-                <span className="font-mono text-[8px] text-(--text-ghost) mt-0.5 uppercase tracking-widest font-bold">
+                <span className="font-mono text-[8px] text-(--text-muted) mt-1 uppercase font-bold opacity-60 tracking-widest">
                     MOD::{def.type}
                 </span>
             </div>
 
-            {/* Ícono de Estado (CPU si está activo, Candado si está agotado) */}
-            <div className="ml-2 transition-opacity pointer-events-none">
-                {isDisabled
-                    ? <Lock size={14} className="text-(--red-muted) opacity-60" />
-                    : <Cpu size={16} className="text-(--text-ghost) opacity-30 group-hover:opacity-60" />
-                }
+            {/* 4. ÍCONOS DE ESTADO (Módulos de Hardware LED) */}
+            <div className="pr-3 transition-opacity pointer-events-none flex items-center justify-center z-10">
+                {isDisabled ? (
+                    // Estado Candado: Pantalla hundida con luz roja de emergencia
+                    <div className="bg-[#050608] p-1 rounded-sm shadow-[inset_0_1px_3px_rgba(0,0,0,1)] border-b border-r border-[#2D3340]">
+                        <Lock size={12} className="text-[#B34054] opacity-80" />
+                    </div>
+                ) : (
+                    // Estado CPU: Se enciende en verde al pasar el mouse
+                    <div className="bg-[#050608] p-1 rounded-sm shadow-[inset_0_1px_3px_rgba(0,0,0,1)] border-b border-r border-[#363D4C] opacity-50 group-hover:opacity-100 transition-all duration-300">
+                        <Cpu size={12} className="text-[#363D4C] group-hover:text-(--green-base) drop-shadow-[0_0_0_transparent] group-hover:drop-shadow-[0_0_3px_rgba(85,226,0,0.8)]" />
+                    </div>
+                )}
             </div>
 
-            {/* EFECTOS ESPECIALES (Superpuestos con position absolute) */}
-
-            {/* Brillo táctico superior (Se ilumina sutilmente al pasar el mouse) */}
-            {!isDisabled && (
-                <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-white/10 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-            )}
-
-            {/* Patrón de "Módulo Agotado" (Líneas diagonales estilo cinta de peligro) */}
+            {/* 5. EFECTO: CINTA DE PELIGRO (Si está agotado) */}
             {isDisabled && (
-                <div className="absolute inset-0 opacity-10 bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,var(--text-muted)_4px,var(--text-muted)_8px)] pointer-events-none" />
+                <div className="absolute inset-0 opacity-10 bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,#fff_4px,#fff_8px)] pointer-events-none" />
             )}
         </button>
     )
