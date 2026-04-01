@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ChevronLeft, AlertTriangle } from 'lucide-react'
 import type { Level, LevelState } from '@/types/game'
+import { Screw } from '../ui/Screw'
 
 interface LevelHeaderProps {
     level: Level
@@ -35,11 +36,10 @@ export function LevelHeader({ level, status, isRunning, children }: LevelHeaderP
             {/* ─── COMPARTIMENTO 02: PLACA DE IDENTIFICACIÓN (Slim) ─── */}
             <div className="relative flex-1 flex flex-col justify-center px-6 py-2 border-b md:border-b-0 md:border-r border-(--border-color) bg-(--bg-surface) overflow-hidden shadow-[inset_0_0_30px_rgba(0,0,0,0.8)]">
 
-                {/* Tornillos expuestos más pequeños */}
-                <div className="absolute top-1.5 left-2 w-2 h-2 rounded-full bg-black border border-(--border-muted-color) flex items-center justify-center"><div className="w-1 h-px bg-(--text-ghost) rotate-45" /></div>
-                <div className="absolute bottom-1.5 left-2 w-2 h-2 rounded-full bg-black border border-(--border-muted-color) flex items-center justify-center"><div className="w-1 h-px bg-(--text-ghost) rotate-12" /></div>
-                <div className="absolute top-1.5 right-2 w-2 h-2 rounded-full bg-black border border-(--border-muted-color) flex items-center justify-center"><div className="w-1 h-px bg-(--text-ghost) -rotate-45" /></div>
-                <div className="absolute bottom-1.5 right-2 w-2 h-2 rounded-full bg-black border border-(--border-muted-color) flex items-center justify-center"><div className="w-1 h-px bg-(--text-ghost) rotate-90" /></div>
+                <Screw corner="tl" size="sm" />
+                <Screw corner="tr" size="sm" />
+                <Screw corner="bl" size="sm" />
+                <Screw corner="br" size="sm" />
 
                 {/* Marca de agua (Menos invasiva) */}
                 <span className="absolute -top-1 right-4 text-6xl font-black font-mono text-black opacity-30 pointer-events-none select-none tracking-tighter">
