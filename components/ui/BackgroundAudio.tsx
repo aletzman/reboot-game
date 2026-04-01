@@ -6,7 +6,7 @@ import { useAudioStore } from "@/store/audio.store";
 export function BackgroundAudio({ src }: { src: string }) {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const [hasInteracted, setHasInteracted] = useState(false);
-    
+
     // Obtener valores reactivos del store persistente
     const { musicVolume, isMuted } = useAudioStore();
 
@@ -20,7 +20,7 @@ export function BackgroundAudio({ src }: { src: string }) {
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
-        
+
         // Volumen inicial
         audio.volume = isMuted ? 0 : musicVolume;
 
