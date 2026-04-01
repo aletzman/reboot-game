@@ -100,7 +100,7 @@ export const BLOCK_DEFS: BlockDef[] = [
 
 export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
     '2-01': {
-        availableBlocks: ['MOVER', 'GIRAR', 'REPETIR', 'ACTIVAR', 'LLAMAR', 'FUNCION', 'SI', 'SI_NO', 'ASIGNAR',],
+        availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR'],
         maxBlocks: 8,
         hint: 'Usa REPETIR para evitar repetir MOVER varias veces',
         map: {
@@ -121,7 +121,7 @@ export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
             return hasRepetir && hasActivar
         },
     },
-    '2-03': {
+    '2-02': {
         availableBlocks: ['MOVER', 'GIRAR', 'FUNCION', 'LLAMAR', 'ACTIVAR'],
         maxBlocks: 12,
         hint: 'Define una FUNCIÓN con la secuencia y llámala 3 veces para los tres nodos',
@@ -145,7 +145,7 @@ export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
             return hasFuncion && llamadas.length >= 3
         },
     },
-    '2-07': {
+    '2-03': {
         availableBlocks: ['MOVER', 'GIRAR', 'REPETIR', 'SI', 'FUNCION', 'LLAMAR', 'ACTIVAR', 'ASIGNAR'],
         maxBlocks: 20,
         hint: 'Combina funciones, repeticiones y condiciones para estabilizar el núcleo',

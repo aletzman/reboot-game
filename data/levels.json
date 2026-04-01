@@ -661,10 +661,10 @@
       "maxStars": 3
     },
     {
-      "id": "2-02",
+      "id": "2-03",
       "act": 2,
       "actName": "Palabras de maquina",
-      "type": "puzzle-sort",
+      "type": "logicassembly",
       "title": "Instrucciones desordenadas",
       "description": "Un robot anterior dejó las instrucciones mezcladas. El programa existe — solo está en el orden equivocado. Ordénalo.",
       "narrative": "FRAG: 'Alguien intentó esto antes. Sus instrucciones están todas aquí, pero desordenadas.'",
@@ -686,7 +686,7 @@
       "maxStars": 2
     },
     {
-      "id": "2-03",
+      "id": "2-02",
       "act": 2,
       "actName": "Palabras de maquina",
       "type": "logicassembly",
