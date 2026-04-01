@@ -100,7 +100,7 @@ export const BLOCK_DEFS: BlockDef[] = [
 
 export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
     '2-01': {
-        availableBlocks: ['MOVER', 'GIRAR', 'REPETIR', 'ACTIVAR', 'ASIGNAR'],
+        availableBlocks: ['MOVER', 'GIRAR', 'REPETIR', 'ACTIVAR', 'LLAMAR', 'FUNCION', 'SI', 'SI_NO', 'ASIGNAR',],
         maxBlocks: 8,
         hint: 'Usa REPETIR para evitar repetir MOVER varias veces',
         map: {

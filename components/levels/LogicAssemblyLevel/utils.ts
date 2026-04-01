@@ -49,83 +49,82 @@ export function addChildToTree(parentId: string, type: LogicAssemblyBlockType, b
 export function findAndReorder(
     items: LogicAssemblyBlock[], 
     sourceId: string, 
-    targetId: string, 
+    targetId: string | null, 
     isNew: boolean = false, 
     newBlockType?: LogicAssemblyBlockType
 ): LogicAssemblyBlock[] {
     let movedBlock: LogicAssemblyBlock | null = null;
-    let listWithoutSource: LogicAssemblyBlock[] = [];
+    let listWithoutSource: LogicAssemblyBlock[] = items;
 
-    // 1. Extraer el bloque origen
+    // 1. Extraer el bloque origen si no es nuevo
     if (isNew && newBlockType) {
         movedBlock = makeBlock(newBlockType);
-        listWithoutSource = items;
     } else {
-        if (!sourceId || sourceId === targetId) return items;
-
-        let foundSource = false;
-        function extract(list: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
+        if (!sourceId) return items;
+        
+        let found = false;
+        function extractRecursive(list: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
+            if (found) return list;
             const idx = list.findIndex(b => b.id === sourceId);
             if (idx !== -1) {
                 movedBlock = list[idx];
-                foundSource = true;
+                found = true;
                 return list.filter((_, i) => i !== idx);
             }
             return list.map(b => (b.children && b.children.length > 0) 
-                ? { ...b, children: extract(b.children) } 
+                ? { ...b, children: extractRecursive(b.children) } 
                 : b
             );
         }
-        listWithoutSource = extract(items);
-        if (!foundSource || !movedBlock) return items;
+        listWithoutSource = extractRecursive(items);
+        if (!found || !movedBlock) return items;
     }
 
     // 2. Insertar en el bloque destino
     let inserted = false;
 
-    // Caso A: El destino es un contenedor vacío o específico de hijos
+    // Caso A: El destino es un contenedor específico de hijos
     if (targetId && targetId.startsWith('children-')) {
         const parentId = targetId.replace('children-', '');
-        function nest(list: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
+        function nestRecursive(list: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
+            if (inserted) return list;
             return list.map(b => {
                 if (b.id === parentId) {
                     inserted = true;
                     return { ...b, children: [...(b.children || []), movedBlock!] };
                 }
                 if (b.children && b.children.length > 0) {
-                    return { ...b, children: nest(b.children) };
+                    return { ...b, children: nestRecursive(b.children) };
                 }
-                // Si el bloque es el padre pero no tiene hijos aun, ya lo manejamos arriba con el id
                 return b;
             });
         }
-        const result = nest(listWithoutSource);
+        const result = nestRecursive(listWithoutSource);
         if (inserted) return result;
     }
 
-    // Caso B: El destino es otro bloque (reordenar poniéndolo antes)
-    function insertAt(list: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
-        const idx = list.findIndex(b => b.id === targetId);
-        if (idx !== -1) {
-            inserted = true;
-            const next = [...list];
-            next.splice(idx, 0, movedBlock!);
-            return next;
+    // Caso B: El destino es otro bloque (poner ANTES)
+    if (targetId && targetId !== 'root-workspace') {
+        function insertAtRecursive(list: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
+            if (inserted) return list;
+            const idx = list.findIndex(b => b.id === targetId);
+            if (idx !== -1) {
+                inserted = true;
+                const next = [...list];
+                next.splice(idx, 0, movedBlock!);
+                return next;
+            }
+            return list.map(b => (b.children && b.children.length > 0)
+                ? { ...b, children: insertAtRecursive(b.children) }
+                : b
+            );
         }
-        return list.map(b => (b.children && b.children.length > 0)
-            ? { ...b, children: insertAt(b.children) }
-            : b
-        );
+        const finalResult = insertAtRecursive(listWithoutSource);
+        if (inserted) return finalResult;
     }
 
-    const finalResult = insertAt(listWithoutSource);
-    
-    // Si no se pudo insertar en ningún lado, "rescatamos" el bloque poniéndolo al final
-    if (!inserted) {
-        return [...listWithoutSource, movedBlock];
-    }
-
-    return finalResult;
+    // Caso C: No hay destino o targetId era root-workspace -> al final del nivel raíz
+    return [...listWithoutSource, movedBlock!];
 }
 
 export function moveBlockInTree(id: string, direction: 'up' | 'down', blocks: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
@@ -138,8 +137,10 @@ export function moveBlockInTree(id: string, direction: 'up' | 'down', blocks: Lo
             updated.splice(nextIdx, 0, moved)
             return updated
         }
-        return blocks
+        return blocks // Límite de lista alcanzado
     }
+
+    // No está en este nivel, buscar recursivamente
     return blocks.map(b => {
         if (b.children && b.children.length > 0) {
             const next = moveBlockInTree(id, direction, b.children)
