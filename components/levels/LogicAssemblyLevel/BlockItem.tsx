@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useDroppable } from '@dnd-kit/react'
 import { useSortable } from '@dnd-kit/react/sortable'
 import { RestrictToVerticalAxis } from '@dnd-kit/abstract/modifiers';
-import { PackageOpen, GripVertical, ChevronDown, Plus, Minus, ArrowDownToLine, Cpu } from 'lucide-react'
+import { PackageOpen, ChevronDown, Plus, Minus, ArrowDownToLine } from 'lucide-react'
 import { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
 import { BlockDef } from './types'
 import { CloseButton } from '@/components/ui/CloseButton'
@@ -19,8 +19,11 @@ interface BlockItemProps {
     availableFunctions: string[]
     index: number
     depth: number
+    parentId: string
     disabled?: boolean
+    isOverlay?: boolean
 }
+
 
 // ============================================================================
 // 1. ZONA DE ANIDAMIENTO (ZÓCALO PARA BLOQUES HIJOS)
@@ -41,26 +44,19 @@ function ChildrenDroppable({ parentId, childrenCount, isLoop, children, borderCo
                 ${isDropTarget ? 'bg-(--bg-hover) ring-2 ring-dashed ring-(--green-muted)/30 my-4 shadow-[inset_0_4px_15px_rgba(0,0,0,0.8)] z-20' : 'z-auto'}
             `}
         >
-            {/* Hit area */}
-            <div className="absolute -inset-4 -inset-x-8 -bottom-8 pointer-events-auto z-0" />
+            {/* Hit area expandida para captar arrastres desde la izquierda (indentación) */}
+            <div className="absolute -inset-4 -left-16 -inset-x-8 -bottom-8 pointer-events-auto z-0" />
 
             {/* Contenido */}
             <div className="relative z-10 flex flex-col gap-2 min-h-[4px]">
                 {children}
-            </div>
-
-            {/* ESTADO: Arrastrando sobre el zócalo */}
+            </div>            {/* ESTADO: Arrastrando sobre el zócalo */}
             {isDropTarget && (
-                <div className="h-14 border border-dashed border-(--green-base) bg-[#050608] flex items-center justify-center gap-3 mt-2 relative z-20 shadow-[inset_0_0_20px_rgba(85,226,0,0.1)]">
-                    <ArrowDownToLine className="text-(--green-light) animate-bounce" size={16} />
-                    <span className="font-mono text-[9px] text-(--green-light) uppercase tracking-[0.4em] font-black drop-shadow-[0_0_8px_rgba(85,226,0,0.8)]">
+                <div className="h-10 border border-dashed border-(--green-base)/40 bg-(--green-base)/5 flex items-center justify-center gap-3 mt-2 relative z-20 rounded-xs">
+                    <ArrowDownToLine className="text-(--green-light) opacity-50 animate-bounce" size={14} />
+                    <span className="font-mono text-[8px] text-(--green-light) uppercase tracking-[0.4em] font-black">
                         INSERTAR_MOD
                     </span>
-                    {/* Guías de mira táctica */}
-                    <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-(--green-base)/50" />
-                    <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-(--green-base)/50" />
-                    <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-(--green-base)/50" />
-                    <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-(--green-base)/50" />
                 </div>
             )}
 
@@ -94,28 +90,42 @@ export function BlockItem({
     availableFunctions,
     index,
     depth,
+    parentId,
     disabled = false,
+    isOverlay = false,
 }: BlockItemProps) {
     const [showChildPicker, setShowChildPicker] = useState(false)
 
-    const { ref: nodeRef, handleRef, isDragging, isDropTarget } = useSortable({
-        id: block.id,
+    const { ref: nodeRef, targetRef, handleRef, isDragging } = useSortable({
+        id: `${block.id}__drop`,
         index,
-        disabled, modifiers: [RestrictToVerticalAxis],
-        data: { ...block, depth, isWorkspace: true }
+        disabled: disabled || isOverlay, 
+        data: { ...block, depth, isWorkspace: true, parentId }
     })
 
     const def = availableDefs.find(d => d.type === block.type)!
 
+    // Si es un overlay, no necesitamos el wrapper de sortable completo
+    const containerProps = isOverlay ? {} : {
+        ref: (element: HTMLDivElement | null) => {
+            nodeRef(element);
+            if (!isDragging) targetRef(element);
+        }
+    };
+
     return (
         <div
-            ref={nodeRef}
-            className={`relative z-10 transition-all duration-200 ${isDragging ? 'z-50 opacity-85 scale-[1]' : ''}`}
-            style={{ marginLeft: depth > 0 ? 24 : 0 }}
+            {...containerProps}
+            className={`relative z-10 transition-shadow duration-200 ${isDragging && !isOverlay ? 'opacity-20 grayscale scale-95' : ''} ${isOverlay ? 'z-50 pointer-events-none' : ''}`}
+            style={{ marginLeft: (depth > 0 && !isOverlay) ? 24 : 0 }}
         >
+
             {/* Indentación visual (Cableado de hardware) */}
             {depth > 0 && (
-                <div className="absolute -left-4 top-6 bottom-0 w-px border-l-2 border-dotted border-(--border-color)" />
+                <div
+                    className="absolute top-6 bottom-0 w-px border-l-2 border-dotted border-(--border-color) opacity-40"
+                    style={{ left: 16 }}
+                />
             )}
 
 
@@ -124,29 +134,25 @@ export function BlockItem({
                 className={`
                     relative flex min-h-[50px] w-full rounded-[2px] bg-[#1F242D] /* <-- Más luz en el chasis principal */
                     /* BISELADO ASIMÉTRICO: Los bordes de luz ahora son más claros para reflejar el nuevo fondo */
-                    border-t border-l  
+                    border-t border-l  cursor-grab
                     border-b-2 border-r-[3px] border-[#050608]
-                    transition-all duration-150 group
-                    ${isDragging
-                        ? 'shadow-[6px_6px_0_rgba(0,0,0,0.9)] -translate-y-1 -translate-x-1 z-50 ring-1 ring-[#363D4C]'
-                        : 'shadow-[3px_3px_0_rgba(0,0,0,0.8)] hover:bg-[#252B36]' /* <-- Hover más iluminado */
-                    }
+                    transition-all duration-150 group 
                     ${disabled ? 'opacity-50 grayscale' : ''}
                 `}
             >
                 {/* 1. INDICADOR DE COLOR */}
                 <div
                     className="w-[6px] h-full border-r border-[#050608] shadow-[inset_-2px_0_4px_rgba(0,0,0,0.4)]"
-                    style={{ backgroundColor: def.border }}
+                    style={{ backgroundColor: '#FFFFFF' }}
                 />
 
                 {/* 2. DRAG HANDLE (Placa metálica aclarada) */}
                 <div
-                    ref={handleRef}
+                    //ref={handleRef}
                     className={`
                         w-8 bg-[#161A20] /* <-- Placa base con más luz */
                         border-r border-[#363D4C] flex flex-col items-center justify-between py-1.5
-                        cursor-grab active:cursor-grabbing touch-none relative
+                        /*cursor-grab active:cursor-grabbing touch-none*/ relative
                         ${disabled ? 'hidden' : ''}
                     `}
                 >
@@ -243,7 +249,7 @@ export function BlockItem({
                         onClick={() => onRemove(block.id)}
                         size='xs'
                         disabled={disabled}
-                        className="ml-auto opacity-0 group-hover:opacity-100 hover:text-white hover:bg-[#B34054] border border-transparent hover:border-[#050608] transition-all mr-2 rounded-sm"
+                        className="ml-auto opacity-45 group-hover:opacity-100 hover:text-white "
                     />
                 </div>
             </div>
@@ -276,6 +282,7 @@ export function BlockItem({
                                 onMove={onMove}
                                 availableFunctions={availableFunctions}
                                 depth={depth + 1}
+                                parentId={block.id}
                                 disabled={disabled}
                             />
                         ))}

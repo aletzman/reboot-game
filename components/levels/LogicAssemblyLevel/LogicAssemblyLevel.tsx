@@ -1,15 +1,15 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { DragDropProvider, useDroppable, DragOverlay } from '@dnd-kit/react'
-import { Play, Trash2, Activity, RefreshCcw, Cpu } from 'lucide-react'
+import { Play, Activity, RefreshCcw, Cpu } from 'lucide-react'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
 import type { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
 import { LOGIC_ASSEMBLY_TUTORIAL, LOGIC_TUTORIAL_CONFIG } from './tutorialSteps'
 import { LogicAssemblyLevelProps } from './types'
 import { BLOCK_DEFS, LOGICASSEMBLY_DATA, DEFAULT_LOGICASSEMBLY } from './constants'
-import { flatBlocks, makeBlock, updateBlockValueInTree, removeBlockFromTree, addChildToTree, findAndReorder, moveBlockInTree } from './utils'
+import { flatBlocks, makeBlock, updateBlockValueInTree, removeBlockFromTree, addChildToTree, moveBlockInTree, moveNodeInTree } from './utils'
 import { BlockItem } from './BlockItem'
 import { PseudocodeSummary } from './PseudocodeSummary'
 import { FlatSimulator } from './FlatSimulator'
@@ -35,10 +35,20 @@ export default function LogicAssemblyLevel({
     const [feedback, setFeedback] = useState<'idle' | 'correct' | 'wrong'>('idle')
     const [attempts, setAttempts] = useState(0)
     const [isExecuting, setIsExecuting] = useState(false)
+    const [activeId, setActiveId] = useState<string | null>(null);
+    const [activeBlock, setActiveBlock] = useState<LogicAssemblyBlock | null>(null);
+    const activeBlockRef = useRef<LogicAssemblyBlock | null>(null);
+    const lastTargetRef = useRef<{ id: string, index: number } | null>(null);
 
-    const availableFunctions = program
+    const { ref: rootDropRef, isDropTarget: isRootWorkspaceHover } = useDroppable({
+        id: 'root-workspace', // ID unificado
+        data: { isWorkspace: true }
+    })
+
+
+    const availableFunctions = Array.from(new Set(program
         .filter(b => b.type === 'FUNCION' && b.value)
-        .map(b => b.value as string)
+        .map(b => b.value as string)))
 
     // ------------------------------------------------------------
     // ACCIONES
@@ -70,60 +80,66 @@ export default function LogicAssemblyLevel({
         setProgram(prev => addChildToTree(parentId, type, prev))
     }
 
-    const { ref: rootDropRef, isDropTarget: isRootWorkspaceHover } = useDroppable({
-        id: 'root-workspace'
-    })
-
-    const [activeId, setActiveId] = useState<string | null>(null)
-    const [activeData, setActiveData] = useState<any>(null)
-
     const handleDragStart = useCallback((event: any) => {
-        const op = event.operation || event
-        if (!op || !op.source) return
+        const { source } = event.operation;
+        const data = source.data as any;
+        setActiveId(source.id);
 
-        const sourceData = op.source.data || op.source.props?.data || {}
-        const sourceId = op.source.id || sourceData.id
-
-        if (sourceId) {
-            setActiveId(sourceId)
-            setActiveData(sourceData)
+        let block: LogicAssemblyBlock | null = null;
+        if (data.isNew) {
+            block = makeBlock(data.type);
+        } else {
+            const sid = source.id.replace('__drop', '');
+            block = flatBlocks(program).find(b => b.id === sid) || null;
         }
-    }, [])
 
-    const handleAction = useCallback((event: any, isFinal: boolean = false) => {
-        if (isExecuting || feedback !== 'idle') return
+        setActiveBlock(block);
+        activeBlockRef.current = block;
+    }, [program]);
 
-        const op = event.operation || event
-        if (!op || !op.source) return
+    const handleDragOver = useCallback((event: any) => {
+        const { source, target } = event.operation;
+        if (!target || isExecuting || !activeBlockRef.current) return;
 
-        const sid = op.source.id
-        const tid = op.target?.id
-        const isNew = op.source.data?.isNew || false
-        const newType = op.source.data?.type as LogicAssemblyBlockType | undefined
+        // Optimización: Evitar re-renders si el target y el index son idénticos al anterior
+        if (lastTargetRef.current?.id === target.id && lastTargetRef.current?.index === target.index) return;
+        lastTargetRef.current = { id: target.id, index: target.index };
 
-        if (!sid) return
+        const sourceId = source.id.replace('__drop', '');
+        const targetId = target.id;
+        const targetIndex = target.index;
+        const isNew = source.data?.isNew || false;
+
+        // Evitar bucles infinitos
+        if (targetId.includes(activeBlockRef.current.id)) return;
 
         setProgram(current => {
-            const normalizedTid = (tid === 'root-workspace') ? null : tid
+            return moveNodeInTree(
+                current,
+                sourceId,
+                targetId,
+                targetIndex,
+                isNew,
+                source.data?.type,
+                activeBlockRef.current!
+            );
+        });
+    }, [isExecuting]);
 
-            // Caso A: Bloque nuevo de la paleta
-            if (isNew) {
-                // Solo insertamos en el estado final (onDragEnd) para evitar saturar de IDs temporales el árbol
-                if (!isFinal) return current
-                if (flatBlocks(current).length >= data.maxBlocks) return current
-                return findAndReorder(current, sid, normalizedTid, true, newType)
-            } else {
-                // Caso B: Reordenamiento de bloque existente (en tiempo real o final)
-                if (!tid || sid === tid) return current
-                return findAndReorder(current, sid, normalizedTid, false)
-            }
-        })
+    const handleDragEnd = useCallback(() => {
+        setActiveId(null);
+        setActiveBlock(null);
+        activeBlockRef.current = null;
+        lastTargetRef.current = null;
+    }, []);
 
-        if (isFinal) {
-            setActiveId(null)
-            setActiveData(null)
-        }
-    }, [isExecuting, feedback, data.maxBlocks])
+    const handleDragCancel = useCallback(() => {
+        setActiveId(null);
+        setActiveBlock(null);
+        activeBlockRef.current = null;
+        lastTargetRef.current = null;
+    }, []);
+
 
     function handleCheck() {
         if (program.length === 0 || isExecuting || feedback !== 'idle') return
@@ -171,7 +187,8 @@ export default function LogicAssemblyLevel({
     return (
         <DragDropProvider
             onDragStart={handleDragStart}
-            onDragEnd={(e) => handleAction(e, true)}
+            onDragOver={handleDragOver}
+            onDragEnd={handleDragEnd}
         >
             <div className="flex-1 flex flex-row">
                 <div className={`flex-1 flex flex-col w-full h-full overflow-hidden bg-(--bg-void) transition-all duration-700 ${feedback === 'correct' ? 'brightness-125 saturate-150' : ''}`}>
@@ -241,7 +258,7 @@ export default function LogicAssemblyLevel({
                             <div
                                 id="logic-workspace"
                                 ref={rootDropRef}
-                                className={`flex-1 min-h-[500px] max-h-[calc(100vh-296px)] overflow-y-auto custom-scrollbar overflow-x-hidden p-8 transition-all duration-500 border flex flex-col gap-3 ${isRootWorkspaceHover ? 'bg-(--green-base)/5 border-(--green-base)/30' :
+                                className={`flex-1 h-[calc(100vh-296px)] overflow-y-auto custom-scrollbar overflow-x-hidden p-8 transition-all duration-500 border flex flex-col gap-3 ${isRootWorkspaceHover ? 'bg-(--green-base)/5 border-(--green-base)/30' :
                                     feedback === 'correct' ? 'bg-(--green-darkest)/10 border-(--green-base)/40' :
                                         feedback === 'wrong' ? 'bg-(--red)/5 border-(--red)/30 animate-shake' :
                                             'bg-(--bg-surface)/30 border-white/5'
@@ -273,6 +290,7 @@ export default function LogicAssemblyLevel({
                                         onMove={handleMoveBlock}
                                         availableFunctions={availableFunctions}
                                         depth={0}
+                                        parentId="root"
                                         disabled={isInteractionDisabled}
                                     />
                                 ))}
@@ -551,6 +569,26 @@ export default function LogicAssemblyLevel({
                         )}
                     </div>
                 </aside>
+
+                <DragOverlay>
+                    {activeId && activeBlock && (
+                        <div className="w-[300px] opacity-90 shadow-2xl scale-105 transition-transform duration-200">
+                            <BlockItem
+                                block={activeBlock}
+                                availableDefs={availableDefs}
+                                onRemove={() => { }}
+                                onValueChange={() => { }}
+                                onAddChild={() => { }}
+                                onMove={() => { }}
+                                availableFunctions={availableFunctions}
+                                depth={0}
+                                index={0}
+                                parentId="overlay"
+                                isOverlay
+                            />
+                        </div>
+                    )}
+                </DragOverlay>
             </div>
         </DragDropProvider>
     )

@@ -46,86 +46,85 @@ export function addChildToTree(parentId: string, type: LogicAssemblyBlockType, b
     })
 }
 
-export function findAndReorder(
-    items: LogicAssemblyBlock[], 
-    sourceId: string, 
-    targetId: string | null, 
-    isNew: boolean = false, 
-    newBlockType?: LogicAssemblyBlockType
-): LogicAssemblyBlock[] {
-    let movedBlock: LogicAssemblyBlock | null = null;
-    let listWithoutSource: LogicAssemblyBlock[] = items;
 
-    // 1. Extraer el bloque origen si no es nuevo
-    if (isNew && newBlockType) {
-        movedBlock = makeBlock(newBlockType);
-    } else {
-        if (!sourceId) return items;
-        
-        let found = false;
-        function extractRecursive(list: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
-            if (found) return list;
-            const idx = list.findIndex(b => b.id === sourceId);
-            if (idx !== -1) {
-                movedBlock = list[idx];
-                found = true;
-                return list.filter((_, i) => i !== idx);
-            }
-            return list.map(b => (b.children && b.children.length > 0) 
-                ? { ...b, children: extractRecursive(b.children) } 
-                : b
-            );
+export function moveNodeInTree(
+    items: LogicAssemblyBlock[],
+    sourceId: string,
+    targetId: string,
+    targetIndex: number,
+    isNew: boolean = false,
+    newType?: LogicAssemblyBlockType,
+    providedBlock?: LogicAssemblyBlock 
+): LogicAssemblyBlock[] {
+    let movedBlock: LogicAssemblyBlock | null = providedBlock || null;
+
+    // 1. Extraer el bloque del árbol si ya existe
+    const findAndRemoveNode = (list: LogicAssemblyBlock[], idToRemove: string): LogicAssemblyBlock[] => {
+        const idx = list.findIndex(b => b.id === idToRemove);
+        if (idx !== -1) {
+            if (!movedBlock) movedBlock = list[idx];
+            return list.filter((_, i) => i !== idx);
         }
-        listWithoutSource = extractRecursive(items);
-        if (!found || !movedBlock) return items;
+        return list.map(b => b.children ? { ...b, children: findAndRemoveNode(b.children, idToRemove) } : b);
+    };
+
+    if (movedBlock) {
+        // Si tenemos un bloque proveído (ej: de onDragOver estable), lo removemos por SU ID real
+        items = findAndRemoveNode(items, movedBlock.id);
+    } else {
+        if (isNew && newType) {
+            movedBlock = makeBlock(newType);
+        } else {
+            // Buscar por el sourceId de la operación
+            items = findAndRemoveNode(items, sourceId);
+        }
     }
 
-    // 2. Insertar en el bloque destino
-    let inserted = false;
+    if (!movedBlock) return items;
 
-    // Caso A: El destino es un contenedor específico de hijos
-    if (targetId && targetId.startsWith('children-')) {
-        const parentId = targetId.replace('children-', '');
-        function nestRecursive(list: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
-            if (inserted) return list;
+    // 2. Determinar destino
+    const isInside = targetId.startsWith('children-');
+    const targetRefId = isInside 
+        ? targetId.replace('children-', '') 
+        : targetId.replace('__drop', '');
+
+    // 3. Insertar recursivamente
+    const insertRecursive = (list: LogicAssemblyBlock[]): LogicAssemblyBlock[] => {
+        // Caso Raíz
+        if (!targetRefId || targetRefId === 'root' || targetRefId === 'logic-workspace' || targetRefId === 'root-workspace') {
+            const next = [...list];
+            next.splice(targetIndex, 0, movedBlock!);
+            return next;
+        }
+
+        // Caso Adentro de un bloque (contenedor de hijos)
+        if (isInside) {
             return list.map(b => {
-                if (b.id === parentId) {
-                    inserted = true;
-                    return { ...b, children: [...(b.children || []), movedBlock!] };
+                if (b.id === targetRefId) {
+                    const nextChildren = [...(b.children || [])];
+                    nextChildren.splice(targetIndex, 0, movedBlock!);
+                    return { ...b, children: nextChildren };
                 }
-                if (b.children && b.children.length > 0) {
-                    return { ...b, children: nestRecursive(b.children) };
-                }
-                return b;
+                return b.children ? { ...b, children: insertRecursive(b.children) } : b;
             });
         }
-        const result = nestRecursive(listWithoutSource);
-        if (inserted) return result;
-    }
 
-    // Caso B: El destino es otro bloque (poner ANTES)
-    if (targetId && targetId !== 'root-workspace') {
-        function insertAtRecursive(list: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
-            if (inserted) return list;
-            const idx = list.findIndex(b => b.id === targetId);
-            if (idx !== -1) {
-                inserted = true;
-                const next = [...list];
-                next.splice(idx, 0, movedBlock!);
-                return next;
-            }
-            return list.map(b => (b.children && b.children.length > 0)
-                ? { ...b, children: insertAtRecursive(b.children) }
-                : b
-            );
+        // Caso Sobre un bloque (hermano)
+        const siblingIdx = list.findIndex(b => b.id === targetRefId);
+        if (siblingIdx !== -1) {
+            const next = [...list];
+            // Si el target es un bloque, usamos el targetIndex que nos da dnd-kit
+            next.splice(targetIndex, 0, movedBlock!);
+            return next;
         }
-        const finalResult = insertAtRecursive(listWithoutSource);
-        if (inserted) return finalResult;
-    }
 
-    // Caso C: No hay destino o targetId era root-workspace -> al final del nivel raíz
-    return [...listWithoutSource, movedBlock!];
+        // Seguir buscando en la profundidad
+        return list.map(b => b.children ? { ...b, children: insertRecursive(b.children) } : b);
+    };
+
+    return insertRecursive(items);
 }
+
 
 export function moveBlockInTree(id: string, direction: 'up' | 'down', blocks: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
     const idx = blocks.findIndex(b => b.id === id)
