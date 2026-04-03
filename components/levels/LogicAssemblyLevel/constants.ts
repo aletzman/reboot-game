@@ -123,7 +123,7 @@ export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
     },
     '2-02': {
         availableBlocks: ['MOVER', 'GIRAR', 'FUNCION', 'LLAMAR', 'ACTIVAR'],
-        maxBlocks: 12,
+        maxBlocks: 20,
         hint: 'Define una FUNCIÓN con la secuencia y llámala 3 veces para los tres nodos',
         map: {
             grid: [

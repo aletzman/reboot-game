@@ -118,7 +118,7 @@ export function BlockItem({
     return (
         <div
             {...containerProps}
-            className={`relative z-10 transition-shadow duration-200 ${isDragging && !isOverlay ? 'opacity-20 grayscale scale-95' : ''} ${isOverlay ? 'z-50 pointer-events-none' : ''}`}
+            className={`relative z-10 transition-shadow duration-200  ${isDragging && !isOverlay ? 'opacity-20 grayscale scale-95' : ''} ${isOverlay ? 'z-50 pointer-events-none' : ''}`}
             style={{ marginLeft: (depth > 0 && !isOverlay) ? 24 : 0 }}
         >
 
@@ -143,28 +143,22 @@ export function BlockItem({
                     style={{ backgroundColor: def.border }}
                 />
 
+                {/* 1. BISEL DE PROFUNDIDAD (El "secreto" para que no sea plano) */}
+                <div className="absolute inset-px border border-(--bg-elevated)/60 rounded-[1px] pointer-events-none shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]" />
+
                 {/* 2. DRAG HANDLE (Placa metálica aclarada) */}
                 <div
-                    //ref={handleRef}
-                    className={`
-                        w-8 bg-(--surface-2-dark) /* <-- Placa base con más luz */
-                        border-r border-[#363D4C] flex flex-col items-center justify-between py-1.5
-                        /*cursor-grab active:cursor-grabbing touch-none*/ relative 
-                        ${disabled ? 'hidden' : ''}
-                    `}
+                    ref={handleRef}
+                    className="w-10 bg-(--surface-2) border-r border-white/5 flex flex-col items-center justify-center gap-1.5 cursor-grab active:cursor-grabbing group-hover:bg-[#161920] transition-colors"
                 >
-                    {/* Tornillo superior */}
-                    <Screw />
-
-                    {/* Estrías de agarre */}
-                    <div className="flex flex-col gap-[3px] w-full px-[5px] opacity-80">
-                        <div className="h-[2px] w-full bg-[#050608] border-b border-[#363D4C]" />
-                        <div className="h-[2px] w-full bg-[#050608] border-b border-[#363D4C]" />
-                        <div className="h-[2px] w-full bg-[#050608] border-b border-[#363D4C]" />
+                    {/* Indicadores de Micro-LED (Sustituyen tornillos) */}
+                    <div className="w-1 h-1 rounded-full bg-(--text-muted)/60" />
+                    <div className="flex flex-col gap-1 opacity-20">
+                        {[...Array(3)].map((_, i) => (
+                            <div key={i} className="w-4 h-px bg-(--text-muted)" />
+                        ))}
                     </div>
-
-                    {/* Tornillo inferior */}
-                    <Screw />
+                    <div className="w-1 h-1 rounded-full bg-(--text-muted)/60 shadow-[0_0_5px_rgba(255,255,255,0.1)]" />
                 </div>
 
                 {/* 3. CUERPO DEL MÓDULO */}
