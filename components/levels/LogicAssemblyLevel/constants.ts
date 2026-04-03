@@ -1,5 +1,5 @@
 import { BlockDef, LogicAssemblyLevelData } from './types'
-import { LogicAssemblyBlock } from '@/types/game'
+import { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
 
 // Redefinimos flatBlocks aquí para evitar dependencia circular con utils.ts
 function flatBlocksLocal(blocks: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
@@ -194,4 +194,17 @@ export const DEFAULT_LOGICASSEMBLY: LogicAssemblyLevelData = {
     maxBlocks: 10,
     hint: 'Construye la secuencia correcta',
     validateFn: (blocks: LogicAssemblyBlock[]) => blocks.length > 0,
+}
+
+
+export const MODULES_REGISTERS: Record<LogicAssemblyBlockType, string> = {
+    'MOVER': '0x01',
+    'GIRAR': '0x02',
+    'REPETIR': '0x03',
+    'SI': '0x04',
+    'SI_NO': '0x05',
+    'FUNCION': '0x06',
+    'LLAMAR': '0x07',
+    'ACTIVAR': '0x08',
+    'ASIGNAR': '0x09',
 }

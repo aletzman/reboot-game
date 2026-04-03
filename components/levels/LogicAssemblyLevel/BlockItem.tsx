@@ -8,6 +8,8 @@ import { PackageOpen, ChevronDown, Plus, Minus, ArrowDownToLine } from 'lucide-r
 import { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
 import { BlockDef } from './types'
 import { CloseButton } from '@/components/ui/CloseButton'
+import { MODULES_REGISTERS } from './constants';
+import { Screw } from '@/components/ui/Screw';
 
 interface BlockItemProps {
     block: LogicAssemblyBlock
@@ -62,13 +64,13 @@ function ChildrenDroppable({ parentId, childrenCount, isLoop, children, borderCo
 
             {/* ESTADO: Zócalo Vacío */}
             {!isDropTarget && isEmpty && (
-                <div className="py-6 px-4 border border-dashed border-(--border-muted-color) bg-black/40 flex flex-col items-center justify-center gap-2 opacity-40 hover:opacity-80 transition-all select-none hover:bg-(--bg-surface) hover:border-(--border-color) cursor-pointer">
-                    <div className="flex items-center gap-2 text-(--text-ghost)">
+                <div className="py-6 px-4  text-(--text-muted)/60 hover:text-(--text-primary) border border-dashed border-(--border-muted-color) bg-black/40 flex flex-col items-center justify-center gap-2 opacity-70 hover:opacity-80 transition-all select-none hover:bg-(--bg-surface) hover:border-(--border-color) cursor-pointer">
+                    <div className="flex items-center gap-2">
                         <span className="font-mono text-[10px] uppercase font-black tracking-widest">[</span>
                         <PackageOpen size={14} className="opacity-50" />
                         <span className="font-mono text-[10px] uppercase font-black tracking-widest">]</span>
                     </div>
-                    <span className="font-mono text-[8px] uppercase tracking-[0.4em] text-(--text-ghost) font-bold text-center">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.4em] font-bold text-center">
                         ZÓCALO_VACÍO
                     </span>
                 </div>
@@ -99,7 +101,7 @@ export function BlockItem({
     const { ref: nodeRef, targetRef, handleRef, isDragging } = useSortable({
         id: `${block.id}__drop`,
         index,
-        disabled: disabled || isOverlay, 
+        disabled: disabled || isOverlay,
         data: { ...block, depth, isWorkspace: true, parentId }
     })
 
@@ -129,37 +131,30 @@ export function BlockItem({
             )}
 
 
-            {/* CONTENEDOR FÍSICO (Cartucho Rugerizado REBOOT - Calibración de Luz Clara) */}
+            {/* CONTENEDOR FÍSICO (Cartucho de Acero Cepillado) */}
             <div
-                className={`
-                    relative flex min-h-[50px] w-full rounded-[2px] bg-[#1F242D] /* <-- Más luz en el chasis principal */
-                    /* BISELADO ASIMÉTRICO: Los bordes de luz ahora son más claros para reflejar el nuevo fondo */
-                    border-t border-l  cursor-grab
-                    border-b-2 border-r-[3px] border-[#050608]
-                    transition-all duration-150 group 
-                    ${disabled ? 'opacity-50 grayscale' : ''}
-                `}
+                className={`relative flex min-h-[50px] w-full 
+                            rounded-[4px] transition-all duration-150 group 
+                            cursor-grab ${disabled ? 'opacity-50 grayscale' : ''} block-item`}
             >
                 {/* 1. INDICADOR DE COLOR */}
                 <div
-                    className="w-[6px] h-full border-r border-[#050608] shadow-[inset_-2px_0_4px_rgba(0,0,0,0.4)]"
-                    style={{ backgroundColor: '#FFFFFF' }}
+                    className="w-[6px] h-[50px] border-r border-[#050608] shadow-[inset_-2px_0_4px_rgba(0,0,0,0.4)]"
+                    style={{ backgroundColor: def.border }}
                 />
 
                 {/* 2. DRAG HANDLE (Placa metálica aclarada) */}
                 <div
                     //ref={handleRef}
                     className={`
-                        w-8 bg-[#161A20] /* <-- Placa base con más luz */
+                        w-8 bg-(--surface-2-dark) /* <-- Placa base con más luz */
                         border-r border-[#363D4C] flex flex-col items-center justify-between py-1.5
-                        /*cursor-grab active:cursor-grabbing touch-none*/ relative
+                        /*cursor-grab active:cursor-grabbing touch-none*/ relative 
                         ${disabled ? 'hidden' : ''}
                     `}
                 >
                     {/* Tornillo superior */}
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#050608] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] flex items-center justify-center">
-                        <div className="w-px h-[3px] bg-[#363D4C] rotate-45" />
-                    </div>
+                    <Screw />
 
                     {/* Estrías de agarre */}
                     <div className="flex flex-col gap-[3px] w-full px-[5px] opacity-80">
@@ -169,29 +164,27 @@ export function BlockItem({
                     </div>
 
                     {/* Tornillo inferior */}
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#050608] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] flex items-center justify-center">
-                        <div className="w-px h-[3px] bg-[#363D4C] -rotate-12" />
-                    </div>
+                    <Screw />
                 </div>
 
                 {/* 3. CUERPO DEL MÓDULO */}
                 <div className="flex-1 p-2 pl-3 flex flex-wrap items-center gap-3 relative overflow-hidden">
 
                     {/* Título Stamped */}
-                    <div className="flex flex-col justify-center relative z-10 min-w-18">
+                    <div className="flex flex-col justify-center items-center relative z-10 min-w-18 h-full rounded-xs label-panel">
                         <span
-                            className="font-black tracking-[0.15em] text-[11px] uppercase leading-none drop-shadow-[0_2px_2px_rgba(0,0,0,1)]"
+                            className="text-[11px] uppercase label-text"
                             style={{ color: def.border }}
                         >
                             {def.label}
                         </span>
-                        <span className="font-mono text-[8px] text-(--text-muted) uppercase mt-[3px] font-bold">
-                            <span className="opacity-40">TIPO:</span> {block.type}
+                        <span className="font-mono text-[10px] text-(--text-muted) uppercase font-bold">
+                            <span className="opacity-60">ID:</span> {MODULES_REGISTERS[block.type]}
                         </span>
                     </div>
 
                     {/* Separador físico */}
-                    <div className="h-6 w-[2px] bg-[#050608] mx-1 border-r border-[#363D4C] relative z-10" />
+                    <div className="h-6 w-px bg-[#1e2128] mx-1 border-r border-[#4f545f] relative z-10" />
 
                     {/* 4. INPUTS DE VALOR (Módulos LCD) */}
                     {def.hasValue && (
@@ -199,7 +192,7 @@ export function BlockItem({
 
                             {/* Stepper Numérico Mecánico */}
                             {def.valueType === 'number' && (
-                                <div className="flex items-stretch bg-[#050608] rounded-sm border-t border-l border-[#050608] border-b border-r overflow-hidden h-7 shadow-[inset_0_2px_4px_rgba(0,0,0,1)]">
+                                <div className="flex items-stretch rounded-sm h-7 lcd-screen ">
                                     <button
                                         onClick={() => !disabled && onValueChange(block.id, Math.max(1, (block.value as number) - 1))}
                                         disabled={disabled || (block.value as number) <= 1}
@@ -207,8 +200,8 @@ export function BlockItem({
                                     >
                                         <Minus size={12} strokeWidth={4} />
                                     </button>
-                                    <div className="w-10 flex items-center justify-center relative bg-[#0A0C0F]">
-                                        <span className="font-mono text-[13px] font-bold text-white tabular-nums drop-shadow-[0_0_2px_rgba(255,255,255,0.3)]">
+                                    <div className="w-10 flex items-center justify-center relative">
+                                        <span className="font-mono text-[13px] font-bold text-(--green-light) tabular-nums">
                                             {block.value}
                                         </span>
                                     </div>
@@ -224,23 +217,54 @@ export function BlockItem({
 
                             {/* Selectores */}
                             {(def.valueType === 'direction' || (def.valueType === 'text' && block.type === 'LLAMAR')) && (
-                                <div className="relative flex">
+                                <div className="relative flex group/lcd">
                                     <select
                                         value={block.value as string}
                                         onChange={e => onValueChange(block.id, e.target.value)}
                                         disabled={disabled}
-                                        className="appearance-none bg-[#050608] rounded-sm border-t border-l border-[#050608] border-b border-r pl-3 pr-8 h-7 font-mono text-[10px] min-w-[120px] outline-none text-(--text-muted) hover:text-white focus:text-(--green-base) font-bold uppercase cursor-pointer shadow-[inset_0_2px_4px_rgba(0,0,0,1)] transition-colors"
+                                        className={`appearance-none rounded-sm h-7 pl-3 pr-8 min-w-[120px] outline-none transition-all duration-200 cursor-pointer lcd-screen  
+                                        ${def.valueType === 'direction' ? 'uppercase' : ''}`}
+                                        style={{
+                                            // Brillo de fósforo verde
+                                            textShadow: '0 1px 1px var(--green-base), 0 0 3px rgba(126, 213, 38, 0.2)',
+                                            // Reflejo interno del panel
+                                            backgroundImage: 'linear-gradient(180deg, rgba(45, 120, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%)'
+                                        }}
                                     >
-                                        {def.valueType === 'text' && <option value="" className="text-(--text-ghost)">-- SEL_FUNCIÓN --</option>}
+                                        {def.valueType === 'text' && (
+                                            <option value="" className="text-(--green-muted) opacity-50">-- SEL_FUNCIÓN --</option>
+                                        )}
                                         {(def.valueOptions || availableFunctions).map(opt => (
-                                            <option key={opt} value={opt} className="bg-[#050608] text-white">{opt}</option>
+                                            <option key={opt} value={opt} className="bg-(--green-darkest) text-(--green-light)">
+                                                {opt}
+                                            </option>
                                         ))}
                                     </select>
-                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none">
+
+                                    {/* Icono de flecha integrado en la paleta */}
+                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-(--green-base) group-hover/lcd:text-(--green-light) transition-colors">
                                         <ChevronDown size={12} strokeWidth={4} />
                                     </div>
+
+                                    {/* Reflejo de cristal superior (Le da el toque final de "pantalla") */}
+                                    <div className="absolute inset-0 pointer-events-none rounded-sm bg-linear-to-tr from-transparent via-(--green-light)/2 to-white/5" />
                                 </div>
                             )}
+
+                            {/* Inputs de texto manuales (Para FUNCION, SI, ASIGNAR) */}
+                            {def.valueType === 'text' && block.type !== 'LLAMAR' && (
+                                <div className="relative flex">
+                                    <input
+                                        type="text"
+                                        value={block.value as string}
+                                        onChange={e => onValueChange(block.id, e.target.value)}
+                                        disabled={disabled}
+                                        placeholder={block.type === 'FUNCION' ? 'nombre_función' : 'expresión'}
+                                        className={`rounded-sm lcd-screen px-3 h-7`}
+                                    />
+                                </div>
+                            )}
+
                         </div>
                     )}
 
@@ -249,92 +273,95 @@ export function BlockItem({
                         onClick={() => onRemove(block.id)}
                         size='xs'
                         disabled={disabled}
-                        className="ml-auto opacity-45 group-hover:opacity-100 hover:text-white "
+                        variant="light"
+                        className="ml-auto opacity-60 group-hover:opacity-100 hover:text-white"
                     />
                 </div>
-            </div>
+            </div >
             {/* ===============================================================
                 BLOQUES HIJOS (RUTINAS ANIDADAS)
                 =============================================================== */}
-            {block.children !== undefined && (
-                <div className="ml-5 mt-1 pl-4 py-2 flex flex-col gap-2 relative">
+            {
+                block.children !== undefined && (
+                    <div className="ml-5 mt-1 pl-4 py-2 flex flex-col gap-2 relative">
 
-                    {/* Cableado de Hardware (Esquina de anidamiento) */}
-                    <div className="absolute left-0 top-0 bottom-4 w-px border-l-2 border-dotted" style={{ borderColor: def.border, opacity: 0.3 }} />
-                    <div className="absolute left-0 bottom-4 w-3 h-px border-b-2 border-dotted" style={{ borderColor: def.border, opacity: 0.3 }} />
+                        {/* Cableado de Hardware (Esquina de anidamiento) */}
+                        <div className="absolute left-0 top-0 bottom-4 w-px border-l-2 border-dotted" style={{ borderColor: def.border, opacity: 0.3 }} />
+                        <div className="absolute left-0 bottom-4 w-3 h-px border-b-2 border-dotted" style={{ borderColor: def.border, opacity: 0.3 }} />
 
-                    {/* Zócalo para soltar hijos */}
-                    <ChildrenDroppable
-                        parentId={block.id}
-                        childrenCount={block.children.length}
-                        isLoop={true}
-                        borderColor={def.border}
-                    >
-                        {block.children.map((child, cIdx) => (
-                            <BlockItem
-                                key={child.id}
-                                index={cIdx}
-                                block={child}
-                                availableDefs={availableDefs}
-                                onRemove={onRemove}
-                                onValueChange={onValueChange}
-                                onAddChild={onAddChild}
-                                onMove={onMove}
-                                availableFunctions={availableFunctions}
-                                depth={depth + 1}
-                                parentId={block.id}
-                                disabled={disabled}
-                            />
-                        ))}
-                    </ChildrenDroppable>
+                        {/* Zócalo para soltar hijos */}
+                        <ChildrenDroppable
+                            parentId={block.id}
+                            childrenCount={block.children.length}
+                            isLoop={true}
+                            borderColor={def.border}
+                        >
+                            {block.children.map((child, cIdx) => (
+                                <BlockItem
+                                    key={child.id}
+                                    index={cIdx}
+                                    block={child}
+                                    availableDefs={availableDefs}
+                                    onRemove={onRemove}
+                                    onValueChange={onValueChange}
+                                    onAddChild={onAddChild}
+                                    onMove={onMove}
+                                    availableFunctions={availableFunctions}
+                                    depth={depth + 1}
+                                    parentId={block.id}
+                                    disabled={disabled}
+                                />
+                            ))}
+                        </ChildrenDroppable>
 
-                    {/* Botón Táctico para Acoplar Sub-Módulo */}
-                    <div className="relative pt-1 z-10">
-                        {!showChildPicker ? (
-                            <button
-                                onClick={() => setShowChildPicker(true)}
-                                disabled={disabled}
-                                className={`
+                        {/* Botón Táctico para Acoplar Sub-Módulo */}
+                        <div className="relative pt-1 z-10">
+                            {!showChildPicker ? (
+                                <button
+                                    onClick={() => setShowChildPicker(true)}
+                                    disabled={disabled}
+                                    className={`
                                     w-full flex items-center justify-center gap-2 px-4 py-2 rounded-sm bg-black/20 
-                                    font-mono text-[9px] uppercase tracking-[0.2em] cursor-pointer group/socket transition-all 
+                                    font-mono text-[10px] uppercase tracking-[0.2em] cursor-pointer group/socket transition-all 
                                     border border-dashed border-(--border-color) hover:border-(--cyan)/50 hover:bg-(--cyan)/5 
-                                    text-(--text-ghost) hover:text-(--cyan)
+                                    text-(--text-muted) hover:text-(--cyan)
                                     ${disabled ? 'opacity-30 cursor-not-allowed hidden' : ''}
                                 `}
-                            >
-                                <Plus size={12} className="group-hover/socket:rotate-90 transition-transform" />
-                                <span className="font-bold">ACOPLAR_MOD_INTERNO</span>
-                            </button>
-                        ) : (
-                            <div className="bg-[#050608] border border-(--border-color) p-3 shadow-2xl rounded-sm">
-                                <span className="block font-mono text-[8px] text-(--text-muted) uppercase tracking-widest mb-3 border-b border-(--border-color) pb-1">
-                                    [ SEL_MOD_COMPATIBLE ]
-                                </span>
-                                <div className="flex flex-wrap gap-2">
-                                    {availableDefs
-                                        .filter(d => !d.hasChildren)
-                                        .map(d => (
-                                            <button
-                                                key={d.type}
-                                                onClick={() => { onAddChild(block.id, d.type); setShowChildPicker(false) }}
-                                                className="px-3 py-1.5 border border-(--border-color) bg-(--bg-surface) hover:bg-(--bg-hover) transition-all cursor-pointer font-mono text-[9px] font-bold uppercase tracking-widest shadow-sm hover:shadow-md"
-                                                style={{ borderLeft: `2px solid ${d.border}`, color: d.border }}
-                                            >
-                                                {d.label}
-                                            </button>
-                                        ))}
-                                    <button
-                                        onClick={() => setShowChildPicker(false)}
-                                        className="px-3 py-1.5 bg-transparent border border-transparent text-(--text-ghost) hover:text-(--red) font-mono text-[8px] uppercase cursor-pointer transition-all"
-                                    >
-                                        [ CANCELAR ]
-                                    </button>
+                                >
+                                    <Plus size={12} className="group-hover/socket:rotate-90 transition-transform" />
+                                    <span className="font-bold">ACOPLAR_MODULO_INTERNO</span>
+                                </button>
+                            ) : (
+                                <div className="bg-[#050608] border border-(--border-color) p-3 shadow-2xl rounded-sm">
+                                    <span className="block font-mono text-[8px] text-(--text-muted) uppercase tracking-widest mb-3 border-b border-(--border-color) pb-1">
+                                        [ SEL_MOD_COMPATIBLE ]
+                                    </span>
+                                    <div className="flex flex-wrap gap-2">
+                                        {availableDefs
+                                            .filter(d => !d.hasChildren)
+                                            .map(d => (
+                                                <button
+                                                    key={d.type}
+                                                    onClick={() => { onAddChild(block.id, d.type); setShowChildPicker(false) }}
+                                                    className="px-3 py-1.5 border border-(--border-color) bg-(--bg-surface) hover:bg-(--bg-hover) transition-all cursor-pointer font-mono text-[9px] font-bold uppercase tracking-widest shadow-sm hover:shadow-md"
+                                                    style={{ borderLeft: `2px solid ${d.border}`, color: d.border }}
+                                                >
+                                                    {d.label}
+                                                </button>
+                                            ))}
+                                        <button
+                                            onClick={() => setShowChildPicker(false)}
+                                            className="px-3 py-1.5 bg-transparent border border-transparent text-(--text-ghost) hover:text-(--red) font-mono text-[8px] uppercase cursor-pointer transition-all"
+                                        >
+                                            [ CANCELAR ]
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     )
 }

@@ -16,6 +16,7 @@ import { FlatSimulator } from './FlatSimulator'
 import { LevelHeader } from '../LevelHeader'
 import { DraggablePaletteBlock } from './DraggablePaletteBlock'
 import { Screw } from '@/components/ui/Screw'
+import SectionHeader from '@/components/ui/SectionHeader'
 
 
 
@@ -190,7 +191,7 @@ export default function LogicAssemblyLevel({
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
         >
-            <div className="flex-1 flex flex-row">
+            <div className="flex-1 flex flex-row" >
                 <div className={`flex-1 flex flex-col w-full h-full overflow-hidden bg-(--bg-void) transition-all duration-700 ${feedback === 'correct' ? 'brightness-125 saturate-150' : ''}`}>
 
 
@@ -202,7 +203,7 @@ export default function LogicAssemblyLevel({
                         />
                     </div>
 
-                    <div className="flex-1 flex flex-col md:flex-row min-h-[70vh] border border-(--bg-hover) overflow-hidden shadow-2xl relative bg-(--bg-void)">
+                    <div className="flex-1 flex flex-col md:flex-row  overflow-hidden shadow-2xl relative bg-(--bg-void)">
 
                         {/* Overlay de bloqueo global cuando hay ejecución o error */}
                         {isInteractionDisabled && (
@@ -210,36 +211,13 @@ export default function LogicAssemblyLevel({
                         )}
 
                         {/* Panel izquierdo — paleta de bloques */}
-                        <aside id="logic-palette" className="w-full md:w-[240px] shrink-0 bg-(--bg-deep) border-b md:border-b-0 md:border-r border-(--border-color) flex flex-col relative overflow-hidden z-20">
+                        <aside id="logic-palette" className="w-full md:w-[240px] shrink-0 bg-(--bg-deep) border-b md:border-b-0 md:border-r border-(--border-color)  border-t-0 flex flex-col relative overflow-hidden z-20">
 
                             {/* 1. HEADER: Placa Metálica Superior */}
-                            <header className="p-4 border-b-2 border-black bg-(--bg-surface) flex items-center justify-between relative  z-10">
-
-                                {/* Tornillos Industriales Perforados */}
-                                <div className="absolute top-2 left-2 w-1.5 h-1.5 rounded-full bg-(--bg-void) shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] flex items-center justify-center">
-                                    <div className="w-px h-[3px] bg-(--border-color) rotate-45" />
-                                </div>
-                                <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-(--bg-void) shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] flex items-center justify-center">
-                                    <div className="w-px h-[3px] bg-(--border-color) -rotate-12" />
-                                </div>
-
-                                <div className="flex items-center gap-2 mt-1">
-                                    <span className="font-mono text-[11px] text-(--green-muted) tracking-[0.2em] uppercase font-black drop-shadow-[0_1px_1px_rgba(0,0,0,1)]">
-                                        módulos_de_comando
-                                    </span>
-                                </div>
-
-                                {/* Diodos LED de Estado Físicos */}
-                                <div className="flex gap-1.5 mt-1">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-(--green-base) animate-pulse shadow-[0_0_5px_var(--green-base)]" />
-                                    <div className="w-1.5 h-1.5 rounded-full bg-(--bg-void)  border border-(--border-muted-color)/30" />
-                                </div>
-                            </header>
+                            <SectionHeader title="módulos_de_comando" subtitle="SEC_02 // MOD_CMD" />
 
                             {/* 2. ZONA DE ALMACENAJE (El "Hueco" oscuro) */}
-                            <div className="flex-1 p-4 flex flex-col gap-3 overflow-y-auto custom-scrollbar bg-(--bg-void)   relative">
-
-
+                            <div className="flex-1 p-4 flex flex-col gap-3 overflow-y-auto custom-scrollbar bg-(--bg-deep) relative">
                                 {availableDefs.map(def => (
                                     <div key={def.type} className="relative z-10">
                                         <DraggablePaletteBlock
@@ -254,11 +232,11 @@ export default function LogicAssemblyLevel({
                         </aside>
 
                         {/* Panel central — Sequenciador */}
-                        <main className="flex-1 flex flex-col bg-(--bg-void) relative">
+                        <main className="flex-1 flex flex-col bg-(--bg-void) relative h-[calc(100svh-130px)]">
                             <div
                                 id="logic-workspace"
                                 ref={rootDropRef}
-                                className={`flex-1 h-[calc(100vh-296px)] overflow-y-auto custom-scrollbar overflow-x-hidden p-8 transition-all duration-500 border flex flex-col gap-3 ${isRootWorkspaceHover ? 'bg-(--green-base)/5 border-(--green-base)/30' :
+                                className={`flex-1 h-[calc(100svh-500px)] overflow-y-auto custom-scrollbar overflow-x-hidden p-8 transition-all duration-500 border flex flex-col gap-3 ${isRootWorkspaceHover ? 'bg-(--green-base)/5 border-(--green-base)/30' :
                                     feedback === 'correct' ? 'bg-(--green-darkest)/10 border-(--green-base)/40' :
                                         feedback === 'wrong' ? 'bg-(--red)/5 border-(--red)/30 animate-shake' :
                                             'bg-(--bg-surface)/30 border-white/5'
@@ -300,18 +278,17 @@ export default function LogicAssemblyLevel({
                                 <div className="max-w-5xl mx-auto flex items-stretch gap-4">
 
                                     {/* 1. MÓDULO DE PURGA: Kill Switch Industrial */}
-                                    <div className="relative p-1 bg-black/40 rounded-sm shadow-[inset_0_2px_10px_rgba(0,0,0,1)] border border-white/5">
+                                    <div className="relative p-2 bg-black/40 rounded-sm shadow-[inset_0_2px_10px_rgba(0,0,0,1)] border border-white/5">
                                         <button
                                             onClick={() => !isInteractionDisabled && setProgram([])}
                                             disabled={isInteractionDisabled || program.length === 0}
-                                            className={`
-                    h-full px-4 flex flex-col items-center justify-center gap-2 group transition-all duration-150 rounded-xs select-none relative overflow-hidden
-                    ${isInteractionDisabled || program.length === 0
+                                            className={`h-full px-4 flex flex-col items-center justify-center gap-2 group transition-all duration-150 rounded-xs select-none relative overflow-hidden
+                                                    ${isInteractionDisabled || program.length === 0
                                                     ? 'opacity-20 grayscale cursor-not-allowed bg-transparent'
                                                     : 'cursor-pointer bg-[#2A1616] hover:bg-[#3D1A1A] active:scale-95 shadow-[0_4px_0_rgba(0,0,0,1)] active:shadow-none'
                                                 }
-                    border border-b-[3px] border-r-[3px] border-black
-                `}
+                                                border border-b-[3px] border-r-[3px] border-black
+                                            `}
                                         >
                                             <div className="absolute inset-0 opacity-10 bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,#000_8px,#000_10px)] pointer-events-none" />
 
@@ -325,7 +302,7 @@ export default function LogicAssemblyLevel({
                                     </div>
 
                                     {/* 2. UNIDAD DE CONTROL CENTRAL */}
-                                    <div className="flex-1 relative p-1.5 bg-black/20 rounded-sm shadow-[inset_0_4px_20px_rgba(0,0,0,0.8)] border border-white/5">
+                                    <div className="flex-1 relative p-2 bg-black/20 rounded-sm shadow-[inset_0_4px_20px_rgba(0,0,0,0.8)] border border-white/5">
 
 
 
@@ -333,26 +310,25 @@ export default function LogicAssemblyLevel({
                                             id="logic-execute-button"
                                             onClick={handleCheck}
                                             disabled={program.length === 0 || isInteractionDisabled}
-                                            className={`
-                    group relative w-full h-20 transition-all duration-200 rounded-xs overflow-hidden select-none cursor-pointer
-                    active:translate-y-1 active:translate-x-0.5 active:shadow-none
-                    disabled:opacity-40 disabled:grayscale disabled:cursor-not-allowed
-                    
-                    /* ESTRUCTURA FÍSICA */
-                    bg-[#1F242D] border-t border-l  border-b-4 border-r-5 border-black
-                    shadow-[0_8px_0_#050608,0_15px_30px_rgba(0,0,0,0.7)]
-                `}
+                                            className={`group relative w-full h-20 transition-all duration-200 rounded-xs overflow-hidden select-none cursor-pointer
+                                                    active:translate-y-1 active:translate-x-0.5 active:shadow-none
+                                                    disabled:opacity-40 disabled:grayscale disabled:cursor-not-allowed
+                                                    
+                                                    /* ESTRUCTURA FÍSICA */
+                                                    bg-[#1F242D] border-t border-l  border-b-4 border-r-5 border-black
+                                                    shadow-[0_8px_0_#050608,0_15px_30px_rgba(0,0,0,0.7)]
+                                                `}
                                         >
                                             {/* Textura de rejilla mucho más densa */}
                                             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] bg-size-[4px_4px] pointer-events-none" />
 
                                             {/* Luz de estado lateral (Lume) */}
                                             <div className={`absolute left-0 top-0 bottom-0 w-2 transition-all duration-500
-                    ${feedback === 'correct' ? 'bg-(--green-light) shadow-[4px_0_20px_var(--green-light)]' :
+                                                    ${feedback === 'correct' ? 'bg-(--green-light) shadow-[4px_0_20px_var(--green-light)]' :
                                                     feedback === 'wrong' ? 'bg-(--red) shadow-[4px_0_20px_var(--red)]' :
                                                         isExecuting ? 'bg-(--amber) shadow-[4px_0_20px_var(--amber)]' :
                                                             'bg-[#363D4C] opacity-30'}
-                `} />
+                                                `} />
 
                                             <div className="relative z-10 flex items-center justify-between px-10 h-full">
                                                 <div className="flex flex-col items-start gap-1">
@@ -360,8 +336,8 @@ export default function LogicAssemblyLevel({
                                                         CORE_INJECTOR_V2.1
                                                     </span>
                                                     <span className={`font-mono text-xl tracking-tighter uppercase font-black transition-all
-                            ${feedback === 'wrong' ? 'text-(--red)' : isExecuting ? 'text-(--amber)' : 'text-white'}
-                        `}>
+                                                            ${feedback === 'wrong' ? 'text-(--red)' : isExecuting ? 'text-(--amber)' : 'text-white'}
+                                                        `}>
                                                         {isExecuting ? '>>> EJECUTANDO' : feedback === 'correct' ? 'SUCCESS_OK' : feedback === 'wrong' ? 'FATAL_ERR' : 'INICIAR SECUENCIA'}
                                                     </span>
                                                 </div>
@@ -381,12 +357,12 @@ export default function LogicAssemblyLevel({
 
                                                     {/* Botón Circular con Bisel Profundo */}
                                                     <div className={`
-                            w-14 h-14 rounded-full border-2 flex items-center justify-center transition-all duration-300 bg-black/40
-                            shadow-[inset_0_4px_8px_rgba(0,0,0,0.8),0_2px_0_rgba(255,255,255,0.05)]
-                            ${isExecuting ? 'border-(--amber) text-(--amber) animate-spin' :
+                                                            w-14 h-14 rounded-full border-2 flex items-center justify-center transition-all duration-300 bg-black/40
+                                                            shadow-[inset_0_4px_8px_rgba(0,0,0,0.8),0_2px_0_rgba(255,255,255,0.05)]
+                                                            ${isExecuting ? 'border-(--amber) text-(--amber) animate-spin' :
                                                             feedback === 'correct' ? 'border-(--green-base) text-(--green-light) shadow-[0_0_20px_var(--green-base)]' :
                                                                 'border-[#363D4C] text-[#363D4C] group-hover:border-(--green-muted) group-hover:text-(--green-light)'}
-                        `}>
+                                                        `}>
                                                         <Play size={28} fill={feedback === 'correct' ? 'currentColor' : 'none'} strokeWidth={3} />
                                                     </div>
                                                 </div>
@@ -444,26 +420,16 @@ export default function LogicAssemblyLevel({
                 </div>
 
                 {/* Panel derecho — Monitor, Pista y Resumen de Pseudocódigo */}
-                <aside id="logic-simulator" className="w-full md:w-[280px] shrink-0 bg-(--bg-surface) border-t-[3px] md:border-t-0 md:border-l-[3px] border-black flex flex-col relative overflow-hidden z-20 shadow-[-5px_0_15px_rgba(0,0,0,0.6)]">
+                <aside id="logic-simulator" className="w-full md:w-[400px] shrink-0 bg-(--bg-deep) border-t-[3px] md:border-t-0 md:border-l-[3px] border-black flex flex-col relative overflow-hidden z-20 shadow-[-5px_0_15px_rgba(0,0,0,0.6)]">
 
-                    {/* Rieles metálicos de fondo (Le da textura al chasis) */}
-                    <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[repeating-linear-gradient(90deg,transparent,transparent_40px,#fff_40px,#fff_41px)]" />
-
-                    <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-6 custom-scrollbar relative z-10">
+                    <div className="flex-1 overflow-y-auto flex flex-col gap-6 custom-scrollbar relative z-10">
 
                         {/* ========================================================
-            SECCIÓN 1: MONITOR DE PROCESO (Pantalla CRT Hundida)
-            ======================================================== */}
-                        <section>
-                            {/* Placa superior del monitor */}
-                            <div className="font-mono text-[11px] text-(--green-muted) uppercase tracking-[0.2em] mb-2 font-black border-b-2 border-black pb-2 flex justify-between items-end drop-shadow-[0_1px_1px_rgba(0,0,0,1)]">
-                                <span>MONITOR_PROCESO</span>
-                                <div className="flex gap-1.5 mb-0.5">
-                                    {/* LEDs de diagnóstico */}
-                                    <div className="w-1.5 h-1.5 bg-(--green-base) rounded-full shadow-[0_0_5px_var(--green-base)] animate-pulse" />
-                                    <div className="w-1.5 h-1.5 bg-(--bg-void) rounded-full shadow-[inset_0_1px_1px_rgba(0,0,0,0.8)] border border-(--border-muted-color)/30" />
-                                </div>
-                            </div>
+                            SECCIÓN 1: MONITOR DE PROCESO (Pantalla CRT Hundida)
+                        ======================================================== */}
+                        {/* Placa superior del monitor */}
+                        <SectionHeader title="MONITOR_PROCESO" subtitle="SEC_02 // MON_PRO" />
+                        <section className="px-4">
 
                             <div className="font-mono text-[9px] text-(--text-muted) uppercase tracking-widest mb-2 font-bold flex items-center gap-2">
                                 <span className="w-2 h-2 border-t border-l border-(--text-muted) opacity-50" />
@@ -572,7 +538,7 @@ export default function LogicAssemblyLevel({
 
                 <DragOverlay>
                     {activeId && activeBlock && (
-                        <div className="w-[300px] opacity-90 shadow-2xl scale-105 transition-transform duration-200">
+                        <div className="w-[300px] opacity-90">
                             <BlockItem
                                 block={activeBlock}
                                 availableDefs={availableDefs}
