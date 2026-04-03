@@ -10,7 +10,7 @@ Lee este archivo completo antes de tocar cualquier cosa.
 **REBOOT** es un juego educativo de programación con estética post-apocalíptica.
 El jugador es un sobreviviente que aprende a programar para reconstruir el mundo.
 
-Stack: Next.js 14 (App Router) + Tailwind CSS + Phaser.js + Supabase.
+Stack: Next.js 14 (App Router) + Tailwind CSS + Phaser.js + Supabase + Motion.
 Deploy: CubePath (un solo servidor Next.js).
 
 ---
@@ -63,31 +63,101 @@ reboot/
 ## Paleta de colores — SIEMPRE usar estas variables
 
 ```css
-/* Fondos (de más oscuro a más claro) */ 
---bg-void:        #010101   /* fondo base de la app */
---bg-deep:        #060809   /* pantallas de juego */
---bg-surface:     #090C10   /* paneles, editor de código */
---bg-elevated:    #0F1318   /* cards, modales */
---bg-hover:       #141B24   /* hover states, bordes sutiles */
+ --bg-void: #040607;
+  --bg-deep: #0C1117;
+  --bg-surface: #121A22;
+  --bg-elevated: #192430;
+  --bg-hover: #233244;
 
-/* Verde ácido principal — color identidad del juego */
---green-darkest:  #0d1f00   /* fondo botones activos */
---green-dark:     #1a4d00   /* botones primarios */
---green-base:     #2d7800   /* bordes, iconos, links */
---green-light:    #55e200   /* texto principal de UI ← color identidad */
---green-muted:    #88c44d   /* texto secundario */
+  --surface-2: #202427;
+  --surface-2-dark: #29303e;
+  --surface-2-hover: #4d5b69;
 
-/* Texto general */
---text-primary:   #E6EDF3   /* texto blanco limpio */
---text-muted:     #8B949E   /* texto secundario */
---text-ghost:     #3D444D   /* placeholders, hints */
+  /* =========================================
+     BORDES (AJUSTADOS PARA INTEGRACIÓN)
+     ========================================= */
+  --border-color: #2D333B;
+  /* Gris con subtono azul oscuro */
+  --border-muted-color: #1A1E23;
+  /* Casi invisible, para sombras/separadores */
 
-/* Semánticos — estados del juego */
---amber:          #EF9F27   /* cartas raras, advertencias */
---purple:         #7F77DD   /* FRAG (IA auxiliar), cartas épicas */
---red:            #E24B4A   /* error, código incorrecto */
---blue:           #378ADD   /* info, cartas comunes */
---cyan:           #12b0bb   /* color de acento */ 
+  /* =========================================
+     VERDE ÁCIDO (PANTALLA FÓSFORO)
+     ========================================= */
+  --green-darkest: #0b1702;
+  --green-dark: #1a4d00;
+  --green-base: #2d7800;
+  --green-light: #7ed526;
+  --green-muted: #88c44d;
+
+  /* =========================================
+     TEXTO GENERAL (ALTO CONTRASTE)
+     ========================================= */
+  --text-primary: #E6EDF3;
+  --text-muted: #8B949E;
+  --text-ghost: #3D444D;
+
+  /* =========================================
+     SEMÁNTICOS (ESTADOS Y RAREZAS)
+     ========================================= */
+  --amber: #EF9F27;
+  /* cartas raras / advertencias / isRunning */
+  --purple: #7F77DD;
+  /* FRAG, épicas */
+  --red: #E24B4A;
+  /* error crítico */
+  --red-light: #f67c7c;
+  --red-dark: #7a1515;
+  --red-muted: #b42b2b;
+  --blue: #2e4ada;
+  /* info, comunes */
+  --cyan: #19c8d4;
+  /* F1 / Subrutinas / Enfoque secundario */
+
+  /* =========================================
+     LOGICASSEMBLY BLOCK RECYCLED TECH PALETTE 
+     ========================================= */
+
+  /* Mover: Verde militar desgastado */
+  --block-mover: #6fe81e;
+  --block-mover-dark: #2F5217;
+
+  /* Girar: Cobre oxidado / Pátina */
+  --block-girar: #21dada;
+  --block-girar-dark: #1A4D4D;
+
+  /* Repetir: Violeta ceniza */
+  --block-repetir: #966be6;
+  --block-repetir-dark: #3A2C59;
+
+  /* Si (Condicional): Azul acero industrial */
+  --block-si: #4a9be7;
+  --block-si-dark: #1D3B59;
+
+  /* Función: Óxido de hierro viejo */
+  --block-funcion: #e98c35;
+  --block-funcion-dark: #5C320E;
+
+  /* Llamar: Latón manchado / Oro viejo */
+  --block-llamar: #e9c226;
+  --block-llamar-dark: #594A12;
+
+  /* Activar: Pintura roja descascarada */
+  --block-activar: #f92c4e;
+  --block-activar-dark: #591D27;
+
+  /* Asignar: Cableado viejo / Azul lavanda */
+  --block-asignar: #8ab0ed;
+  --block-asignar-dark: #2D4160;
+
+  /* Tipografías por defecto de Next.js (Geist es hermosa para este proyecto) */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-data-mono);
+  --font-title: var(--font-data-title);
+
+  --header-height: 55px;
+  --footer-height: 56px;
+
 ```
 
 **Reglas de color:**
@@ -275,5 +345,4 @@ Timeout máximo de ejecución: **3 segundos**. Si se supera, el nivel muestra er
 - [ ] Editor Monaco
 - [ ] Auth con Google/GitHub (Supabase)
 - [ ] Deploy en CubePath
-
-Fecha límite: **31 de marzo de 2026 a las 23:59 CET**
+ 
