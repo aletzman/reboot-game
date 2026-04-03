@@ -81,7 +81,6 @@ export default function RootLayout({
       className={`${geistSans.variable} ${dataMono.variable} ${fontTitle.variable} h-full antialiased`}
     >
       <body className=" flex flex-col h-svh">
-        <div className="absolute top-0 left-0 w-full h-full crt-overlay z-99999 pointer-events-none"></div>
         {/* <CRTOverlay /> */}
         <Header />
         <main className="mt-(--header-height) h-svh custom-scrollbar overflow-y-auto">

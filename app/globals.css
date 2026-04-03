@@ -1,11 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --bg-void: #010101;
+  /*--bg-void: #010101;
   --bg-deep: #060809;
   --bg-surface: #090C10;
   --bg-elevated: #0F1318;
-  --bg-hover: #141B24;
+  --bg-hover: #141B24;*/
+
+  --bg-void: #040607;
+  --bg-deep: #0C1117;
+  --bg-surface: #121A22;
+  --bg-elevated: #192430;
+  --bg-hover: #233244;
+
+  --surface-2: #606c78;
+  --surface-2-dark: #29303e;
+  --surface-2-hover: #4d5b69;
 
   /* =========================================
      BORDES (AJUSTADOS PARA INTEGRACIÓN)
@@ -18,10 +28,10 @@
   /* =========================================
      VERDE ÁCIDO (PANTALLA FÓSFORO)
      ========================================= */
-  --green-darkest: #0d1f00;
+  --green-darkest: #0b1702;
   --green-dark: #1a4d00;
   --green-base: #2d7800;
-  --green-light: #55e200;
+  --green-light: #7ed526;
   --green-muted: #88c44d;
 
   /* =========================================
@@ -54,35 +64,35 @@
      ========================================= */
 
   /* Mover: Verde militar desgastado */
-  --block-mover: #5C9933;
+  --block-mover: #6fe81e;
   --block-mover-dark: #2F5217;
 
   /* Girar: Cobre oxidado / Pátina */
-  --block-girar: #3B9999;
+  --block-girar: #21dada;
   --block-girar-dark: #1A4D4D;
 
   /* Repetir: Violeta ceniza */
-  --block-repetir: #785EAA;
+  --block-repetir: #966be6;
   --block-repetir-dark: #3A2C59;
 
   /* Si (Condicional): Azul acero industrial */
-  --block-si: #477EB3;
+  --block-si: #4a9be7;
   --block-si-dark: #1D3B59;
 
   /* Función: Óxido de hierro viejo */
-  --block-funcion: #B86B25;
+  --block-funcion: #e98c35;
   --block-funcion-dark: #5C320E;
 
   /* Llamar: Latón manchado / Oro viejo */
-  --block-llamar: #B3982E;
+  --block-llamar: #e9c226;
   --block-llamar-dark: #594A12;
 
   /* Activar: Pintura roja descascarada */
-  --block-activar: #B34054;
+  --block-activar: #f92c4e;
   --block-activar-dark: #591D27;
 
   /* Asignar: Cableado viejo / Azul lavanda */
-  --block-asignar: #6A8BBF;
+  --block-asignar: #8ab0ed;
   --block-asignar-dark: #2D4160;
 
   /* Tipografías por defecto de Next.js (Geist es hermosa para este proyecto) */
@@ -690,20 +700,110 @@ body {
   }
 }
 
+
+/* ──────────────────────────────────────────────────────────
+   LOGIC ASSEMBLY LEVEL
+   ────────────────────────────────────────────────────────── */
+
+/*
+.block-item {
+  padding: 0 0;
+  background: #aaa;
+  border: 1px solid #bab9b9;
+  box-shadow: 0 2px 3px #292929, 0 0 77px #D6D6D6 inset, 5px -5px 44px #292929 inset;
+  ;
+}
+*/
+
+.block-item {
+  background: #aaa;
+  background-image: linear-gradient(90deg, rgba(163, 170, 177, 0.5), rgba(207, 205, 205, 0.4), rgba(109, 113, 121, 0.5)),
+    repeating-linear-gradient(0deg, rgba(75, 81, 69, 0.6), rgba(224, 226, 227, 0.3) 3.0px),
+    repeating-linear-gradient(0deg, rgba(91, 95, 98, 0.5), rgba(55, 170, 233, 0.26) 4.5px);
+
+}
+
+.lcd-screen {
+  background-color: var(--green-darkest);
+  /* #0d1f00 */
+  color: var(--green-light);
+  /* #7ed526 */
+  font-family: var(--font-mono);
+  /* O tu font mono */
+  font-size: 13px;
+  /* Marco del cristal */
+  border-top: 2px solid #000;
+  border-left: 2px solid #000;
+  border-bottom: 1px solid var(--green-dark);
+  border-right: 1px solid var(--green-dark);
+
+  /* Profundidad y resplandor interno */
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.9);
+
+  /* El "glow" de los caracteres */
+  text-shadow: 0 0 5px var(--green-base), 0 0 10px rgba(126, 213, 38, 0.2);
+
+  /* Reflejo de superficie */
+  background-image: linear-gradient(180deg, rgba(45, 120, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.lcd-screen:hover {
+  box-shadow: inset 0 2px 12px rgba(0, 0, 0, 1), 0 0 8px rgba(126, 213, 38, 0.15);
+}
+
+.label-panel {
+  /* 1. Color de fondo: Un gris muy oscuro mate o azul marino industrial */
+  background-color: #1a1c20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  /* 2. En lugar de estar hundida (inset), la etiqueta SOBRESALE un poco */
+  border: 1px solid #000;
+
+  /* 3. Sombra exterior para dar altura y brillo en el borde superior */
+  box-shadow:
+    0px 1px 2px rgba(0, 0, 0, 0.5),
+    /* Sombra proyectada */
+    inset 0px 1px 0px rgba(255, 255, 255, 0.2);
+  /* Brillo en el borde superior de la placa */
+
+  /* 4. Textura de plástico/metal mate (opcional) */
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.1) 100%);
+
+  position: relative;
+  overflow: hidden;
+}
+
+.label-text {
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+
+  /* 5. Efecto Grabado (Debossed): El texto parece hundido en la etiqueta */
+  /* El color del texto debe ser un poco más oscuro que el color original de la etiqueta */
+  filter: none;
+  /* Quitamos el resplandor digital */
+  text-shadow:
+
+    -1px -1px 0px rgba(0, 0, 0, 0.5),
+    /* Sombra interna superior */
+    1px 1px 0px rgba(255, 255, 255, 0.1);
+  /* Brillo en el borde inferior del grabado */
+}
+
 /* ──────────────────────────────────────────────────────────
    DRIVER.JS: REBOOT "CLEAN IDE" THEME
    ────────────────────────────────────────────────────────── */
 
 /* EL VELO */
 .driver-popover-mask {
-  fill: var(--bg-void) !important;
   opacity: 0.75 !important;
-  transition: opacity 0.3s ease;
 }
 
 /* EL ELEMENTO ACTIVO */
 .driver-active-element {
-  outline: 1px solid var(--purple) !important;
   outline-offset: 1px !important;
   border-radius: 4px !important;
   /* Resplandor súper sutil */

@@ -8,6 +8,7 @@ interface CloseButtonProps {
     size?: 'xs' | 'sm' | 'md' | 'lg'
     className?: string
     disabled?: boolean
+    variant?: "dark" | "light"
 }
 
 /**
@@ -19,6 +20,7 @@ export function CloseButton({
     onClick,
     size = 'md',
     className = "",
+    variant = "dark",
     disabled = false
 }: CloseButtonProps) {
     // Square Size mapping
@@ -36,6 +38,11 @@ export function CloseButton({
         lg: 20
     };
 
+    const variantClasses = {
+        light: "text-(--bg-surface) group-hover/close:text-[#ff0000] transition-colors",
+        dark: "text-(--text-muted) group-hover/close:text-(--red) transition-colors",
+    };
+
     return (
         <button
             onClick={(e) => {
@@ -44,8 +51,9 @@ export function CloseButton({
             }}
             className={`
                 group/close relative flex items-center justify-center aspect-square
-                bg-transparent transition-all duration-300 cursor-pointer 
+                bg-transparent transition-all duration-300 cursor-pointer  hover:bg-red-500/10
                 ${sizeClasses[size]}
+                ${variantClasses[variant]}
                 ${className}
             `}
             aria-label="Close"
@@ -69,7 +77,7 @@ export function CloseButton({
                 >
                     <XIcon
                         size={iconSizes[size]}
-                        className="text-(--text-muted) group-hover/close:text-(--red) transition-colors"
+                        className={`transition-colors ${variant === 'light' ? 'group-hover/close:text-(--red-dark)' : 'group-hover/close:text-(--red)'}`}
                         strokeWidth={size === 'sm' ? 2 : 3}
                     />
                 </motion.div>

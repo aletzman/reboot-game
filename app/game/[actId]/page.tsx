@@ -11,7 +11,7 @@ export default async function ActMapPage({ params }: { params: Promise<{ actId: 
   const actName = levels.find(level => level.act === actNum)?.actName || 'ACT_ERROR'
 
   return (
-    <div className="container mx-auto px-4 pb-8 flex flex-col gap-4 bg-(--bg-void) overflow-y-auto custom-scrollbar">
+    <div className="container mx-auto px-4 pb-8 flex flex-col gap-4 bg-(--bg-void)">
       {/* Header Shell (Server-side rendered for instant Title) */}
       <SectorHeader actId={actId} actName={actName}>
         {/* Dynamic header stats (Client-side) */}

@@ -60,11 +60,11 @@ type PageStatus =
 // COMPONENTE PRINCIPAL
 // ------------------------------------------------------------
 
-export default function LevelPage({ 
-    initialLevel, 
-    allLevels, 
-    allCards, 
-    allObjects 
+export default function LevelPage({
+    initialLevel,
+    allLevels,
+    allCards,
+    allObjects
 }: PageProps) {
     const levelId = initialLevel.id
     const router = useRouter()
@@ -164,7 +164,7 @@ export default function LevelPage({
     const fragErrorHint = useMemo(() => {
         if (levelState?.status !== 'failed' || !levelState.failReason) return null
         const ctx = levelState.failContext
-        
+
         switch (levelState.failReason) {
             case 'infinite-loop': {
                 const panels = ctx?.involvedPanels?.map(p => p.toUpperCase()).join(" y ") || "tus funciones"
@@ -340,10 +340,10 @@ function renderLevelComponent(
 
 function LoadingScreen() {
     return (
-        <Loading 
-            message="Sincronizando con FRAG..." 
-            variant="frag" 
-            showTips={true} 
+        <Loading
+            message="Sincronizando con FRAG..."
+            variant="frag"
+            showTips={true}
             icon="cpu"
         />
     )
@@ -361,7 +361,7 @@ function BlockedScreen({ title, message, items, onBack, onInventory, onLogin }: 
     title: string; message: string; items?: string[]; onBack: () => void; onInventory?: () => void; onLogin?: () => void;
 }) {
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-(--bg-void) font-mono gap-4 p-8 text-center">
+        <div className="flex flex-col items-center justify-center bg-(--bg-void) font-mono gap-4 p-8 text-center">
             <div className="text-(--red) text-[11px] tracking-[.14em] uppercase font-bold text-center">
                 // {title}
             </div>
