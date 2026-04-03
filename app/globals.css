@@ -13,7 +13,7 @@
   --bg-elevated: #192430;
   --bg-hover: #233244;
 
-  --surface-2: #606c78;
+  --surface-2: #202427;
   --surface-2-dark: #29303e;
   --surface-2-hover: #4d5b69;
 
@@ -541,27 +541,15 @@ body {
 
 /* SHAKE ANIMATION FOR ERRORS */
 @keyframes shake {
-
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-
-  25% {
-    transform: translateX(-4px);
-  }
-
-  50% {
-    transform: translateX(4px);
-  }
-
-  75% {
-    transform: translateX(-4px);
-  }
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-2px); }
+  40% { transform: translateX(2px); }
+  60% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
 }
 
 .animate-shake {
-  animation: shake 0.3s ease-in-out infinite;
+  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
 }
 
 /* SLIDE UP WITH FADE */
@@ -716,34 +704,26 @@ body {
 */
 
 .block-item {
+  overflow: hidden;
+  border-radius: 2px;
   background: #aaa;
   background-image: linear-gradient(90deg, rgba(163, 170, 177, 0.5), rgba(207, 205, 205, 0.4), rgba(109, 113, 121, 0.5)),
-    repeating-linear-gradient(0deg, rgba(75, 81, 69, 0.6), rgba(224, 226, 227, 0.3) 3.0px),
-    repeating-linear-gradient(0deg, rgba(91, 95, 98, 0.5), rgba(55, 170, 233, 0.26) 4.5px);
+    repeating-linear-gradient(0deg, rgba(75, 81, 69, 0.07), rgba(224, 226, 227, 0.07) 3.0px),
+    repeating-linear-gradient(0deg, rgba(91, 95, 98, 0.01), rgba(55, 170, 233, 0.01) 4.5px);
 
 }
 
 .lcd-screen {
   background-color: var(--green-darkest);
-  /* #0d1f00 */
   color: var(--green-light);
-  /* #7ed526 */
   font-family: var(--font-mono);
-  /* O tu font mono */
   font-size: 13px;
-  /* Marco del cristal */
   border-top: 2px solid #000;
   border-left: 2px solid #000;
   border-bottom: 1px solid var(--green-dark);
   border-right: 1px solid var(--green-dark);
-
-  /* Profundidad y resplandor interno */
   box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.9);
-
-  /* El "glow" de los caracteres */
   text-shadow: 0 0 5px var(--green-base), 0 0 10px rgba(126, 213, 38, 0.2);
-
-  /* Reflejo de superficie */
   background-image: linear-gradient(180deg, rgba(45, 120, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
 }
 
@@ -752,26 +732,14 @@ body {
 }
 
 .label-panel {
-  /* 1. Color de fondo: Un gris muy oscuro mate o azul marino industrial */
   background-color: #1a1c20;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  /* 2. En lugar de estar hundida (inset), la etiqueta SOBRESALE un poco */
   border: 1px solid #000;
-
-  /* 3. Sombra exterior para dar altura y brillo en el borde superior */
-  box-shadow:
-    0px 1px 2px rgba(0, 0, 0, 0.5),
-    /* Sombra proyectada */
-    inset 0px 1px 0px rgba(255, 255, 255, 0.2);
-  /* Brillo en el borde superior de la placa */
-
-  /* 4. Textura de plástico/metal mate (opcional) */
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5), inset 0px 1px 0px rgba(255, 255, 255, 0.2);
   background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.1) 100%);
-
   position: relative;
   overflow: hidden;
 }
@@ -779,18 +747,35 @@ body {
 .label-text {
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-
-  /* 5. Efecto Grabado (Debossed): El texto parece hundido en la etiqueta */
-  /* El color del texto debe ser un poco más oscuro que el color original de la etiqueta */
+  letter-spacing: 0.05em;
   filter: none;
-  /* Quitamos el resplandor digital */
   text-shadow:
-
     -1px -1px 0px rgba(0, 0, 0, 0.5),
-    /* Sombra interna superior */
     1px 1px 0px rgba(255, 255, 255, 0.1);
-  /* Brillo en el borde inferior del grabado */
+}
+
+@keyframes shockwave-tac {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+    border-width: 4px;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+    border-width: 2px;
+  }
+
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+
+.animate-shockwave-tac {
+  animation: shockwave-tac 0.4s ease-out forwards;
 }
 
 /* ──────────────────────────────────────────────────────────
@@ -966,7 +951,7 @@ body {
 
 /* Cuadricula */
 
-.grid-bg {
+.bg-grid {
   background-image: linear-gradient(to right, var(--border-muted-color) 1px, transparent 1px),
     linear-gradient(to bottom, var(--border-muted-color) 1px, transparent 1px);
   background-size: 32px 32px;

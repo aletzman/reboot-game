@@ -39,7 +39,7 @@ export function Header({ viewMenu, showStats }: HeaderProps) {
     }, [showStats]);
 
     return (
-        <header className="fixed top-0 left-0 flex items-center justify-between h-(--header-height) px-4 bg-(--bg-void) border-b border-(--border-color) w-full z-9999 shadow-[0_4px_20px_rgba(0,0,0,0.8)] select-none">
+        <header className="fixed top-0 left-0 flex items-center justify-between h-(--header-height) px-4 bg-(--bg-void) border-b border-(--border-color) w-full z-9999 select-none">
             {/* ─── CINTA DE PELIGRO SUPERIOR (Slim) ─── */}
             <div className="absolute top-0 left-0 w-full h-0.75 bg-[repeating-linear-gradient(45deg,var(--amber),var(--amber)_8px,#000_8px,#000_16px)] opacity-40 z-30" />
 
