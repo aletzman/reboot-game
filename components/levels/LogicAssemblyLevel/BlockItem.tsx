@@ -1,15 +1,13 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, memo } from 'react'
 import { useDroppable } from '@dnd-kit/react'
 import { useSortable } from '@dnd-kit/react/sortable'
-import { RestrictToVerticalAxis } from '@dnd-kit/abstract/modifiers';
 import { PackageOpen, ChevronDown, Plus, Minus, ArrowDownToLine } from 'lucide-react'
 import { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
 import { BlockDef } from './types'
 import { CloseButton } from '@/components/ui/CloseButton'
 import { MODULES_REGISTERS } from './constants';
-import { Screw } from '@/components/ui/Screw';
 
 interface BlockItemProps {
     block: LogicAssemblyBlock
@@ -26,11 +24,22 @@ interface BlockItemProps {
     isOverlay?: boolean
 }
 
-
 // ============================================================================
 // 1. ZONA DE ANIDAMIENTO (ZÓCALO PARA BLOQUES HIJOS)
 // ============================================================================
-function ChildrenDroppable({ parentId, childrenCount, isLoop, children, borderColor }: { parentId: string, childrenCount: number, isLoop: boolean, children: React.ReactNode, borderColor: string }) {
+const ChildrenDroppable = memo(function ChildrenDroppable({
+    parentId,
+    childrenCount,
+    isLoop,
+    children,
+    borderColor
+}: {
+    parentId: string
+    childrenCount: number
+    isLoop: boolean
+    children: React.ReactNode
+    borderColor: string
+}) {
     const { ref, isDropTarget } = useDroppable({
         id: `children-${parentId}`,
         data: { isWorkspace: true }
@@ -46,13 +55,12 @@ function ChildrenDroppable({ parentId, childrenCount, isLoop, children, borderCo
                 ${isDropTarget ? 'bg-(--bg-hover) ring-2 ring-dashed ring-(--green-muted)/30 my-4 shadow-[inset_0_4px_15px_rgba(0,0,0,0.8)] z-20' : 'z-auto'}
             `}
         >
-            {/* Hit area expandida para captar arrastres desde la izquierda (indentación) */}
             <div className="absolute -inset-4 -left-16 -inset-x-8 -bottom-8 pointer-events-auto z-0" />
 
-            {/* Contenido */}
             <div className="relative z-10 flex flex-col gap-2 min-h-[4px]">
                 {children}
-            </div>            {/* ESTADO: Arrastrando sobre el zócalo */}
+            </div>
+
             {isDropTarget && (
                 <div className="h-10 border border-dashed border-(--green-base)/40 bg-(--green-base)/5 flex items-center justify-center gap-3 mt-2 relative z-20 rounded-xs">
                     <ArrowDownToLine className="text-(--green-light) opacity-50 animate-bounce" size={14} />
@@ -62,9 +70,8 @@ function ChildrenDroppable({ parentId, childrenCount, isLoop, children, borderCo
                 </div>
             )}
 
-            {/* ESTADO: Zócalo Vacío */}
             {!isDropTarget && isEmpty && (
-                <div className="py-6 px-4  text-(--text-muted)/60 hover:text-(--text-primary) border border-dashed border-(--border-muted-color) bg-black/40 flex flex-col items-center justify-center gap-2 opacity-70 hover:opacity-80 transition-all select-none hover:bg-(--bg-surface) hover:border-(--border-color) cursor-pointer">
+                <div className="py-6 px-4 text-(--text-muted)/60 hover:text-(--text-primary) border border-dashed border-(--border-muted-color) bg-black/40 flex flex-col items-center justify-center gap-2 opacity-70 hover:opacity-80 transition-all select-none hover:bg-(--bg-surface) hover:border-(--border-color) cursor-pointer">
                     <div className="flex items-center gap-2">
                         <span className="font-mono text-[10px] uppercase font-black tracking-widest">[</span>
                         <PackageOpen size={14} className="opacity-50" />
@@ -77,12 +84,12 @@ function ChildrenDroppable({ parentId, childrenCount, isLoop, children, borderCo
             )}
         </div>
     )
-}
+})
 
 // ============================================================================
 // 2. COMPONENTE PRINCIPAL DEL BLOQUE
 // ============================================================================
-export function BlockItem({
+function BlockItemInner({
     block,
     availableDefs,
     onRemove,
@@ -107,7 +114,6 @@ export function BlockItem({
 
     const def = availableDefs.find(d => d.type === block.type)!
 
-    // Si es un overlay, no necesitamos el wrapper de sortable completo
     const containerProps = isOverlay ? {} : {
         ref: (element: HTMLDivElement | null) => {
             nodeRef(element);
@@ -117,12 +123,11 @@ export function BlockItem({
 
     return (
         <div
-            {...containerProps}
-            className={`relative z-10 transition-shadow duration-200  ${isDragging && !isOverlay ? 'opacity-20 grayscale scale-95' : ''} ${isOverlay ? 'z-50 pointer-events-none' : ''}`}
+            ref={isOverlay ? undefined : nodeRef}
+            //{...containerProps}
+            className={`relative z-10 transition-shadow duration-200 ${isDragging && !isOverlay ? 'opacity-20 grayscale scale-95' : ''} ${isOverlay ? 'z-50 pointer-events-none' : ''}`}
             style={{ marginLeft: (depth > 0 && !isOverlay) ? 24 : 0 }}
         >
-
-            {/* Indentación visual (Cableado de hardware) */}
             {depth > 0 && (
                 <div
                     className="absolute top-6 bottom-0 w-px border-l-2 border-dotted border-(--border-color) opacity-40"
@@ -131,27 +136,25 @@ export function BlockItem({
             )}
 
 
-            {/* CONTENEDOR FÍSICO (Cartucho de Acero Cepillado) */}
             <div
+                ref={isOverlay ? undefined : targetRef}
                 className={`relative flex min-h-[50px] w-full 
                             rounded-[4px] transition-all duration-150 group 
                             cursor-grab ${disabled ? 'opacity-50 grayscale' : ''} block-item`}
             >
-                {/* 1. INDICADOR DE COLOR */}
                 <div
+
                     className="w-[6px] h-[50px] border-r border-[#050608] shadow-[inset_-2px_0_4px_rgba(0,0,0,0.4)]"
                     style={{ backgroundColor: def.border }}
                 />
 
-                {/* 1. BISEL DE PROFUNDIDAD (El "secreto" para que no sea plano) */}
                 <div className="absolute inset-px border border-(--bg-elevated)/60 rounded-[1px] pointer-events-none shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]" />
 
-                {/* 2. DRAG HANDLE (Placa metálica aclarada) */}
+                {/*Handle Drag*/}
                 <div
-                    ref={handleRef}
-                    className="w-10 bg-(--surface-2) border-r border-white/5 flex flex-col items-center justify-center gap-1.5 cursor-grab active:cursor-grabbing group-hover:bg-[#161920] transition-colors"
+                    ref={isOverlay ? undefined : handleRef}
+                    className="w-10 bg-(--surface-2) border-r border-white/5 flex flex-col items-center justify-center gap-1.5 cursor-grab active:cursor-grabbing group-hover:bg-[#161920] transition-colors touch-none select-none"
                 >
-                    {/* Indicadores de Micro-LED (Sustituyen tornillos) */}
                     <div className="w-1 h-1 rounded-full bg-(--text-muted)/60" />
                     <div className="flex flex-col gap-1 opacity-20">
                         {[...Array(3)].map((_, i) => (
@@ -161,10 +164,8 @@ export function BlockItem({
                     <div className="w-1 h-1 rounded-full bg-(--text-muted)/60 shadow-[0_0_5px_rgba(255,255,255,0.1)]" />
                 </div>
 
-                {/* 3. CUERPO DEL MÓDULO */}
                 <div className="flex-1 p-2 pl-3 flex flex-wrap items-center gap-3 relative overflow-hidden">
 
-                    {/* Título Stamped */}
                     <div className="flex flex-col justify-center items-center relative z-10 min-w-18 h-full rounded-xs label-panel">
                         <span
                             className="text-[11px] uppercase label-text"
@@ -177,16 +178,13 @@ export function BlockItem({
                         </span>
                     </div>
 
-                    {/* Separador físico */}
                     <div className="h-6 w-px bg-[#1e2128] mx-1 border-r border-[#4f545f] relative z-10" />
 
-                    {/* 4. INPUTS DE VALOR (Módulos LCD) */}
                     {def.hasValue && (
                         <div className="flex items-center gap-2 relative z-10">
 
-                            {/* Stepper Numérico Mecánico */}
                             {def.valueType === 'number' && (
-                                <div className="flex items-stretch rounded-sm h-7 lcd-screen ">
+                                <div className="flex items-stretch rounded-sm h-7 lcd-screen">
                                     <button
                                         onClick={() => !disabled && onValueChange(block.id, Math.max(1, (block.value as number) - 1))}
                                         disabled={disabled || (block.value as number) <= 1}
@@ -209,7 +207,6 @@ export function BlockItem({
                                 </div>
                             )}
 
-                            {/* Selectores */}
                             {(def.valueType === 'direction' || (def.valueType === 'text' && block.type === 'LLAMAR')) && (
                                 <div className="relative flex group/lcd">
                                     <select
@@ -219,9 +216,7 @@ export function BlockItem({
                                         className={`appearance-none rounded-sm h-7 pl-3 pr-8 min-w-[120px] outline-none transition-all duration-200 cursor-pointer lcd-screen  
                                         ${def.valueType === 'direction' ? 'uppercase' : ''}`}
                                         style={{
-                                            // Brillo de fósforo verde
                                             textShadow: '0 1px 1px var(--green-base), 0 0 3px rgba(126, 213, 38, 0.2)',
-                                            // Reflejo interno del panel
                                             backgroundImage: 'linear-gradient(180deg, rgba(45, 120, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%)'
                                         }}
                                     >
@@ -235,17 +230,14 @@ export function BlockItem({
                                         ))}
                                     </select>
 
-                                    {/* Icono de flecha integrado en la paleta */}
                                     <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-(--green-base) group-hover/lcd:text-(--green-light) transition-colors">
                                         <ChevronDown size={12} strokeWidth={4} />
                                     </div>
 
-                                    {/* Reflejo de cristal superior (Le da el toque final de "pantalla") */}
                                     <div className="absolute inset-0 pointer-events-none rounded-sm bg-linear-to-tr from-transparent via-(--green-light)/2 to-white/5" />
                                 </div>
                             )}
 
-                            {/* Inputs de texto manuales (Para FUNCION, SI, ASIGNAR) */}
                             {def.valueType === 'text' && block.type !== 'LLAMAR' && (
                                 <div className="relative flex">
                                     <input
@@ -262,7 +254,6 @@ export function BlockItem({
                         </div>
                     )}
 
-                    {/* Botón Eliminar */}
                     <CloseButton
                         onClick={() => onRemove(block.id)}
                         size='xs'
@@ -271,91 +262,100 @@ export function BlockItem({
                         className="ml-auto opacity-60 group-hover:opacity-100 hover:text-white"
                     />
                 </div>
-            </div >
-            {/* ===============================================================
-                BLOQUES HIJOS (RUTINAS ANIDADAS)
-                =============================================================== */}
-            {
-                block.children !== undefined && (
-                    <div className="ml-5 mt-1 pl-4 py-2 flex flex-col gap-2 relative">
+            </div>
 
-                        {/* Cableado de Hardware (Esquina de anidamiento) */}
-                        <div className="absolute left-0 top-0 bottom-4 w-px border-l-2 border-dotted" style={{ borderColor: def.border, opacity: 0.3 }} />
-                        <div className="absolute left-0 bottom-4 w-3 h-px border-b-2 border-dotted" style={{ borderColor: def.border, opacity: 0.3 }} />
+            {block.children !== undefined && (
+                <div className="ml-5 mt-1 pl-4 py-2 flex flex-col gap-2 relative">
 
-                        {/* Zócalo para soltar hijos */}
-                        <ChildrenDroppable
-                            parentId={block.id}
-                            childrenCount={block.children.length}
-                            isLoop={true}
-                            borderColor={def.border}
-                        >
-                            {block.children.map((child, cIdx) => (
-                                <BlockItem
-                                    key={child.id}
-                                    index={cIdx}
-                                    block={child}
-                                    availableDefs={availableDefs}
-                                    onRemove={onRemove}
-                                    onValueChange={onValueChange}
-                                    onAddChild={onAddChild}
-                                    onMove={onMove}
-                                    availableFunctions={availableFunctions}
-                                    depth={depth + 1}
-                                    parentId={block.id}
-                                    disabled={disabled}
-                                />
-                            ))}
-                        </ChildrenDroppable>
+                    <div className="absolute left-0 top-0 bottom-4 w-px border-l-2 border-dotted" style={{ borderColor: def.border, opacity: 0.3 }} />
+                    <div className="absolute left-0 bottom-4 w-3 h-px border-b-2 border-dotted" style={{ borderColor: def.border, opacity: 0.3 }} />
 
-                        {/* Botón Táctico para Acoplar Sub-Módulo */}
-                        <div className="relative pt-1 z-10">
-                            {!showChildPicker ? (
-                                <button
-                                    onClick={() => setShowChildPicker(true)}
-                                    disabled={disabled}
-                                    className={`
-                                    w-full flex items-center justify-center gap-2 px-4 py-2 rounded-sm bg-black/20 
-                                    font-mono text-[10px] uppercase tracking-[0.2em] cursor-pointer group/socket transition-all 
-                                    border border-dashed border-(--border-color) hover:border-(--cyan)/50 hover:bg-(--cyan)/5 
-                                    text-(--text-muted) hover:text-(--cyan)
-                                    ${disabled ? 'opacity-30 cursor-not-allowed hidden' : ''}
-                                `}
-                                >
-                                    <Plus size={12} className="group-hover/socket:rotate-90 transition-transform" />
-                                    <span className="font-bold">ACOPLAR_MODULO_INTERNO</span>
-                                </button>
-                            ) : (
-                                <div className="bg-[#050608] border border-(--border-color) p-3 shadow-2xl rounded-sm">
-                                    <span className="block font-mono text-[8px] text-(--text-muted) uppercase tracking-widest mb-3 border-b border-(--border-color) pb-1">
-                                        [ SEL_MOD_COMPATIBLE ]
-                                    </span>
-                                    <div className="flex flex-wrap gap-2">
-                                        {availableDefs
-                                            .filter(d => !d.hasChildren)
-                                            .map(d => (
-                                                <button
-                                                    key={d.type}
-                                                    onClick={() => { onAddChild(block.id, d.type); setShowChildPicker(false) }}
-                                                    className="px-3 py-1.5 border border-(--border-color) bg-(--bg-surface) hover:bg-(--bg-hover) transition-all cursor-pointer font-mono text-[9px] font-bold uppercase tracking-widest shadow-sm hover:shadow-md"
-                                                    style={{ borderLeft: `2px solid ${d.border}`, color: d.border }}
-                                                >
-                                                    {d.label}
-                                                </button>
-                                            ))}
-                                        <button
-                                            onClick={() => setShowChildPicker(false)}
-                                            className="px-3 py-1.5 bg-transparent border border-transparent text-(--text-ghost) hover:text-(--red) font-mono text-[8px] uppercase cursor-pointer transition-all"
-                                        >
-                                            [ CANCELAR ]
-                                        </button>
-                                    </div>
+                    <ChildrenDroppable
+                        parentId={block.id}
+                        childrenCount={block.children.length}
+                        isLoop={true}
+                        borderColor={def.border}
+                    >
+                        {block.children.map((child, cIdx) => (
+                            <BlockItem
+                                key={child.id}
+                                index={cIdx}
+                                block={child}
+                                availableDefs={availableDefs}
+                                onRemove={onRemove}
+                                onValueChange={onValueChange}
+                                onAddChild={onAddChild}
+                                onMove={onMove}
+                                availableFunctions={availableFunctions}
+                                depth={depth + 1}
+                                parentId={block.id}
+                                disabled={disabled}
+                            />
+                        ))}
+                    </ChildrenDroppable>
+
+                    <div className="relative pt-1 z-10">
+                        {!showChildPicker ? (
+                            <button
+                                onClick={() => setShowChildPicker(true)}
+                                disabled={disabled}
+                                className={`
+                                w-full flex items-center justify-center gap-2 px-4 py-2 rounded-sm bg-black/20 
+                                font-mono text-[10px] uppercase tracking-[0.2em] cursor-pointer group/socket transition-all 
+                                border border-dashed border-(--border-color) hover:border-(--cyan)/50 hover:bg-(--cyan)/5 
+                                text-(--text-muted) hover:text-(--cyan)
+                                ${disabled ? 'opacity-30 cursor-not-allowed hidden' : ''}
+                            `}
+                            >
+                                <Plus size={12} className="group-hover/socket:rotate-90 transition-transform" />
+                                <span className="font-bold">ACOPLAR_MODULO_INTERNO</span>
+                            </button>
+                        ) : (
+                            <div className="bg-[#050608] border border-(--border-color) p-3 shadow-2xl rounded-sm">
+                                <span className="block font-mono text-[8px] text-(--text-muted) uppercase tracking-widest mb-3 border-b border-(--border-color) pb-1">
+                                    [ SEL_MOD_COMPATIBLE ]
+                                </span>
+                                <div className="flex flex-wrap gap-2">
+                                    {availableDefs
+                                        .filter(d => !d.hasChildren)
+                                        .map(d => (
+                                            <button
+                                                key={d.type}
+                                                onClick={() => { onAddChild(block.id, d.type); setShowChildPicker(false) }}
+                                                className="px-3 py-1.5 border border-(--border-color) bg-(--bg-surface) hover:bg-(--bg-hover) transition-all cursor-pointer font-mono text-[9px] font-bold uppercase tracking-widest shadow-sm hover:shadow-md"
+                                                style={{ borderLeft: `2px solid ${d.border}`, color: d.border }}
+                                            >
+                                                {d.label}
+                                            </button>
+                                        ))}
+                                    <button
+                                        onClick={() => setShowChildPicker(false)}
+                                        className="px-3 py-1.5 bg-transparent border border-transparent text-(--text-ghost) hover:text-(--red) font-mono text-[8px] uppercase cursor-pointer transition-all"
+                                    >
+                                        [ CANCELAR ]
+                                    </button>
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
-                )
-            }
-        </div >
+                </div>
+            )}
+        </div>
     )
 }
+
+// Comparación custom: un BlockItem solo necesita re-renderizar si cambió
+// su bloque (referencia o contenido), su posición, o el flag disabled.
+// Los callbacks (onRemove, onValueChange, etc.) son estables por useCallback
+// en el padre, así que no necesitamos compararlos.
+export const BlockItem = memo(BlockItemInner, (prev, next) => {
+    return (
+        prev.block === next.block &&
+        prev.index === next.index &&
+        prev.depth === next.depth &&
+        prev.disabled === next.disabled &&
+        prev.parentId === next.parentId &&
+        prev.isOverlay === next.isOverlay &&
+        prev.availableFunctions === next.availableFunctions
+    )
+})

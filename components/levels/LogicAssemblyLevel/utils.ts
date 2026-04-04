@@ -54,77 +54,93 @@ export function moveNodeInTree(
     targetIndex: number,
     isNew: boolean = false,
     newType?: LogicAssemblyBlockType,
-    providedBlock?: LogicAssemblyBlock 
+    providedBlock?: LogicAssemblyBlock
 ): LogicAssemblyBlock[] {
     let movedBlock: LogicAssemblyBlock | null = providedBlock || null;
 
-    // 1. Extraer el bloque del árbol si ya existe
     const findAndRemoveNode = (list: LogicAssemblyBlock[], idToRemove: string): LogicAssemblyBlock[] => {
         const idx = list.findIndex(b => b.id === idToRemove);
         if (idx !== -1) {
             if (!movedBlock) movedBlock = list[idx];
+            // Solo reconstruye el array, no los objetos dentro
             return list.filter((_, i) => i !== idx);
         }
-        return list.map(b => b.children ? { ...b, children: findAndRemoveNode(b.children, idToRemove) } : b);
+
+        let changed = false;
+        const next = list.map(b => {
+            if (!b.children) return b; // misma referencia
+            const nextChildren = findAndRemoveNode(b.children, idToRemove);
+            if (nextChildren === b.children) return b; // misma referencia si no cambió nada
+            changed = true;
+            return { ...b, children: nextChildren }; // solo el padre directo se reconstruye
+        });
+
+        return changed ? next : list; // si nadie cambió, devuelve el mismo array
     };
 
     if (movedBlock) {
-        // Si tenemos un bloque proveído (ej: de onDragOver estable), lo removemos por SU ID real
         items = findAndRemoveNode(items, movedBlock.id);
     } else {
         if (isNew && newType) {
             movedBlock = makeBlock(newType);
         } else {
-            // Buscar por el sourceId de la operación
             items = findAndRemoveNode(items, sourceId);
         }
     }
 
     if (!movedBlock) return items;
 
-    // 2. Determinar destino
     const isInside = targetId.startsWith('children-');
-    const targetRefId = isInside 
-        ? targetId.replace('children-', '') 
+    const targetRefId = isInside
+        ? targetId.replace('children-', '')
         : targetId.replace('__drop', '');
 
-    // 3. Insertar recursivamente
     const insertRecursive = (list: LogicAssemblyBlock[]): LogicAssemblyBlock[] => {
-        // Caso Raíz
         if (!targetRefId || targetRefId === 'root' || targetRefId === 'logic-workspace' || targetRefId === 'root-workspace') {
             const next = [...list];
             next.splice(targetIndex, 0, movedBlock!);
             return next;
         }
 
-        // Caso Adentro de un bloque (contenedor de hijos)
         if (isInside) {
-            return list.map(b => {
+            let changed = false;
+            const next = list.map(b => {
                 if (b.id === targetRefId) {
                     const nextChildren = [...(b.children || [])];
                     nextChildren.splice(targetIndex, 0, movedBlock!);
-                    return { ...b, children: nextChildren };
+                    changed = true;
+                    return { ...b, children: nextChildren }; // solo este bloque cambia
                 }
-                return b.children ? { ...b, children: insertRecursive(b.children) } : b;
+                if (!b.children) return b; // misma referencia
+                const nextChildren = insertRecursive(b.children);
+                if (nextChildren === b.children) return b; // misma referencia si no cambió
+                changed = true;
+                return { ...b, children: nextChildren };
             });
+            return changed ? next : list;
         }
 
-        // Caso Sobre un bloque (hermano)
         const siblingIdx = list.findIndex(b => b.id === targetRefId);
         if (siblingIdx !== -1) {
             const next = [...list];
-            // Si el target es un bloque, usamos el targetIndex que nos da dnd-kit
             next.splice(targetIndex, 0, movedBlock!);
             return next;
         }
 
-        // Seguir buscando en la profundidad
-        return list.map(b => b.children ? { ...b, children: insertRecursive(b.children) } : b);
+        // Buscar en profundidad preservando referencias
+        let changed = false;
+        const next = list.map(b => {
+            if (!b.children) return b; // misma referencia
+            const nextChildren = insertRecursive(b.children);
+            if (nextChildren === b.children) return b; // misma referencia si no cambió
+            changed = true;
+            return { ...b, children: nextChildren };
+        });
+        return changed ? next : list;
     };
 
     return insertRecursive(items);
 }
-
 
 export function moveBlockInTree(id: string, direction: 'up' | 'down', blocks: LogicAssemblyBlock[]): LogicAssemblyBlock[] {
     const idx = blocks.findIndex(b => b.id === id)
