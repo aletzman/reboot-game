@@ -6,6 +6,7 @@ import { useLogicAssemblyData } from '@/lib/store/useLogicAssemblyData'
 
 export function PseudocodeSummary({ blocks, depth = 0 }: { blocks: LogicAssemblyBlock[]; depth?: number }) {
     const currentFlatInstruction = useLogicAssemblyData((state) => state.currentFlatInstruction)
+    const currentStep = useLogicAssemblyData((state) => state.currentStep)
     console.log("blocks", blocks)
     return (
         <div className="font-mono text-[11px] text-(--text-ghost) leading-relaxed p-2 h-full overflow-y-auto custom-scrollbar">
@@ -25,7 +26,7 @@ export function PseudocodeSummary({ blocks, depth = 0 }: { blocks: LogicAssembly
                                 className="transition-all duration-300 group-hover/line:brightness-125"
                             >
                                 {'  '.repeat(depth)}
-                                {currentFlatInstruction.id === block.id && <span className="font-bold opacity-50 select-none mr-1">»</span>}
+                                {(currentFlatInstruction.id === block.id || (currentStep === idx && block.children)) && <span className="font-bold opacity-50 select-none mr-1">»</span>}
                                 <span className="font-bold tracking-tight uppercase">{block.type}</span>
                                 {val && <span className="text-(--text-muted) ml-1.5 font-medium">{val}</span>}
                             </span>
