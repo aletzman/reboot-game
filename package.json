@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@dnd-kit/abstract": "^0.3.2",
+    "@dnd-kit/collision": "^0.3.2",
     "@dnd-kit/react": "^0.3.2",
     "@monaco-editor/react": "^4.7.0",
     "@supabase/ssr": "^0.9.0",
