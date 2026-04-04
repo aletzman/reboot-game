@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
 import { MapData } from './types'
+import { useLogicAssemblyData } from '@/lib/store/useLogicAssemblyData'
 
 interface FlatSimulatorProps {
     blocks: LogicAssemblyBlock[]
@@ -25,9 +26,12 @@ export function FlatSimulator({
         dir: map.start.dir as Direction
     })
     const [activated, setActivated] = useState<string[]>([])
-    const [currentStep, setCurrentStep] = useState(-1)
     const [error, setError] = useState<string | null>(null)
     const executionRef = useRef(0)
+
+    const currentStep = useLogicAssemblyData((state) => state.currentStep)
+    const setCurrentStep = useLogicAssemblyData((state) => state.setCurrentStep)
+    const setCurrentFlatInstruction = useLogicAssemblyData((state) => state.setCurrentFlatInstruction)
 
     // Reset simulation when logic starts/stops
     useEffect(() => {
@@ -43,29 +47,32 @@ export function FlatSimulator({
         }
     }, [isExecuting, map, blocks])
 
-    // Tu lógica de flatInstructions se mantiene igual...
-    const flatInstructions = useCallback((program: LogicAssemblyBlock[], allBlocks: LogicAssemblyBlock[]): { type: LogicAssemblyBlockType, value?: string | number }[] => {
-        let result: { type: LogicAssemblyBlockType, value?: string | number }[] = []
+    //Logica para aplanar el programa
+    const flatInstructions = useCallback((program: LogicAssemblyBlock[], allBlocks: LogicAssemblyBlock[], parentId?: string): { type: LogicAssemblyBlockType, value?: string | number, id: string }[] => {
+        let result: { type: LogicAssemblyBlockType, value?: string | number, id: string }[] = []
         for (const b of program) {
             if (b.type === 'REPETIR' && b.children) {
                 const times = parseInt(b.value as string) || 1
                 for (let i = 0; i < times; i++) {
-                    result.push(...flatInstructions(b.children, allBlocks))
+                    result.push(...flatInstructions(b.children, allBlocks, b.id))
                 }
             } else if (b.type === 'LLAMAR') {
                 const fnName = b.value as string
                 const fnDef = allBlocks.find(block => block.type === 'FUNCION' && block.value === fnName)
                 if (fnDef && fnDef.children) {
-                    result.push(...flatInstructions(fnDef.children, allBlocks))
+                    result.push(...flatInstructions(fnDef.children, allBlocks, b.id))
                 }
-            } else if (b.type === 'FUNCION') continue
-            else result.push({ type: b.type, value: b.value })
+            } else if (b.type === 'FUNCION') {
+                continue
+            }
+            else result.push({ type: b.type, value: b.value, id: b.id })
         }
         return result
     }, [])
 
     async function runSimulation(id: number) {
         const queue = flatInstructions(blocks, blocks)
+        console.log("queue", queue)
         let cx = map.start.x
         let cy = map.start.y
         let cd = map.start.dir as Direction
@@ -73,10 +80,13 @@ export function FlatSimulator({
         const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
 
         for (let i = 0; i < queue.length; i++) {
+            console.log(queue[i])
+
+            setCurrentFlatInstruction(queue[i])
             if (id !== executionRef.current || !isExecuting) return
             const inst = queue[i]
             setCurrentStep(i)
-            await delay(400)
+            await delay(1600)
             if (id !== executionRef.current || !isExecuting) return
 
             if (inst.type === 'MOVER') {
@@ -242,7 +252,7 @@ export function FlatSimulator({
             </div>
 
             {/* STATUS FOOTER (Panel de Datos Inferior) */}
-            <div className="bg-[#0D1117] px-4 py-2 border-x border-b border-white/5 rounded-b font-mono text-[9px] flex justify-between items-center text-[#4A5568] uppercase tracking-widest shadow-inner">
+            <div className="bg-[#0D1117] px-4 py-2 border-x border-b border-white/5 rounded-b font-mono text-[10px] flex justify-between items-center text-(--text-muted) uppercase tracking-widest shadow-inner">
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1.5">
                         <div className={`w-2 h-2 rounded-full ${isExecuting ? 'bg-(--amber) shadow-[0_0_8px_var(--amber)] animate-pulse' : 'bg-white/5'}`} />
