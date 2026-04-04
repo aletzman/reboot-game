@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { PlayCircle } from 'lucide-react'
-import { motion } from 'motion/react'
+import { motion, AnimatePresence } from 'motion/react'
+import { Screw } from './Screw'
 
 interface SequenceMemoryProps {
     isExecuting: boolean
@@ -12,66 +12,85 @@ interface SequenceMemoryProps {
 }
 
 export function SequenceMemory({ isExecuting, usedBlocks, maxBlocks, className = "" }: SequenceMemoryProps) {
-    // Determinar el color de cada segmento basado en su posición
     const getBarColor = (index: number) => {
         const ratio = index / maxBlocks;
-        if (ratio >= 0.8) return 'var(--red)';
-        if (ratio >= 0.5) return 'var(--amber)';
+        if (ratio >= 0.85) return 'var(--red)';
+        if (ratio >= 0.6) return 'var(--amber)';
         return 'var(--green-light)';
     };
 
-    const label = isExecuting ? 'EJECUCIÓN_PASOS' : 'CAPACIDAD_SISTEMA';
-
     return (
-        <div className={`hidden md:flex w-full self-center flex-col gap-3 p-4 bg-(--bg-void) border border-(--border-color) shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)] relative overflow-hidden ${className}`}>
+        <div className={`
+            hidden md:flex flex-col gap-1 p-3 py-1 w-full
+            bg-(--bg-deep) 
+            shadow-[0_-5px_15px_rgba(0,0,0,0.4)]
+            relative overflow-hidden group/mem
+            ${className}
+        `}>
+            {/* 3. HEADER */}
+            <div className="flex justify-between items-end px-1 relative z-10">
+                <div className="flex flex-col">
+                    <span className={`
+                        text-[10px] font-mono font-bold tracking-widest mt-1
+                        ${isExecuting ? 'text-(--amber) [text-shadow:0_0_8px_var(--amber)]' : 'text-(--text-muted)'}
+                    `}>
+                        {isExecuting ? 'PROCESANDO_PASOS' : 'USO_DE_MEMORIA'}
+                    </span>
+                </div>
 
-            {/* Capa de textura sutil de hardware */}
-            <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(#fff_1px,transparent_1px)] bg-size-[4px_4px] pointer-events-none" />
-
-            {/* Header del Componente */}
-            <div className="flex justify-between items-center font-mono text-xs uppercase font-black tracking-widest z-10 relative">
-                <span className="flex items-center gap-2 text-(--text-muted)">
-                    <PlayCircle
-                        size={12}
-                        className={`transition-colors duration-300 ${isExecuting ? 'text-(--amber) animate-pulse' : 'opacity-40'}`}
-                    />
-                    {label}
-                </span>
-                <span className="text-white">
-                    {String(usedBlocks).padStart(2, '0')}
-                    <span className="opacity-30 mx-1">/</span>
-                    {String(maxBlocks).padStart(2, '0')}
-                </span>
+                <div className="flex items-baseline gap-1 bg-black/40 px-2 py-0.5 border border-white/5 rounded-sm">
+                    <span className="text-[12px] font-mono font-black text-white leading-none">
+                        {String(usedBlocks).padStart(2, '0')}
+                    </span>
+                    <span className="text-[9px] font-mono text-(--text-ghost)">BLOQUES</span>
+                </div>
             </div>
 
-            {/* Barra de Bloques Segmentada */}
-            <div className="flex gap-[2px] h-[6px] w-full items-center z-10">
+            {/* 4. BARRA DE BLOQUES */}
+            <div className="
+                relative h-[22px] w-full flex items-center justify-between gap-[3px] 
+                bg-black/60 p-1.5 rounded-[1px]
+                border border-black shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)]
+            ">
+                <div className="absolute inset-0 flex justify-between px-2 pointer-events-none opacity-10">
+                    {[...Array(5)].map((_, i) => (
+                        <div key={i} className="w-px h-full bg-white" />
+                    ))}
+                </div>
+
                 {Array.from({ length: maxBlocks || 12 }).map((_, i) => {
                     const active = i < usedBlocks;
                     const isProcessing = isExecuting && active;
                     const barColor = getBarColor(i);
 
                     return (
-                        <motion.div
-                            key={i}
-                            layout
-                            initial={false}
-                            animate={{
-                                opacity: active ? (isProcessing ? [1, 0.3, 1] : 1) : 0.8,
-                                backgroundColor: active ? barColor : 'rgba(255, 255, 255, 0.05)',
-                                scaleY: active ? 1 : 0.6,
-                                boxShadow: active ? `0 0 6px ${barColor}` : '0 0 0px rgba(0,0,0,0)',
-                            }}
-                            transition={{
-                                duration: isProcessing ? 1 : 0.2,
-                                repeat: isProcessing ? Infinity : 0,
-                                delay: isProcessing ? i * 0.1 : 0,
-                                ease: isProcessing ? "linear" : "easeOut",
-                            }}
-                            className={`flex-1 h-full rounded-[1px] border ${active ? 'border-transparent' : 'border-white/5'}`}
-                        />
+                        <div key={i} className="relative flex-1 h-full flex flex-col items-center">
+                            <motion.div
+                                layout
+                                animate={{
+                                    backgroundColor: active ? barColor : 'rgba(255, 255, 255, 0.05)',
+                                    opacity: active ? (isProcessing ? [1, 0.4, 1] : 1) : 0.4,
+                                    height: active ? '100%' : '15%',
+                                    boxShadow: active ? `0 0 8px ${barColor}` : 'none'
+                                }}
+                                transition={{
+                                    duration: isProcessing ? 0.6 : 0.1,
+                                    repeat: isProcessing ? Infinity : 0,
+                                    delay: isProcessing ? i * 0.05 : 0
+                                }}
+                                className="w-full rounded-[0.5px] border-x border-black/20"
+                            />
+                        </div>
                     );
                 })}
+            </div>
+
+            <div className="flex justify-between items-center px-1">
+                <div className="flex gap-1">
+                    <div className={`w-1.5 h-1.5 rounded-full ${isExecuting ? 'bg-(--amber) animate-pulse shadow-[0_0_5px_var(--amber)]' : 'bg-black border border-white/10'}`} />
+                    <span className="text-[7px] font-mono text-(--text-ghost) uppercase tracking-tighter">CONEXIÓN_ACTIVA</span>
+                </div>
+                <span className="text-[7px] font-mono text-(--text-ghost) uppercase">LÍMITE_MÁX: {maxBlocks}</span>
             </div>
         </div>
     );
