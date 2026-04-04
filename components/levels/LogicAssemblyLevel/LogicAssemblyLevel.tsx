@@ -24,6 +24,8 @@ import { directionBiased } from '@dnd-kit/collision'
 import { Screw } from '@/components/ui/Screw'
 import { PlayButton } from '@/components/ui/PlayButton'
 import { StopButton } from '@/components/ui/StopButton'
+import { AnimatePresence, motion } from 'motion/react'
+import { useLogicAssemblyData } from '@/lib/store/useLogicAssemblyData'
 export default function LogicAssemblyLevel({
     level,
     state,
@@ -37,16 +39,15 @@ export default function LogicAssemblyLevel({
         [data.availableBlocks]
     )
 
-    const [program, setProgram] = useState<LogicAssemblyBlock[]>([])
+    //const [program, setProgram] = useState<LogicAssemblyBlock[]>([])
     // Estado de preview separado: solo existe durante un drag activo.
     // El workspace renderiza dragPreview ?? program, así el estado "real"
     // no se toca en cada mousemove y BlockItem no re-renderiza innecesariamente.
     const [dragPreview, setDragPreviewState] = useState<LogicAssemblyBlock[] | null>(null)
-    const dragPreviewRef = useRef<LogicAssemblyBlock[] | null>(null)
 
     const [feedback, setFeedback] = useState<'idle' | 'correct' | 'wrong'>('idle')
     const [attempts, setAttempts] = useState(0)
-    const [isExecuting, setIsExecuting] = useState(false)
+    //const [isExecuting, setIsExecuting] = useState(false)
     const [activeId, setActiveId] = useState<string | null>(null);
     const [activeBlock, setActiveBlock] = useState<LogicAssemblyBlock | null>(null);
 
@@ -57,6 +58,7 @@ export default function LogicAssemblyLevel({
     // Snapshot del programa al inicio del drag para que el preview
     // pueda operar siempre sobre una base estable sin capturar `program`
     const programSnapshotRef = useRef<LogicAssemblyBlock[]>([]);
+    const dragPreviewRef = useRef<LogicAssemblyBlock[] | null>(null)
 
     const { ref: rootDropRef, isDropTarget: isRootWorkspaceHover } = useDroppable({
         id: 'root-workspace',
@@ -64,6 +66,11 @@ export default function LogicAssemblyLevel({
         collisionDetector: directionBiased,
         collisionPriority: 0
     })
+
+    const program = useLogicAssemblyData((state) => state.program)
+    const setProgram = useLogicAssemblyData((state) => state.setProgram)
+    const isExecuting = useLogicAssemblyData((state) => state.isExecuting)
+    const setIsExecuting = useLogicAssemblyData((state) => state.setIsExecuting)
 
     // Lo que el workspace muestra: preview durante drag, estado real en reposo
     const displayProgram = dragPreview ?? program
@@ -276,7 +283,13 @@ export default function LogicAssemblyLevel({
                             level={level}
                             status={feedback === 'correct' ? 'success' : feedback === 'wrong' ? 'failed' : isExecuting ? 'playing' : 'idle'}
                             isRunning={isExecuting}
-                        />
+                        >
+                            <SequenceMemory
+                                isExecuting={isExecuting}
+                                usedBlocks={flatBlocks(displayProgram).length}
+                                maxBlocks={data.maxBlocks}
+                            />
+                        </LevelHeader>
                     </div>
 
                     <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
@@ -289,7 +302,7 @@ export default function LogicAssemblyLevel({
                         <Panel typePanel="aside" className="w-full md:w-[290px]" border={['left', 'right']}>
                             <SectionHeader title="módulos_de_comando" subtitle="SEC_02 // MOD_CMD" />
 
-                            <div className="p-4 h-[calc(100svh-246px)]">
+                            <div className="flex flex-col gap-1 p-4 h-[calc(100svh-177px)]">
                                 {availableDefs.map(def => (
                                     <div key={def.type} className="relative z-10">
                                         <DraggablePaletteBlock
@@ -301,12 +314,6 @@ export default function LogicAssemblyLevel({
                                     </div>
                                 ))}
                             </div>
-
-                            <SequenceMemory
-                                isExecuting={isExecuting}
-                                usedBlocks={flatBlocks(displayProgram).length}
-                                maxBlocks={data.maxBlocks}
-                            />
                         </Panel>
 
                         {/* ÁREA CENTRAL*/}
@@ -382,24 +389,11 @@ export default function LogicAssemblyLevel({
                                         </div>
                                     </div>
                                     {/* PANEL ASISTENTE (DOCS) */}
-                                    <div className="w-[340px] relative flex flex-col justify-end pt-1">
-                                        <div className="absolute -top-1 left-2 flex items-center gap-2 px-3 py-0.5 bg-[#192430] border border-[#2D333B] border-b-0 rounded-t-sm z-20 shadow-[-2px_-2px_5px_rgba(0,0,0,0.3)]">
-                                            <div className={`w-1.5 h-1.5 rounded-full shadow-[0_0_10px_var(--amber)] animate-pulse transition-colors ${state.fragUsed ? 'bg-(--purple)' : 'bg-(--amber)'}`} />
-                                            <span className="text-[9px] font-mono font-black text-(--text-muted) tracking-[0.3em] uppercase">R_INFO // AUX_V4</span>
-                                        </div>
-
-                                        <div className="-mb-6">
-                                            <DirectivesPanel
-                                                infoText={
-                                                    <TacticalSection title="MISIÓN_ACTUAL" >
-                                                        <div className="font-mono text-[12px] text-white/90 leading-relaxed relative z-10">
-                                                            {level.description}
-                                                        </div>
-                                                    </TacticalSection>
-                                                }
-                                                missionText={level.description}
-                                            />
-                                        </div>
+                                    <div className="w-[340px] relative flex flex-col justify-center pt-1">
+                                        <DirectivesPanel
+                                            infoText={level.fragHint}
+                                            missionText={level.description}
+                                        />
                                     </div>
 
                                 </div>
@@ -431,39 +425,59 @@ export default function LogicAssemblyLevel({
                             </div>
                         </TacticalSection>
 
-                        {/* OUTPUT SECUENCIA */}
-                        <TacticalSection title="OUTPUT_SECUENCIA" variant="inset">
-                            <div className="h-88 overflow-hidden bg-[#05070A] border border-black shadow-[inset_0_2px_15px_rgba(0,0,0,1)] relative group/terminal">
+                        {/* OUTPUT_SECUENCIA: MONITOR DE DEPURACIÓN */}
+                        <TacticalSection title="MONITOR_DE_DEPURACIÓN" variant="inset">
+                            <div className={`h-[335px] overflow-hidden bg-[#020406]  transition-all duration-500 relative group/terminal
+                       
+                            `}>
 
-                                <div className="flex items-center justify-between px-3 py-2 border-b border-white/5 bg-black/40">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-px h-3 bg-(--text-muted) opacity-40" />
-                                        <span className="text-[9px] font-mono font-black text-(--text-muted) uppercase">
-                                            LOG_STREAM_V4 // ROOT
+                                {/* 1. EFECTOS DE PANTALLA MÍNIMOS (Para no cansar la vista) */}
+                                <div className="absolute inset-0 opacity-[0.05] pointer-events-none z-20 crt-overlay" />
+                                <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(0,0,0,0.7)] pointer-events-none z-20" />
+
+                                {/* 2. HEADER DINÁMICO */}
+                                <div className={`relative z-30 flex items-center justify-between px-3 py-1.5 border-b backdrop-blur-sm transition-colors duration-500 bg-black/60 border-white/5`}>
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${isExecuting ? 'animate-pulse shadow-[0_0_8px_var(--amber)]' : 'bg-(--text-ghost)'}`} />
+                                        <span className={`text-[9px] font-mono font-black tracking-widest uppercase transition-colors ${isExecuting ? 'text-(--amber)' : 'text-(--text-muted)'}`}>
+                                            {isExecuting ? '[ EJECUTANDO_SECUENCIA ]' : 'ESTADO_DEL_CÓDIGO // READ_ONLY'}
                                         </span>
                                     </div>
-                                    <div className="flex gap-1 opacity-30">
-                                        <div className="w-1 h-1 bg-white rounded-full" />
-                                        <div className="w-1 h-1 bg-white/40 rounded-full" />
+                                    <div className="text-[8px] font-mono text-(--text-ghost) opacity-60">
+                                        REF_ID: 0x{level.id.toUpperCase().replace('-', '')}
                                     </div>
                                 </div>
 
-                                <div className="h-[calc(100%-32px)] overflow-y-auto custom-scrollbar p-4 relative">
-                                    <div className="absolute inset-0 opacity-[0.02] bg-[linear-gradient(to_right,#fff_1px,transparent_1px)] bg-size-[40px_100%] pointer-events-none" />
-
-                                    <div className="relative z-10 font-mono text-[11px] leading-tight antialiased">
-                                        <PseudocodeSummary blocks={displayProgram} />
-                                        <div className="inline-block w-1.5 h-3 bg-(--text-primary) opacity-30 animate-pulse ml-1 align-middle" />
+                                {/* 3. ÁREA DE CÓDIGO (Siempre legible) */}
+                                <div className="h-[calc(100%-55px)] p-1 relative">
+                                    <div className="relative z-10 flex gap-4 h-full">
+                                        {/* Contenido de la secuencia */}
+                                        <div className={`flex-1 font-mono text-[11px] h-full leading-tight antialiased transition-colors duration-500 ${isExecuting ? 'text-(--amber) [text-shadow:0_0_5px_rgba(239,159,39,0.3)]' : 'text-(--green-light) [text-shadow:0_0_5px_rgba(126,213,38,0.2)]'}`}>
+                                            <PseudocodeSummary blocks={displayProgram} />
+                                            <motion.div
+                                                animate={{ opacity: [1, 0, 1] }}
+                                                transition={{ duration: 1, repeat: Infinity }}
+                                                className={`inline-block w-1.5 h-3 ml-2 align-middle ${isExecuting ? 'bg-(--amber)' : 'bg-(--green-light)'}`}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="absolute bottom-0 right-0 w-6 h-6 pointer-events-none opacity-10">
-                                    <div className="absolute bottom-1 right-1 w-full h-px bg-white -rotate-45" />
+                                {/* 4. FOOTER TÉCNICO */}
+                                <div className="absolute bottom-0 left-0 right-0 h-4 bg-black/40 border-t border-white/5 px-2 flex items-center justify-between z-30">
+                                    <span className="text-[9px] font-mono text-(--text-muted) uppercase tracking-widest">
+                                        {isExecuting ? 'FLUJO_DE_DATOS_ACTIVO' : 'SISTEMA_EN_ESPERA'}
+                                    </span>
+                                    <div className="flex gap-2">
+                                        <div className="w-8 h-1 bg-white/5 rounded-full overflow-hidden">
+                                            {isExecuting && <motion.div animate={{ x: [-32, 32] }} transition={{ duration: 1, repeat: Infinity }} className="w-4 h-full bg-(--amber)/40" />}
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_40px_rgba(0,0,0,0.6)]" />
                             </div>
                         </TacticalSection>
+
+
                     </div>
                 </Panel>
 

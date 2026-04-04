@@ -73,77 +73,17 @@ export function LevelHeader({ level, status, isRunning, children }: LevelHeaderP
             </div>
 
             {/* ─── COMPARTIMENTO 03: TELEMETRÍA (Monitor CRT) ─── */}
-            <div className="flex items-center justify-between md:justify-end h-18 min-w-fit md:min-w-[320px] bg-(--bg-deep) relative gap-6">
+            {children && <div className="flex items-center justify-between md:justify-end h-18 min-w-fit md:min-w-[320px] bg-(--bg-deep) relative gap-6">
 
-                <div className="flex items-center px-6 py-2 min-w-full h-18 bg-black/20 relative border-l border-black">
-                    {/* Textura de fondo (Rejilla de Bit Lógico) */}
-                    <div className="absolute inset-0 opacity-[0.02] h-18 bg-[radial-gradient(#fff_1px,transparent_1px)] bg-size-[4px_4px]" />
-
-                    <div className="flex flex-col w-full relative z-10 gap-2">
-                        <div className="flex justify-between items-center">
-                            <span className="text-[9px] font-mono text-(--text-muted) font-black tracking-widest flex items-center gap-2">
-                                <Activity size={12} className={isRunning ? 'text-(--amber) animate-pulse' : ''} />
-                                STATUS
-                            </span>
-                            <div className={`w-1.5 h-1.5 rounded-full ${isRunning ? 'bg-(--amber) shadow-[0_0_8px_var(--amber)] animate-pulse' : 'bg-white/5'}`} />
-                        </div>
-
-                        {/* Display Digital */}
-                        <div className="flex flex-col gap-1.5">
-                            <span
-                                className="text-[12px] font-mono not-last:font-black tracking-[0.25em] leading-none transition-colors duration-300"
-                                style={{ color: statusColor }}
-                            >
-                                {status === 'success' ? 'RUTINA_OK' : status === 'failed' ? 'ERROR' : isRunning ? 'PROCESANDO_DATA' : 'STANDBY'}
-                            </span>
-
-                            {/* Barras de Señal (Animación de Hardware) */}
-                            <div className="flex gap-[2px] h-[5px] w-full items-center">
-                                {Array.from({ length: 15 }).map((_, i) => {
-                                    const isSuccess = status === 'success';
-                                    const isFailed = status === 'failed';
-
-                                    return (
-                                        <motion.div
-                                            key={i}
-                                            initial={false}
-                                            animate={{
-                                                opacity: isSuccess ? 1 : isFailed ? [1, 0.2, 1] : isRunning ? [1, 0.2, 1] : 0.2,
-                                                backgroundColor: statusColor,
-                                                boxShadow: (isSuccess || isFailed || isRunning) ? `0 0 6px ${statusColor}` : '0 0 0px transparent',
-                                            }}
-                                            transition={{
-                                                duration: isFailed ? 0.3 : isRunning ? 0.8 : 0.2,
-                                                repeat: (isFailed || isRunning) ? Infinity : 0,
-                                                delay: isRunning ? i * 0.05 : isFailed ? (i % 2 === 0 ? 0 : 0.15) : 0,
-                                                ease: "linear",
-                                            }}
-                                            className="flex-1 h-full rounded-[1px]"
-                                        />
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Acciones (Volumen, etc.) */}
-                    {children && (
-                        <div className="flex items-center ml-4 pl-4 border-l border-white/5 h-10">
-                            {children}
-                        </div>
-                    )}
-                </div>
 
                 {/* Acciones del Header */}
                 {children && (
-                    <div className="flex items-center justify-center shrink-0 border-l border-(--border-color) pl-6 ml-2 h-full">
+                    <div className="flex items-center justify-center shrink-0 border-l border-(--border-color) w-full h-full">
                         {children}
                     </div>
                 )}
-            </div>
+            </div>}
 
-            {/* OVERLAY DE INTERFERENCIA (Sutil) */}
-            <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(255,255,255,0.1)_50%)] bg-size-[100%_4px]" />
         </div>
     )
 }
