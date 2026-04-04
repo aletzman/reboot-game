@@ -20,12 +20,12 @@ export function DraggablePaletteBlock({ def, disabled, maxReached, onClick }: { 
             disabled={isDisabled}
             className={`
                 group relative flex items-center min-h-[46px] w-full text-left transition-all duration-150
-                cursor-grab overflow-hidden touch-none select-none rounded-[2px] 
-                border-t border-l border-b-2 border-r-[3px] border-[#050608] 
+                cursor-grab overflow-hidden touch-none select-none rounded-[3px] overflow-x-hidden
+                border-t border-l border-b border-r-[3px] border-[#050608] 
                 ${isDragging ? 'opacity-50 scale-95 shadow-none' : ''} 
                 ${isDisabled
-                    ? 'cursor-not-allowed opacity-60 grayscale bg-[#0A0C0F] shadow-[inset_0_4px_10px_rgba(0,0,0,0.9)] border-t-[#050608] border-l-[#050608] border-b-[#1A1D24] border-r-[#1A1D24]' // Se invierte el bisel, parece un hueco
-                    : 'block-item opacity-85 hover:opacity-100 hover:-translate-x-px hover:shadow-[4px_4px_0_rgba(0,0,0,0.8)] active:scale-[0.98] active:shadow-none active:translate-y-0 active:translate-x-0'
+                    ? 'cursor-not-allowed opacity-60 grayscale bg-[#0A0C0F] border-t-[#050608] border-l-[#050608] border-b-[#1A1D24] border-r-[#1A1D24]' // Se invierte el bisel, parece un hueco
+                    : 'block-item opacity-85 hover:opacity-100 hover:-translate-x-px   active:scale-[0.98] active:shadow-none active:translate-y-0 active:translate-x-0'
                 }
             `}
         >
@@ -40,18 +40,18 @@ export function DraggablePaletteBlock({ def, disabled, maxReached, onClick }: { 
             {/* 2. PLACA DE AGARRE EN MINIATURA (Adiós GripVertical genérico) */}
             <div className={` absolute left-0 top-0 bottom-0
                 w-6 ml-[5px] h-full 
-                border-r border-[#363D4C] bg-(--surface-2-dark) 
+                border-r border-[#363D4C] bg-(--surface-2) 
                 flex flex-col items-center justify-center gap-[3px] py-1 
                 ${isDisabled ? 'opacity-30' : ''}
             `}>
-                {/* Tornillo superior */}
-                <Screw size='sm' />
-                {/* Estrías físicas en lugar del ícono */}
-                <div className="h-[2px] w-3.5 bg-[#050608] border-b border-[#363D4C]" />
-                <div className="h-[2px] w-3.5 bg-[#050608] border-b border-[#363D4C]" />
-                <div className="h-[2px] w-3.5 bg-[#050608] border-b border-[#363D4C]" />
-                {/* Tornillo inferior */}
-                <Screw size='sm' />
+                <div className="w-1 h-1 rounded-full bg-(--text-muted)/60" />
+                <div className="flex flex-col gap-1 opacity-20">
+                    {[...Array(3)].map((_, i) => (
+                        <div key={i} className="w-4 h-px bg-(--text-muted)" />
+                    ))}
+                </div>
+                <div className="w-1 h-1 rounded-full bg-(--text-muted)/60 shadow-[0_0_5px_rgba(255,255,255,0.1)]" />
+
             </div>
 
             {/* 3. CONTENIDO DEL BLOQUE (Desplazado para hacer espacio a la placa) */}
