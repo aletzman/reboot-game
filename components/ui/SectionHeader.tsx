@@ -12,16 +12,13 @@ export default function SectionHeader({ title, subtitle }: SectionHeaderProps) {
     return (
         <header className="h-[48px] px-4 flex items-center justify-between relative z-10 bg-(--bg-surface) border-y border-(--border-color) overflow-hidden group/section">
 
-            {/* 1. ESTRUCTURA DE PANEL (EL BISEL) 
-                Mismo inset que el LevelHeader para coherencia de fabricación */}
+            {/* 1. ESTRUCTURA DE PANEL (EL BISEL) */}
             <div className="absolute inset-[2px] border border-black/60 rounded-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] pointer-events-none" />
 
-            {/* 2. TEXTURA DE FIBRA / CARBONO 
-                Misma escala que el header principal pero con menos opacidad */}
-            <div className="absolute inset-0 opacity-[0.08] bg-[linear-gradient(45deg,rgba(0,0,0,0)_45%,#fff_50%,rgba(0,0,0,0)_55%)] bg-size-[3px_3px] pointer-events-none" />
+            {/* 2. TEXTURA DE FIBRA / CARBONO */}
+            <div className="absolute left-[2px] right-[2px] top-[2px] bottom-[2px] rounded-sm opacity-[0.08] bg-[linear-gradient(45deg,rgba(0,0,0,0)_45%,#fff_50%,rgba(0,0,0,0)_55%)] bg-size-[3px_3px] pointer-events-none" />
 
-            {/* 3. LUZ DE ESTADO SECUNDARIA
-                Más delgada y sutil que la principal */}
+            {/* 3. LUZ DE ESTADO SECUNDARIA */}
             <div className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[2px] bg-(--green-base) shadow-[0_0_10px_var(--green-base)] rounded-r-full opacity-70 group-hover/section:opacity-100 transition-opacity" />
 
             {/* =========================================
