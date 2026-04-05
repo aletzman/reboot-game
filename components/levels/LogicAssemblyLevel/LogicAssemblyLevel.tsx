@@ -26,6 +26,7 @@ import { PlayButton } from '@/components/ui/PlayButton'
 import { StopButton } from '@/components/ui/StopButton'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLogicAssemblyData } from '@/lib/store/useLogicAssemblyData'
+import { SpeedSelector } from './SpeedSelector'
 export default function LogicAssemblyLevel({
     level,
     state,
@@ -55,16 +56,11 @@ export default function LogicAssemblyLevel({
     const activeBlockRef = useRef<LogicAssemblyBlock | null>(null);
     const lastTargetRef = useRef<{ id: string, index: number } | null>(null);
     const throttleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    // Snapshot del programa al inicio del drag para que el preview
-    // pueda operar siempre sobre una base estable sin capturar `program`
-    const programSnapshotRef = useRef<LogicAssemblyBlock[]>([]);
-    const dragPreviewRef = useRef<LogicAssemblyBlock[] | null>(null)
+
 
     const { ref: rootDropRef, isDropTarget: isRootWorkspaceHover } = useDroppable({
         id: 'root-workspace',
-        data: { isWorkspace: true },
-        collisionDetector: directionBiased,
-        collisionPriority: 0
+        data: { isWorkspace: true }
     })
 
     const program = useLogicAssemblyData((state) => state.program)
@@ -85,13 +81,10 @@ export default function LogicAssemblyLevel({
     )
 
 
-    useEffect(() => {
-        programSnapshotRef.current = program
-    }, [program])
-
-    // ------------------------------------------------------------
-    // ACCIONES
-    // ------------------------------------------------------------
+    // Snapshot del programa para que el preview
+    // pueda operar siempre sobre una base estable.
+    const programSnapshotRef = useRef<LogicAssemblyBlock[]>(program);
+    const dragPreviewRef = useRef<LogicAssemblyBlock[] | null>(null)
 
     function handleAddBlock(type: LogicAssemblyBlockType) {
         if (isExecuting || feedback !== 'idle') return
@@ -138,8 +131,9 @@ export default function LogicAssemblyLevel({
         const sourceData = source.data as any;
         setActiveId(source.id);
 
-        // Usar el ref en vez de program para evitar closure stale
-        const currentProgram = programSnapshotRef.current
+        // Snapshot FRECO del programa al inicio del drag para evitar errores de sincronización
+        const currentProgram = [...program]
+        programSnapshotRef.current = currentProgram;
 
         let block: LogicAssemblyBlock | null = null;
         if (sourceData.isNew) {
@@ -155,13 +149,24 @@ export default function LogicAssemblyLevel({
         // Snapshot del programa en el momento exacto que empieza el drag.
         // El preview siempre parte de aquí, evitando acumular errores
         // si moveNodeInTree muta referencias de forma inconsistente.
-        dragPreviewRef.current = currentProgram;
-        setDragPreviewState(currentProgram);
-    }, [program]);
+        setDragPreview(currentProgram);
+    }, [program, setDragPreview]);
 
     const handleDragOver = useCallback((event: any) => {
-        const { source, target } = event.operation;
-        if (!target || isExecuting || !activeBlockRef.current) return;
+        let { source, target } = event.operation;
+
+        // Si no hay target detectado por colisión directa con droppables (como bloques),
+        // pero estamos sobre el workspace (root-workspace), lo asignamos manualmente.
+        if (!target && isRootWorkspaceHover) {
+            target = { id: 'root-workspace', index: programSnapshotRef.current.length };
+        }
+
+        if (!target) {
+            lastTargetRef.current = null
+            return
+        }
+
+        if (isExecuting || !activeBlockRef.current) return;
         //console.log('source.id:', source?.id, '| target.id:', target?.id, '| target.index:', target?.index)
 
         // Evitar trabajo si el target y el index son idénticos al anterior
@@ -186,10 +191,10 @@ export default function LogicAssemblyLevel({
         // Evitar bucles infinitos al soltar un padre sobre un hijo suyo
         if (targetId.includes(activeBlockRef.current.id)) return;
 
-        // Actualizar SOLO el preview, nunca el estado real durante el drag
-        setDragPreview(current =>
+        // Actualizar SOLO el preview, partiendo SIEMPRE del snapshot estable del inicio del drag
+        setDragPreview(
             moveNodeInTree(
-                current ?? programSnapshotRef.current,
+                programSnapshotRef.current,
                 sourceId,
                 targetId,
                 targetIndex,
@@ -198,9 +203,10 @@ export default function LogicAssemblyLevel({
                 activeBlockRef.current!
             )
         );
-    }, [isExecuting]);
+    }, [isExecuting, isRootWorkspaceHover, setDragPreview]);
 
-    const handleDragEnd = useCallback(() => {
+    const handleDragEnd = useCallback((event: any) => {
+        const { target } = event.operation;
         //console.log('programRef.current al soltar:', JSON.stringify(programSnapshotRef.current, null, 2))
         //console.log('lastTargetRef:', lastTargetRef.current)
         // Limpiar throttle pendiente
@@ -211,20 +217,20 @@ export default function LogicAssemblyLevel({
 
         const finalProgram = dragPreviewRef.current;
 
-        // Confirmar el preview como estado real solo si hubo movimiento
-        if (finalProgram !== null) {
-            setProgram(finalProgram)
+        // Confirmar la inserción si el preview ha cambiado y estamos sobre la zona del workspace
+        if (finalProgram !== null && finalProgram !== programSnapshotRef.current) {
+            if (target || isRootWorkspaceHover) {
+                setProgram(finalProgram)
+            }
         }
-
 
         setActiveId(null);
         setActiveBlock(null);
         activeBlockRef.current = null;
         lastTargetRef.current = null;
-        programSnapshotRef.current = [];
         dragPreviewRef.current = null;
         setDragPreviewState(null);
-    }, []);
+    }, [isRootWorkspaceHover, setProgram]);
 
     function handleCheck() {
         if (program.length === 0 || isExecuting || feedback !== 'idle') return
@@ -292,14 +298,14 @@ export default function LogicAssemblyLevel({
                         </LevelHeader>
                     </div>
 
-                    <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+                    <div className="flex-1 flex flex-col md:flex-row w-full overflow-hidden relative">
 
                         {isInteractionDisabled && (
                             <div className="absolute inset-0 z-50 bg-black/5 cursor-not-allowed" />
                         )}
 
                         {/* PALETA DE BLOQUES */}
-                        <Panel typePanel="aside" className="w-full md:w-[290px]" border={['left', 'right']}>
+                        <Panel id="logic-palette" typePanel="aside" className="w-full md:w-[290px]" border={['left', 'right']}>
                             <SectionHeader title="módulos_de_comando" subtitle="SEC_02 // MOD_CMD" />
 
                             <div className="flex flex-col gap-1 p-4 h-[calc(100svh-177px)]">
@@ -317,16 +323,17 @@ export default function LogicAssemblyLevel({
                         </Panel>
 
                         {/* ÁREA CENTRAL*/}
-                        <main className="flex-1 flex flex-col bg-(--bg-void) relative h-[calc(100svh-130px)]">
+                        <div className="flex-1 flex flex-col bg-(--bg-void) w-full relative h-[calc(100svh-130px)] min-w-0">
                             {/* AREA DE PROGRAMACIÓN */}
-                            <Panel typePanel="main" border={'none'} className='h-[calc(100svh-240px)] overflow-y-auto custom-scrollbar'>
+                            <Panel typePanel="main" border={'none'} className='h-[calc(100svh-240px)] w-full overflow-y-auto custom-scrollbar'>
                                 <div
-                                    id="logic-workspace"
+                                    id="root-workspace"
                                     ref={rootDropRef}
-                                    className={`flex-1 h-full gap-2 relative overflow-y-auto custom-scrollbar overflow-x-hidden p-8 transition-all duration-500 border flex flex-col ${isRootWorkspaceHover ? 'bg-(--green-base)/5 border-(--green-base)/30' :
-                                        feedback === 'correct' ? 'bg-(--green-darkest)/10 border-(--green-base)/40' :
-                                            feedback === 'wrong' ? 'bg-(--red)/5 border-(--red)/30 animate-shake' :
-                                                'bg-(--bg-surface)/30 border-white/5'
+                                    className={`flex-1 min-h-[500px] h-full w-full gap-2 relative p-8 transition-all duration-500 border flex flex-col 
+                                        ${isRootWorkspaceHover ? 'bg-(--green-base)/5 border-(--green-base)/30' :
+                                            feedback === 'correct' ? 'bg-(--green-darkest)/10 border-(--green-base)/40' :
+                                                feedback === 'wrong' ? 'bg-(--red)/5 border-(--red)/30 animate-shake' :
+                                                    'bg-(--bg-surface)/30 border-white/5'
                                         }`}
                                 >
                                     {displayProgram.length === 0 && (
@@ -357,16 +364,17 @@ export default function LogicAssemblyLevel({
                                             depth={0}
                                             parentId="root"
                                             disabled={isInteractionDisabled}
+                                            activeBlockId={activeBlock?.id}
                                         />
                                     ))}
                                 </div>
                             </Panel>
 
                             {/* FOOTER CONTROLES*/}
-                            <Panel typePanel="footer" border={['top']} className="h-[120px] relative overflow-visible">
-                                <div className="flex h-full items-stretch p-3 gap-4">
+                            <Panel typePanel="footer" border={['top']} className="h-[120px] w-full relative overflow-visible min-w-0">
+                                <div className="flex h-full items-stretch p-3 gap-4 min-w-0">
 
-                                    <div className="flex-1 flex items-stretch gap-4 p-2 ">
+                                    <div id="logic-execute-button" className="flex-1 flex items-stretch gap-4 p-2 min-w-0">
 
                                         {/* 1. BOTÓN ERASE: TIPO "SWITCH TÁCTICO" */}
                                         <StopButton
@@ -388,8 +396,9 @@ export default function LogicAssemblyLevel({
                                             />
                                         </div>
                                     </div>
+                                    <SpeedSelector />
                                     {/* PANEL ASISTENTE (DOCS) */}
-                                    <div className="w-[340px] relative flex flex-col justify-center pt-1">
+                                    <div className="w-[340px] relative flex flex-col justify-center pt-1 ">
                                         <DirectivesPanel
                                             infoText={level.fragHint}
                                             missionText={level.description}
@@ -399,14 +408,14 @@ export default function LogicAssemblyLevel({
                                 </div>
                             </Panel>
 
-                        </main>
+                        </div>
                     </div>
                 </div>
                 {/* MONITOR DE PROCESO */}
-                <Panel typePanel="aside" border={['left', 'right']} className="w-full md:w-[400px] shrink-0 flex flex-col relative overflow-hidden">
+                <Panel typePanel="aside" border={['left', 'right']} className="w-full md:w-[400px] shrink-0 flex flex-col relative custom-scrollbar h-[calc(100svh-63px)] overflow-hidden overflow-y-auto">
                     <SectionHeader title="MONITOR_PROCESO" subtitle="SEC_02 // MON_PRO" />
 
-                    <div className="flex-1 overflow-y-auto flex flex-col pt-4 custom-scrollbar relative z-10">
+                    <div id="logic-simulator" className="flex-1 overflow-y-auto flex flex-col pt-4 custom-scrollbar relative z-10">
                         {/* EJECUCIÓN EN TIEMPO REAL */}
                         <TacticalSection title="EJECUCIÓN_EN_TIEMPO_REAL" variant="inset">
                             <div className="bg-(--bg-void) relative overflow-hidden">
@@ -427,12 +436,12 @@ export default function LogicAssemblyLevel({
 
                         {/* OUTPUT_SECUENCIA: MONITOR DE DEPURACIÓN */}
                         <TacticalSection title="MONITOR_DE_DEPURACIÓN" variant="inset">
-                            <div className={`h-[335px] overflow-hidden bg-[#020406]  transition-all duration-500 relative group/terminal
+                            <div className={`h-[330px] overflow-hidden bg-[#020406]  transition-all duration-500 relative group/terminal
                        
                             `}>
 
                                 {/* 1. EFECTOS DE PANTALLA MÍNIMOS (Para no cansar la vista) */}
-                                <div className="absolute inset-0 opacity-[0.05] pointer-events-none z-20 crt-overlay" />
+                                <div className="absolute inset-0 opacity-[0.05] pointer-events-none z-20" />
                                 <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(0,0,0,0.7)] pointer-events-none z-20" />
 
                                 {/* 2. HEADER DINÁMICO */}
@@ -453,12 +462,7 @@ export default function LogicAssemblyLevel({
                                     <div className="relative z-10 flex gap-4 h-full">
                                         {/* Contenido de la secuencia */}
                                         <div className={`flex-1 font-mono text-[11px] h-full leading-tight antialiased transition-colors duration-500 ${isExecuting ? 'text-(--amber) [text-shadow:0_0_5px_rgba(239,159,39,0.3)]' : 'text-(--green-light) [text-shadow:0_0_5px_rgba(126,213,38,0.2)]'}`}>
-                                            <PseudocodeSummary blocks={displayProgram} />
-                                            <motion.div
-                                                animate={{ opacity: [1, 0, 1] }}
-                                                transition={{ duration: 1, repeat: Infinity }}
-                                                className={`inline-block w-1.5 h-3 ml-2 align-middle ${isExecuting ? 'bg-(--amber)' : 'bg-(--green-light)'}`}
-                                            />
+                                            <PseudocodeSummary blocks={program} />
                                         </div>
                                     </div>
                                 </div>
@@ -483,23 +487,32 @@ export default function LogicAssemblyLevel({
 
                 {/* DRAG OVERLAY */}
                 <DragOverlay>
-                    {activeId && activeBlock && (
-                        <div className="w-[300px] opacity-90">
-                            <BlockItem
-                                block={activeBlock}
-                                availableDefs={availableDefs}
-                                onRemove={() => { }}
-                                onValueChange={() => { }}
-                                onAddChild={() => { }}
-                                onMove={() => { }}
-                                availableFunctions={availableFunctions}
-                                depth={0}
-                                index={0}
-                                parentId="overlay"
-                                isOverlay
-                            />
-                        </div>
-                    )}
+                    <AnimatePresence>
+                        {activeId && activeBlock && (
+                            <motion.div
+                                key={activeId}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 0.8, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9, filter: 'blur(4px)' }}
+                                transition={{ duration: 0.1 }}
+                                className="w-[300px] pointer-events-none z-50 relative drop-shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
+                            >
+                                <BlockItem
+                                    block={activeBlock}
+                                    availableDefs={availableDefs}
+                                    onRemove={() => { }}
+                                    onValueChange={() => { }}
+                                    onAddChild={() => { }}
+                                    onMove={() => { }}
+                                    availableFunctions={availableFunctions}
+                                    depth={0}
+                                    index={0}
+                                    parentId="overlay"
+                                    isOverlay
+                                />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </DragOverlay>
             </div>
         </DragDropProvider>

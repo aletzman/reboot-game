@@ -5,6 +5,7 @@ interface FlatInstruction {
     type: LogicAssemblyBlockType
     value?: string | number
     id: string
+    stack?: string[]
 }
 
 interface LogicAssemblyDataState {
@@ -15,8 +16,6 @@ interface LogicAssemblyDataState {
     setIsExecuting: (isExecuting: boolean) => void
     currentStep: number
     setCurrentStep: (currentStep: number) => void
-    speed: number
-    setSpeed: (speed: number) => void
     currentFlatInstruction: FlatInstruction
     setCurrentFlatInstruction: (currentFlatInstruction: FlatInstruction) => void
 }
@@ -33,8 +32,6 @@ export const useLogicAssemblyData = create<LogicAssemblyDataState>((set) => ({
     setIsExecuting: (isExecuting) => set({ isExecuting }),
     currentStep: -1,
     setCurrentStep: (currentStep) => set({ currentStep }),
-    speed: 1,
-    setSpeed: (speed) => set({ speed }),
     currentFlatInstruction: { type: 'MOVER', value: 0, id: '' },
     setCurrentFlatInstruction: (currentFlatInstruction) => set({ currentFlatInstruction }),
 }))

@@ -98,7 +98,9 @@ export function moveNodeInTree(
     const insertRecursive = (list: LogicAssemblyBlock[]): LogicAssemblyBlock[] => {
         if (!targetRefId || targetRefId === 'root' || targetRefId === 'logic-workspace' || targetRefId === 'root-workspace') {
             const next = [...list];
-            next.splice(targetIndex, 0, movedBlock!);
+            // Si el index es inválido para el root, lo mandamos al final
+            const idx = (typeof targetIndex !== 'number' || targetIndex < 0) ? next.length : targetIndex;
+            next.splice(idx, 0, movedBlock!);
             return next;
         }
 

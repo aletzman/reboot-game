@@ -24,7 +24,7 @@ export const LOGIC_ASSEMBLY_TUTORIAL: DriveStep[] = [
         }
     },
     {
-        element: '#logic-workspace',
+        element: '#root-workspace',
         popover: {
             title: 'ZONA DE TRABAJO',
             description: 'Aquí es donde pones tus órdenes. El robot las hará una tras otra, empezando por la que esté más arriba.',

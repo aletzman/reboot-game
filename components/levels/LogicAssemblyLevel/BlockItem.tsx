@@ -22,6 +22,8 @@ interface BlockItemProps {
     parentId: string
     disabled?: boolean
     isOverlay?: boolean
+    activeBlockId?: string | null
+    isPhantom?: boolean
 }
 
 // ============================================================================
@@ -102,6 +104,8 @@ function BlockItemInner({
     parentId,
     disabled = false,
     isOverlay = false,
+    activeBlockId = null,
+    isPhantom = false,
 }: BlockItemProps) {
     const [showChildPicker, setShowChildPicker] = useState(false)
 
@@ -114,18 +118,15 @@ function BlockItemInner({
 
     const def = availableDefs.find(d => d.type === block.type)!
 
-    const containerProps = isOverlay ? {} : {
-        ref: (element: HTMLDivElement | null) => {
-            nodeRef(element);
-            if (!isDragging) targetRef(element);
-        }
-    };
+    const currentIsPhantom = isPhantom || (activeBlockId === block.id);
 
     return (
         <div
             ref={isOverlay ? undefined : nodeRef}
             //{...containerProps}
-            className={`relative z-10 transition-shadow duration-200 ${isDragging && !isOverlay ? 'opacity-20 grayscale scale-95' : ''} ${isOverlay ? 'z-50 pointer-events-none' : ''}`}
+            className={`relative z-10 transition-all duration-200 
+                ${(isDragging || currentIsPhantom) && !isOverlay ? 'opacity-30 grayscale-[0.5] scale-[1]' : ''} 
+                ${isOverlay ? 'z-50 pointer-events-none opacity-100' : ''}`}
             style={{ marginLeft: (depth > 0 && !isOverlay) ? 24 : 0 }}
         >
             {depth > 0 && (
@@ -140,7 +141,7 @@ function BlockItemInner({
                 ref={isOverlay ? undefined : targetRef}
                 className={`relative flex min-h-[50px] w-full 
                             rounded-[4px] transition-all duration-150 group 
-                            cursor-grab ${disabled ? 'opacity-50 grayscale' : ''} block-item`}
+                             ${disabled ? 'opacity-50 grayscale' : ''} block-item`}
             >
                 <div
 
@@ -290,6 +291,8 @@ function BlockItemInner({
                                 depth={depth + 1}
                                 parentId={block.id}
                                 disabled={disabled}
+                                activeBlockId={activeBlockId}
+                                isPhantom={currentIsPhantom}
                             />
                         ))}
                     </ChildrenDroppable>
@@ -356,6 +359,8 @@ export const BlockItem = memo(BlockItemInner, (prev, next) => {
         prev.disabled === next.disabled &&
         prev.parentId === next.parentId &&
         prev.isOverlay === next.isOverlay &&
+        prev.isPhantom === next.isPhantom &&
+        prev.activeBlockId === next.activeBlockId &&
         prev.availableFunctions === next.availableFunctions
     )
 })

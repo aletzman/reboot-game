@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
 import { MapData } from './types'
 import { useLogicAssemblyData } from '@/lib/store/useLogicAssemblyData'
+import { useSettingsStore } from '@/store/settings.store'
 
 interface FlatSimulatorProps {
     blocks: LogicAssemblyBlock[]
@@ -14,30 +15,112 @@ interface FlatSimulatorProps {
 
 type Direction = 'up' | 'down' | 'left' | 'right'
 
+const DIR_TO_DEG: Record<Direction, number> = { up: 0, right: 90, down: 180, left: 270 }
+
 export function FlatSimulator({
     blocks,
     map,
     isExecuting,
     onFinish
 }: FlatSimulatorProps) {
+    // Logical grid position (integer)
     const [robot, setRobot] = useState({
         x: map.start.x,
         y: map.start.y,
         dir: map.start.dir as Direction
     })
+
+    // Visual interpolated position (float, in grid units)
+    const [visualPos, setVisualPos] = useState({ x: map.start.x, y: map.start.y })
+    const [visualRotation, setVisualRotation] = useState(DIR_TO_DEG[map.start.dir as Direction])
+
     const [activated, setActivated] = useState<string[]>([])
     const [error, setError] = useState<string | null>(null)
     const executionRef = useRef(0)
 
+    // Refs for smooth animation
+    const animTargetRef = useRef({ x: map.start.x, y: map.start.y })
+    const animCurrentRef = useRef({ x: map.start.x, y: map.start.y })
+    const animRotTargetRef = useRef(DIR_TO_DEG[map.start.dir as Direction])
+    const animRotCurrentRef = useRef(DIR_TO_DEG[map.start.dir as Direction])
+    const rafIdRef = useRef<number>(0)
+    const gridContainerRef = useRef<HTMLDivElement>(null)
+
     const currentStep = useLogicAssemblyData((state) => state.currentStep)
     const setCurrentStep = useLogicAssemblyData((state) => state.setCurrentStep)
     const setCurrentFlatInstruction = useLogicAssemblyData((state) => state.setCurrentFlatInstruction)
+    const simulationSpeed = useSettingsStore((state) => state.simulationSpeed)
+
+    // ─── requestAnimationFrame loop for smooth interpolation ───
+    useEffect(() => {
+        let lastTime = performance.now()
+
+        const animate = (now: number) => {
+            const dt = Math.min((now - lastTime) / 1000, 0.1) // cap delta
+            lastTime = now
+
+            // Lerp speed — higher = snappier. 12-16 feels responsive but smooth.
+            const lerpFactor = 1 - Math.pow(0.001, dt) // ~smooth exponential lerp
+
+            const cur = animCurrentRef.current
+            const tgt = animTargetRef.current
+
+            const dx = tgt.x - cur.x
+            const dy = tgt.y - cur.y
+
+            // Only update if there's meaningful difference
+            if (Math.abs(dx) > 0.001 || Math.abs(dy) > 0.001) {
+                cur.x += dx * lerpFactor
+                cur.y += dy * lerpFactor
+            } else {
+                cur.x = tgt.x
+                cur.y = tgt.y
+            }
+
+            // Smooth rotation (shortest path)
+            const rotCur = animRotCurrentRef.current
+            const rotTgt = animRotTargetRef.current
+            let rotDiff = rotTgt - rotCur
+            // Normalize to [-180, 180] for shortest path
+            while (rotDiff > 180) rotDiff -= 360
+            while (rotDiff < -180) rotDiff += 360
+
+            if (Math.abs(rotDiff) > 0.5) {
+                animRotCurrentRef.current += rotDiff * lerpFactor
+            } else {
+                animRotCurrentRef.current = rotTgt
+            }
+
+            setVisualPos({ x: cur.x, y: cur.y })
+            setVisualRotation(animRotCurrentRef.current)
+
+            rafIdRef.current = requestAnimationFrame(animate)
+        }
+
+        rafIdRef.current = requestAnimationFrame(animate)
+        return () => cancelAnimationFrame(rafIdRef.current)
+    }, [])
+
+    // Sync animation target whenever logical robot position changes
+    useEffect(() => {
+        animTargetRef.current = { x: robot.x, y: robot.y }
+        animRotTargetRef.current = DIR_TO_DEG[robot.dir]
+    }, [robot.x, robot.y, robot.dir])
 
     // Reset simulation when logic starts/stops
     useEffect(() => {
         if (!isExecuting) {
             executionRef.current++
-            setRobot({ x: map.start.x, y: map.start.y, dir: map.start.dir as Direction })
+            const startPos = { x: map.start.x, y: map.start.y }
+            const startDir = map.start.dir as Direction
+            setRobot({ ...startPos, dir: startDir })
+            // Snap visual position immediately on reset
+            animCurrentRef.current = { ...startPos }
+            animTargetRef.current = { ...startPos }
+            animRotCurrentRef.current = DIR_TO_DEG[startDir]
+            animRotTargetRef.current = DIR_TO_DEG[startDir]
+            setVisualPos(startPos)
+            setVisualRotation(DIR_TO_DEG[startDir])
             setActivated([])
             setCurrentStep(-1)
             setError(null)
@@ -48,24 +131,24 @@ export function FlatSimulator({
     }, [isExecuting, map, blocks])
 
     //Logica para aplanar el programa
-    const flatInstructions = useCallback((program: LogicAssemblyBlock[], allBlocks: LogicAssemblyBlock[], parentId?: string): { type: LogicAssemblyBlockType, value?: string | number, id: string }[] => {
-        let result: { type: LogicAssemblyBlockType, value?: string | number, id: string }[] = []
+    const flatInstructions = useCallback((program: LogicAssemblyBlock[], allBlocks: LogicAssemblyBlock[], stack: string[] = []): { type: LogicAssemblyBlockType, value?: string | number, id: string, stack: string[] }[] => {
+        let result: { type: LogicAssemblyBlockType, value?: string | number, id: string, stack: string[] }[] = []
         for (const b of program) {
             if (b.type === 'REPETIR' && b.children) {
                 const times = parseInt(b.value as string) || 1
                 for (let i = 0; i < times; i++) {
-                    result.push(...flatInstructions(b.children, allBlocks, b.id))
+                    result.push(...flatInstructions(b.children, allBlocks, [...stack, b.id]))
                 }
             } else if (b.type === 'LLAMAR') {
                 const fnName = b.value as string
                 const fnDef = allBlocks.find(block => block.type === 'FUNCION' && block.value === fnName)
                 if (fnDef && fnDef.children) {
-                    result.push(...flatInstructions(fnDef.children, allBlocks, b.id))
+                    result.push(...flatInstructions(fnDef.children, allBlocks, [...stack, b.id, fnDef.id]))
                 }
             } else if (b.type === 'FUNCION') {
                 continue
             }
-            else result.push({ type: b.type, value: b.value, id: b.id })
+            else result.push({ type: b.type, value: b.value, id: b.id, stack: stack })
         }
         return result
     }, [])
@@ -86,7 +169,11 @@ export function FlatSimulator({
             if (id !== executionRef.current || !isExecuting) return
             const inst = queue[i]
             setCurrentStep(i)
-            await delay(1600)
+            if (inst.type !== 'GIRAR' && inst.type !== 'ACTIVAR') {
+                await delay(1000 / simulationSpeed)
+            } else {
+                await delay(450 / simulationSpeed)
+            }
             if (id !== executionRef.current || !isExecuting) return
 
             if (inst.type === 'MOVER') {
@@ -105,7 +192,7 @@ export function FlatSimulator({
                     }
                     cx = nx; cy = ny
                     setRobot({ x: cx, y: cy, dir: cd })
-                    await delay(200)
+                    await delay(200 / simulationSpeed)
                 }
             } else if (inst.type === 'GIRAR') {
                 const val = inst.value as string
@@ -125,9 +212,39 @@ export function FlatSimulator({
             }
         }
         const success = map.objective.every(obj => currentActivated.includes(`${obj.x}-${obj.y}`))
-        await delay(500)
+        await delay(500 / simulationSpeed)
         onFinish(success)
     }
+
+    // ─── Calculate robot pixel position from grid coords ───
+    const getRobotStyle = useCallback((): React.CSSProperties => {
+        const container = gridContainerRef.current
+        if (!container) return { opacity: 0 }
+
+        const cols = map.grid[0].length
+        const rows = map.grid.length
+
+        // Get actual rendered cell dimensions from the grid container
+        const containerRect = container.getBoundingClientRect()
+        const padding = 8 // p-2 = 0.5rem = 8px
+        const gap = 2 // gap-0.5 = 2px
+        const innerWidth = containerRect.width - padding * 2
+        const innerHeight = containerRect.height - padding * 2
+        const cellW = (innerWidth - gap * (cols - 1)) / cols
+        const cellH = (innerHeight - gap * (rows - 1)) / rows
+
+        const px = padding + visualPos.x * (cellW + gap) + cellW / 2
+        const py = padding + visualPos.y * (cellH + gap) + cellH / 2
+
+        return {
+            position: 'absolute',
+            left: `${px}px`,
+            top: `${py}px`,
+            transform: `translate(-50%, -50%) rotate(${visualRotation}deg)`,
+            zIndex: 30,
+            willChange: 'left, top, transform',
+        }
+    }, [visualPos.x, visualPos.y, visualRotation, map.grid])
 
     return (
         <div className="flex flex-col gap-2">
@@ -145,6 +262,7 @@ export function FlatSimulator({
             >
                 {/* Grid Container */}
                 <div
+                    ref={gridContainerRef}
                     className="grid gap-0.5 p-2 relative z-20 border border-white/5 bg-black/20"
                     style={{
                         gridTemplateColumns: `repeat(${map.grid[0].length}, 1fr)`,
@@ -153,7 +271,6 @@ export function FlatSimulator({
                 >
                     {map.grid.map((row, y) => row.map((cell, x) => {
                         const isObjective = map.objective.some(o => o.x === x && o.y === y)
-                        const isRobot = robot.x === x && robot.y === y
                         const isActivated = activated.includes(`${x}-${y}`)
                         const isWall = cell === 1
 
@@ -214,25 +331,47 @@ export function FlatSimulator({
                                         </div>
                                     </div>
                                 )}
-
-                                {/* ROBOT (Unidad REBOOT) */}
-                                {isRobot && (
-                                    <div className="absolute z-30 transition-all duration-300" style={{
-                                        transform: `rotate(${robot.dir === 'up' ? 0 : robot.dir === 'right' ? 90 : robot.dir === 'down' ? 180 : 270}deg)`
-                                    }}>
-                                        {/* Cursor de Navegación Táctico */}
-                                        <div className="relative flex items-center justify-center">
-                                            <svg viewBox="0 0 24 24" className="w-6 h-6 text-(--green-light) drop-shadow-[0_0_8px_var(--green-light)]">
-                                                <path fill="currentColor" d="M12 2L4 21l1-1 7-4 7 4 1 1z" />
-                                            </svg>
-                                            {/* Aura de energía */}
-                                            <div className="absolute inset-0 bg-(--green-light)/20 blur-md rounded-full animate-ping" />
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                         )
                     }))}
+
+                    {/* ═══════════ ROBOT OVERLAY (Positioned absolutely over the grid) ═══════════ */}
+                    <div style={getRobotStyle()}>
+                        {/* Dron Explorador Top-Down */}
+                        <div className="relative flex items-center justify-center">
+
+                            {/* Aura de energía */}
+                            <div className="absolute inset-0 m-auto w-6 h-6 bg-(--green-light)/20 blur-md rounded-full animate-ping" />
+
+                            <svg viewBox="0 0 32 32" className="relative z-10 w-8 h-8 text-(--green-light) drop-shadow-[0_0_8px_var(--green-light)]">
+
+                                {/* 1. ORUGAS LATERALES (Tank Treads) */}
+                                <rect x="3" y="6" width="5" height="20" rx="1" fill="#050608" stroke="currentColor" strokeWidth="1.5" />
+                                <rect x="24" y="6" width="5" height="20" rx="1" fill="#050608" stroke="currentColor" strokeWidth="1.5" />
+
+                                {/* Marcas de tracción de las orugas */}
+                                <path d="M3 10h5 M3 14h5 M3 18h5 M3 22h5 M24 10h5 M24 14h5 M24 18h5 M24 22h5"
+                                    stroke="currentColor" strokeWidth="1" opacity="0.4" />
+
+                                {/* 2. CHASIS CENTRAL (Blindaje biselado) */}
+                                <path d="M8 9 L24 9 L26 24 L6 24 Z" fill="#1a1c20" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+
+                                {/* 3. VISOR FRONTAL */}
+                                <path d="M10 5 L22 5 L24 9 L8 9 Z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
+
+                                {/* Lente del escáner en el visor */}
+                                <rect x="13" y="6" width="6" height="1.5" fill="#fff" opacity="0.8" />
+
+                                {/* 4. NÚCLEO DE ENERGÍA CENTRAL */}
+                                <circle cx="16" cy="16" r="3.5" fill="#050608" stroke="currentColor" strokeWidth="1.5" />
+                                <circle cx="16" cy="16" r="1.5" fill="#fff" className="animate-pulse" />
+
+                                {/* 5. PUERTO DE ESCAPE TRASERO */}
+                                <rect x="13" y="24" width="6" height="3" fill="#050608" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                            </svg>
+
+                        </div>
+                    </div>
                 </div>
 
                 {/* ERROR OVERLAY (Alerta de Sistema Crítica) */}
