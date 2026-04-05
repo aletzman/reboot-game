@@ -6,9 +6,10 @@ import { Screw } from '../ui/Screw'
 interface SectionHeaderProps {
     title: string;
     subtitle?: string;
+    children?: React.ReactNode;
 }
 
-export default function SectionHeader({ title, subtitle }: SectionHeaderProps) {
+export default function SectionHeader({ title, subtitle, children }: SectionHeaderProps) {
     return (
         <header className="h-[48px] px-4 flex items-center justify-between relative z-10 bg-(--bg-surface) border-y border-(--border-color) overflow-hidden group/section">
 
@@ -42,13 +43,15 @@ export default function SectionHeader({ title, subtitle }: SectionHeaderProps) {
             </div>
 
             {/* 4. DETALLES DE HARDWARE (Los tornillos le dan peso) */}
-            <div className="relative flex items-center gap-4">
+            <div className="relative flex items-center gap-4 h-full">
+                {children}
+
                 {/* Código de serie falso (Look de inventario) */}
                 <span className="hidden md:block font-mono text-[8px] text-(--text-ghost) opacity-30 tracking-widest">
                     SN-PRC_{title.slice(0, 3).toUpperCase()}_026
                 </span>
 
-                <div className="flex items-center gap-1 opacity-40">
+                <div className="flex items-center gap-1 opacity-20">
                     <Screw size="sm" className="relative" />
                     <div className="w-4 h-px bg-(--border-color)" />
                     <Screw size="sm" className="relative" />

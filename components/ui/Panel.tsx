@@ -1,14 +1,15 @@
 interface PanelProps {
+    id?: string;
     title?: string;
     subtitle?: string;
     children: React.ReactNode;
     className?: string;
     typePanel: 'aside' | 'main' | 'footer';
-    // Ahora soporta 'all', 'none' o un array de lados específicos
     border?: 'none' | ('top' | 'bottom' | 'left' | 'right')[] | 'all';
 }
 
 export function Panel({
+    id,
     title,
     subtitle,
     children,
@@ -54,10 +55,10 @@ export function Panel({
     };
 
     const currentStyle = panelStyles[typePanel];
-    const Tag = typePanel;
+    const Tag = typePanel === 'main' ? 'div' : typePanel;
 
     return (
-        <Tag className={`relative 
+        <Tag id={id} className={`relative 
                         ${currentStyle.container} 
                         ${getBorderClasses()} 
                         ${className}`}>
