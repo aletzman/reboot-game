@@ -9,6 +9,8 @@ interface TacticalSectionProps {
     variant?: 'elevated' | 'hazard' | 'inset';
     accentColor?: string;
     children: React.ReactNode;
+    isActived?: boolean;
+    button?: React.ReactNode;
 }
 
 export function TacticalSection({
@@ -16,10 +18,12 @@ export function TacticalSection({
     subtitle,
     variant = 'elevated',
     accentColor = 'var(--text-muted)',
-    children
+    children,
+    isActived,
+    button
 }: TacticalSectionProps) {
     return (
-        <section className="mb-6 group/tactical px-2">
+        <section className="mb-2 group/tactical px-2">
 
             {/* ─── LA ETIQUETA: PLACA DE IDENTIFICACIÓN INTEGRADA ─── */}
             <header className="relative flex items-center h-8 px-4
@@ -31,29 +35,34 @@ export function TacticalSection({
                                 rounded-t-sm shadow-[0_2px_5px_rgba(0,0,0,0.5)]">
 
                 {/* Tornillos de fijación de la placa identificativa */}
-                <div className="absolute left-1 top-1/2 -translate-y-1/2 opacity-60"><Screw size="sm" /></div>
-                <div className="absolute right-1 top-1/2 -translate-y-1/2 opacity-60"><Screw size="sm" /></div>
+                <div className="absolute left-1 top-1/2 -translate-y-1/2"><Screw size="sm" /></div>
+                <div className="absolute right-1 top-1/2 -translate-y-1/2"><Screw size="sm" /></div>
 
                 {/* Indicador de Canal (Luz de estado de la sección) */}
                 <div
-                    className="w-1 h-3 mr-3 shadow-[0_0_8px_var(--accent)]"
-                    style={{ backgroundColor: accentColor, '--accent': accentColor } as any}
+                    className={`w-1 h-3 mr-3 mt-0.5 ${isActived ? 'animate-cursor' : ''}`}
+                    style={{ backgroundColor: isActived !== undefined && !isActived ? 'var(--text-ghost)' : accentColor, '--accent': accentColor, boxShadow: isActived ? '0 0 8px var(--accent)' : 'none' } as any}
                 />
 
-                <div className="flex items-baseline gap-3">
-                    <h3 className="font-mono text-[11px] text-white/80 font-black tracking-widest uppercase">
+                <div className="flex items-baseline gap-3 pt-1">
+                    <h3 className={`font-mono text-[11px] font-black tracking-widest uppercase ${isActived !== undefined && !isActived ? 'text-(--text-primary)/35' : 'text-(--text-primary)/95'}`}>
                         {title}
                     </h3>
-                    <span className="font-mono text-[7px] text-(--text-ghost) uppercase tracking-tighter opacity-60">
-                        {subtitle || 'REF_0x2A'}
-                    </span>
                 </div>
 
-                {/* Micro-perforaciones decorativas a la derecha */}
-                <div className="flex-1 flex justify-end gap-1 px-4 opacity-10">
-                    {[...Array(5)].map((_, i) => (
-                        <div key={i} className="w-1 h-1 bg-white rounded-full" />
-                    ))}
+                {/* Micro-perforaciones decorativas / Botón de acción */}
+                <div className="flex-1 flex justify-end items-center pr-1 overflow-hidden">
+                    {button ? (
+                        <div className={`flex items-center pt-0.5 ${isActived ? 'opacity-100' : 'opacity-25'}`}>
+                            {button}
+                        </div>
+                    ) : (
+                        <div className="flex gap-1 opacity-10">
+                            {[...Array(5)].map((_, i) => (
+                                <div key={i} className="w-1 h-1 bg-white rounded-full" />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </header>
 
