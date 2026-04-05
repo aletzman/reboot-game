@@ -84,7 +84,7 @@ export function AuthButton() {
               shadow-[0_3px_0_0_#041416,0_5px_12px_rgba(25,200,212,0.15)]
               hover:shadow-[0_3px_0_0_#041416,0_8px_18px_rgba(25,200,212,0.25)]
               hover:translate-y
-              active:translate-y-[3px] active:shadow-[0_0px_0_0_transparent]
+              active:scale-98 active:shadow-[0_0px_0_0_transparent]
             `}
           >
             {/* Brillo interior (plástico/metal) */}
@@ -214,7 +214,7 @@ export function AuthButton() {
             rounded-[4px] border cursor-pointer
             ${bgGradient} ${borderColor} ${shadowColor}
             hover:translate-y
-            active:translate-y-[3px] active:shadow-[0_0px_0_0_transparent]
+            active:scale-98 active:shadow-[0_0px_0_0_transparent]
           `}
         >
           {/* Brillo interior */}

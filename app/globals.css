@@ -88,8 +88,8 @@
   --block-llamar-dark: #594A12;
 
   /* Activar: Pintura roja descascarada */
-  --block-activar: #f92c4e;
-  --block-activar-dark: #591D27;
+  --block-activar: #f92c77;
+  --block-activar-dark: #700f32;
 
   /* Asignar: Cableado viejo / Azul lavanda */
   --block-asignar: #8ab0ed;
@@ -541,15 +541,31 @@ body {
 
 /* SHAKE ANIMATION FOR ERRORS */
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-2px); }
-  40% { transform: translateX(2px); }
-  60% { transform: translateX(-2px); }
-  80% { transform: translateX(2px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-2px);
+  }
+
+  40% {
+    transform: translateX(2px);
+  }
+
+  60% {
+    transform: translateX(-2px);
+  }
+
+  80% {
+    transform: translateX(2px);
+  }
 }
 
 .animate-shake {
-  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+  animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
 }
 
 /* SLIDE UP WITH FADE */

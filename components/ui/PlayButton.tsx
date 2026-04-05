@@ -28,7 +28,7 @@ export function PlayButton({ onClick, lengthProgram, isInteractionDisabled, feed
             shadow: 'shadow-[0_6px_0_0_#0a0b0d,0_8px_10px_rgba(0,0,0,0.5)]',
             text: 'text-(--text-ghost)',
             border: 'border-(--border-color)',
-            iconBg: 'bg-(--bg-void) border border-(--border-muted-color) text-(--text-ghost)',
+            iconBg: 'border border-(--border-muted-color) text-(--text-ghost)',
             led: 'bg-(--text-ghost)',
             sideLight: 'bg-(--text-ghost)/20'
         },
@@ -37,7 +37,7 @@ export function PlayButton({ onClick, lengthProgram, isInteractionDisabled, feed
             shadow: 'shadow-[0_6px_0_0_#0b2300,0_10px_25px_rgba(45,120,0,0.4)] hover:shadow-[0_6px_0_0_#0b2300,0_15px_30px_rgba(126,213,38,0.3)]',
             text: 'text-(--green-light) [text-shadow:0_0_10px_var(--green-base)]',
             border: 'border-(--green-base)',
-            iconBg: 'bg-[var(--green-light)] text-[var(--green-dark)] shadow-[0_0_15px_var(--green-base)]',
+            iconBg: 'text-(--green-light)',
             led: 'bg-[var(--green-light)] shadow-[0_0_8px_var(--green-light)]',
             sideLight: 'bg-(--green-light) shadow-[0_0_10px_var(--green-base)]'
         },
@@ -46,7 +46,7 @@ export function PlayButton({ onClick, lengthProgram, isInteractionDisabled, feed
             shadow: 'shadow-[0_6px_0_0_#1a1003,0_10px_20px_rgba(239,159,39,0.3)]',
             text: 'text-(--amber) [text-shadow:0_0_15px_var(--amber)]',
             border: 'border-(--amber)',
-            iconBg: 'bg-[var(--amber)] text-[#3d270b] shadow-[0_0_15px_var(--amber)]',
+            iconBg: 'text-(--amber)',
             led: 'bg-[var(--amber)] shadow-[0_0_8px_var(--amber)]',
             sideLight: 'bg-(--amber) shadow-[0_0_10px_var(--amber)]'
         },
@@ -55,7 +55,7 @@ export function PlayButton({ onClick, lengthProgram, isInteractionDisabled, feed
             shadow: 'shadow-[0_6px_0_0_#0b2300,0_10px_20px_rgba(45,120,0,0.4)]',
             text: 'text-[var(--bg-void)]',
             border: 'border-(--green-light)',
-            iconBg: 'bg-[var(--bg-void)] text-[var(--green-light)]',
+            iconBg: 'text-[var(--green-light)]',
             led: 'bg-[var(--bg-void)]',
             sideLight: 'bg-(--green-light)'
         },
@@ -64,7 +64,7 @@ export function PlayButton({ onClick, lengthProgram, isInteractionDisabled, feed
             shadow: 'shadow-[0_6px_0_0_#2b0707,0_10px_20px_rgba(226,75,74,0.4)]',
             text: 'text-(--red-light)',
             border: 'border-(--red)',
-            iconBg: 'bg-[var(--red-light)] text-[var(--red-dark)]',
+            iconBg: 'text-(--red-light)',
             led: 'bg-[var(--red-light)] shadow-[0_0_8px_var(--red-light)]',
             sideLight: 'bg-(--red-light) shadow-[0_0_10px_var(--red-light)]'
         }
@@ -81,7 +81,7 @@ export function PlayButton({ onClick, lengthProgram, isInteractionDisabled, feed
     };
 
     return (
-        <div className="w-full h-[76px] relative group p-1.5 bg-[#080b0e] rounded-lg border border-[#1a222c] shadow-[0_4px_0_0_#030507]">
+        <div className="w-full max-h-[76px] h-full relative group p-1.5 bg-[#080b0e] rounded-lg border border-[#1a222c] shadow-[0_4px_0_0_#030507] @container">
             {/* 1. Base del Socket (el agujero donde entra el botón) */}
             <div className="absolute inset-1.5 rounded-md bg-(--bg-void) shadow-[inset_0_5px_10px_rgba(0,0,0,0.9)]" />
 
@@ -90,10 +90,10 @@ export function PlayButton({ onClick, lengthProgram, isInteractionDisabled, feed
                 onClick={onClick}
                 disabled={isDisabled}
                 className={`
-                    relative w-full h-[60px] flex items-center justify-between px-5 
+                    relative w-full h-full flex items-center justify-between px-5 
                     transition-all duration-150 overflow-hidden
                     rounded-md border-2 ${currentStyle.border}
-                    ${isDisabled ? 'opacity-60 grayscale translate-y-[2px]' : 'cursor-pointer active:translate-y-[6px] hover:translate-y-px'}
+                    ${isDisabled ? 'opacity-60 grayscale-30 cursor-not-allowed scale-98 ' : 'cursor-pointer active:scale-98'}
                     
                     /* CTA BACKGROUND and BIG SHADOW */
                     ${currentStyle.bg}
@@ -116,7 +116,7 @@ export function PlayButton({ onClick, lengthProgram, isInteractionDisabled, feed
                 />
 
                 {/* 4. CONTENIDO: INSTRUMENTACIÓN */}
-                <div className="flex flex-col items-start gap-0 relative z-10">
+                <div className="flex flex-row items-center gap-1 relative z-10 min-w-0">
                     <div className="flex items-center gap-2">
                         <div className="relative flex items-center justify-center w-3 h-3">
                             {state === 'ready' && (
@@ -124,13 +124,10 @@ export function PlayButton({ onClick, lengthProgram, isInteractionDisabled, feed
                             )}
                             <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${currentStyle.led}`} />
                         </div>
-                        <span className={`font-mono text-[9px] font-bold uppercase tracking-widest opacity-80 ${currentStyle.text}`}>
-                            IO_{state === 'disabled' ? 'STBY' : 'LINKED'}
-                        </span>
                     </div>
 
                     <span
-                        className={`font-mono text-sm md:text-xl font-black uppercase tracking-[0.15em] transition-all duration-300 ${currentStyle.text}`}
+                        className={`font-mono text-[clamp(0.7rem,5cqw,1.25rem)] font-black uppercase tracking-[0.15em] transition-all duration-300 ${currentStyle.text}`}
                     >
                         {getStatusText()}
                     </span>

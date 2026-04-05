@@ -1,3 +1,6 @@
+import { getBorderClasses } from "@/lib/helpers";
+import { BorderType } from "@/types/infrastructure";
+
 interface PanelProps {
     id?: string;
     title?: string;
@@ -5,7 +8,7 @@ interface PanelProps {
     children: React.ReactNode;
     className?: string;
     typePanel: 'aside' | 'main' | 'footer';
-    border?: 'none' | ('top' | 'bottom' | 'left' | 'right')[] | 'all';
+    border?: BorderType;
 }
 
 export function Panel({
@@ -19,22 +22,7 @@ export function Panel({
 }: PanelProps) {
 
     // 1. Lógica de mapeo de bordes
-    const getBorderClasses = () => {
-        if (border === 'all') return 'border';
-        if (border === 'none') return 'border-none';
-
-        // Mapeo de direcciones a clases de Tailwind
-        const borderMap: Record<string, string> = {
-            top: 'border-t',
-            bottom: 'border-b',
-            left: 'border-l',
-            right: 'border-r'
-        };
-
-        return Array.isArray(border)
-            ? border.map(side => borderMap[side]).join(' ')
-            : '';
-    };
+    const borders = getBorderClasses(border)
 
     const panelStyles = {
         aside: {
@@ -60,7 +48,7 @@ export function Panel({
     return (
         <Tag id={id} className={`relative 
                         ${currentStyle.container} 
-                        ${getBorderClasses()} 
+                        ${borders} 
                         ${className}`}>
 
             {/* Capa de Textura Dinámica */}

@@ -1,23 +1,26 @@
 'use client'
 
-import React from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import { Screw } from './Screw'
+import { motion } from 'motion/react'
+import { getBorderClasses } from '@/lib/helpers'
+import { BorderType } from '@/types/infrastructure'
 
 interface SequenceMemoryProps {
     isExecuting: boolean
     usedBlocks: number
     maxBlocks: number
     className?: string
+    border?: BorderType;
 }
 
-export function SequenceMemory({ isExecuting, usedBlocks, maxBlocks, className = "" }: SequenceMemoryProps) {
+export function SequenceMemory({ isExecuting, usedBlocks, maxBlocks, className = "", border = 'none' }: SequenceMemoryProps) {
     const getBarColor = (index: number) => {
         const ratio = index / maxBlocks;
-        if (ratio >= 0.85) return 'var(--red)';
-        if (ratio >= 0.6) return 'var(--amber)';
+        if (ratio >= 0.80) return 'var(--red)';
+        if (ratio >= 0.50) return 'var(--amber)';
         return 'var(--green-light)';
     };
+
+    const borders = getBorderClasses(border)
 
     return (
         <div className={`
@@ -25,14 +28,14 @@ export function SequenceMemory({ isExecuting, usedBlocks, maxBlocks, className =
             bg-(--bg-deep) 
             shadow-[0_-5px_15px_rgba(0,0,0,0.4)]
             relative overflow-hidden group/mem
-            ${className}
+            ${className} ${borders} border-(--border-color) 
         `}>
             {/* 3. HEADER */}
             <div className="flex justify-between items-end px-1 relative z-10">
                 <div className="flex flex-col">
                     <span className={`
                         text-[10px] font-mono font-bold tracking-widest mt-1
-                        ${isExecuting ? 'text-(--amber) [text-shadow:0_0_8px_var(--amber)]' : 'text-(--text-muted)'}
+                        ${isExecuting ? 'text-(--amber) [text-shadow:0_0_8px_var(--amber)]' : 'text-(--text-primary)/80'}
                     `}>
                         {isExecuting ? 'PROCESANDO_PASOS' : 'USO_DE_MEMORIA'}
                     </span>
@@ -42,14 +45,14 @@ export function SequenceMemory({ isExecuting, usedBlocks, maxBlocks, className =
                     <span className="text-[12px] font-mono font-black text-white leading-none">
                         {String(usedBlocks).padStart(2, '0')}
                     </span>
-                    <span className="text-[9px] font-mono text-(--text-ghost)">BLOQUES</span>
+                    <span className="text-[9px] font-mono text-(--text-muted)">BLOQUES</span>
                 </div>
             </div>
 
             {/* 4. BARRA DE BLOQUES */}
             <div className="
-                relative h-[22px] w-full flex items-center justify-between gap-[3px] 
-                bg-black/60 p-1.5 rounded-[1px]
+                relative h-[18px] w-full flex items-center justify-between gap-[3px] 
+                bg-black/60 p-[5px] rounded-[2px]
                 border border-black shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)]
             ">
                 <div className="absolute inset-0 flex justify-between px-2 pointer-events-none opacity-10">
@@ -86,11 +89,11 @@ export function SequenceMemory({ isExecuting, usedBlocks, maxBlocks, className =
             </div>
 
             <div className="flex justify-between items-center px-1">
-                <div className="flex gap-1">
-                    <div className={`w-1.5 h-1.5 rounded-full ${isExecuting ? 'bg-(--amber) animate-pulse shadow-[0_0_5px_var(--amber)]' : 'bg-black border border-white/10'}`} />
-                    <span className="text-[7px] font-mono text-(--text-ghost) uppercase tracking-tighter">CONEXIÓN_ACTIVA</span>
+                <div className="flex items-center gap-1">
+                    <div className={`w-2 h-2 rounded-full ${isExecuting ? 'bg-(--amber) animate-pulse shadow-[0_0_5px_var(--amber)]' : 'bg-black border border-white/10'}`} />
+                    <span className="text-[10px] font-mono text-(--text-primary)/80 uppercase">CONEXIÓN_ACTIVA</span>
                 </div>
-                <span className="text-[7px] font-mono text-(--text-ghost) uppercase">LÍMITE_MÁX: {maxBlocks}</span>
+                <span className="text-[10px] font-mono text-(--text-primary) uppercase">LÍMITE_MÁX: {maxBlocks}</span>
             </div>
         </div>
     );
