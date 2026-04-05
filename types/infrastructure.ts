@@ -1,0 +1,1 @@
+export type BorderType = 'none' | ('top' | 'bottom' | 'left' | 'right')[] | 'all';

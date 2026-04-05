@@ -10,7 +10,7 @@ export const PALETTE_COMMANDS: { type: CommandType; label: string; icon: Forward
     { type: 'activate', label: 'activar', icon: Sun, cssColor: 'var(--amber)' },
     { type: 'repeat', label: 'repetir', icon: Repeat, cssColor: 'var(--purple)' },
     { type: 'call-f1', label: 'Sub F1', icon: Package, cssColor: 'var(--cyan)' },
-    { type: 'call-f2', label: 'Sub F2', icon: Package, cssColor: 'var(--purple)' },
+    { type: 'call-f2', label: 'Sub F2', icon: Package, cssColor: 'var(--block-activar)' },
 ]
 
 export const MAX_COMMANDS = 20
@@ -45,8 +45,10 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         robotStart: { x: 0, y: 0, direction: 'east' },
         targets: [{ x: 4, y: 0 }],
         maxCommands: 5,
+        allowF1: true,
+        allowF2: true,
         uiLimitMain: 6,
-        allowedCommands: ['move', 'activate'],
+        allowedCommands: ['move', 'activate', 'turn-left', 'turn-right', 'jump', 'repeat', 'call-f1', 'call-f2'],
     },
     '1-03': { // 3. La primera esquina (Girar NO avanza)
         map: [

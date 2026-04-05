@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import type { LevelState, Command, CommandType } from '@/types/game'
-import { ShieldAlert, Cpu, Share2, Terminal, Database, ArrowRight } from 'lucide-react'
+import { ShieldAlert, Cpu, Share2, Terminal, Database, ArrowRight, RotateCcwIcon } from 'lucide-react'
 import { useAudioStore } from '@/store/audio.store'
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
@@ -14,6 +14,10 @@ import { IsometricCanvas } from './IsometricCanvas'
 import { CommandPalette } from './CommandPalette'
 import { NODE_ROUTINE_TUTORIAL, REPEAT_TUTORIAL, FUNCTION_TUTORIAL, FUNCTION_F2_TUTORIAL, TUTORIAL_CONFIG } from './tutorialSteps'
 import { LevelHeader } from '../LevelHeader'
+import { Panel } from '@/components/ui/Panel'
+import { PlayButton } from '@/components/ui/PlayButton'
+import { Button } from '@/components/ui/Button'
+import { DirectivesPanel } from '@/components/ui/DirectivesPanel'
 
 export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, onStatusChange }: NodeRoutineLevelProps) {
     const mapData = NODEROUTINE_MAPS[level.id] ?? DEFAULT_MAP
@@ -283,70 +287,9 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
 
             {/* PANEL IZQUIERDO — Interfaz Ciberdeck */}
             <div className="flex-1 flex flex-col p-3 md:p-0 gap-0 relative z-10 overflow-hidden">
-                <div className="relative group mb-8 select-none">
-                    <LevelHeader level={level} status={status} isRunning={isRunning} />
-                </div>
-
+                <LevelHeader level={level} status={status} isRunning={isRunning} />
                 {/* Main Content Layout — Split View */}
-                <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 p-4">
-
-                    {/* Sección del Mapa (Centro-Derecha en Desktop) */}
-                    <div className="flex-3 flex flex-col gap-4 min-h-0 p-[2px]">
-                        <div id="game-canvas-container" className="flex-1 flex items-center justify-center relative bg-(--bg-deep)/40 rounded-sm border border-(--bg-hover)/50 p-2 overflow-hidden shadow-inner">
-                            <IsometricCanvas
-                                mapData={mapData}
-                                robot={robot}
-                                activatedTiles={activatedTiles}
-                                status={status}
-                                isScanning={isScanning}
-                            />
-
-                            {/* Corner Accents */}
-                            <div className="absolute top-4 left-4 w-4 h-4 border-l border-t border-(--green-base)/40" />
-                            <div className="absolute top-4 right-4 w-4 h-4 border-r border-t border-(--green-base)/40" />
-                            <div className="absolute bottom-4 left-4 w-4 h-4 border-l border-b border-(--green-base)/40" />
-                            <div className="absolute bottom-4 right-4 w-4 h-4 border-r border-b border-(--green-base)/40" />
-
-                            {/* Floating Metadata Information Overlay */}
-                            <div className="absolute bottom-6 left-6 flex flex-col gap-1 pointer-events-none">
-                                <div className="flex items-center gap-3 bg-(--bg-surface)/80 px-3 py-1.5 border border-(--bg-hover) rounded-sm">
-                                    <div className="flex flex-col">
-                                        <span className="text-[8px] font-mono text-(--text-ghost) leading-none mb-1 uppercase">Local_Coords</span>
-                                        <span className="text-xs font-mono text-(--green-light) tabular-nums">X:{robot.x.toFixed(1)} Y:{robot.y.toFixed(1)}</span>
-                                    </div>
-                                    <div className="w-px h-6 bg-(--bg-hover)" />
-                                    <div className="flex flex-col">
-                                        <span className="text-[8px] font-mono text-(--text-ghost) leading-none mb-1 uppercase">Robot_Status</span>
-                                        <span className={`text-xs font-mono tabular-nums ${isRunning ? 'text-(--amber)' : 'text-(--green-muted)'}`}>IDLE_LOCKED</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Status Feedback Banner */}
-                        <div className="h-12 flex items-center justify-center overflow-hidden">
-                            {status === 'failed' && (
-                                <div className="w-full h-full text-(--red) flex items-center gap-4 bg-(--red)/5 px-6 border-l-2 border-(--red)/50 animate-in slide-in-from-bottom-4 duration-500 overflow-hidden relative">
-                                    <div className="absolute top-0 right-0 p-1 opacity-20"><ShieldAlert size={40} /></div>
-                                    <div className="relative z-10 flex items-center gap-3">
-                                        <div className="w-1.5 h-1.5 bg-(--red) rounded-full animate-pulse shadow-[0_0_8px_var(--red)]" />
-                                        <span className="text-[12px] font-mono font-black tracking-[.25em] uppercase">ANOMALÍA_DE_SECUENCIA_RECONOCIDA</span>
-                                    </div>
-                                </div>
-                            )}
-                            {status === 'success' && (
-                                <div className="w-full h-full text-(--green-light) flex items-center gap-4 bg-(--green-base)/5 px-6 border-l-2 border-(--green-base)/50 animate-in slide-in-from-bottom-4 duration-500 overflow-hidden relative">
-                                    <div className="absolute top-0 right-0 p-1 opacity-20"><Share2 size={40} /></div>
-                                    <div className="relative z-10 flex items-center gap-3">
-                                        <div className="w-1.5 h-1.5 bg-(--green-light) rounded-full animate-pulse shadow-[0_0_8px_var(--green-light)]" />
-                                        <span className="text-[12px] font-mono font-black tracking-[.25em] uppercase">SISTEMA_SINCRONIZADO_CON_ÉXITO</span>
-                                    </div>
-                                    <span className="text-[10px] font-mono opacity-50 ml-auto hidden md:block tracking-widest">ACTUALIZANDO_DB_NODO_0{level.act}</span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
+                <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0">
                     {/* Sección de Diagnóstico y Logs (Derecha en Desktop) */}
                     <div className="flex-1 flex flex-col gap-4 min-w-[280px] p-[2px]">
 
@@ -393,6 +336,94 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
                                 <span className="text-[8px] text-(--text-ghost) font-mono uppercase tracking-tighter">Live_Telemetry_Feed_Active</span>
                             </div>
                         </div>
+                    </div>
+                    <div className="flex-3 flex flex-col min-h-0 h-[calc(100svh-125px)] p-[2px]">
+                        {/* Sección del Mapa (Centro-Derecha en Desktop) */}
+                        <Panel typePanel='main' border={["left", "right"]} className='h-full min-h-0'>
+                            <div id="game-canvas-container" className="flex-1 flex items-center justify-center relative p-2 overflow-hidden shadow-inner">
+                                <IsometricCanvas
+                                    mapData={mapData}
+                                    robot={robot}
+                                    activatedTiles={activatedTiles}
+                                    status={status}
+                                    isScanning={isScanning}
+                                />
+
+                                {/* Corner Accents */}
+                                <div className="absolute top-4 left-4 w-4 h-4 border-l border-t border-(--green-base)/40" />
+                                <div className="absolute top-4 right-4 w-4 h-4 border-r border-t border-(--green-base)/40" />
+                                <div className="absolute bottom-4 left-4 w-4 h-4 border-l border-b border-(--green-base)/40" />
+                                <div className="absolute bottom-4 right-4 w-4 h-4 border-r border-b border-(--green-base)/40" />
+
+                                {/* Floating Metadata Information Overlay */}
+                                <div className="absolute bottom-6 left-6 flex flex-col gap-1 pointer-events-none">
+                                    <div className="flex items-center gap-3 bg-(--bg-surface)/80 px-3 py-1.5 border border-(--bg-hover) rounded-sm">
+                                        <div className="flex flex-col">
+                                            <span className="text-[8px] font-mono text-(--text-ghost) leading-none mb-1 uppercase">Local_Coords</span>
+                                            <span className="text-xs font-mono text-(--green-light) tabular-nums">X:{robot.x.toFixed(1)} Y:{robot.y.toFixed(1)}</span>
+                                        </div>
+                                        <div className="w-px h-6 bg-(--bg-hover)" />
+                                        <div className="flex flex-col">
+                                            <span className="text-[8px] font-mono text-(--text-ghost) leading-none mb-1 uppercase">Robot_Status</span>
+                                            <span className={`text-xs font-mono tabular-nums ${isRunning ? 'text-(--amber)' : 'text-(--green-muted)'}`}>IDLE_LOCKED</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Status Feedback Banner */}
+                            <div className="h-12 flex items-center justify-center overflow-hidden">
+                                {status === 'failed' && (
+                                    <div className="w-full h-full text-(--red) flex items-center gap-4 bg-(--red)/5 px-6 border-l-2 border-(--red)/50 animate-in slide-in-from-bottom-4 duration-500 overflow-hidden relative">
+                                        <div className="absolute top-0 right-0 p-1 opacity-20"><ShieldAlert size={40} /></div>
+                                        <div className="relative z-10 flex items-center gap-3">
+                                            <div className="w-1.5 h-1.5 bg-(--red) rounded-full animate-pulse shadow-[0_0_8px_var(--red)]" />
+                                            <span className="text-[12px] font-mono font-black tracking-[.25em] uppercase">ANOMALÍA_DE_SECUENCIA_RECONOCIDA</span>
+                                        </div>
+                                    </div>
+                                )}
+                                {status === 'success' && (
+                                    <div className="w-full h-full text-(--green-light) flex items-center gap-4 bg-(--green-base)/5 px-6 border-l-2 border-(--green-base)/50 animate-in slide-in-from-bottom-4 duration-500 overflow-hidden relative">
+                                        <div className="absolute top-0 right-0 p-1 opacity-20"><Share2 size={40} /></div>
+                                        <div className="relative z-10 flex items-center gap-3">
+                                            <div className="w-1.5 h-1.5 bg-(--green-light) rounded-full animate-pulse shadow-[0_0_8px_var(--green-light)]" />
+                                            <span className="text-[12px] font-mono font-black tracking-[.25em] uppercase">SISTEMA_SINCRONIZADO_CON_ÉXITO</span>
+                                        </div>
+                                        <span className="text-[10px] font-mono opacity-50 ml-auto hidden md:block tracking-widest">ACTUALIZANDO_DB_NODO_0{level.act}</span>
+                                    </div>
+                                )}
+                            </div>
+                        </Panel>
+                        <Panel typePanel='footer'>
+                            <div className='flex flex-row'>
+                                <div id="execution-controls" className="p-4 w-full flex flex-row gap-4">
+                                    <PlayButton
+                                        id="execute-button"
+                                        onClick={executeCommands}
+                                        lengthProgram={commands.length}
+                                        isInteractionDisabled={isRunning || status === 'failed'}
+                                        feedback={status === 'success' ? 'correct' : status === 'failed' ? 'wrong' : 'idle'}
+                                        isExecuting={isRunning}
+                                    />
+
+                                    <Button
+                                        variant="amber"
+                                        size="lg"
+                                        onClick={handleReset}
+                                        disabled={isRunning}
+                                        className={`w-full text-3xl ${status === 'failed' ? 'border-(--amber)/50 text-(--amber) animate-pulse shadow-[0_0_15px_rgba(239,159,39,0.2)]' : ''}`}
+                                        icon={RotateCcwIcon}
+                                        iconPosition="right"
+                                    >
+                                        REINICIAR
+                                    </Button>
+                                </div>
+                                <DirectivesPanel
+                                    infoText={level.fragHint}
+                                    missionText={level.description}
+                                />
+                            </div>
+                        </Panel>
                     </div>
                 </div>
             </div>
