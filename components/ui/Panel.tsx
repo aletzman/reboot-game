@@ -28,11 +28,11 @@ export function Panel({
         aside: {
             container: "bg-[linear-gradient(180deg,#161A1F_0%,#090B0D_100%)] border-(--border-color) shadow-[inset_0_4px_12px_rgba(0,0,0,0.5)]",
             texture: "opacity-[0.35] bg-[linear-gradient(90deg,transparent_50%,rgba(255,255,255,0.1)_50%)] bg-[size:3px_100%]",
-            glow: "bg-[linear-gradient(to_right,rgba(0,0,0,0.3)_0%,transparent_10%,transparent_90%,rgba(0,0,0,0.3)_100%)]"
+            glow: "hidden"
         },
         main: {
             container: "bg-(--bg-void) border-(--border-color) shadow-[inset_0_2px_30px_rgba(0,0,0,0.9)]",
-            texture: "bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[6px_6px]",
+            texture: "bg-[linear-gradient(to_right,#80808009_1px,transparent_1px),linear-gradient(to_bottom,#80808009_1px,transparent_1px)] bg-size-[6px_6px]",
             glow: "bg-[radial-gradient(circle_at_center,rgba(0,163,255,0.04)_0%,transparent_80%)]"
         },
         footer: {

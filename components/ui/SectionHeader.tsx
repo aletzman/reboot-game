@@ -28,7 +28,7 @@ export default function SectionHeader({ title, subtitle, children }: SectionHead
             <div className="relative flex items-center gap-4 ml-2">
                 <div className="flex flex-col">
                     <div className="flex items-center gap-3">
-                        <h1 className="font-mono text-[11px] text-(--text-primary) tracking-[0.3em] uppercase font-black drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                        <h1 className="font-mono text-md text-(--text-primary) tracking-[0.3em] uppercase font-black drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
                             {title}
                         </h1>
 
@@ -45,11 +45,6 @@ export default function SectionHeader({ title, subtitle, children }: SectionHead
             {/* 4. DETALLES DE HARDWARE (Los tornillos le dan peso) */}
             <div className="relative flex items-center gap-4 h-full">
                 {children}
-
-                {/* Código de serie falso (Look de inventario) */}
-                <span className="hidden md:block font-mono text-[8px] text-(--text-ghost) opacity-30 tracking-widest">
-                    SN-PRC_{title.slice(0, 3).toUpperCase()}_026
-                </span>
 
                 <div className="flex items-center gap-1 opacity-20">
                     <Screw size="sm" className="relative" />
