@@ -10,7 +10,7 @@ interface SystemLogRealtimeProps {
 
 export default function SystemLogRealtime({ logs }: { logs: SystemLogRealtimeProps[] }) {
     return (
-        <div id="system-logs" className="flex-1 flex flex-col overflow-hidden min-h-[200px] shadow-[inset_0_2px_12px_rgba(0,0,0,0.8)] relative group/console">
+        <div id="system-logs" className="flex-1 flex flex-col overflow-hidden min-h-[225px] shadow-[inset_0_2px_12px_rgba(0,0,0,0.8)] relative group/console">
 
             {/* 2. PANTALLA: El "Void" donde vive el texto emisivo */}
             <div className="flex-1 p-3 flex flex-col-reverse gap-1.5 overflow-y-auto custom-scrollbar 

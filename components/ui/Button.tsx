@@ -8,7 +8,7 @@ import { Screw } from "./Screw";
 export type ButtonVariant = "green" | "cyan" | "amber" | "red" | "blue" | "outline" | "ghost" | "text" | "solid" | "danger";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     variant?: ButtonVariant;
     size?: "xs" | "sm" | "md" | "lg" | "xl";
     typeButton?: "button" | "link";
@@ -58,7 +58,7 @@ export function Button({
     // Estilos del "Socket" (el chasis contenedor)
     const socketClasses = `
         relative inline-flex ${padding} bg-[#080b0e] rounded-md border border-[#1a222c] 
-         group @container ${className}
+         group ${className}
         ${disabled ? 'pointer-events-none' : ''}
     `;
 
@@ -87,7 +87,7 @@ export function Button({
             bg-[color-mix(in_srgb,var(--red)_60%,transparent_100%)]
             border-(--red)/35 text-(--red-light)
             ${baseShadow} ${hoverShadow}
-            hover:border-(--red)/60 hover:shadow-[0_6px_0_0_#230000,0_15px_30px_rgba(220,53,69,0.3)]
+            hover:border-(--red)/60 hover:shadow-[0_6px_0_0_#23000033,0_15px_30px_rgba(220,53,69,0.3)]
             hover:brightness-125
             active:scale-98 active:shadow-[0_0px_0_0_transparent]
         `,
@@ -95,7 +95,7 @@ export function Button({
             bg-(--green-dark)
             border-(--green-base)/35 text-(--green-light)
             ${baseShadow} ${hoverShadow}
-            hover:border-(--green-light)/50 hover:shadow-[0_6px_0_0_#0b2300,0_15px_30px_rgba(126,213,38,0.3)]
+            hover:border-(--green-light)/50 hover:shadow-[0_6px_0_0_#0b230033,0_15px_30px_rgba(126,213,38,0.3)]
             hover:brightness-105
             active:scale-98 active:shadow-[0_6px_0_0_#0b2300,0_15px_30px_rgba(126,213,38,0.3)]
             disabled:scale-98 disabled:shadow-[0_6px_0_0_#0b2300,0_15px_30px_rgba(126,213,38,0.3)] cursor-not-allowed
@@ -104,15 +104,14 @@ export function Button({
             bg-[color-mix(in_srgb,var(--cyan)_60%,transparent_100%)]
             border-(--cyan)/35 text-(--cyan)
             ${baseShadow} ${hoverShadow}
-            hover:border-(--cyan)/60 hover:shadow-[0_6px_0_0_#002323,0_15px_30px_rgba(16,185,129,0.3)]
+            hover:border-(--cyan)/60 hover:shadow-[0_6px_0_0_#00232333,0_15px_30px_rgba(16,185,129,0.3)]
             hover:brightness-105
             active:scale-98 active:shadow-[0_0px_0_0_transparent]
         `,
         red: `
             bg-[color-mix(in_srgb,var(--red)_60%,transparent_100%)]
-            border-(--red)/35 text-(--red-light)
-            ${baseShadow} ${hoverShadow}
-            hover:border-(--red)/60 hover:shadow-[0_6px_0_0_#230000,0_15px_30px_rgba(220,53,69,0.3)]
+            border-(--red)/35 text-(--red-light) 
+            hover:border-(--red)/60 hover:shadow-[0_6px_0_0_#23000033,0_15px_30px_rgba(220,53,69,0.3)]
             hover:brightness-105
             active:scale-98 active:shadow-[0_0px_0_0_transparent]
         `,
@@ -120,7 +119,7 @@ export function Button({
             bg-[color-mix(in_srgb,var(--amber)_60%,transparent_100%)]
             border-(--amber)/35 text-(--amber)
             ${baseShadow} ${hoverShadow}
-            hover:border-(--amber)/50 hover:shadow-[0_6px_0_0_#231b00,0_15px_30px_rgba(255,193,7,0.3)]
+            hover:border-(--amber)/50 hover:shadow-[0_6px_0_0_#231b0033,0_15px_30px_rgba(255,193,7,0.3)]
             hover:brightness-105
             active:scale-98 active:shadow-[0_0px_0_0_transparent]
         `,
@@ -128,14 +127,14 @@ export function Button({
             bg-[color-mix(in_srgb,var(--blue)_60%,transparent_100%)]
             border-(--blue)/35 text-(--blue)
             ${baseShadow} ${hoverShadow}
-            hover:border-(--blue)/60 hover:shadow-[0_6px_0_0_#001a23,0_15px_30px_rgba(59,130,246,0.3)]
+            hover:border-(--blue)/60 hover:shadow-[0_6px_0_0_#001a2333,0_15px_30px_rgba(59,130,246,0.3)]
             hover:brightness-105
             active:scale-98 active:shadow-[0_0px_0_0_transparent]
         `,
         outline: `
             bg-transparent border border-(--accent)/30 text-(--accent)
             shadow-[0_2px_0_0_#05070a]
-            hover:bg-(--accent)/5 hover:border-(--accent)/60
+            hover:bg-(--accent)/10 hover:border-(--accent)/60
             active:scale-98 active:shadow-none
         `,
         ghost: `
@@ -153,7 +152,7 @@ export function Button({
         relative w-full h-full flex items-center justify-center gap-2 
         font-mono font-black uppercase tracking-[0.1em] rounded-[6px] 
         transition-all duration-100 cursor-pointer select-none
-        ${isBig ? 'border-2' : 'border'} overflow-hidden leading-none
+        ${isBig ? 'border-2' : 'border-2'} overflow-hidden leading-none
     `;
 
     const iconSizeMap = {
@@ -189,10 +188,10 @@ export function Button({
             )}
 
 
-            <span className={`relative z-10 flex items-center w-full ${Icon ? "justify-between" : "justify-center"} gap-2 drop-shadow-sm`}>
-                {Icon && iconPosition === "left" && <Icon size={iconSize} className="shrink-0" />}
+            <span className={`relative z-10 flex items-center w-full ${Icon ? "justify-center" : "justify-center"} gap-2`}>
+                {Icon && iconPosition === "left" && <span className='flex items-center justify-center pl-1.5'><Icon size={iconSize} className="shrink-0" /></span>}
                 <span className="pt-[2px]">{children}</span>
-                {Icon && iconPosition === "right" && <Icon size={iconSize} className="shrink-0" />}
+                {Icon && iconPosition === "right" && <span className='flex items-center justify-center pr-1'><Icon size={iconSize} className="shrink-0" /></span>}
             </span>
         </>
     );
@@ -206,7 +205,7 @@ export function Button({
     return (
         <div className={socketClasses}>
             {/* El "Void" para profundidad */}
-            <div className={`absolute ${isBig ? 'inset-[6px]' : 'inset-[3.5px]'} rounded-[8px] bg-(--bg-void) shadow-[inset_0_4px_8px_rgba(0,0,0,0.95)] pointer-events-none`} />
+            <div className={`absolute ${isBig ? 'inset-[6px]' : 'inset-[3.5px]'} rounded-[8px] bg-(--bg-void) pointer-events-none`} />
 
             {/* Tornillos para tamaños grandes */}
             {isBig && (
