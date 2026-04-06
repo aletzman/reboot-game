@@ -69,9 +69,9 @@ export function DirectivesPanel({ missionText, infoText }: DirectivesPanelProps)
                                     <div className="opacity-90">{missionText}</div>
                                 </div>
                             ) : (
-                                <div className="text-(--amber) [text-shadow:0_0_10px_var(--amber)]">
+                                <div className="text-(--purple) [text-shadow:0_0_10px_var(--purple)]">
                                     <div className="flex items-center gap-3 mb-4 pb-2 border-b border-[#594A12]/30">
-                                        <div className="w-2 h-2 bg-(--amber) animate-pulse" />
+                                        <div className="w-2 h-2 bg-(--purple) animate-pulse" />
                                         <span className="font-black tracking-[0.2em] text-[10px]">MANUAL_DE_AYUDA</span>
                                     </div>
                                     <div className="opacity-90">{infoText}</div>
@@ -142,15 +142,15 @@ export function DirectivesPanel({ missionText, infoText }: DirectivesPanelProps)
                     >
                         <div className={`
                 absolute left-1 top-2 bottom-2 w-1 transition-all duration-300
-                ${activePanel === 'info' ? 'bg-(--amber) shadow-[0_0_15px_var(--amber)]' : 'bg-[#2D333B]'}
+                ${activePanel === 'info' ? 'bg-(--purple) shadow-[0_0_15px_var(--purple)]' : 'bg-[#2D333B]'}
             `} />
                         <div className="flex flex-col items-start ml-2">
                             <span className="text-[8px] font-mono text-(--text-muted) tracking-widest font-black uppercase opacity-60">REG_02</span>
-                            <span className={`text-[11px] font-mono font-bold tracking-widest ${activePanel === 'info' ? 'text-(--amber) [text-shadow:0_0_8px_var(--amber)]' : 'text-(--text-muted)'}`}>
+                            <span className={`text-[11px] font-mono font-bold tracking-widest ${activePanel === 'info' ? 'text-(--purple) [text-shadow:0_0_8px_var(--purple)]' : 'text-(--text-muted)'}`}>
                                 AYUDA_SISTEMA
                             </span>
                         </div>
-                        <div className={`ml-auto w-2 h-2 rounded-full border transition-all ${activePanel === 'info' ? 'bg-(--amber) border-black shadow-[0_0_10px_var(--amber)]' : 'bg-black border-[#2D333B]'}`} />
+                        <div className={`ml-auto w-2 h-2 rounded-full border transition-all ${activePanel === 'info' ? 'bg-(--purple) border-black shadow-[0_0_10px_var(--purple)]' : 'bg-black border-[#2D333B]'}`} />
                     </button>
                 </div>
 
