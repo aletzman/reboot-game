@@ -328,8 +328,8 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
         const mapWidthPx = (cols + rows) * (ISO.TILE_W / 2)
         const mapHeightPx = (cols + rows) * (ISO.TILE_H / 2) + maxH * (ISO.DEPTH - 1)
 
-        const canvasW = Math.max(500, mapWidthPx + 150)
-        const canvasH = Math.max(500, mapHeightPx + ISO.DEPTH + 150)
+        const canvasW = Math.max(800, mapWidthPx + 150)
+        const canvasH = Math.max(800, mapHeightPx + ISO.DEPTH + 150)
         canvas.width = canvasW
         canvas.height = canvasH
 
@@ -370,7 +370,7 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
             const bgGrad = ctx.createRadialGradient(canvasW / 2, canvasH / 2, 0, canvasW / 2, canvasH / 2, canvasW * 0.7)
             bgGrad.addColorStop(0, '#0a0d12')
             bgGrad.addColorStop(0.5, '#040609')
-            bgGrad.addColorStop(1, '#000000')
+            bgGrad.addColorStop(1, '#040607')
             ctx.fillStyle = bgGrad
             ctx.fillRect(0, 0, canvasW, canvasH)
 
@@ -533,11 +533,11 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
             drawRobot(ctx, robot, rx, ry - 8 - rz - zOffset, pulse)
 
             // Efectos de pantalla (Glitch en falla)
-            if (status === 'success') {
-                ctx.fillStyle = `rgba(85, 226, 0, ${0.02 + pulse * 0.03})`; ctx.fillRect(0, 0, canvasW, canvasH)
-            } else if (status === 'failed') {
-                ctx.fillStyle = `rgba(226, 75, 74, ${0.04 * (1 - pulse)})`; ctx.fillRect(0, 0, canvasW, canvasH)
-            }
+            /* if (status === 'success') {
+                 ctx.fillStyle = `rgba(85, 226, 0, ${0.02 + pulse * 0.03})`; ctx.fillRect(0, 0, canvasW, canvasH)
+             } else if (status === 'failed') {
+                 ctx.fillStyle = `rgba(226, 75, 74, ${0.04 * (1 - pulse)})`; ctx.fillRect(0, 0, canvasW, canvasH)
+             }*/
 
             ctx.restore()
 
@@ -551,13 +551,12 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
     return (
         <canvas
             ref={canvasRef}
-            className="rounded-lg shadow-[0_0_40px_rgba(0,0,0,0.6)]"
+            className="rounded-lg "
             style={{
                 display: 'block',
                 maxWidth: '100%',
                 maxHeight: '58vh',
                 objectFit: 'contain',
-                filter: status === 'failed' ? 'hue-rotate(-10deg) saturate(1.4) contrast(1.1)' : 'none',
                 transition: 'filter 0.5s ease'
             }}
         />

@@ -2,11 +2,10 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import type { LevelState, Command, CommandType } from '@/types/game'
-import { ShieldAlert, Cpu, Share2, Terminal, Database, ArrowRight, RotateCcwIcon } from 'lucide-react'
+import { ShieldAlert, Share2, RotateCcwIcon, Play } from 'lucide-react'
 import { useAudioStore } from '@/store/audio.store'
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
-
 import { NodeRoutineLevelProps, ExtendedRobotState } from './types'
 import { NODEROUTINE_MAPS, DEFAULT_MAP, MAX_COMMANDS, EXEC_SPEED } from './constants'
 import { sleep, flattenCommands, getNextPosition, turnLeft, turnRight, calcStars } from './utils'
@@ -15,9 +14,15 @@ import { CommandPalette } from './CommandPalette'
 import { NODE_ROUTINE_TUTORIAL, REPEAT_TUTORIAL, FUNCTION_TUTORIAL, FUNCTION_F2_TUTORIAL, TUTORIAL_CONFIG } from './tutorialSteps'
 import { LevelHeader } from '../LevelHeader'
 import { Panel } from '@/components/ui/Panel'
-import { PlayButton } from '@/components/ui/PlayButton'
 import { Button } from '@/components/ui/Button'
 import { DirectivesPanel } from '@/components/ui/DirectivesPanel'
+import { useSettingsStore } from '@/store/settings.store'
+import { SpeedSelector } from '../LogicAssemblyLevel/SpeedSelector'
+import SystemLogRealtime from './SystemLogRealtime'
+import SectionHeader from '@/components/ui/SectionHeader'
+import { TacticalSection } from '@/components/ui/TacticalSection'
+import { RobotMonitor } from './RobotMonitor'
+import { MissionStatusMonitor } from './MissionStatusMonitor'
 
 export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, onStatusChange }: NodeRoutineLevelProps) {
     const mapData = NODEROUTINE_MAPS[level.id] ?? DEFAULT_MAP
@@ -34,8 +39,22 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
     ])
 
     const addLog = useCallback((msg: string, type: 'info' | 'warn' | 'success' | 'err' = 'info') => {
-        setLogs(prev => [{ id: Math.random().toString(), msg, type }, ...prev].slice(0, 5))
+        setLogs(prev => [{ id: Math.random().toString(), msg, type }, ...prev].slice(0, 8))
     }, [])
+
+    const [commands, setCommands] = useState<Command[]>([])
+    const [commandsF1, setCommandsF1] = useState<Command[]>([])
+    const [commandsF2, setCommandsF2] = useState<Command[]>([])
+    const [activePanel, setActivePanel] = useState<'main' | 'f1' | 'f2'>('main')
+    const [robot, setRobot] = useState<ExtendedRobotState>({ ...mapData.robotStart, isMoving: false, isJumping: false, prevX: mapData.robotStart.x, prevY: mapData.robotStart.y })
+    const [activatedTiles, setActivated] = useState<Set<string>>(new Set())
+    const [isRunning, setIsRunning] = useState(false)
+    const [executingIdx, setExecutingIdx] = useState<{ idx: number; panel: 'main' | 'f1' | 'f2' } | null>(null)
+    const [status, setStatus] = useState<LevelState['status']>('idle')
+    const [isScanning, setIsScanning] = useState(false)
+    const [repeatModalOpen, setRepeatModal] = useState(false)
+    const [repeatTimes, setRepeatTimes] = useState(2)
+    const speed = useSettingsStore((state) => state.simulationSpeed)
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -51,19 +70,6 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
         if (jumpSoundRef.current) jumpSoundRef.current.volume = volume
         if (activateSoundRef.current) activateSoundRef.current.volume = volume
     }, [isMuted, sfxVolume])
-
-    const [commands, setCommands] = useState<Command[]>([])
-    const [commandsF1, setCommandsF1] = useState<Command[]>([])
-    const [commandsF2, setCommandsF2] = useState<Command[]>([])
-    const [activePanel, setActivePanel] = useState<'main' | 'f1' | 'f2'>('main')
-    const [robot, setRobot] = useState<ExtendedRobotState>({ ...mapData.robotStart, isMoving: false, isJumping: false, prevX: mapData.robotStart.x, prevY: mapData.robotStart.y })
-    const [activatedTiles, setActivated] = useState<Set<string>>(new Set())
-    const [isRunning, setIsRunning] = useState(false)
-    const [executingIdx, setExecutingIdx] = useState<{ idx: number; panel: 'main' | 'f1' | 'f2' } | null>(null)
-    const [status, setStatus] = useState<LevelState['status']>('idle')
-    const [isScanning, setIsScanning] = useState(false)
-    const [repeatModalOpen, setRepeatModal] = useState(false)
-    const [repeatTimes, setRepeatTimes] = useState(2)
 
     // Reaccionar al uso de FRAG
     useEffect(() => {
@@ -130,7 +136,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
             const currentItem = flat[i]
             setExecutingIdx({ idx: currentItem.originalIdx, panel: currentItem.panel })
             const cmd = currentItem.cmd
-            await sleep(EXEC_SPEED)
+            await sleep(EXEC_SPEED / speed)
 
             if (cmd.type === 'move' || cmd.type === 'jump') {
                 const isJump = cmd.type === 'jump'
@@ -274,73 +280,31 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
 
     return (
         <div className="flex flex-1 min-h-0 bg-(--bg-void) relative selection:bg-(--green-base) selection:text-(--white) overflow-hidden">
-
-            {/* Decoración de fondo de consola ciberdeck */}
-            <div className="absolute inset-0 opacity-[0.02] pointer-events-none z-0">
-                <div className="absolute top-0 right-0 w-[60%] h-[60%] bg-radial-gradient from-(--green-base) to-transparent" />
-                <div className="grid grid-cols-20 h-full w-full">
-                    {Array.from({ length: 400 }).map((_, i) => (
-                        <div key={i} className="border-[0.5px] border-(--green-base)/20 h-10 w-full" />
-                    ))}
-                </div>
-            </div>
-
-            {/* PANEL IZQUIERDO — Interfaz Ciberdeck */}
             <div className="flex-1 flex flex-col p-3 md:p-0 gap-0 relative z-10 overflow-hidden">
                 <LevelHeader level={level} status={status} isRunning={isRunning} />
                 {/* Main Content Layout — Split View */}
-                <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0">
+                <div className="flex-1 flex flex-col lg:flex-row min-h-0">
                     {/* Sección de Diagnóstico y Logs (Derecha en Desktop) */}
-                    <div className="flex-1 flex flex-col gap-4 min-w-[280px] p-[2px]">
-
-                        {/* Objetivo del Nivel en Box táctico */}
-                        <div id="mission-objective" className="bg-(--bg-surface) border border-(--bg-hover) p-4 relative rounded-sm overflow-hidden min-h-[140px] flex flex-col">
-                            <div className="absolute top-0 left-0 w-1 h-full bg-(--green-base)" />
-                            <div className="flex justify-between items-center mb-3">
-                                <h3 className="text-[10px] font-mono font-bold text-(--text-ghost) uppercase tracking-widest flex items-center gap-2">
-                                    <Database size={12} className="text-(--green-base)" />
-                                    Objetivo_Misión
-                                </h3>
-                            </div>
-                            <p className="text-[13px] text-(--text-primary)/90 font-sans leading-relaxed flex-1">
-                                {level.description || 'Debe inyectar una secuencia de comandos válida para activar los nodos de respuesta del sector.'}
-                            </p>
-                            <div className="mt-4 flex items-center gap-2 border-t border-(--bg-hover) pt-3 opacity-60">
-                                <ArrowRight size={10} className="text-(--green-light)" />
-                                <span className="text-[9px] font-mono text-(--text-ghost) uppercase">Nodos: {mapData.targets.length} | Comandos: {mapData.maxCommands}</span>
-                            </div>
+                    {/* System Logs Realtime */}
+                    <Panel typePanel='aside' border={["left"]} className='h-full min-h-0 w-[350px] '>
+                        <SectionHeader title='DATOS_DE_CAMPO' />
+                        <div className='flex flex-col gap-2 pt-2'>
+                            <TacticalSection title='LOGS_DE_SISTEMA'>
+                                <SystemLogRealtime logs={logs} />
+                            </TacticalSection>
+                            <TacticalSection title='ESTADO_DEL_ROBOT'>
+                                <RobotMonitor robot={robot} />
+                            </TacticalSection>
+                            <TacticalSection title='ESTADO_DE_LA_MISIÓN'>
+                                {/* Status Feedback Banner */}
+                                <MissionStatusMonitor status={status} />
+                            </TacticalSection>
                         </div>
-
-                        {/* System Logs Realtime */}
-                        <div id="system-logs" className="flex-1 bg-(--bg-deep) border border-(--bg-hover) rounded-sm flex flex-col overflow-hidden max-h-[300px]">
-                            <div className="bg-(--bg-surface) px-3 py-1.5 border-b border-(--bg-hover) flex justify-between items-center">
-                                <span className="text-[10px] font-mono font-bold text-(--text-primary) tracking-widest uppercase flex items-center gap-2">
-                                    <Terminal size={12} className="text-(--green-light)" />
-                                    System_Log
-                                </span>
-                                <div className="flex gap-1.5">
-                                    <div className="w-1.5 h-1.5 bg-(--green-base)/30 rounded-full" />
-                                    <div className="w-1.5 h-1.5 bg-(--green-base)/30 rounded-full" />
-                                </div>
-                            </div>
-                            <div className="flex-1 p-3 flex flex-col-reverse gap-2 overflow-y-auto custom-scrollbar font-mono text-[10px] leading-tight">
-                                {logs.map(log => (
-                                    <div key={log.id} className={`flex gap-2 animate-in slide-in-from-left-2 fade-in duration-300 ${log.type === 'err' ? 'text-(--red)' : log.type === 'warn' ? 'text-(--amber)' : log.type === 'success' ? 'text-(--green-light)' : 'text-(--text-muted)'}`}>
-                                        <span className="opacity-50 shrink-0 select-none">[{">"}]</span>
-                                        <span className="wrap-break-words">{log.msg}</span>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="bg-(--bg-surface)/50 p-1 px-3 border-t border-(--bg-hover) flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 bg-(--green-base) rounded-full animate-pulse" />
-                                <span className="text-[8px] text-(--text-ghost) font-mono uppercase tracking-tighter">Live_Telemetry_Feed_Active</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex-3 flex flex-col min-h-0 h-[calc(100svh-125px)] p-[2px]">
+                    </Panel>
+                    <div className="flex-3 flex flex-col min-h-0 h-[calc(100svh-128px)]">
                         {/* Sección del Mapa (Centro-Derecha en Desktop) */}
                         <Panel typePanel='main' border={["left", "right"]} className='h-full min-h-0'>
-                            <div id="game-canvas-container" className="flex-1 flex items-center justify-center relative p-2 overflow-hidden shadow-inner">
+                            <div id="game-canvas-container" className="flex-1 flex items-center justify-center bg-(--bg-void) h-full relative p-2 overflow-hidden shadow-inner">
                                 <IsometricCanvas
                                     mapData={mapData}
                                     robot={robot}
@@ -354,60 +318,29 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
                                 <div className="absolute top-4 right-4 w-4 h-4 border-r border-t border-(--green-base)/40" />
                                 <div className="absolute bottom-4 left-4 w-4 h-4 border-l border-b border-(--green-base)/40" />
                                 <div className="absolute bottom-4 right-4 w-4 h-4 border-r border-b border-(--green-base)/40" />
-
-                                {/* Floating Metadata Information Overlay */}
-                                <div className="absolute bottom-6 left-6 flex flex-col gap-1 pointer-events-none">
-                                    <div className="flex items-center gap-3 bg-(--bg-surface)/80 px-3 py-1.5 border border-(--bg-hover) rounded-sm">
-                                        <div className="flex flex-col">
-                                            <span className="text-[8px] font-mono text-(--text-ghost) leading-none mb-1 uppercase">Local_Coords</span>
-                                            <span className="text-xs font-mono text-(--green-light) tabular-nums">X:{robot.x.toFixed(1)} Y:{robot.y.toFixed(1)}</span>
-                                        </div>
-                                        <div className="w-px h-6 bg-(--bg-hover)" />
-                                        <div className="flex flex-col">
-                                            <span className="text-[8px] font-mono text-(--text-ghost) leading-none mb-1 uppercase">Robot_Status</span>
-                                            <span className={`text-xs font-mono tabular-nums ${isRunning ? 'text-(--amber)' : 'text-(--green-muted)'}`}>IDLE_LOCKED</span>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
-                            {/* Status Feedback Banner */}
-                            <div className="h-12 flex items-center justify-center overflow-hidden">
-                                {status === 'failed' && (
-                                    <div className="w-full h-full text-(--red) flex items-center gap-4 bg-(--red)/5 px-6 border-l-2 border-(--red)/50 animate-in slide-in-from-bottom-4 duration-500 overflow-hidden relative">
-                                        <div className="absolute top-0 right-0 p-1 opacity-20"><ShieldAlert size={40} /></div>
-                                        <div className="relative z-10 flex items-center gap-3">
-                                            <div className="w-1.5 h-1.5 bg-(--red) rounded-full animate-pulse shadow-[0_0_8px_var(--red)]" />
-                                            <span className="text-[12px] font-mono font-black tracking-[.25em] uppercase">ANOMALÍA_DE_SECUENCIA_RECONOCIDA</span>
-                                        </div>
-                                    </div>
-                                )}
-                                {status === 'success' && (
-                                    <div className="w-full h-full text-(--green-light) flex items-center gap-4 bg-(--green-base)/5 px-6 border-l-2 border-(--green-base)/50 animate-in slide-in-from-bottom-4 duration-500 overflow-hidden relative">
-                                        <div className="absolute top-0 right-0 p-1 opacity-20"><Share2 size={40} /></div>
-                                        <div className="relative z-10 flex items-center gap-3">
-                                            <div className="w-1.5 h-1.5 bg-(--green-light) rounded-full animate-pulse shadow-[0_0_8px_var(--green-light)]" />
-                                            <span className="text-[12px] font-mono font-black tracking-[.25em] uppercase">SISTEMA_SINCRONIZADO_CON_ÉXITO</span>
-                                        </div>
-                                        <span className="text-[10px] font-mono opacity-50 ml-auto hidden md:block tracking-widest">ACTUALIZANDO_DB_NODO_0{level.act}</span>
-                                    </div>
-                                )}
-                            </div>
+
                         </Panel>
                         <Panel typePanel='footer'>
-                            <div className='flex flex-row'>
-                                <div id="execution-controls" className="p-4 w-full flex flex-row gap-4">
-                                    <PlayButton
+                            <div className='flex flex-row items-center p-2 gap-2.5 max-h-22'>
+                                <div id="execution-controls" className="  w-full h-full flex flex-row items-center justify-center gap-4">
+                                    <Button
                                         id="execute-button"
                                         onClick={executeCommands}
-                                        lengthProgram={commands.length}
-                                        isInteractionDisabled={isRunning || status === 'failed'}
-                                        feedback={status === 'success' ? 'correct' : status === 'failed' ? 'wrong' : 'idle'}
-                                        isExecuting={isRunning}
-                                    />
+                                        disabled={isRunning || status === 'failed'}
+                                        variant={'green'}
+                                        showStripes={!isRunning && status === 'idle' && commands.length > 0}
+                                        icon={Play}
+                                        iconPosition="right"
+                                        size="lg"
+                                        className="w-full"
+                                    >
+                                        INICIAR
+                                    </Button>
 
                                     <Button
-                                        variant="amber"
+                                        variant="cyan"
                                         size="lg"
                                         onClick={handleReset}
                                         disabled={isRunning}
@@ -417,6 +350,9 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
                                     >
                                         REINICIAR
                                     </Button>
+                                </div>
+                                <div className='flex items-start h-full min-h-20'>
+                                    <SpeedSelector />
                                 </div>
                                 <DirectivesPanel
                                     infoText={level.fragHint}

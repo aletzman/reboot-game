@@ -10,7 +10,7 @@ import { Panel } from '@/components/ui/Panel'
 import SectionHeader from '@/components/ui/SectionHeader'
 import { TacticalSection } from '@/components/ui/TacticalSection'
 
-import { PlayButton } from '@/components/ui/PlayButton'
+
 import { CloseButton } from '@/components/ui/CloseButton'
 import { TacticalHeaderButton } from '@/components/ui/TacticalHeaderButton'
 
@@ -59,7 +59,7 @@ export function CommandPalette({
     const usagePercent = Math.min(100, (currentTotal / totalLimit) * 100)
 
     return (
-        <Panel typePanel='aside' className="w-[320px] shrink-0 flex flex-col relative z-20">
+        <Panel typePanel='aside' className="w-[350px] shrink-0 flex flex-col relative z-20">
             <SequenceMemory className="mt-px" maxBlocks={totalLimit} usedBlocks={currentTotal} isExecuting={isRunning} border={['bottom']} />
 
             <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">

@@ -14,7 +14,7 @@ export const PALETTE_COMMANDS: { type: CommandType; label: string; icon: Forward
 ]
 
 export const MAX_COMMANDS = 20
-export const EXEC_SPEED = 420
+export const EXEC_SPEED = 650
 
 export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     // ==========================================
@@ -623,9 +623,9 @@ export const DEFAULT_MAP: NodeRoutineLevelData = {
 }
 
 export const ISO = {
-    TILE_W: 80,    // ancho del tile isométrico (diamante)
-    TILE_H: 46,    // alto del tile isométrico
-    DEPTH: 18,     // profundidad/grosor del tile 3D
+    TILE_W: 100,    // Antes 80
+    TILE_H: 56,    // Antes 46
+    DEPTH: 18,     // Antes 18
 }
 
 // Colores de tiles (top face, side-left, side-right)
