@@ -22,7 +22,7 @@ import { SequenceMemory } from '@/components/ui/MemorySequence'
 import { Panel } from '@/components/ui/Panel'
 import { directionBiased } from '@dnd-kit/collision'
 import { Screw } from '@/components/ui/Screw'
-import { PlayButton } from '@/components/ui/PlayButton'
+import { Button } from '@/components/ui/Button'
 import { StopButton } from '@/components/ui/StopButton'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLogicAssemblyData } from '@/lib/store/useLogicAssemblyData'
@@ -387,13 +387,18 @@ export default function LogicAssemblyLevel({
                                             Diseño: Una placa larga de cristal/policarbonato que sobresale del chasis metálico.
                                         */}
                                         <div className="flex-1 relative">
-                                            <PlayButton
-                                                lengthProgram={flatBlocks(program).length}
-                                                isInteractionDisabled={isInteractionDisabled}
-                                                feedback={feedback}
-                                                isExecuting={isExecuting}
+                                            <Button
                                                 onClick={handleCheck}
-                                            />
+                                                disabled={isInteractionDisabled}
+                                                variant={feedback === 'correct' ? 'green' : feedback === 'wrong' ? 'red' : isExecuting ? 'amber' : 'green'}
+                                                showStripes={!isExecuting && feedback === 'idle' && program.length > 0}
+                                                icon={isExecuting ? Play : feedback === 'correct' ? RefreshCcw : Play}
+                                                iconPosition="right"
+                                                size="xl"
+                                                className="w-full"
+                                            >
+                                                {isExecuting ? 'EJECUTANDO...' : feedback === 'correct' ? 'SINCRONIZADO' : feedback === 'wrong' ? 'ERROR' : 'INICIAR_SECUENCIA'}
+                                            </Button>
                                         </div>
                                     </div>
                                     <SpeedSelector />
