@@ -10,6 +10,8 @@ import { EditorHeader } from './EditorHeader'
 import { EditorFooter } from './EditorFooter'
 import { TestPanel } from './TestPanel'
 import { OutputPanel } from './OutputPanel'
+import { DirectivesPanel } from '@/components/ui/DirectivesPanel'
+import { useUIStore } from '@/lib/store/useUIStore'
 
 // Monaco se importa dinámicamente — nunca SSR
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false })
@@ -45,8 +47,11 @@ export default function CodeEditorLevel({
     // EJECUTAR
     // ------------------------------------------------------------
 
+    const closeDirectives = useUIStore(state => state.closeDirectives)
+
     const handleRun = useCallback(async () => {
         if (editorState.running) return
+        closeDirectives()
         setAttempts(a => a + 1)
         setPhase('running')
         setEditorState(prev => ({ ...prev, running: true, output: [], error: null }))
@@ -194,8 +199,16 @@ export default function CodeEditorLevel({
                         </div>
                     </div>
                     
-                    <div className="flex-1 overflow-y-auto custom-scrollbar relative z-0">
-                        <TestPanel tests={editorState.tests} level={level} />
+                    <div className="flex-1 overflow-y-auto custom-scrollbar relative z-0 flex flex-col">
+                        <div className="p-3">
+                            <DirectivesPanel
+                                infoText={level.fragHint}
+                                missionText={level.description}
+                            />
+                        </div>
+                        <div className="mt-2 flex-1">
+                            <TestPanel tests={editorState.tests} level={level} />
+                        </div>
                     </div>
                 </div>
             </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import type { LevelState, Command, CommandType } from '@/types/game'
-import { ShieldAlert, Share2, RotateCcwIcon, Play } from 'lucide-react'
+import { ShieldAlert, Share2, RotateCcwIcon, Play, Minus, Plus } from 'lucide-react'
 import { useAudioStore } from '@/store/audio.store'
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
@@ -17,12 +17,13 @@ import { Panel } from '@/components/ui/Panel'
 import { Button } from '@/components/ui/Button'
 import { DirectivesPanel } from '@/components/ui/DirectivesPanel'
 import { useSettingsStore } from '@/store/settings.store'
-import { SpeedSelector } from '../LogicAssemblyLevel/SpeedSelector'
+import { SpeedSelector } from '../../ui/SpeedSelector'
 import SystemLogRealtime from './SystemLogRealtime'
 import SectionHeader from '@/components/ui/SectionHeader'
 import { TacticalSection } from '@/components/ui/TacticalSection'
 import { RobotMonitor } from './RobotMonitor'
 import { MissionStatusMonitor } from './MissionStatusMonitor'
+import { useUIStore } from '@/lib/store/useUIStore'
 
 export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, onStatusChange }: NodeRoutineLevelProps) {
     const mapData = NODEROUTINE_MAPS[level.id] ?? DEFAULT_MAP
@@ -31,6 +32,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
     const activateSoundRef = useRef<HTMLAudioElement | null>(null)
 
     const { sfxVolume, isMuted } = useAudioStore()
+    const closeDirectives = useUIStore((state) => state.closeDirectives)
 
     // Logs del sistema para la terminal "coleta"
     const [logs, setLogs] = useState<{ id: string, msg: string, type: 'info' | 'warn' | 'success' | 'err' }[]>([
@@ -107,12 +109,12 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
         return () => clearTimeout(timer);
     }, [level.id]);
 
-    // --------------------------------------------------------
-    // EJECUTAR SECUENCIA
-    // --------------------------------------------------------
 
     const executeCommands = useCallback(async () => {
         if (isRunning || commands.length === 0) return
+
+        closeDirectives() // Cerrar ayuda al iniciar
+
         setIsRunning(true)
         setStatus('playing')
         onStatusChange('playing')
@@ -255,6 +257,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
     }
 
     function handleReset() {
+        closeDirectives()
         setRobot({ ...mapData.robotStart, isMoving: false, isJumping: false })
         setActivated(new Set())
         setIsRunning(false)
@@ -323,7 +326,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
 
                         </Panel>
                         <Panel typePanel='footer'>
-                            <div className='flex flex-row items-center p-2 gap-2.5 max-h-22'>
+                            <div className='flex flex-row items-center p-1.5 gap-2.5 h-28'>
                                 <div id="execution-controls" className="  w-full h-full flex flex-row items-center justify-center gap-4">
                                     <Button
                                         id="execute-button"
@@ -351,7 +354,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
                                         REINICIAR
                                     </Button>
                                 </div>
-                                <div className='flex items-start h-full min-h-20'>
+                                <div className='flex items-start h-full '>
                                     <SpeedSelector />
                                 </div>
                                 <DirectivesPanel
@@ -383,40 +386,52 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
 
             {repeatModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/85 animate-in fade-in duration-300">
-                    <div id="repeat-modal" className="bg-(--bg-surface) border border-(--green-base)/40 p-8 font-mono flex flex-col gap-6 min-w-[300px] shadow-[0_0_60px_rgba(45,120,0,0.2)] relative rounded-sm">
+                    <Panel typePanel='main' id="repeat-modal" className="bg-(--bg-surface) border border-(--border-color) font-mono flex flex-col gap-6 min-w-[300px] shadow-[0_0_60px_rgba(45,120,0,0.2)] relative rounded-sm">
                         <div className="absolute top-2 left-2 text-[8px] text-(--text-ghost) opacity-40 uppercase">Sys_Dialog_v4</div>
-
-                        <div className="text-(--green-light) text-[11px] tracking-[.2em] uppercase border-b border-(--bg-hover) pb-3 flex items-center justify-between">
-                            <span>// PROTOCOLO_ITERATIVO</span>
-                        </div>
-
-                        <div className="py-4">
-                            <div className="text-center text-(--text-ghost) text-[10px] mb-4 uppercase tracking-widest">DEFINIR_CANTIDAD_CICLOS</div>
-                            <div className="flex items-center justify-center gap-6">
-                                <button onClick={() => setRepeatTimes(t => Math.max(2, t - 1))} className="w-10 h-10 flex items-center justify-center border border-(--bg-hover) hover:border-(--green-base) bg-(--bg-deep) transition-colors rounded-md">−</button>
+                        <SectionHeader title="PROTOCOLO_ITERATIVO" />
+                        <div className="pt-8 pb-6">
+                            <div className="text-center text-(--text-primary) text-xs mb-4 uppercase tracking-widest">DEFINIR CANTIDAD DE REPETICIONES</div>
+                            <div className="flex items-center justify-center gap-6 my-5">
+                                <Button
+                                    onClick={() => setRepeatTimes(t => Math.max(2, t - 1))}
+                                    variant={'outline'}
+                                    size="sm"
+                                    icon={Minus}
+                                    className="w-14"
+                                />
                                 <div className="flex flex-col items-center">
                                     <span className="text-(--green-light) text-5xl font-mono leading-none animate-in slide-in-from-bottom-2" key={repeatTimes}>{repeatTimes}</span>
-                                    <span className="text-[9px] text-(--text-ghost) mt-3 opacity-60 uppercase tracking-widest">Iteraciones</span>
+
                                 </div>
-                                <button onClick={() => setRepeatTimes(t => Math.min(10, t + 1))} className="w-10 h-10 flex items-center justify-center border border-(--bg-hover) hover:border-(--green-base) bg-(--bg-deep) transition-colors rounded-md">+</button>
+                                <Button
+                                    onClick={() => setRepeatTimes(t => Math.min(10, t + 1))}
+                                    variant={'outline'}
+                                    size="sm"
+                                    icon={Plus}
+                                    className="w-14"
+                                />
                             </div>
                         </div>
 
-                        <div className="flex gap-4 pt-2">
-                            <button
+                        <Panel typePanel='footer' className="flex flex-row items-center justify-center gap-4 p-2">
+                            <Button
                                 onClick={handleAddRepeat}
-                                className="flex-1 h-10 bg-(--green-dark) border border-(--green-base) text-(--white) font-mono text-xs uppercase tracking-widest hover:bg-(--green-base) transition-colors rounded-sm shadow-[0_0_15px_rgba(45,120,0,0.2)]"
+                                variant={'green'}
+                                size="sm"
+                                className='w-1/2'
                             >
                                 Inyectar(n)
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                                 onClick={() => setRepeatModal(false)}
-                                className="flex-1 h-10 border border-(--bg-hover) text-(--text-muted) font-mono text-xs uppercase tracking-widest hover:text-(--text-primary) hover:bg-(--bg-hover) transition-all rounded-sm"
+                                variant={'red'}
+                                size="sm"
+                                className='w-1/2'
                             >
                                 Abortar
-                            </button>
-                        </div>
-                    </div>
+                            </Button>
+                        </Panel>
+                    </Panel>
                 </div>
             )}
 

@@ -1,8 +1,3 @@
-// ============================================================
-// REBOOT — app/level/[id]/page.tsx
-// Página dinámica de nivel — conecta todo
-// ============================================================
-
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
@@ -17,8 +12,8 @@ import {
 } from '@/lib/levelEngine'
 import { requiresLogin, getSave } from '@/lib/gameState'
 import LevelComplete from '@/components/ui/LevelComplete'
-import FragAssistant from '@/components/frag/FragAssistant'
 import { Loading } from '@/components/ui/Loading'
+import { useUIStore } from '@/lib/store/useUIStore'
 
 // ------------------------------------------------------------
 // IMPORTS DINÁMICOS — cada componente solo carga cuando se necesita
@@ -158,6 +153,9 @@ export default function LevelPage({
         setLevelState(prev => prev ? { ...prev, status, failReason: reason, failContext: context } : prev)
     }
 
+    const setFragHint = useUIStore((state) => state.setActiveFragHint)
+    const setDirectives = useUIStore((state) => state.setDirectivesState)
+
     // Al calcular el hint de FRAG, priorizamos los errores específicos
     const fragErrorHint = useMemo(() => {
         if (levelState?.status !== 'failed' || !levelState.failReason) return null
@@ -180,6 +178,18 @@ export default function LevelPage({
     }, [levelState?.status, levelState?.failReason, levelState?.failContext])
 
     const fragHintToDisplay = fragErrorHint || randomizedFragHint
+
+    // Sincronizar el hint con el store en caso de fallo
+    useEffect(() => {
+        if (levelState?.status === 'failed' && fragHintToDisplay) {
+            setFragHint(fragHintToDisplay)
+            setDirectives(true, 'info')
+        }
+    }, [levelState?.status, fragHintToDisplay, setFragHint, setDirectives])
+
+    // ------------------------------------------------------------
+    // HANDLERS
+    // ------------------------------------------------------------
 
     function handleNext() {
         if (!completionResult?.nextLevelId) {
@@ -212,6 +222,10 @@ export default function LevelPage({
         setResult(null)
         setLevelState(initLevelState(level))
         setResetKey(prev => prev + 1)
+        
+        // Limpiar hints de FRAG
+        setFragHint(null)
+        setDirectives(false)
     }
 
     // ------------------------------------------------------------
@@ -268,6 +282,7 @@ export default function LevelPage({
     if (!level || !levelState) return <LoadingScreen />
 
     const reviewHint = getReviewHint(levelId, allLevels)
+    const fragHint = level.fragAvailable && levelState.status === 'failed' ? fragHintToDisplay : ""
 
     return (
         <div className="flex flex-col h-[calc(100svh-var(--header-height))] bg-(--bg-void)">
@@ -278,15 +293,6 @@ export default function LevelPage({
             <main key={resetKey} className="flex-1 flex flex-col">
                 {renderLevelComponent(level, levelState, handleComplete, handleFragUse, handleStatusChange)}
             </main>
-
-            {level.fragAvailable && levelState.status === 'failed' && (
-                <FragAssistant
-                    hint={fragHintToDisplay}
-                    onUse={handleFragUse}
-                    autoOpen={true}
-                    feedback="error"
-                />
-            )}
 
             {showComplete && completionResult && (
                 <LevelComplete

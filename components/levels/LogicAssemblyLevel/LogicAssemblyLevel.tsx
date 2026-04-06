@@ -26,7 +26,9 @@ import { Button } from '@/components/ui/Button'
 import { StopButton } from '@/components/ui/StopButton'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLogicAssemblyData } from '@/lib/store/useLogicAssemblyData'
-import { SpeedSelector } from './SpeedSelector'
+import { SpeedSelector } from '../../ui/SpeedSelector'
+import { useUIStore } from '@/lib/store/useUIStore'
+
 export default function LogicAssemblyLevel({
     level,
     state,
@@ -232,8 +234,11 @@ export default function LogicAssemblyLevel({
         setDragPreviewState(null);
     }, [isRootWorkspaceHover, setProgram]);
 
+    const closeDirectives = useUIStore(state => state.closeDirectives)
+
     function handleCheck() {
         if (program.length === 0 || isExecuting || feedback !== 'idle') return
+        closeDirectives()
         setAttempts(a => a + 1)
         setIsExecuting(true)
         setFeedback('idle')
@@ -305,7 +310,7 @@ export default function LogicAssemblyLevel({
                         )}
 
                         {/* PALETA DE BLOQUES */}
-                        <Panel id="logic-palette" typePanel="aside" className="w-full md:w-[290px]" border={['left', 'right']}>
+                        <Panel id="logic-palette" typePanel="aside" className="w-full md:w-[400px]" border={['left', 'right']}>
                             <SectionHeader title="módulos_de_comando" subtitle="SEC_02 // MOD_CMD" />
 
                             <div className="flex flex-col gap-1 p-4 h-[calc(100svh-177px)]">
@@ -371,39 +376,37 @@ export default function LogicAssemblyLevel({
                             </Panel>
 
                             {/* FOOTER CONTROLES*/}
-                            <Panel typePanel="footer" border={['top']} className="h-[120px] w-full relative overflow-visible min-w-0">
-                                <div className="flex h-full items-stretch p-3 gap-4 min-w-0">
-
-                                    <div id="logic-execute-button" className="flex-1 flex items-stretch gap-4 p-2 min-w-0">
-
-                                        {/* 1. BOTÓN ERASE: TIPO "SWITCH TÁCTICO" */}
-                                        <StopButton
-                                            isInteractionDisabled={isInteractionDisabled}
-                                            program={program}
-                                            setProgram={setProgram}
-                                        />
-
-                                        {/* 2. BOTÓN START_SEQ: TIPO "PANEL DE CONTROL AERONÁUTICO"
-                                            Diseño: Una placa larga de cristal/policarbonato que sobresale del chasis metálico.
-                                        */}
-                                        <div className="flex-1 relative">
-                                            <Button
-                                                onClick={handleCheck}
-                                                disabled={isInteractionDisabled}
-                                                variant={feedback === 'correct' ? 'green' : feedback === 'wrong' ? 'red' : isExecuting ? 'amber' : 'green'}
-                                                showStripes={!isExecuting && feedback === 'idle' && program.length > 0}
-                                                icon={isExecuting ? Play : feedback === 'correct' ? RefreshCcw : Play}
-                                                iconPosition="right"
-                                                size="xl"
-                                                className="w-full"
-                                            >
-                                                {isExecuting ? 'EJECUTANDO...' : feedback === 'correct' ? 'SINCRONIZADO' : feedback === 'wrong' ? 'ERROR' : 'INICIAR_SECUENCIA'}
-                                            </Button>
-                                        </div>
+                            <Panel typePanel="footer" border={['top']} className=" h-28 w-full relative overflow-visible min-w-0">
+                                <div className="flex h-full items-stretch p-1.5 gap-4 min-w-0">
+                                    <div id="logic-execute-button" className="flex-1 flex items-center justify-center gap-2 min-w-0">
+                                        <Button
+                                            onClick={handleCheck}
+                                            disabled={isInteractionDisabled}
+                                            variant={'green'}
+                                            icon={Play}
+                                            iconPosition="right"
+                                            size="lg"
+                                            className='w-full'
+                                        >
+                                            INICIAR
+                                        </Button>
+                                        <Button
+                                            onClick={() => setProgram([])}
+                                            disabled={isInteractionDisabled}
+                                            variant={'red'}
+                                            icon={RefreshCcw}
+                                            iconPosition="right"
+                                            size="lg"
+                                            className='w-full'
+                                        >
+                                            BORRAR
+                                        </Button>
                                     </div>
-                                    <SpeedSelector />
+                                    <div className="flex-0.5 not-first:flex items-start h-full justify-center min-w-0">
+                                        <SpeedSelector />
+                                    </div>
                                     {/* PANEL ASISTENTE (DOCS) */}
-                                    <div className="w-[340px] relative flex flex-col justify-center pt-1 ">
+                                    <div className=" relative flex flex-1 flex-col justify-center">
                                         <DirectivesPanel
                                             infoText={level.fragHint}
                                             missionText={level.description}
@@ -417,7 +420,7 @@ export default function LogicAssemblyLevel({
                     </div>
                 </div>
                 {/* MONITOR DE PROCESO */}
-                <Panel typePanel="aside" border={['left', 'right']} className="w-full md:w-[400px] shrink-0 flex flex-col relative custom-scrollbar h-[calc(100svh-63px)] overflow-hidden overflow-y-auto">
+                <Panel typePanel="aside" border={['left', 'right']} className="w-full md:w-[400px] shrink-0 flex flex-col relative custom-scrollbar h-[calc(100svh-57px)] overflow-hidden overflow-y-auto">
                     <SectionHeader title="MONITOR_PROCESO" subtitle="SEC_02 // MON_PRO" />
 
                     <div id="logic-simulator" className="flex-1 overflow-y-auto flex flex-col pt-4 custom-scrollbar relative z-10">
@@ -441,7 +444,7 @@ export default function LogicAssemblyLevel({
 
                         {/* OUTPUT_SECUENCIA: MONITOR DE DEPURACIÓN */}
                         <TacticalSection title="MONITOR_DE_DEPURACIÓN" variant="inset">
-                            <div className={`h-[330px] overflow-hidden bg-[#020406]  transition-all duration-500 relative group/terminal
+                            <div className={`h-[325px] overflow-hidden bg-[#020406]  transition-all duration-500 relative group/terminal
                        
                             `}>
 

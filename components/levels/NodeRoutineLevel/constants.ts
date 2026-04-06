@@ -14,13 +14,13 @@ export const PALETTE_COMMANDS: { type: CommandType; label: string; icon: Forward
 ]
 
 export const MAX_COMMANDS = 20
-export const EXEC_SPEED = 650
+export const EXEC_SPEED = 550
 
 export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     // ==========================================
     // FASE 1: SECUENCIAS BÁSICAS Y ORIENTACIÓN
     // ==========================================
-    '1-01': { // Calibración Inicial — avanzar + activar en línea recta
+    '1-01': {
         map: [
             [
                 { type: 'floor', x: 0, y: 0 },
@@ -34,7 +34,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitMain: 4,
         allowedCommands: ['move', 'activate'],
     },
-    '1-02': { // 2. La caminata (Entender secuencias más largas)
+    '1-02': {
         map: [
             [{ type: 'floor', x: 0, y: 0 },
             { type: 'floor', x: 1, y: 0 },
@@ -50,7 +50,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitMain: 6,
         allowedCommands: ['move', 'activate', 'turn-left', 'turn-right', 'jump', 'repeat', 'call-f1', 'call-f2'],
     },
-    '1-03': { // 3. La primera esquina (Girar NO avanza)
+    '1-03': {
         map: [
             [
                 { type: 'floor', x: 0, y: 0 },
@@ -66,7 +66,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitMain: 6,
         allowedCommands: ['move', 'turn-right', 'activate'],
     },
-    '1-04': { // 4. El Zig-Zag básico (Izquierda y Derecha)
+    '1-04': {
         map: [
             [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'empty', x: 2, y: 0 }],
             [{ type: 'empty', x: 0, y: 1 }, { type: 'floor', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }],
@@ -78,7 +78,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitMain: 8,
         allowedCommands: ['move', 'turn-left', 'turn-right', 'activate'],
     },
-    '1-05': { // 5. La U (Giro de 180 grados)
+    '1-05': {
         map: [
             [{ type: 'floor', x: 0, y: 0 }, { type: 'floor', x: 1, y: 0 }, { type: 'floor', x: 2, y: 0 }],
             [{ type: 'empty', x: 0, y: 1 }, { type: 'empty', x: 1, y: 1 }, { type: 'floor', x: 2, y: 1 }],
@@ -94,7 +94,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     // ==========================================
     // FASE 2: LA TERCERA DIMENSIÓN (SALTOS)
     // ==========================================
-    '1-06': { // 6. El primer escalón
+    '1-06': {
         map: [
             [{ type: 'floor', x: 0, y: 0, height: 0 }, { type: 'floor', x: 1, y: 0, height: 1 }, { type: 'target', x: 2, y: 0, height: 1 }]
         ],
@@ -104,7 +104,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitMain: 5,
         allowedCommands: ['move', 'jump', 'activate'],
     },
-    '1-07': { // 7. El foso (Saltar hacia abajo)
+    '1-07': {
         map: [
             [{ type: 'floor', x: 0, y: 0, height: 1 }, { type: 'floor', x: 1, y: 0, height: 0 }, { type: 'target', x: 2, y: 0, height: 0 }]
         ],
@@ -114,7 +114,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitMain: 5,
         allowedCommands: ['move', 'jump', 'activate'],
     },
-    '1-08': { // 8. La pirámide (Subir y bajar)
+    '1-08': {
         map: [
             [{ type: 'floor', x: 0, y: 0, height: 0 }, { type: 'floor', x: 1, y: 0, height: 1 }, { type: 'floor', x: 2, y: 0, height: 2 }, { type: 'floor', x: 3, y: 0, height: 1 }, { type: 'target', x: 4, y: 0, height: 0 }]
         ],
@@ -124,7 +124,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitMain: 8,
         allowedCommands: ['move', 'jump', 'activate'],
     },
-    '1-09': { // 9. Escalera de caracol
+    '1-09': {
         map: [
             [
                 { type: 'floor', x: 0, y: 0, height: 2 },
@@ -149,7 +149,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitMain: 10,
         allowedCommands: ['turn-right', 'jump', 'activate', 'move'],
     },
-    '1-10': { // 10. Parkour urbano (Saltos intermitentes con giros)
+    '1-10': {
         map: [
             [
                 { type: 'floor', x: 0, y: 0, height: 1 },
@@ -177,7 +177,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     // ==========================================
     // FASE 3: LA MAGIA DEL BUCLE (REPEAT)
     // ==========================================
-    '1-11': { // 11. El pasillo infinito (Fuerza a usar Repeat por límite de UI)
+    '1-11': {
         map: [
             [
                 { type: 'floor', x: 0, y: 0 },
@@ -194,7 +194,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitMain: 10, // Solo cabe: Repeat, Move, Activate
         allowedCommands: ['move', 'activate', 'repeat'],
     },
-    '1-12': { // 12. Escalera al cielo (Repeat + Jump)
+    '1-12': {
         map: [
             [
                 { type: 'floor', x: 0, y: 0, height: 0 },
@@ -210,7 +210,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitMain: 10,
         allowedCommands: ['jump', 'activate', 'repeat', 'move'],
     },
-    '1-13': { // 13. El Cuadrado (Repeat con patrones múltiples)
+    '1-13': {
         map: [
             [
                 { type: 'floor', x: 0, y: 0 },
@@ -234,7 +234,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitMain: 12,
         allowedCommands: ['move', 'turn-right', 'activate', 'repeat'],
     },
-    '1-14': { // 14. Zig-Zag infinito (Patrón Move-Turn-Move-Turn)
+    '1-14': {
         map: [
             [
                 { type: 'floor', x: 0, y: 0 },
@@ -261,7 +261,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitMain: 10,
         allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'repeat'],
     },
-    '1-15': { // 15. Pilares repetitivos (Jump + Move en bucle)
+    '1-15': {
         map: [
             [
                 { type: 'floor', x: 0, y: 0, height: 1 },
@@ -281,7 +281,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     // ==========================================
     // FASE 4: FUNCIONES (F1 / CALL-FN)
     // ==========================================
-    '1-16': { // 16. La primera Función (Avanzar y Activar x2 + Terminal)
+    '1-16': {
         map: [
             [
                 { type: 'floor', x: 0, y: 0 },
@@ -294,11 +294,11 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         targets: [{ x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }],
         allowF1: true,
         maxCommands: 4,
-        uiLimitMain: 6, // Obliga a llamar a F1 tres veces
-        uiLimitF1: 6,   // F1: move, activate, move
+        uiLimitMain: 6,
+        uiLimitF1: 6,
         allowedCommands: ['move', 'activate', 'call-f1', 'repeat', 'turn-left', 'turn-right', 'jump'],
     },
-    '1-17': { // 17. Tres Islas (F1 con giro)
+    '1-17': {
         map: [
             [
                 { type: 'empty', x: 0, y: 0 },
@@ -344,7 +344,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitF1: 10,
         allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1', 'repeat', 'jump',],
     },
-    '1-18': { // 18. Cruz de Malta (F1 + Repeat en Main)
+    '1-18': {
         map: [
             [
                 { type: 'empty', x: 0, y: 0 },
@@ -370,7 +370,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitF1: 10,
         allowedCommands: ['move', 'turn-right', 'activate', 'call-f1', 'repeat', "jump", 'turn-left'],
     },
-    '1-19': { // 19. El fractal de saltos
+    '1-19': {
         map: [
             [
                 { type: 'floor', x: 0, y: 0, height: 0 },
@@ -389,7 +389,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitF1: 4,
         allowedCommands: ['move', 'jump', 'activate', 'call-f1', 'repeat', 'turn-left', 'turn-right'],
     },
-    '1-20': { // 20. F1 con ida y vuelta
+    '1-20': {
         map: [
             [
                 { type: 'target', x: 0, y: 0 },
@@ -410,7 +410,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitF1: 6,
         allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1', 'repeat', 'jump'],
     },
-    '1-21': { // 21. Laberinto en U doble
+    '1-21': {
         map: [
             [
                 { type: 'floor', x: 0, y: 0 },
@@ -448,7 +448,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitF1: 7,
         allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1', 'repeat', 'jump'],
     },
-    '1-22': { // 22. Montañas gemelas
+    '1-22': {
         map: [
             [
                 { type: 'generator', x: 0, y: 0 },
@@ -494,7 +494,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitF1: 4,
         allowedCommands: ['move', 'jump', 'activate', 'call-f1', 'repeat', 'turn-left', 'turn-right'],
     },
-    '1-23': { // 23. Espiral exterior
+    '1-23': {
         map: [
             [
                 { type: 'floor', x: 0, y: 0 },
@@ -543,7 +543,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         uiLimitF2: 5,
         allowedCommands: ['move', 'turn-left', 'turn-right', 'activate', 'call-f1', 'call-f2', 'repeat', 'jump'],
     },
-    '1-24': { // 24. La Antesala (Preparación para el boss)
+    '1-24': {
         map: [
             [
                 { type: 'target', x: 0, y: 0, height: 4 },
@@ -596,7 +596,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     // ==========================================
     // FASE 5: EL EXAMEN FINAL DEL SECTOR 1
     // ==========================================
-    '1-R': { // 25. EXAMEN FINAL (Optimización absoluta: F1 + Repeat + Saltos)
+    '1-R': {
         map: [
             [{ type: 'floor', x: 0, y: 0, height: 0 }, { type: 'floor', x: 1, y: 0, height: 1 }, { type: 'floor', x: 2, y: 0, height: 2 }, { type: 'target', x: 3, y: 0, height: 2 }],
             [{ type: 'empty', x: 0, y: 1 }, { type: 'empty', x: 1, y: 1 }, { type: 'empty', x: 2, y: 1 }, { type: 'floor', x: 3, y: 1, height: 2 }],
