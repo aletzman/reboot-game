@@ -289,6 +289,7 @@ export interface TestCase {
   description: string      // qué verifica este test
   input?: unknown          // input para la función del jugador
   expected: unknown        // resultado esperado
+  received?: unknown       // resultado obtenido
   passed: boolean | null   // null = no ejecutado
 }
 

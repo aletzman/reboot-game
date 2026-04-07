@@ -37,7 +37,7 @@ export function DirectivesPanel({ missionText, infoText }: DirectivesPanelProps)
         <div ref={containerRef} className="relative w-full max-w-2xl mx-auto pointer-events-auto z-50">
 
             {/* 1. VENTANA DE DATOS (ESTILO TERMINAL EXTERNA) */}
-            <div className={`absolute left-0 right-0 z-100
+            <div className={`absolute left-0 right-0 z-99999
                              transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)]
                              ${panelPosition === 'top' ? 'bottom-[calc(100%+20px)] origin-bottom' : 'top-[calc(100%+20px)] origin-top'}
                              ${activePanel ? 'translate-y-0 opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none ' + (panelPosition === 'top' ? 'translate-y-4' : '-translate-y-4')}
@@ -159,7 +159,7 @@ export function DirectivesPanel({ missionText, infoText }: DirectivesPanelProps)
             </div>
 
             {/* 2. BOTONERA INDUSTRIAL (SOCKET & PLUNGER) */}
-            <div className="flex gap-4 p-2 bg-[#080B0E] border border-[#1A222C] rounded-sm shadow-[0_4px_0_0_#000]">
+            <div className="flex gap-4 p-2 bg-(--bg-void) border border-(--border-color) rounded-sm">
 
                 {/* BOTÓN: OBJETIVO */}
                 <div className="flex-1 h-14 relative bg-black/60 rounded-[2px] shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)] p-[2px]">

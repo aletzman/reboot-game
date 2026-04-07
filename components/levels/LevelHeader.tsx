@@ -18,7 +18,7 @@ export function LevelHeader({ level, status, isRunning, children }: LevelHeaderP
     const statusColor = status === 'success' ? 'var(--green-base)' : status === 'failed' ? 'var(--red)' : isRunning ? 'var(--amber)' : 'var(--text-primary)';
 
     return (
-        <div className="flex flex-col md:flex-row items-stretch border-b border-(--border-color) bg-(--bg-void) relative z-20 select-none">
+        <div className="flex flex-col md:flex-row items-stretch border-b border-(--border-color) bg-(--bg-void) relative z-20 ">
 
 
             {/* ─── COMPARTIMENTO 01: RETORNO (Hundido) ─── */}
