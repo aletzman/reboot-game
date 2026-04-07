@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 import { Map, ChevronRight, Binary, Cpu, ArrowLeft, ShelvingUnit } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useState } from "react";
@@ -13,28 +12,28 @@ const navItems = [
         href: "/game",
         label: "SECTORES",
         icon: Map,
-        color: "var(--green-light)",
+        color: "blue",
         tag: "0x01_MAP"
     },
     {
         href: "/game/collection",
         label: "ALMACÉN",
         icon: ShelvingUnit,
-        color: "var(--cyan)",
+        color: "amber",
         tag: "0x02_DB"
     },
     {
         href: "/game/collection/cards",
-        label: "MODULOS",
+        label: "MÓDULOS",
         icon: Binary,
-        color: "var(--amber)",
+        color: "cyan",
         tag: "0x03_MOD"
     },
     {
         href: "/game/collection/objects",
         label: "OBJETOS",
         icon: Cpu,
-        color: "var(--blue)",
+        color: "purple",
         tag: "0x04_OBJ"
     },
 ];
@@ -63,35 +62,37 @@ export function NavigationFooter() {
                 key="footer-nav"
                 initial={{ y: 100, opacity: 0 }}
                 animate={{
-                    y: isMinimized ? 85 : 20,
+                    y: isMinimized ? 87 : 10,
                     opacity: 1
                 }}
                 exit={{ y: 0, opacity: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 120 }}
-                className="fixed bottom-0 left-0 right-0 z-5000 px-6 pb-6 pointer-events-none"
+                className="fixed bottom-0 left-0 right-0 z-5000 pb-2 pointer-events-none"
             >
                 <div className="max-w-5xl mx-auto pointer-events-auto relative">
+
                     {/* Access Tab / Toggle Button */}
-                    <div className="absolute -top-7 left-1/2 -translate-x-1/2 z-20">
+                    <div className="absolute -top-[34px] left-1/2 -translate-x-1/2 z-20">
+                        <div className="w-[204px] h-[8px] bg-(--bg-void) absolute bottom-0 left-1/2 -translate-x-1/2 border-x border-t border-(--bg-void) rounded-t-[2px] z-0 shadow-[inset_0_4px_8px_rgba(0,0,0,1)] pointer-events-none" />
                         <motion.button
                             onClick={() => setIsMinimized(!isMinimized)}
-                            whileHover={{ y: -2, scale: 1.02 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center justify-between px-5 w-44 h-7 bg-(--bg-deep) border border-(--bg-hover) rounded-t-lg relative group overflow-hidden shadow-[0_-8px_20px_rgba(0,0,0,0.8)] cursor-pointer"
+                            whileHover={{ y: 2 }}
+                            whileTap={{ y: 6, transition: { duration: 0.1 } }}
+                            className="flex items-center justify-between px-5 w-48 h-9 bg-[linear-gradient(180deg,#161b22,#0a0d11)] border-t-2 border-x-2 border-[#1c2229] rounded-t-[4px] relative group overflow-hidden shadow-[0_-8px_20px_rgba(0,0,0,0.8),inset_0_2px_2px_rgba(255,255,255,0.05)] cursor-pointer z-10"
                         >
-                            {/* Technical pattern */}
-                            <div className="absolute inset-0 opacity-10 bg-[linear-gradient(45deg,transparent_25%,var(--text-ghost)_50%,transparent_75%)] bg-size-[10px_10px]" />
+                            <div className="absolute inset-[4px] border border-black/60 rounded-sm shadow-[inset_0_1px_1px_rgba(255,255,255,0.03)] pointer-events-none" />
+                            <div className="absolute left-[4px] right-[4px] top-[4px] bottom-[4px] rounded-sm opacity-[0.08] bg-[linear-gradient(45deg,rgba(0,0,0,0)_45%,#fff_50%,rgba(0,0,0,0)_55%)] bg-size-[4px_4px] pointer-events-none" />
 
                             <div className="flex items-center gap-2.5 relative z-10">
                                 <motion.div
                                     animate={{
-                                        opacity: [1, 0.5, 1],
+                                        opacity: [1, 0.4, 1],
                                         boxShadow: isMinimized ? "0 0 8px var(--amber)" : "0 0 8px var(--green-base)"
                                     }}
                                     transition={{ repeat: Infinity, duration: 2 }}
-                                    className={`w-1.5 h-1.5 rounded-full ${isMinimized ? 'bg-(--amber)' : 'bg-(--green-base)'}`}
+                                    className={`w-2 h-2 rounded-[1px] ${isMinimized ? 'bg-[#ef9f27]' : 'bg-[#2d7800]'}`}
                                 />
-                                <span className={`text-[10px] font-mono font-black tracking-[0.25em] transition-colors ${isMinimized ? 'text-(--amber)' : 'text-(--green-base)'}`}>
+                                <span className={`text-[10px] font-mono font-black tracking-[0.25em] transition-colors ${isMinimized ? 'text-[#ef9f27] drop-shadow-[0_0_4px_var(--amber)]' : 'text-[#E6EDF3] drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]'}`}>
                                     NAVEGACIÓN
                                 </span>
                             </div>
@@ -99,117 +100,56 @@ export function NavigationFooter() {
                             <motion.div
                                 animate={{ rotate: isMinimized ? 180 : 0 }}
                                 transition={{ duration: 0.4, ease: "anticipate" }}
-                                className="relative z-10"
+                                className="relative z-10 border border-(--bg-void) bg-(--bg-void) p-0.5 rounded-[2px] shadow-[inset_0_2px_4px_rgba(0,0,0,1)]"
                             >
                                 <ChevronRight
-                                    size={12}
-                                    className={`${isMinimized ? 'text-(--amber)' : 'text-(--green-base)'} rotate-90 group-hover:text-white transition-colors`}
+                                    size={14}
+                                    strokeWidth={3}
+                                    className={`${isMinimized ? 'text-[#ef9f27]' : 'text-[#2d7800]'} rotate-90 transition-colors drop-shadow-[0_0_4px_currentColor]`}
                                 />
                             </motion.div>
                         </motion.button>
                     </div>
 
-                    {/* Industrial Chassis */}
+                    {/* Chassis */}
                     <motion.div
                         animate={{
-                            opacity: isMinimized ? 0.15 : 1,
+                            opacity: isMinimized ? 0.3 : 1,
                             scale: isMinimized ? 0.96 : 1,
-                            filter: isMinimized ? 'grayscale(1) brightness(0.4) blur(2px)' : 'none',
+                            filter: isMinimized ? 'grayscale(1) brightness(0.4) blur(1px)' : 'none',
                         }}
-                        className="relative h-16 bg-(--bg-deep)/95 backdrop-blur-xl border border-(--bg-hover) rounded-sm shadow-[0_-25px_60px_rgba(0,0,0,0.9)] overflow-hidden"
+                        className="relative h-20 bg-(--bg-void) rounded-[6px] p-[6px] border border-black shadow-[0_-25px_60px_rgba(0,0,0,0.9),inset_0_4px_12px_rgba(0,0,0,0.9),inset_0_-4px_12px_rgba(0,0,0,0.9)] overflow-visible"
                     >
-                        {/* Internal Accents / Slots at the edges */}
-                        <div className="absolute inset-y-0 left-0 w-1 bg-(--green-base)/20" />
-                        <div className="absolute inset-y-0 right-0 w-1 bg-(--green-base)/20" />
+                        <div className="relative h-full w-full bg-[linear-gradient(45deg,color-mix(in_srgb,var(--bg-hover)_60%,transparent_100%),color-mix(in_srgb,var(--bg-surface)_60%,transparent_100%)_55%)] bg-size-[3px_3px] rounded-[3px] border-2 border-[#1c2229] shadow-[0_4px_8px_rgba(0,0,0,0.5),inset_0_1px_2px_rgba(255,255,255,0.05)] overflow-hidden flex items-center justify-between px-2 sm:px-6">
 
-                        {/* Metallic / Glass texture */}
-                        <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(ellipse_at_center,var(--text-ghost)_0%,transparent_80%)]" />
-                        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[repeating-linear-gradient(90deg,transparent,transparent_2px,var(--text-primary)_3px)]" />
-
-                        {/* Top Accent with Running Light effect */}
-                        <div className="absolute top-0 left-0 right-0 h-px bg-(--bg-hover)" />
-                        <motion.div
-                            animate={{ x: ['-100%', '200%'] }}
-                            transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-                            className="absolute top-0 left-0 w-40 h-px bg-linear-to-r from-transparent via-(--green-base)/40 to-transparent"
-                        />
-
-                        <div className="relative h-full flex items-center justify-between px-6">
-                            {/* Context Action Panel - REGRESAR AL SECTOR (Left) */}
-                            <div className="flex items-center min-w-fit md:min-w-[150px] justify-start h-full">
-                                {isLevel && actId ? (
-                                    <NavButton
-                                        href={`/game/${actId}`}
-                                        icon={ArrowLeft}
-                                        iconPosition="left"
-                                        colorTheme="green"
-                                    >
-                                        RETORNAR AL SECTOR
-                                    </NavButton>
-                                ) : (
-                                    <div className="hidden md:flex flex-col items-start gap-1 pl-4 opacity-10">
-                                        <div className="text-[7px] font-mono text-(--text-muted) tracking-[0.4em] uppercase">READY_STBY</div>
-                                        <div className="w-16 h-0.5 bg-(--text-ghost)" />
-                                    </div>
-                                )}
+                            <div className="absolute inset-y-0 left-0 w-2.5 bg-(--bg-void) border-r border-(--bg-void) shadow-[inset_0_2px_8px_rgba(0,0,0,1)] flex flex-col items-center justify-evenly py-2 pointer-events-none z-0">
+                                <div className="w-px h-3 bg-[#1c2229]" />
+                                <div className="w-px h-3 bg-[#1c2229]" />
+                            </div>
+                            <div className="absolute inset-y-0 right-0 w-2.5 bg-(--bg-void) border-l border-(--bg-void) shadow-[inset_0_2px_8px_rgba(0,0,0,1)] flex flex-col items-center justify-evenly py-2 pointer-events-none z-0">
+                                <div className="w-px h-3 bg-[#1c2229]" />
+                                <div className="w-px h-3 bg-[#1c2229]" />
                             </div>
 
-
                             {/* Centered Navigation */}
-                            <nav className="flex items-center gap-1 sm:gap-12">
+                            <nav className="flex items-center justify-center w-full gap-1 sm:gap-2 relative z-10 px-2 h-full py-1">
                                 {navItems.map((item) => {
                                     const isActive = pathname === item.href || (item.href !== "/game" && pathname.startsWith(item.href));
-                                    const Icon = item.icon;
 
                                     return (
-                                        <Link
+                                        <NavButton
                                             key={item.href}
                                             href={item.href}
-                                            className="group relative flex flex-col items-center justify-center w-12 sm:w-28 h-14 transition-all duration-500"
+                                            icon={item.icon}
+                                            isActive={isActive}
+                                            colorTheme={item.color as any}
+                                            tag={item.tag}
                                         >
-                                            {/* Tactical Brackets Selection */}
-                                            {isActive && (
-                                                <motion.div
-                                                    layoutId="selection-bracket"
-                                                    className="absolute inset-x-0 sm:inset-x-2 inset-y-2 z-0"
-                                                >
-                                                    <div className="absolute top-0 left-0 w-3 h-3 border-t border-l" style={{ borderColor: item.color }} />
-                                                    <div className="absolute top-0 right-0 w-3 h-3 border-t border-r" style={{ borderColor: item.color }} />
-                                                    <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l" style={{ borderColor: item.color }} />
-                                                    <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r" style={{ borderColor: item.color }} />
-
-                                                    <div
-                                                        className="absolute inset-2 opacity-5 blur-xl rounded-full scale-150"
-                                                        style={{ backgroundColor: item.color }}
-                                                    />
-                                                </motion.div>
-                                            )}
-
-                                            <div className="relative z-10 flex flex-col items-center">
-                                                <Icon
-                                                    size={isActive ? 22 : 20}
-                                                    style={{ color: isActive ? item.color : "var(--text-ghost)" }}
-                                                    className={`transition-all duration-500 ${isActive ? 'drop-shadow-[0_0_12px_var(--icon-color)]' : 'group-hover:text-(--text-muted)'}`}
-                                                />
-                                                <span className={`hidden sm:block text-[8px] sm:text-[9px] font-mono font-black tracking-[0.2em] mt-1.5 transition-colors duration-300 ${isActive ? 'text-(--text-primary)' : 'text-(--text-ghost) group-hover:text-(--text-muted)'}`}>
-                                                    {item.label}
-                                                </span>
-                                            </div>
-                                        </Link>
+                                            {item.label}
+                                        </NavButton>
                                     );
                                 })}
                             </nav>
-
-                            {/* Right Status Panel (Visual Balance) */}
-                            <div className="flex items-center min-w-fit md:min-w-[150px] justify-end opacity-20 pr-2">
-                                <div className="hidden md:flex items-center gap-3 pr-2">
-                                    <div className="flex flex-col gap-0.5 items-end">
-                                        <div className="w-8 h-px bg-(--text-muted)" />
-                                        <div className="w-12 h-px bg-(--text-muted)" />
-                                    </div>
-                                    <span className="text-[7px] font-mono text-(--text-muted) tracking-widest uppercase truncate">CORE_V1.5</span>
-                                </div>
-                            </div>
                         </div>
                     </motion.div>
                 </div>
@@ -217,3 +157,4 @@ export function NavigationFooter() {
         </AnimatePresence>
     );
 }
+
