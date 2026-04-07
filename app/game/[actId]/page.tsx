@@ -19,7 +19,7 @@ export default async function ActMapPage({ params }: { params: Promise<{ actId: 
       </SectorHeader>
 
       {/* Main levels list (Client-side) */}
-      <ActMapClient actId={actId} levels={levels} />
+      <ActMapClient key={actId} actId={actId} levels={levels} />
     </div>
   )
 }

@@ -20,8 +20,6 @@ export function LevelHeader({ level, status, isRunning, children }: LevelHeaderP
     return (
         <div className="flex flex-col md:flex-row items-stretch border-b border-(--border-color) bg-(--bg-void) relative z-20 select-none">
 
-            {/* ─── CAPA DE TEXTURA GLOBAL (Igual que SectionHeader) ─── */}
-            <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(45deg,rgba(0,0,0,0)_45%,#fff_50%,rgba(0,0,0,0)_55%)] bg-size[3px_3px] pointer-events-none" />
 
             {/* ─── COMPARTIMENTO 01: RETORNO (Hundido) ─── */}
             <Link
@@ -29,8 +27,11 @@ export function LevelHeader({ level, status, isRunning, children }: LevelHeaderP
                 className="group/act flex flex-row items-center justify-center gap-1 py-2 px-1 border-b md:border-b-0 md:border-r border-(--border-color) min-w-[90px] bg-(--bg-deep) hover:bg-(--bg-elevated) active:bg-black transition-all relative overflow-hidden"
                 title={`Volver a ${level.actName}`}
             >
-                {/* Bisel interno de botón */}
-                <div className="absolute inset-px border border-black/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] pointer-events-none" />
+                {/* Textura de agarre metálico (Grip) */}
+                <div className="absolute inset-[4px] opacity-[0.15] bg-[repeating-linear-gradient(-45deg,transparent,transparent_2px,rgba(255,255,255,0.1)_2px,rgba(255,255,255,0.1)_4px)] pointer-events-none group-hover/act:opacity-30 transition-opacity" />
+
+                {/* Bisel interno para dar profundidad de botón físico presionado */}
+                <div className="absolute inset-[4px] border-t border-l border-b border-r border-white/5 rounded-bl-sm rounded-tl-sm shadow-[inset_0_4px_15px_rgba(0,0,0,0.9)] pointer-events-none" />
 
                 <ChevronLeft size={22} className="text-(--text-muted) group-hover/act:text-(--amber) group-hover/act:-translate-x-1 transition-all relative z-10" />
                 <div className="flex flex-col items-center justify-center relative z-10 mt-1">
@@ -45,7 +46,7 @@ export function LevelHeader({ level, status, isRunning, children }: LevelHeaderP
             <div className="relative flex-1 flex flex-col justify-center px-8 py-3 border-b md:border-b-0 md:border-r border-(--border-color) bg-(--bg-surface) overflow-hidden">
 
                 {/* ESTRUCTURA DE PANEL (EL BISEL - Identidad SectionHeader) */}
-                <div className="absolute inset-[2px] border border-black/60 rounded-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_0_rgba(255,255,255,0.02)] pointer-events-none" />
+                <div className="absolute inset-[4px] border border-black/60 rounded-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_0_rgba(255,255,255,0.02)] pointer-events-none" />
 
                 {/* Tornillos de anclaje */}
                 <Screw corner="tl" size="sm" className="opacity-60" />

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { getSave, isActUnlocked } from '@/lib/gameState'
 import { isDemoModeActive } from '@/lib/store/useDemoStore'
 import { ActSummary, Level, ActNumber } from '@/types/game'
@@ -8,6 +9,7 @@ import { ActCard } from '@/components/map/ActCard'
 import { SectorHeader } from '@/components/map/SectorHeader'
 
 import { Loading } from '@/components/ui/Loading'
+import { ContainerHeader } from '../ui/ContainerHeader'
 
 interface GameMapClientProps {
   levels: Level[]
@@ -16,6 +18,7 @@ interface GameMapClientProps {
 export default function GameMapClient({ levels }: GameMapClientProps) {
   const [acts, setActs] = useState<ActSummary[]>([])
   const [loading, setLoading] = useState(true)
+  const pathname = usePathname()
 
   useEffect(() => {
     const generateActs = () => {
@@ -50,11 +53,12 @@ export default function GameMapClient({ levels }: GameMapClientProps) {
         })
 
         // Update completion status for each act
-        actMap.forEach(act => {
+        actMap.forEach((act, index) => {
           if (isDemoModeActive() && act.number <= 4) {
             act.completed = true
             // En demo, solo se cuentan las estrellas de los primeros 4 niveles
-            act.totalStars = 4 * 3 // 4 niveles * 3 estrellas
+            const levelsAvailable = index === 0 ? 2 : 4
+            act.totalStars = levelsAvailable * 3 // 4 niveles * 3 estrellas
           } else {
             act.completed = act.levelIds.every(id => progress?.[id]?.completed ?? false)
           }
@@ -70,26 +74,27 @@ export default function GameMapClient({ levels }: GameMapClientProps) {
     }
 
     generateActs()
-  }, [levels])
+  }, [levels, pathname])
 
   if (loading) {
     return <Loading message="CARGANDO_MAPA_SISTEMA..." icon="network" />
   }
 
+  console.log(acts)
+
   return (
     <div className="flex-1 flex flex-col bg-(--bg-void) ">
-
       <main className="flex-1 container mx-auto px-8 pb-12 pt-0 relative z-10">
         <SectorHeader
           actId="00"
           actName="MAPA DE SECTORES"
           idLabel="SYS"
           tag="ST_NETWORK_ACTIVE"
-          subtitle="EXPLORA LOS SECTORES FRAGMENTADOS // RED GLOBAL"
+          subtitle="EXPLORA LOS SECTORES FRAGMENTADOS"
           backHref="/"
           backLabel="HOME" variant='blue'
         >
-          <div className="hidden md:flex flex-col items-center justify-center gap-2 border-l border-[#1a2636]/60 p-5 md:p-6 bg-[#0c1218]/40">
+          <ContainerHeader className="hidden md:flex flex-col items-center justify-center gap-2 ml-px p-5 bg-(--bg-deep)">
             <div className="flex items-center gap-3 opacity-60">
               <div className="flex flex-col">
                 <span className="text-[7px] text-(--green-light) font-mono tracking-widest uppercase">INTERFACE_LINK</span>
@@ -100,7 +105,7 @@ export default function GameMapClient({ levels }: GameMapClientProps) {
                 <div className="w-2 h-2 rounded-full bg-(--green-light)" />
               </div>
             </div>
-          </div>
+          </ContainerHeader>
         </SectorHeader>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32">
           {acts.map((act) => {

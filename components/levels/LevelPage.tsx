@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import type { Level, LevelState, Card, GameObject, LevelFailContext } from '@/types/game'
 import {
@@ -63,8 +63,8 @@ export default function LevelPage({
     const router = useRouter()
 
     const [pageStatus, setPageStatus] = useState<PageStatus>('loading')
-    const [level, setLevel] = useState<Level | null>(null)
-    const [levelState, setLevelState] = useState<LevelState | null>(null)
+    const [level, setLevel] = useState<Level | null>(initialLevel)
+    const [levelState, setLevelState] = useState<LevelState | null>(() => initLevelState(initialLevel))
     const [missingObjects, setMissing] = useState<string[]>([])
     const [showComplete, setShowComplete] = useState(false)
     const [completionResult, setResult] = useState<ReturnType<typeof completeLevel> | null>(null)
@@ -82,12 +82,14 @@ export default function LevelPage({
     // INICIALIZACIÓN
     // ------------------------------------------------------------
 
+    const pathname = usePathname()
+
     useEffect(() => {
         // Al recibir los props del servidor, ya tenemos el level disponible
         setLevel(initialLevel)
 
         // verificar login
-        if (requiresLogin(levelId)) {
+        if (requiresLogin(initialLevel.id)) {
             const save = getSave()
             if (!save?.player?.name) {
                 setPageStatus('blocked-login')
@@ -96,7 +98,7 @@ export default function LevelPage({
         }
 
         // verificar acceso dinámico recurriendo a los props
-        const access = checkLevelAccess(levelId, allLevels)
+        const access = checkLevelAccess(initialLevel.id, allLevels)
         if (!access.allowed) {
             if (access.blockedBy === 'missing-objects') {
                 setMissing(access.missingObjectNames ?? [])
@@ -115,7 +117,7 @@ export default function LevelPage({
         if (initialLevel.theory && initialLevel.theory.length > 0) {
             setShowingTheory(true)
         }
-    }, [levelId, initialLevel, allLevels])
+    }, [pathname, initialLevel, allLevels])
 
     const [customCompletionContent, setCustomContent] = useState<React.ReactNode>(null)
 

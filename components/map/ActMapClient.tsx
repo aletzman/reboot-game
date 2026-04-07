@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { getActSummary, getLevelProgress, canAccessLevel } from '@/lib/gameState'
 import { isDemoModeActive } from '@/lib/store/useDemoStore'
 import { ActSummary, ActNumber, Level, LevelProgress } from '@/types/game'
@@ -14,6 +14,7 @@ interface ActMapClientProps {
 
 export default function ActMapClient({ actId, levels }: ActMapClientProps) {
   const router = useRouter()
+  const pathname = usePathname()
   const [act, setAct] = useState<ActSummary | null>(null)
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export default function ActMapClient({ actId, levels }: ActMapClientProps) {
 
     const summary = getActSummary(actNum, levels)
     setAct(summary)
-  }, [actId, router, levels])
+  }, [actId, router, levels, pathname])
 
   if (!act) {
     return (

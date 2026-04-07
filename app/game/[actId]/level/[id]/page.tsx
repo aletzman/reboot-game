@@ -42,6 +42,7 @@ export default async function Page({ params }: { params: Promise<{ actId: string
 
   return (
     <LevelPage
+      key={id}
       initialLevel={level}
       allLevels={allLevels}
       allCards={allCards}
