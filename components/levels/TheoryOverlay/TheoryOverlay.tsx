@@ -15,7 +15,7 @@ import {
     ShieldCheck
 } from 'lucide-react'
 import { TheoryText } from './TheoryText'
-import { Button } from '@/components/ui/Button'
+import { TheoryButton } from './TheoryButton'
 
 interface TheoryOverlayProps {
     theory: TheorySlide[]
@@ -39,19 +39,11 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
     }
 
     return (
-        <div className="fixed inset-0 z-300 flex items-center justify-center p-6 bg-(--bg-void)/98">
-            {/* Ambient Background Elements - Optimized (no pulses) */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-50">
-                <div className="absolute top-0 left-0 w-full h-full opacity-[0.03]"
-                    style={{ backgroundImage: 'linear-gradient(rgba(18, 176, 187, 0.1) 50%, transparent 50%)', backgroundSize: '100% 2px' }} />
-                <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-(--purple)/5 blur-[120px] rounded-full" />
-                <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] bg-(--green-base)/3 blur-[120px] rounded-full" />
-            </div>
-
+        <div className="fixed inset-0 z-300 flex items-center justify-center p-6 bg-(--bg-void) bg-diagonal-lines">
             <motion.div
                 initial={{ opacity: 0, scale: 0.98, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="relative w-full max-w-3xl bg-(--bg-elevated) border border-(--bg-hover) shadow-[0_0_50px_rgba(0,0,0,0.5)] rounded-xs flex flex-col min-h-[500px] will-change-transform"
+                className="relative w-full max-w-4xl bg-(--bg-elevated) border border-(--bg-hover) shadow-[0_0_50px_rgba(0,0,0,0.5)] rounded-xs flex flex-col min-h-[600px] will-change-transform"
             >
                 {/* Tactical Frame Elements */}
                 <div className="absolute -top-px -left-px w-12 h-12 border-t-2 border-l-2 border-(--purple)/50 z-10" />
@@ -60,29 +52,25 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                 <div className="absolute -bottom-px -right-px w-12 h-12 border-b-2 border-r-2 border-(--purple)/50 z-10" />
 
                 {/* Header Section */}
-                <div className="flex items-center justify-between px-8 py-5 border-b border-(--bg-hover) bg-(--bg-deep)/40">
+                <header className="flex items-center justify-between px-8 py-5 border-b border-(--bg-hover) bg-(--bg-deep)/40">
                     <div className="flex items-center gap-4">
                         <div className="w-10 h-10 bg-(--purple)/10 border border-(--purple)/30 flex items-center justify-center shadow-[inset_0_0_10px_rgba(127,119,221,0.2)]">
                             <Cpu className="text-(--purple)" size={20} />
                         </div>
                         <div>
                             <div className="flex items-center gap-2 mb-0.5">
-                                <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-(--purple)">
-                                    MODULO_PEDAGOGICO // ANALISIS_TECNICO
+                                <span className="text-xs uppercase font-bold tracking-[0.2em] text-(--purple)">
+                                    MODULO_PEDAGOGICO
                                 </span>
                                 <div className="h-px w-8 bg-(--purple)/30" />
                                 <Activity size={10} className="text-(--purple)" />
                             </div>
-                            <h2 className="text-(--text-primary) font-(family-name:--font-title) font-bold text-[20px]">
+                            <h2 className="text-(--text-primary) font-(family-name:--font-title) font-bold text-3xl">
                                 {currentSlide.title}
                             </h2>
                         </div>
                     </div>
-                    <div className="hidden sm:flex flex-col items-end opacity-40 font-mono text-[9px] text-(--text-ghost)">
-                        <span>SEC_ID: {currentIndex + 1}/{theory.length}</span>
-                        <span>STS_OK: NOMINAL</span>
-                    </div>
-                </div>
+                </header>
 
                 {/* Content Area - KEY FIX: overflow-visible/y-auto blend */}
                 <div className="flex-1 relative overflow-hidden bg-radial-at-t from-(--bg-surface) to-(--bg-elevated)">
@@ -103,7 +91,7 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                                 {/* Narrative/Main Text */}
                                 <div className="relative">
                                     <div className="absolute -left-4 top-0 bottom-0 w-0.5 bg-linear-to-b from-(--purple)/60 via-(--purple)/10 to-transparent" />
-                                    <div className="text-(--text-muted) leading-relaxed text-[15px] font-normal pl-2">
+                                    <div className="text-(--text-primary)/90 leading-relaxed text-[15px] font-normal pl-2">
                                         <TheoryText text={currentSlide.content} />
                                     </div>
                                 </div>
@@ -158,7 +146,7 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                                                 <span className="text-(--purple) font-bold uppercase text-[10px] tracking-[0.3em] flex items-center gap-2 mb-2">
                                                     ANÁLISIS FRAG <span className="h-px flex-1 bg-(--purple)/20" />
                                                 </span>
-                                                <div className="text-(--text-muted) text-[14px] leading-relaxed">
+                                                <div className="text-(--text-primary)/70 text-[14px] leading-relaxed">
                                                     <TheoryText text={currentSlide.explanation} />
                                                 </div>
                                             </div>
@@ -175,8 +163,8 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                     {/* Tactical Progress Bar */}
                     <div className="flex flex-col gap-2">
                         <div className="flex justify-between items-center w-32">
-                            <span className="text-[11px] text-(--text-muted) font-mono">INTEGRIDAD:</span>
-                            <span className="text-[11px] text-(--purple) font-mono">{Math.round(((currentIndex + 1) / theory.length) * 100)}%</span>
+                            <span className="text-sm text-(--text-muted) font-mono">COMPLETADO:</span>
+                            <span className="text-sm text-(--purple) font-mono">{Math.round(((currentIndex + 1) / theory.length) * 100)}%</span>
                         </div>
                         <div className="flex gap-1">
                             {theory.map((_, i) => (
@@ -184,7 +172,7 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                                     key={i}
                                     className={`h-2 transition-all duration-500 rounded-xs ${i === currentIndex
                                         ? 'w-6 bg-(--purple) shadow-[0_0_10px_rgba(127,119,221,0.5)]'
-                                        : i < currentIndex ? 'w-3 bg-(--purple)/40' : 'w-3 bg-(--bg-hover)'
+                                        : i < currentIndex ? 'w-4 bg-(--purple)/40' : 'w-4 bg-(--bg-hover)'
                                         }`}
                                 />
                             ))}
@@ -193,31 +181,26 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
 
                     <div className="flex items-center gap-4">
                         {!isFirst && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
+                            <TheoryButton
+                                variant="secondary"
+                                size="md"
                                 onClick={prev}
                                 icon={ChevronLeft}
                             >
                                 BACK
-                            </Button>
+                            </TheoryButton>
                         )}
 
-                        <Button
-                            variant="solid"
-                            size="sm"
+                        <TheoryButton
+                            variant={isLast ? 'success' : 'primary'}
+                            size="md"
                             onClick={next}
                             icon={isLast ? CheckCircle2 : ChevronRight}
                             iconPosition="right"
                         >
                             {isLast ? 'CONFIRMAR' : 'SIGUIENTE'}
-                        </Button>
+                        </TheoryButton>
                     </div>
-                </div>
-
-                {/* Decorative Terminal Labels */}
-                <div className="absolute -left-12 top-1/2 -rotate-90 text-[10px] font-mono text-(--text-ghost) opacity-20 tracking-widest pointer-events-none">
-                    TERMINAL_TH_SYNC_ACTIVE
                 </div>
             </motion.div>
         </div>

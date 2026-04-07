@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'motion/react'
-import { Info, HelpCircle, GraduationCap } from 'lucide-react'
+import { Info, HelpCircle, GraduationCap, Lightbulb } from 'lucide-react'
 import { CloseButton } from '@/components/ui/CloseButton'
 import { getGlossary } from '@/services/glossaryService'
 
@@ -111,7 +111,7 @@ function TheoryTerm({ term }: { term: GlossaryTerm }) {
             </motion.span>
 
             {isOpen && portalNode && createPortal(
-                <div className="fixed inset-0 z-1000 pointer-events-none">
+                <div className="fixed inset-0 z-9999 pointer-events-none">
                     {/* Backdrop to close on click outside */}
                     <div className="absolute inset-0 pointer-events-auto" onClick={() => setIsOpen(false)} />
 
@@ -127,22 +127,20 @@ function TheoryTerm({ term }: { term: GlossaryTerm }) {
                             translate: '-50% ' + (coords.showBelow ? '0' : '-100%')
                         }}
                     >
-                        <div className="bg-(--bg-elevated) border border-(--green-base)/40 rounded-sm shadow-[0_20px_60px_rgba(0,0,0,0.8)] p-5 relative overflow-hidden">
-                            {/* HUD Scanline effect */}
-                            <div className="absolute inset-0 bg-linear-to-b from-(--green-base)/5 to-transparent pointer-events-none" />
+                        <div className="bg-(--bg-elevated) border border-(--border-color) rounded-sm shadow-[0_20px_60px_rgba(0,0,0,0.8)] p-5 relative overflow-hidden">
 
                             <div className="relative flex flex-col gap-4">
                                 <div className="flex items-center justify-between border-b border-(--bg-hover) pb-2">
                                     <div className="flex items-center gap-2">
                                         <div className="w-1.5 h-1.5 bg-(--green-light) rounded-full animate-pulse" />
-                                        <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-(--green-muted)">
-                                            REF_DB / {term.id.toUpperCase()}
+                                        <span className="text-xs uppercase font-bold tracking-[0.2em] text-(--green-muted)">
+                                            {term.id.toUpperCase()}
                                         </span>
                                     </div>
-                                        <CloseButton 
-                                            size="sm" 
-                                            onClick={() => setIsOpen(false)} 
-                                        />
+                                    <CloseButton
+                                        size="sm"
+                                        onClick={() => setIsOpen(false)}
+                                    />
                                 </div>
 
                                 {/* Mode Toggle - Switch style */}
@@ -154,7 +152,7 @@ function TheoryTerm({ term }: { term: GlossaryTerm }) {
                                             : 'text-(--text-ghost) hover:text-(--text-muted)'
                                             }`}
                                     >
-                                        <GraduationCap size={12} /> TÉCNICO
+                                        <GraduationCap size={18} /> TÉCNICO
                                     </button>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); setMode('human'); }}
@@ -163,26 +161,14 @@ function TheoryTerm({ term }: { term: GlossaryTerm }) {
                                             : 'text-(--text-ghost) hover:text-(--text-muted)'
                                             }`}
                                     >
-                                        <HelpCircle size={12} /> ANALÓGICO
+                                        <Lightbulb size={18} /> ANALOGÍA
                                     </button>
                                 </div>
 
                                 <div className="min-h-[60px] flex items-center">
-                                    <p className="text-(--text-muted) text-[13px] leading-relaxed font-normal">
+                                    <p className="text-(--text-primary)/75 text-[13px] leading-relaxed font-normal">
                                         "{mode === 'technical' ? term.technical : term.human}"
                                     </p>
-                                </div>
-
-                                <div className="pt-2 border-t border-(--bg-hover) flex items-center justify-between opacity-60">
-                                    <div className="flex items-center gap-2 text-[9px] text-(--green-muted) uppercase font-bold tracking-widest">
-                                        <Info size={12} />
-                                        <span>DIAGNÓSTICO FRAG</span>
-                                    </div>
-                                    <div className="flex gap-1">
-                                        <div className="w-1 h-3 bg-(--green-base)/40" />
-                                        <div className="w-1 h-3 bg-(--green-base)/60" />
-                                        <div className="w-1 h-3 bg-(--green-base)/80" />
-                                    </div>
                                 </div>
                             </div>
                         </div>
