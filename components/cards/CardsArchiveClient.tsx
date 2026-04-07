@@ -9,6 +9,7 @@ import type { Card } from '@/types/game'
 import { CardRackSlot } from '@/components/cards/CardRackSlot'
 import { CardDetailModal } from '@/components/cards/CardDetailModal'
 import { Loading } from '@/components/ui/Loading'
+import { ContainerHeader } from '../ui/ContainerHeader'
 
 interface CardsArchiveClientProps {
   initialCards: Card[]
@@ -60,7 +61,7 @@ export default function CardsArchiveClient({ initialCards }: CardsArchiveClientP
           backHref="/game/collection"
           backLabel="ALMACÉN"
         >
-          <div className="hidden md:flex flex-col items-end justify-center gap-2 border-l border-[#1a2636]/60 p-5 md:p-6 bg-[#0c1218]/40 min-w-[260px]">
+          <ContainerHeader className="hidden md:flex flex-col items-end justify-center gap-2 border-l border-[#1a2636]/60 p-5 md:p-6 bg-[#0c1218]/40 min-w-[260px]">
             <div className="flex gap-[3px] w-full justify-between">
               {Array.from({ length: 15 }).map((_, i) => (
                 <div
@@ -73,7 +74,7 @@ export default function CardsArchiveClient({ initialCards }: CardsArchiveClientP
               <span>MÓDULOS_SINCRONIZADOS</span>
               <span className="text-white font-bold text-[9px] tracking-[0.2em]">{unlockedIds.length} <span className="text-[#1a2636] px-1">/</span> {initialCards.length}</span>
             </div>
-          </div>
+          </ContainerHeader>
         </SectorHeader>
 
         {/* The Grid of Rack-Connected Cartridges */}

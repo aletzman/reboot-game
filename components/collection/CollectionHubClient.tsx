@@ -4,28 +4,11 @@ import { motion } from 'motion/react'
 import { WrenchIcon, CpuIcon, DatabaseIcon } from 'lucide-react'
 import { SectorHeader } from '@/components/map/SectorHeader'
 import { HubCard } from './HubCard'
+import { ContainerHeader } from '../ui/ContainerHeader'
 
 export default function CollectionHubClient() {
   return (
     <div className="flex-1 flex flex-col bg-(--bg-void) relative font-sans">
-      {/* Background patterns */}
-      <div className="absolute inset-0 bg-(--bg-deep) opacity-50 z-0 select-none pointer-events-none overflow-hidden">
-        <div
-          className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-(--green-base) to-transparent opacity-20"
-          style={{ top: '20%' }}
-        />
-        <div
-          className="absolute inset-y-0 left-0 w-px bg-linear-to-b from-transparent via-(--green-base) to-transparent opacity-10"
-          style={{ left: '10%' }}
-        />
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `radial-gradient(circle at center, var(--green-base) 1.5px, transparent 1.5px)`,
-            backgroundSize: '40px 40px'
-          }}
-        />
-      </div>
 
       <main className="flex-1 container mx-auto px-8 relative z-10 flex flex-col">
         <SectorHeader
@@ -35,15 +18,15 @@ export default function CollectionHubClient() {
           tag="ARCHIVE_ACCESS"
           subtitle="ÍNDICE DE FRAGMENTOS RECUPERADOS // PROYECTO GÉNESIS"
         >
-          <div className="hidden md:flex flex-col items-center justify-center gap-2 border-l border-[#1a2636]/60 p-5 md:p-6 bg-[#0c1218]/40">
-            <div className="flex items-center gap-3 opacity-60">
+          <ContainerHeader className="hidden md:flex flex-col items-center justify-center gap-2 border-l border-[#1a2636]/60 p-5 md:p-6 bg-[#0c1218]/40">
+            <div className="flex items-center gap-3">
               <DatabaseIcon className="w-6 h-6 text-(--green-light) animate-pulse" strokeWidth={1} />
               <div className="flex flex-col">
                 <span className="text-[7px] text-(--green-light) font-mono tracking-widest uppercase">DB_INTEGRITY</span>
-                <span className="text-[12px] text-white font-mono tracking-widest uppercase font-black">SINCRO_ACTIVA</span>
+                <span className="text-[12px] text-(--text-primary) font-mono tracking-widest uppercase font-black">SINCRO_ACTIVA</span>
               </div>
             </div>
-          </div>
+          </ContainerHeader>
         </SectorHeader>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 flex-1 items-stretch max-w-7xl mx-auto w-full pb-20 mt-8">

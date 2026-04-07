@@ -11,6 +11,7 @@ import { SectorHeader } from '@/components/map/SectorHeader'
 import type { GameObject } from '@/types/game'
 
 import { Loading } from '@/components/ui/Loading'
+import { ContainerHeader } from '../ui/ContainerHeader'
 
 const typeIcons: Record<string, any> = {
   lore: InboxIcon,
@@ -81,7 +82,7 @@ const ObjectsArchiveClient = ({ initialObjects }: ObjectsArchiveClientProps) => 
           backHref="/game/collection"
           backLabel="ALMACÉN"
         >
-          <div className="hidden md:flex flex-col items-end justify-center gap-2 border-l border-[#1a2636]/60 p-5 md:p-6 bg-[#0c1218]/40 min-w-[260px]">
+          <ContainerHeader className="hidden md:flex flex-col items-end justify-center gap-2 border-l border-[#1a2636]/60 p-5 md:p-6 bg-[#0c1218]/40 min-w-[260px]">
             <div className="flex gap-[3px] w-full justify-between">
               {Array.from({ length: 4 }).map((_, i) => (
                 <div
@@ -94,7 +95,7 @@ const ObjectsArchiveClient = ({ initialObjects }: ObjectsArchiveClientProps) => 
               <span>DETECTADOS</span>
               <span className="text-white font-bold text-[9px] tracking-[0.2em]">{unlockedIds.length} <span className="text-[#1a2636] px-1">/</span> {initialObjects.length}</span>
             </div>
-          </div>
+          </ContainerHeader>
         </SectorHeader>
 
         {/* THE OBJECT RACK (Physical Storage Grid) */}
