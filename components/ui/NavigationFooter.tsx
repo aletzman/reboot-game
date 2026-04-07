@@ -12,28 +12,28 @@ const navItems = [
         href: "/game",
         label: "SECTORES",
         icon: Map,
-        color: "blue",
+        color: "cyan",
         tag: "0x01_MAP"
     },
     {
         href: "/game/collection",
         label: "ALMACÉN",
         icon: ShelvingUnit,
-        color: "amber",
+        color: "purple",
         tag: "0x02_DB"
     },
     {
         href: "/game/collection/cards",
         label: "MÓDULOS",
         icon: Binary,
-        color: "cyan",
+        color: "blue",
         tag: "0x03_MOD"
     },
     {
         href: "/game/collection/objects",
         label: "OBJETOS",
         icon: Cpu,
-        color: "purple",
+        color: "amber",
         tag: "0x04_OBJ"
     },
 ];
