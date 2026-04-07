@@ -3,9 +3,13 @@
 import React, { useState, useEffect, useMemo, memo } from 'react'
 import type { Card, GameObject } from '@/types/game'
 import { Button } from './Button'
-import { RotateCcwIcon, HardDriveIcon, ChevronsRightIcon, DatabaseIcon, CpuIcon, ActivityIcon } from 'lucide-react'
+import { Panel } from './Panel'
+import { TacticalSection } from './TacticalSection'
+import SectionHeader from './SectionHeader'
+import { RotateCcwIcon, HardDriveIcon, ChevronsRightIcon, DatabaseIcon, CpuIcon, ActivityIcon, MapIcon } from 'lucide-react'
 import { RARITY_STYLES } from '@/components/cards/DataCartridge'
 import { CardDetailModal } from '@/components/cards/CardDetailModal'
+import { Screw } from './Screw'
 
 interface ReviewHint {
     shouldShow: boolean
@@ -121,183 +125,134 @@ export default function LevelComplete({
         >
             <FloatingParticles visible={backdropReady} />
 
-            <div className={`relative w-full max-w-[720px] bg-[#0c1218] rounded-sm p-[2px] border border-[#1a2636] shadow-[0_0_100px_rgba(0,0,0,0.9)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${panelReady ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-8'}`}>
+            <div className={`relative w-full max-w-[780px] bg-[#030405] rounded-md p-[8px] border border-black shadow-[0_50px_100px_rgba(0,0,0,0.9),inset_0_4px_20px_rgba(0,0,0,0.9),inset_0_-4px_20px_rgba(0,0,0,0.9)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col ${panelReady ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-8'}`}>
 
-                {/* Corners */}
-                <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-(--green-base) z-30" />
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-(--green-base) z-30" />
+                {/* ─── MODULO PRINCIPAL (PLUNGER) ─── */}
+                <div className="relative flex-1 flex flex-col rounded-sm overflow-hidden bg-[linear-gradient(180deg,#161b22,#0a0d11)] border-2 border-[#1c2229] shadow-[0_4px_12px_rgba(0,0,0,0.6),inset_0_1px_2px_rgba(255,255,255,0.05)]">
 
-                <div className="absolute inset-0 pointer-events-none z-20 opacity-[0.03] overflow-hidden rounded-sm">
-                    <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,white_3px)] w-full h-full" />
-                </div>
+                    <SectionHeader title="Misión Finalizada" subtitle="SIS_STATUS // OPERACIÓN_COMPLETA" />
 
-                <div className="relative bg-(--bg-void) border border-(--bg-hover) shadow-inner flex flex-col font-mono overflow-hidden">
-                    <div className="relative px-6 py-6 max-h-[90vh] overflow-y-auto custom-scrollbar flex flex-col gap-6 z-10">
+                    <div className="relative px-6 py-6 pb-2 max-h-[70vh] overflow-y-auto custom-scrollbar flex flex-col gap-5 z-10 isolate bg-[#0C1117] shadow-[inset_0_4px_20px_rgba(0,0,0,0.8)]">
+                        {/* Textura global de fondo industrial */}
+                        <div className="absolute inset-0 opacity-[0.02] bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,#fff_2px,#fff_4px)] pointer-events-none z-0" />
 
-                        {/* ── HEADER ── */}
-                        <div className="relative z-20 flex items-center justify-between border-b border-[#1a2636] pb-4 mb-2">
-                            <div className="flex flex-col gap-1">
-                                <div className="text-[9px] text-(--green-muted) tracking-[0.3em] uppercase flex items-center gap-2">
-                                    <ActivityIcon size={10} /> SIS_STATUS // COMPLETE
-                                </div>
-                                <div className="text-[20px] font-bold text-white uppercase leading-none mt-1">
-                                    Misión Finalizada
-                                </div>
+                        <div className="flex flex-col md:flex-row gap-5 min-h-[160px]">
+
+                            {/* COLUMNA IZQUIERDA: CONSUMO Y RESULTADOS */}
+                            <div className="w-full md:w-[320px] flex flex-col gap-5">
+                                <TacticalSection title="CONSUMO_DE_ENERGÍA" variant="elevated" isActived={true}>
+                                    <div className="flex justify-center items-center gap-5 h-28 p-2 relative z-10">
+                                        {[1, 2, 3].map(n => {
+                                            const isActive = n <= visibleStars;
+                                            return (
+                                                <div key={n} className="relative w-16 h-full border-x border-y border-[#1c2229]/50 bg-[#020304] flex flex-col justify-end p-1 shadow-[inset_0_6px_15px_rgba(0,0,0,1)] rounded-sm overflow-hidden">
+                                                    {/* Contacto metálico superior de la batería */}
+                                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-[#2d3641] shadow-[0_1px_2px_rgba(0,0,0,0.8)]" />
+
+                                                    {/* Celda LED de la batería */}
+                                                    <div
+                                                        className={`w-full transition-all duration-700 rounded-xs relative overflow-hidden
+                                                             ${isActive
+                                                                ? 'h-full bg-(--green-base) border-t-2 border-(--green-light) shadow-[0_0_20px_var(--green-light)]'
+                                                                : 'h-2 bg-[#0c1218] border-t border-black'
+                                                            }
+                                                         `}
+                                                    >
+                                                        {isActive && (
+                                                            <>
+                                                                <div className="w-full h-full opacity-30 bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,rgba(0,0,0,0.5)_4px,rgba(0,0,0,0.5)_8px)]" />
+                                                                <div className="absolute top-0 left-0 right-0 h-1/2 bg-[linear-gradient(180deg,rgba(255,255,255,0.2)_0%,transparent_100%)]" />
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </TacticalSection>
+
+                                <TacticalSection
+                                    title="RESULTADO_OPERATIVO"
+                                    variant="inset"
+                                    accentColor={visibleStars === 3 ? 'var(--green-light)' : visibleStars === 2 ? 'var(--amber)' : 'var(--red-light)'}
+                                >
+                                    <div className="p-4 bg-[#05070a] border border-(--bg-void) shadow-[inset_0_4px_12px_rgba(0,0,0,1)] overflow-hidden relative min-h-[90px] flex flex-col justify-center">
+                                        {/* Reflejo CRT */}
+                                        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.02)_0%,transparent_50%)] pointer-events-none" />
+
+                                        <div className={`text-[13px] font-black uppercase tracking-widest mb-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] ${visibleStars === 3 ? 'text-(--green-light)' : visibleStars === 2 ? 'text-amber-400' : 'text-red-400'}`}>
+                                            {feedback.title}
+                                        </div>
+                                        <div className="text-[13px] text-[#8B949E] leading-relaxed font-sans opacity-95 font-medium">
+                                            {feedback.desc}
+                                        </div>
+                                    </div>
+                                </TacticalSection>
                             </div>
-                            <div className="flex flex-col items-end gap-1">
-                                <div className="px-2 py-0.5 bg-(--green-darkest) border border-(--green-base) text-[10px] text-(--green-light) tracking-widest uppercase animate-pulse">
-                                    &gt; OK_DATA
-                                </div>
-                                <div className="text-[8px] text-(--text-muted) tracking-tighter uppercase font-mono">
-                                    LOG_REF: {Math.random().toString(36).substring(2, 10).toUpperCase()}
-                                </div>
+
+                            {/* COLUMNA DERECHA: FRAG ANALYSIS */}
+                            <div className="flex-1 h-full flex flex-col">
+                                <TacticalSection title="ANÁLISIS_FRAG_OS" accentColor="var(--purple)" variant="inset">
+                                    <div className="p-5 h-full min-h-[240px] flex flex-col justify-between relative overflow-hidden bg-[#020304] border border-(--bg-void) shadow-[inset_0_8px_20px_rgba(0,0,0,1)]">
+                                        {/* Reflejo CRT Violeta */}
+                                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(127,119,221,0.05),transparent_60%)] pointer-events-none" />
+
+                                        {/* Rejilla de circuito muy sutil de fondo */}
+                                        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(127,119,221,1)_1px,transparent_1px),linear-gradient(90deg,rgba(127,119,221,1)_1px,transparent_1px)] bg-size-[15px_15px] pointer-events-none z-0" />
+
+                                        <div className="flex items-start gap-4 flex-1 relative z-10">
+                                            <div className="text-(--purple) font-black text-xl select-none mt-1 animate-pulse drop-shadow-[0_0_8px_var(--purple)]">{">_"}</div>
+                                            <div className="flex flex-col gap-4">
+                                                <p className={`text-[15px] leading-relaxed tracking-wide font-sans normal-case ${stars === 3 ? 'text-purple-100' : 'text-[#E6EDF3]'}`}>
+                                                    {feedback.frag}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {reviewHint?.levelTitle && (
+                                            <div className="inline-flex w-fit items-center gap-3 text-[10px] text-[#8B949E] tracking-[0.2em] uppercase bg-[#080B0E] border border-[#1c2229] px-4 py-2 mt-4 rounded-sm shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)] relative z-10">
+                                                <CpuIcon size={14} className="text-(--purple)/60" />
+                                                <span>
+                                                    NODO_RELACIONADO: <span className="text-(--purple) font-bold">{reviewHint.levelTitle}</span>
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </TacticalSection>
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-6 relative z-20">
-
-                            {/* ── PANEL DE DIAGNÓSTICO (HARDWARE + CLARIDAD EDUCATIVA - VERSIÓN LIMPIA) ── */}
-                            <div className="flex flex-col md:flex-row bg-[#020304] border-2 border-[#1a202c] overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] relative min-h-[240px] font-mono">
-
-                                {/* NOTA: Eliminado el overlay de textura CRT local de aquí, 
-                                   ya que el Layout global ya aplica uno.
-                                */}
-
-                                {/* PANEL IZQUIERDO: BATERÍAS Y CALIFICACIÓN CLARA */}
-                                <div className="w-full md:w-[320px] p-6 flex flex-col justify-between gap-6 bg-[#05070a] relative border-b-2 md:border-b-0 md:border-r-2 border-[#1a202c] shadow-[inset_-10px_0_20px_rgba(0,0,0,0.5)]">
-
-                                    <div className="relative z-10 w-full">
-                                        <div className="flex items-center justify-between border-b-2 border-[#1a202c] pb-2 mb-6">
-                                            <div className="flex items-center gap-2">
-                                                <div className={`w-2 h-2 ${visibleStars === 3 ? 'bg-(--green-base) animate-pulse' : visibleStars === 2 ? 'bg-amber-500' : 'bg-red-500'} shadow-[0_0_8px_currentColor]`} />
-                                                <span className="text-[10px] font-black text-white/50 tracking-[0.2em] uppercase">
-                                                    CONSUMO DE ENERGÍA
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {/* Ranuras Físicas de Batería */}
-                                        <div className="flex justify-center items-center gap-4 h-20">
-                                            {[1, 2, 3].map(n => {
-                                                const isActive = n <= visibleStars;
-                                                return (
-                                                    <div key={n} className="relative w-12 h-16 border-2 border-[#1a202c] bg-black flex flex-col justify-end p-1 shadow-[inset_0_0_10px_rgba(0,0,0,1)]">
-                                                        <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-6 h-1 bg-[#1a202c]" />
-                                                        <div
-                                                            className={`w-full transition-all duration-700 border-t-2
-                                                                ${isActive
-                                                                    ? 'h-full bg-(--green-base)/40 border-(--green-base) shadow-[0_0_15px_rgba(45,120,0,0.5)]'
-                                                                    : 'h-2 bg-red-900/60 border-red-900/50'
-                                                                }
-                                                            `}
-                                                        >
-                                                            {/* Rayas internas de la batería (mantenidas por ser gráficas, no scanlines) */}
-                                                            {isActive && (
-                                                                <div className="w-full h-full opacity-30 bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,rgba(0,0,0,1)_4px,rgba(0,0,0,1)_8px)]" />
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-
-                                    {/* FEEDBACK EDUCATIVO DIRECTO Y CLARO */}
-                                    <div className={`relative z-10 w-full p-4 border-l-4 bg-black/80 flex flex-col gap-2
-                                        ${visibleStars === 3 ? 'border-(--green-base)' : visibleStars === 2 ? 'border-amber-500' : 'border-red-500'}`}>
-
-                                        <span className={`text-[12px] font-black uppercase
-                                            ${visibleStars === 3 ? 'text-(--green-base)' : visibleStars === 2 ? 'text-amber-500' : 'text-red-500'}`}>
-                                            {feedback.title}
-                                        </span>
-
-                                        {/* Usamos font-sans para máxima legibilidad pedagógica */}
-                                        <span className="text-[12px] text-white/70 leading-relaxed font-sans normal-case">
-                                            {feedback.desc}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* PANEL DERECHO: CONSOLA FRAG (El Mentor - Fondo Puro) */}
-                                <div className="flex-1 p-6 md:p-8 bg-black relative flex flex-col justify-center min-h-[220px]">
-
-                                    {/* NOTA: Eliminado el grid de fondo morado de aquí para máxima limpieza. */}
-
-                                    <div className="relative z-10 flex flex-col h-full justify-between">
-
-                                        {/* Header de la consola: Ahora es un Análisis de la Ruta */}
-                                        <div className="flex items-center gap-3 border-b border-[#1a202c] pb-3 mb-4">
-                                            <div className="bg-(--purple) text-black font-black text-[10px] px-2 py-0.5 tracking-widest">
-                                                FRAG_OS
-                                            </div>
-                                            <span className="text-[10px] text-(--purple)/80 tracking-[0.2em] uppercase font-bold">
-                                                ANÁLISIS DE APRENDIZAJE
-                                            </span>
-                                        </div>
-
-                                        {/* Mensaje de FRAG: Altamente legible sobre negro puro */}
-                                        <div className="flex-1 flex gap-4">
-                                            <div className="text-(--purple) font-black text-lg select-none mt-1">{">"}</div>
-                                            <div className="flex flex-col gap-4">
-                                                {/* Usamos un color más claro (purple-200) para no cansar la vista */}
-                                                <p className={`text-sm md:text-[15px] leading-relaxed tracking-wide font-medium
-                                                    ${stars === 3 ? 'text-purple-200' : 'text-white/90'}`}>
-                                                    {feedback.frag}
-                                                    <span className="inline-block w-2 h-4 bg-(--purple) animate-pulse ml-2 align-middle" />
-                                                </p>
-
-                                                {reviewHint?.levelTitle && (
-                                                    <div className="inline-flex w-fit items-center gap-3 text-[9px] text-white/40 tracking-[0.2em] uppercase bg-[#0a000a] border border-(--purple)/30 px-3 py-1.5 mt-2">
-                                                        <CpuIcon size={12} className="text-(--purple)/60" />
-                                                        <span>
-                                                            NIVEL: <span className="text-(--purple) font-bold">{reviewHint.levelTitle}</span>
-                                                        </span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {/* RECOMPENSAS */}
-                            {hasRewards && (
-                                <div className="border border-[#1a3810] bg-[#061006] p-5 rounded-xs flex flex-col gap-6 relative overflow-hidden group">
-                                    <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(85,226,0,0.03)_50%,transparent_75%)] bg-size-[200%_200%] animate-[lc-shimmer_6s_linear_infinite]" />
-
-                                    <div className="text-[11px] text-(--green-base) uppercase font-bold tracking-[.3em] flex items-center gap-4 relative z-10">
-                                        <DatabaseIcon size={14} />
-                                        <span>RECURSOS RECUPERADOS</span>
-                                        <div className="h-px flex-1 bg-[linear-gradient(90deg,var(--green-base),transparent)] opacity-30" />
-                                    </div>
+                        {/* RECOMPENSAS: EXTRACCIÓN DE RECURSOS */}
+                        {hasRewards && (
+                            <TacticalSection title="EXTRACCIÓN_DE_RECURSOS" accentColor="var(--green-base)" variant="inset">
+                                <div className="p-5 flex flex-col gap-4 bg-[#080B0E] relative overflow-hidden border border-(--bg-void) shadow-[inset_0_6px_15px_rgba(0,0,0,1)]">
+                                    <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(85,226,0,0.02)_50%,transparent_75%)] bg-size-[200%_200%] animate-[lc-shimmer_6s_linear_infinite]" />
 
                                     {newCards.length > 0 && (
                                         <div className="animate-[lc-slideUp_.6s_ease-out_both] delay-300 relative z-10">
-                                            <div className="text-[10px] text-(--green-light) tracking-[.15em] mb-4 uppercase flex items-center gap-2">
-                                                <div className="w-3 h-px bg-(--green-light)" />
+                                            <div className="text-[11px] text-(--green-light) tracking-[.15em] mb-4 uppercase font-black flex items-center gap-3 drop-shadow-[0_0_4px_rgba(126,213,38,0.5)]">
+                                                <div className="w-5 h-[3px] bg-(--green-light) shadow-[0_0_8px_var(--green-light)]" />
                                                 {newCards.length} Módulo{newCards.length > 1 ? 's' : ''} extraído{newCards.length > 1 ? 's' : ''}
                                             </div>
 
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 {newCards.map((card, idx) => {
                                                     const r = RARITY_STYLES[card.rarity] ?? RARITY_STYLES.common
                                                     return (
                                                         <div
                                                             key={card.id}
                                                             onClick={() => { setSelectedCardIdx(idx); }}
-                                                            className="flex items-center gap-3 p-3 bg-black/40 rounded-xs border border-(--border-color)/40 hover:border-(--green-base)/40 transition-all duration-300 group/item cursor-pointer shadow-lg"
-                                                            style={{
-                                                                boxShadow: `0 4px 15px -5px ${r.color}22`
-                                                            }}
+                                                            className="flex items-center gap-4 p-3 bg-[#020304] rounded-sm border-2 border-[#1c2229] hover:border-(--green-base) transition-all duration-300 group/item cursor-pointer shadow-[inset_0_2px_8px_rgba(0,0,0,0.8)]"
                                                         >
-                                                            <div className="w-10 h-10 bg-(--bg-void) rounded-xs flex items-center justify-center border border-[#1a2636] group-hover/item:border-(--green-base) transition-colors">
-                                                                <HardDriveIcon size={18} style={{ color: r.color }} className="opacity-80 group-hover/item:opacity-100 transition-opacity" />
+                                                            <div className="w-14 h-14 bg-[#05070a] rounded-sm flex items-center justify-center border-2 border-[#1c2229] group-hover/item:border-(--green-base) shadow-[inset_0_4px_8px_rgba(0,0,0,1)] transition-colors shrink-0">
+                                                                <HardDriveIcon size={24} style={{ color: r.color }} className="opacity-70 group-hover/item:opacity-100 group-hover/item:scale-110 transition-all drop-shadow-[0_0_8px_currentColor]" />
                                                             </div>
                                                             <div className="flex-1 overflow-hidden">
-                                                                <div className="text-[10px] font-bold tracking-widest uppercase truncate leading-tight" style={{ color: r.color }}>
+                                                                <div className="text-[11px] font-black tracking-[0.15em] uppercase truncate leading-tight" style={{ color: r.color, textShadow: `0 0 8px ${r.color}55` }}>
                                                                     {card.name}
                                                                 </div>
-                                                                <div className="text-[8px] text-(--text-muted) mt-1 tracking-widest uppercase flex items-center gap-1">
-                                                                    <div className="w-1 h-1 rounded-full bg-(--text-ghost)" /> ver detalles
+                                                                <div className="text-[9px] text-[#3D444D] mt-2 tracking-[0.2em] uppercase flex items-center gap-2 font-bold group-hover/item:text-[#8B949E] transition-colors">
+                                                                    <div className="w-2 h-0.5 bg-current" /> VER_DATA_MODULE
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -307,64 +262,69 @@ export default function LevelComplete({
                                         </div>
                                     )}
 
-                                    {secretCardUnlocked && (
-                                        <div className="border border-(--amber)/30 rounded-xs p-5 text-center relative overflow-hidden animate-[lc-slideUp_.6s_ease-out_both] delay-500"
-                                            style={{ background: 'linear-gradient(135deg, rgba(20,10,0,.9), rgba(40,25,0,.6))' }}>
-                                            <div className="text-[11px] font-bold text-(--amber) tracking-[.4em] mb-2 relative uppercase">FRAGMENTO OCULTO RECUPERADO</div>
-                                            <div className="text-[12px] text-[#f5d5b8] italic opacity-90">&quot;Independencia total del sistema FRAG confirmada.&quot;</div>
-                                        </div>
-                                    )}
-
                                     {newObjects.length > 0 && (
-                                        <div className="animate-[lc-slideUp_.6s_ease-out_both] delay-700 relative z-10">
-                                            <div className="text-[10px] text-(--amber) tracking-[.15em] uppercase mb-4 flex items-center gap-2">
-                                                <div className="w-3 h-px bg-(--amber)" />
+                                        <div className="animate-[lc-slideUp_.6s_ease-out_both] delay-500 relative z-10">
+                                            <div className="text-[11px] text-(--amber) tracking-[.15em] uppercase font-black mb-4 flex items-center gap-3 drop-shadow-[0_0_4px_rgba(239,159,39,0.5)]">
+                                                <div className="w-5 h-[3px] bg-(--amber) shadow-[0_0_8px_var(--amber)]" />
                                                 {newObjects.length} Artefacto{newObjects.length > 1 ? 's' : ''} recuperado{newObjects.length > 1 ? 's' : ''}
                                             </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 {newObjects.map((obj) => (
-                                                    <div key={obj.id} className="bg-black/30 border border-[#2a1d0a] rounded-xs py-3 px-4 flex flex-col gap-1">
-                                                        <div className="text-[11px] text-(--amber) font-bold tracking-widest uppercase">{obj.name}</div>
-                                                        <div className="text-[9px] text-(--text-muted)">{obj.inventoryNote}</div>
+                                                    <div key={obj.id} className="bg-[#020304] border-2 border-[#1c2229] rounded-sm shadow-[inset_0_4px_10px_rgba(0,0,0,0.8)] p-4 flex flex-col gap-2">
+                                                        <div className="text-[12px] text-(--amber) font-black tracking-widest uppercase" style={{ textShadow: '0 0 8px rgba(239,159,39,0.4)' }}>{obj.name}</div>
+                                                        <div className="text-[10px] text-[#8B949E] font-medium leading-relaxed">{obj.inventoryNote}</div>
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
                                     )}
-                                </div>
-                            )}
 
-                            {reviewHint?.shouldShow && (
-                                <div className="border border-(--purple)/30 bg-[#0d091a] rounded-xs p-5 animate-[lc-slideUp_.6s_ease-out_both]">
-                                    <div className="text-[10px] text-[#a49ee8] tracking-[.25em] mb-3 uppercase font-bold flex items-center gap-2">
-                                        <ActivityIcon size={12} /> SUGERENCIA_OPTIMIZACIÓN
-                                    </div>
-                                    <div className="text-[12px] text-[#d6d4f0] leading-relaxed pl-4 border-l-2 border-(--purple)/40">
+                                    {secretCardUnlocked && (
+                                        <div className="border-2 border-[#1c2229] bg-[linear-gradient(135deg,rgba(20,10,0,1),rgba(40,25,0,0.8))] rounded-sm p-4 text-center relative overflow-hidden animate-[lc-slideUp_.6s_ease-out_both] delay-700 mt-2 z-10 shadow-[inset_0_2px_10px_rgba(0,0,0,0.9)]">
+                                            <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#fff_2px,#fff_4px)]" />
+                                            <div className="text-[12px] font-black text-(--amber) tracking-[.4em] mb-2 relative uppercase drop-shadow-[0_0_10px_var(--amber)]">FRAGMENTO_OCULTO_SNC</div>
+                                            <div className="text-[12px] text-[#f5d5b8] italic opacity-95">&quot;Independencia total del sistema FRAG confirmada.&quot;</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </TacticalSection>
+                        )}
+
+                        {reviewHint?.shouldShow && (
+                            <TacticalSection title="SUGERENCIA_DE_OPTIMIZACIÓN" accentColor="var(--purple)" isActived={true} variant="inset">
+                                <div className="p-4 bg-[#05070a] border border-(--bg-void) shadow-[inset_0_8px_20px_rgba(0,0,0,1)] animate-[lc-slideUp_.6s_ease-out_both] relative overflow-hidden flex flex-col justify-center">
+                                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(127,119,221,0.03),transparent_70%)] pointer-events-none" />
+                                    <div className="text-[14px] text-[#d6d4f0] leading-relaxed font-sans font-medium relative z-10">
                                         {reviewHint.message}
                                     </div>
                                 </div>
-                            )}
+                            </TacticalSection>
+                        )}
 
-                            {children}
+                        {children}
+                    </div>
 
-                            {/* BOTONES */}
-                            <div className="flex flex-wrap items-center justify-between gap-4 mt-2 pt-6 border-t border-[#1a2636]">
-                                <div className="flex gap-3">
-                                    <Button onClick={onRetry} variant="outline" size="sm" className="min-w-[120px]">
-                                        <RotateCcwIcon size={14} /> REINTENTAR
-                                    </Button>
-                                    <Button onClick={onMap} variant="outline" size="sm" className="min-w-[100px]">MAPA</Button>
-                                </div>
-                                <Button
-                                    onClick={onNext}
-                                    size="md"
-                                    variant="solid"
-                                    icon={reviewHint?.shouldShow ? RotateCcwIcon : ChevronsRightIcon}
-                                    iconPosition="right"
-                                >
-                                    {reviewHint?.shouldShow ? `REPASAR "${reviewHint.levelTitle}"` : "SIGUIENTE NIVEL"}
+                    {/* ─── FOOTER MECÁNICO (SWITCHES ) ─── */}
+                    <div className="shrink-0 relative bg-[linear-gradient(180deg,#12161A_0%,#090B0D_100%)] border-t-2 border-black z-20 shadow-[0_-8px_20px_rgba(0,0,0,0.6),inset_0_1px_2px_rgba(255,255,255,0.05)]">
+                        <div className="flex flex-wrap items-center justify-between gap-4 p-5 py-6">
+                            <div className="flex gap-4">
+                                <Button onClick={onRetry} variant="outline" icon={RotateCcwIcon} size="md" className="min-w-[140px]">
+                                    REINTENTAR
+                                </Button>
+                                <Button onClick={onMap} variant="cyan" icon={MapIcon} size="md" className="min-w-[120px]">
+                                    MAPA_SECT
                                 </Button>
                             </div>
+                            <Button
+                                onClick={onNext}
+                                size="md"
+                                variant="green"
+                                icon={reviewHint?.shouldShow ? RotateCcwIcon : ChevronsRightIcon}
+                                iconPosition="right"
+                                className="min-w-[180px]"
+                            >
+                                {reviewHint?.shouldShow ? `REPASAR NODO` : "SIGUIENTE_FASE"}
+                            </Button>
                         </div>
                     </div>
                 </div>

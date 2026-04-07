@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ActSummary } from '@/types/game'
 import { LockIcon, ServerIcon, CheckCircle2Icon, ShieldAlertIcon, ChevronRightIcon, CpuIcon, ActivityIcon } from 'lucide-react'
+import { Screw } from '@/components/ui/Screw'
 
 interface ActCardProps extends ActSummary {
   isLocked: boolean
@@ -18,183 +19,191 @@ export function ActCard({
   onClick
 }: ActCardProps) {
   const maxStars = maxStarsProp
-  const completionPercentage = Math.round((totalStars / maxStars) * 100) || 0
+  const completionPercentage = Math.round(((totalStars) / maxStars) * 100) || 0
 
-  // Contenedor principal
-  const baseStyles = "relative flex flex-col h-full bg-(--bg-elevated) transition-all duration-500 overflow-hidden font-mono group rounded-sm"
+  // Contenedor principal: El "Socket" (cavidad oscura)
+  const baseStyles = "relative flex flex-col h-full bg-[#030405] transition-all font-mono group rounded-md p-[2px] border border-black shadow-[inset_0_4px_12px_rgba(0,0,0,0.9),inset_0_-4px_12px_rgba(0,0,0,0.9)]"
 
   const lockedStyles = isLocked
-    ? "opacity-90 cursor-not-allowed border border-(--border-muted-color) grayscale shadow-none"
-    : `cursor-pointer border border-(--border-color)/50 hover:shadow-[0_15px_35px_rgba(0,0,0,0.5)] hover:-translate-y-1 hover:border-(--text-muted)/50 ${completed ? 'hover:border-(--green-base)' : 'hover:border-(--amber)'}`
+    ? "opacity-60 cursor-not-allowed grayscale pointer-events-none"
+    : "cursor-pointer"
+
+  const glowColor = completed ? 'var(--green-base)' : 'var(--amber)'
+  const themeColor = completed ? '(--green-base)' : isLocked ? '(--text-ghost)' : '(--amber)'
+  const themeLight = completed ? '(--green-light)' : isLocked ? '(--text-ghost)' : '(--amber)'
 
   const content = (
-    <>
-      {/* Luz de acento superior */}
-      {!isLocked && (
-        <div className={`absolute top-0 inset-x-0 h-[2px] transition-all duration-500 opacity-50 group-hover:opacity-100
-          ${completed ? 'bg-(--green-base) shadow-[0_0_15px_rgba(45,120,0,0.8)]' : 'bg-(--amber) shadow-[0_0_15px_rgba(239,159,39,0.8)]'}
-        `} />
-      )}
+    // La tarjeta en sí: El "Plunger" (módulo que se hunde al clickear)
+    <article className={`relative flex flex-col h-full rounded-sm overflow-hidden bg-[linear-gradient(180deg,#161b22,#0a0d11)] transition-all duration-300 ease-out z-10 border-2
+      ${isLocked
+        ? 'border-[#1a2026] shadow-[0_2px_4px_rgba(0,0,0,0.5)]'
+        : `border-[#1c2229] group-hover:border-${themeColor}/60 shadow-[0_4px_8px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)] group-hover:shadow-[0_8px_24px_rgba(${completed ? '126,213,38' : '239,159,39'},0.25)] group-hover:-translate-y-[2px] group-active:translate-y-px group-active:shadow-[0_2px_4px_rgba(0,0,0,0.5)] group-hover:bg-[linear-gradient(180deg,#1d242d,#0e1217)]`
+      }
+    `}>
 
-      {/* ─── CAPA 2: HEADER ─── */}
-      <div className="flex items-center justify-between px-5 py-3 border-b border-(--border-muted-color) bg-(--bg-hover)/30 relative z-10">
-        <div className="flex items-center gap-3">
-          <div className={`w-1.5 h-3 rounded-full shadow-[0_0_8px_currentColor] transition-colors duration-500
-            ${isLocked ? 'bg-red-900 text-red-900' : completed ? 'bg-(--green-base) text-(--green-base)' : 'bg-(--amber) text-(--amber) animate-pulse'}
-          `} />
-          <div className="flex flex-col">
-            <span className="text-xs font-black text-(--text-primary) leading-none">
-              SEC_{number < 10 ? `0${number}` : number}
-            </span>
-          </div>
-        </div>
+      {/* ─── HEADER: METALLIC SUPERIOR ─── */}
+      <header className="relative flex items-center justify-between px-3 h-[42px] border-b border-black bg-[linear-gradient(90deg,#0a0d11,#161C23,#0a0d11)] z-20 shadow-[0_4px_6px_rgba(0,0,0,0.6)]">
 
-        <div className="flex items-center gap-3">
-          <span className="text-[8px] text-(--text-ghost) hidden md:inline">0x{number}A{levelIds.length}F</span>
-          {isLocked ? (
-            <LockIcon className="w-4 h-4 text-(--text-ghost)" />
-          ) : (
-            <ServerIcon className={`w-4 h-4 transition-colors ${completed ? 'text-(--green-base)' : 'text-(--amber)'}`} />
-          )}
-        </div>
-      </div>
+        {/* 1. ESTRUCTURA DE PANEL (EL BISEL) */}
+        <div className="absolute inset-[4px] border border-black/60 rounded-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] pointer-events-none" />
 
-      {/* ─── CAPA 3: PANTALLA PRINCIPAL ─── */}
-      <div className="flex-1 p-5 relative flex flex-col z-10 bg-(--bg-surface) shadow-[inset_0_10px_20px_rgba(0,0,0,0.2)]">
+        {/* 2. TEXTURA DE FIBRA / CARBONO */}
+        <div className="absolute left-[4px] right-[4px] top-[4px] bottom-[4px] rounded-sm opacity-[0.08] bg-[linear-gradient(45deg,rgba(0,0,0,0)_45%,#fff_50%,rgba(0,0,0,0)_55%)] bg-size-[4px_4px] pointer-events-none" />
 
+        {/* Luz Glow Line superior */}
         {!isLocked && (
-          <div className={`absolute top-4 right-4 opacity-[0.02] group-hover:opacity-10 transition-opacity duration-700 pointer-events-none
-                ${completed ? 'text-(--green-base)' : 'text-(--amber)'}
-            `}>
-            <CpuIcon size={80} />
-          </div>
+          <div className="absolute top-0 inset-x-0 h-[2px] transition-all duration-300 opacity-60 group-hover:opacity-100"
+            style={{ backgroundColor: glowColor, boxShadow: `0 0 10px ${glowColor}` }} />
         )}
 
-        <div className="flex justify-between items-start mb-6 relative z-10">
-          <div className="flex-1 pr-4">
-            <h3 className={`text-2xl md:text-3xl font-black uppercase tracking-tighter leading-tight
-              ${isLocked ? 'text-(--text-ghost)' : 'text-(--text-primary) group-hover:text-white transition-colors'}`}>
-              {name || 'ZONA_DESCONOCIDA'}
-            </h3>
-
-            <div className={`inline-flex items-center gap-1.5 px-2 py-1 mt-2 rounded-sm border
-              ${isLocked ? 'border-(--border-muted-color) bg-(--bg-elevated) text-(--text-ghost)'
-                : completed ? 'border-(--green-base)/30 bg-(--green-base)/10 text-(--green-base)'
-                  : 'border-(--amber)/30 bg-(--amber)/10 text-(--amber)'}
-            `}>
-              {completed ? <CheckCircle2Icon className="w-3 h-3" /> : isLocked ? <ShieldAlertIcon className="w-3 h-3" /> : <ActivityIcon className="w-3 h-3" />}
-              <span className="text-[9px] font-bold uppercase tracking-widest">
-                {completed ? 'SISTEMA SEGURO' : isLocked ? 'BLOQUEO DE RED' : 'ESCANEANDO...'}
-              </span>
-            </div>
-          </div>
+        <div className="flex items-center gap-2 ml-1 relative z-10">
+          <div className="opacity-40"><Screw size="sm" /></div>
+          <div className={`w-1.5 h-3.5 rounded-[1px] shadow-[0_0_8px_currentColor] transition-colors duration-500
+            ${isLocked ? 'bg-red-900 text-red-900' : completed ? 'bg-(--green-base) text-(--green-base)' : 'bg-(--amber) text-(--amber) animate-pulse'}
+          `} />
+          <span className="text-[11px] font-black tracking-widest text-[#E6EDF3] drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
+            SEC_{number < 10 ? `0${number}` : number}
+          </span>
         </div>
 
-        <div className="mt-auto space-y-5 relative z-10">
+        <div className="flex items-center gap-3 mr-1 relative z-10">
+          <span className="text-[9px] text-(--text-muted)/45 hidden md:inline font-bold drop-shadow-md">0x{number}A{levelIds.length}</span>
+          <div className={`p-1 rounded-sm border border-black shadow-[inset_0_1px_2px_rgba(255,255,255,0.05)] bg-[#05070a]`}>
+            {isLocked ? (
+              <LockIcon className="w-3.5 h-3.5 text-(--text-ghost)" />
+            ) : (
+              <ServerIcon className={`w-3.5 h-3.5 transition-colors ${completed ? 'text-(--green-base) drop-shadow-[0_0_4px_var(--green-base)]' : 'text-(--amber) drop-shadow-[0_0_4px_var(--amber)]'}`} />
+            )}
+          </div>
+          <div className="opacity-40"><Screw size="sm" /></div>
+        </div>
+      </header>
 
-          {/* ─── BARRA DE PROGRESO (Corregida y visible) ─── */}
-          <div className="space-y-1.5">
-            <div className="flex justify-between text-[9px] font-bold uppercase tracking-[0.2em] text-(--text-muted)">
-              <span>Integridad_Core</span>
-              <span className={isLocked ? 'text-(--text-ghost)' : completed ? 'text-(--green-base)' : 'text-(--amber)'}>
-                {completionPercentage}%
-              </span>
-            </div>
+      {/* ─── PANTALLA PRINCIPAL: INSET CRT DISPLAY ─── */}
+      <div className={`flex-1 p-5 relative flex flex-col z-10 ${isLocked ? 'bg-[#020304]' : 'bg-[#0C1117]'} shadow-[inset_0_4px_12px_rgba(0,0,0,0.9)] overflow-hidden`}>
 
-            <div className="flex gap-[2px] h-3.5 p-[2px] bg-(--bg-deep) border border-(--border-muted-color) rounded-sm shadow-[inset_0_1px_3px_rgba(0,0,0,0.5)]">
-              {Array.from({ length: 15 }).map((_, i) => {
-                const filled = (i / 15) * 100 < completionPercentage;
-                return (
-                  <div
-                    key={i}
-                    className={`flex-1 rounded-[1px] transition-colors duration-500
+        {/* Grid pattern / scanlines industriales */}
+        <div className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500 bg-[repeating-linear-gradient(90deg,transparent,transparent_2px,#fff_2px,#fff_4px)] pointer-events-none z-0" />
+
+        <div className="relative flex-1 flex flex-col z-10 h-full">
+          {/* Título de Zona */}
+          <h3 className={`text-2xl md:text-3xl font-black uppercase tracking-tighter leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]
+              ${isLocked ? 'text-(--text-ghost)' : 'text-(--text-primary) transition-colors'}`}>
+            {name || 'ZONA_DESCONOCIDA'}
+          </h3>
+
+          <div className="mt-2 text-[10px] uppercase tracking-widest flex items-center gap-1.5 opacity-80">
+            {completed ? <CheckCircle2Icon className={`w-3 h-3 text-${themeColor}`} /> : isLocked ? <ShieldAlertIcon className="w-3 h-3 text-(--text-ghost)" /> : <ActivityIcon className={`w-3 h-3 text-${themeColor}`} />}
+            <span className={`text-${themeColor} font-extrabold`}>
+              {completed ? 'SISTEMA SEGURO' : isLocked ? 'BLOQUEO DE RED' : 'ESCANEANDO...'}
+            </span>
+          </div>
+
+          <div className="mt-auto space-y-4 pt-6">
+
+            {/* ─── BARRA DE PROGRESO ─── */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-[8px] font-bold uppercase tracking-[0.2em] text-[#8B949E] px-0.5">
+                <span>INTEGRIDAD_SECTOR</span>
+                <span className={`text-${themeLight} drop-shadow-md`}>
+                  {completionPercentage}%
+                </span>
+              </div>
+
+              {/* Riel métrico ultra-profundo */}
+              <div className="flex gap-[3px] h-4 p-[3px] bg-[#020203] rounded-sm border-t border-(--bg-void)/50  border-b shadow-[inset_0_4px_10px_rgba(0,0,0,1),inset_0_-2px_4px_rgba(0,0,0,0.6)]">
+                {Array.from({ length: 15 }).map((_, i) => {
+                  const filled = (i / 15) * 100 < completionPercentage;
+                  return (
+                    <div
+                      key={i}
+                      className={`flex-1 transition-all duration-500 rounded-[1px] relative overflow-hidden
                         ${filled
-                        ? (completed ? 'bg-(--green-base) shadow-[0_0_5px_rgba(45,120,0,0.5)]' : 'bg-(--amber) shadow-[0_0_5px_rgba(239,159,39,0.5)]')
-                        : 'bg-(--bg-hover)'
-                      }
-                    `}
-                  />
-                )
-              })}
+                          ? `bg-${themeColor} shadow-[0_0_8px_var(--${completed ? 'green-base' : 'amber'})] group-hover:shadow-[0_0_12px_var(--${completed ? 'green-light' : 'amber'})] border border-black/40`
+                          : 'bg-[#0d1218] border border-black/80 shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]'
+                        }
+                      `}
+                    >
+                      {/* Pequeño reflejo cristalino en cada LED */}
+                      {filled && <div className="absolute top-0 left-0 right-0 h-1/2 bg-[linear-gradient(180deg,rgba(255,255,255,0.2)_0%,transparent_100%)] pointer-events-none" />}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* ─── TELEMETRÍA (Display Técnico Profundo) ─── */}
+            <div className="grid grid-cols-2 gap-3 h-[56px]">
+
+              {/* Display Panel - Nodos */}
+              <div className="relative bg-[#020304] border border-(--bg-void) border-b-[#1c2229] rounded-[3px] p-2.5 flex flex-col justify-center shadow-[inset_0_6px_12px_rgba(0,0,0,1),0_1px_0_rgba(255,255,255,0.05)] overflow-hidden">
+                {/* Reflejo de pantalla CRT */}
+                <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.02)_0%,transparent_50%)] pointer-events-none" />
+
+                <span className="text-[10px] text-(--text-muted)/70 font-bold uppercase tracking-widest leading-none mb-1">RUTAS_SECTOR</span>
+                <span className={`text-lg font-black leading-none drop-shadow-[0_2px_2px_rgba(0,0,0,0.9)] ${isLocked ? 'text-(--text-ghost)' : 'text-[#E6EDF3]'}`}>
+                  {levelIds.length}
+                </span>
+              </div>
+
+              {/* Display Panel - PWR */}
+              <div className={`relative bg-[#020304] border border-(--bg-void) border-b-[#1c2229] rounded-[3px] p-2.5 flex flex-col justify-center shadow-[inset_0_6px_12px_rgba(0,0,0,1),0_1px_0_rgba(255,255,255,0.05)] overflow-hidden transition-colors duration-500
+                    ${!isLocked && `group-hover:shadow-[inset_0_2px_12px_rgba(0,0,0,1),0_0_6px_var(--${completed ? 'green-base' : 'amber'})_inset]`}
+                `}>
+                {/* Reflejo de pantalla CRT */}
+                <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.02)_0%,transparent_50%)] pointer-events-none" />
+
+                <span className="text-[10px] text-(--text-muted)/70 font-bold uppercase tracking-widest leading-none mb-1">EFICIENCIA</span>
+                <span className={`text-lg font-black leading-none drop-shadow-[0_2px_2px_rgba(0,0,0,0.9)] text-${themeLight}`}>
+                  {totalStars}<span className="text-[10px] text-[#3D444D] ml-0.5">/{maxStars}</span>
+                </span>
+              </div>
             </div>
           </div>
+        </div >
+      </div >
 
-          {/* ─── TELEMETRÍA (Recuadros vitaminados y tecnológicos) ─── */}
-          <div className="grid grid-cols-2 gap-3">
-
-            {/* Caja Nodos */}
-            <div className="relative bg-(--bg-elevated) border border-(--border-muted-color) rounded-sm p-2.5 flex flex-col overflow-hidden">
-              <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-(--border-muted-color)" />
-              <span className="absolute top-1 right-1.5 text-[7px] text-(--text-ghost) font-mono">0xN</span>
-              <span className="text-[10px] text-(--text-muted) uppercase tracking-widest mb-0.5 ml-1.5">NODOS</span>
-              <span className={`text-sm md:text-base font-black ml-1.5 leading-none ${isLocked ? 'text-(--text-ghost)' : 'text-(--text-primary)'}`}>
-                {levelIds.length} <span className="text-[10px] text-(--text-muted) font-normal">RUTAS</span>
+      {/* ─── CAPA 4: FOOTER ESTATUS ─── */}
+      < footer className={`px-4 h-[46px] flex items-center justify-between border-t border-black bg-[linear-gradient(180deg,#12161A_0%,#090B0D_100%)] z-20 shadow-[inset_0_2px_4px_rgba(255,255,255,0.02)] relative
+        ${!isLocked && completed ? 'group-hover:bg-[#161a20]' : ''}
+      `}>
+        {!isLocked ? (
+          <>
+            <div className="flex flex-col mt-0.5">
+              <span className="text-[9px] text-(--text-muted)/85 uppercase tracking-widest font-black leading-none mb-1">ESTADO DEL SUB-SISTEMA</span>
+              <span className={`text-[11px] font-black uppercase tracking-[0.2em] leading-none drop-shadow-[0_2px_2px_rgba(0,0,0,0.6)] text-${themeLight}`}>
+                {completed ? 'ESTABILIZADO' : 'EXPLORACIÓN REQUERIDA'}
               </span>
             </div>
 
-            {/* Caja PWR */}
-            <div className={`relative bg-(--bg-elevated) border rounded-sm p-2.5 flex flex-col overflow-hidden transition-colors duration-500
-                ${isLocked ? 'border-(--border-muted-color)' : completed ? 'border-(--green-base)/30 bg-(--green-base)/5' : 'border-(--amber)/30 bg-(--amber)/5 group-hover:border-(--amber)/50'}
-            `}>
-              <div className={`absolute left-0 top-0 bottom-0 w-[3px] transition-colors duration-500
-                ${isLocked ? 'bg-(--border-muted-color)' : completed ? 'bg-(--green-base)' : 'bg-(--amber)'}
-              `} />
-              <span className="absolute top-1 right-1.5 text-[7px] text-(--text-ghost) font-mono">0xP</span>
-              <span className="text-[10px] text-(--text-muted) uppercase tracking-widest mb-0.5 ml-1.5">EFICIENCIA</span>
-              <span className={`text-sm md:text-base font-black ml-1.5 leading-none ${isLocked ? 'text-(--text-ghost)' : completed ? 'text-(--green-base)' : 'text-(--amber)'}`}>
-                {totalStars}<span className="text-(--text-muted) text-xs">/{maxStars}</span>
+            {/* Tag Digital Plano (Integrado, no parece un botón falso) */}
+            <div className={`flex items-center justify-center gap-1.5 transition-all duration-300 opacity-80 group-hover:opacity-100 group-hover:drop-shadow-[0_0_6px_currentColor] text-${themeLight}`}>
+              <div className={`w-1.5 h-1.5 rounded-full bg-${themeLight} animate-pulse`} />
+              <span className={`text-[9px] font-black tracking-widest uppercase`}>
+                {completed ? 'LOGS' : 'ENTER'}
               </span>
+              <ChevronRightIcon strokeWidth={3} className={`w-3.5 h-3.5 group-hover:translate-x-1 transition-transform`} />
             </div>
-
+          </>
+        ) : (
+          <div className="flex w-full items-center justify-center opacity-60">
+            <span className="text-[10px] text-[#3D444D] font-black uppercase tracking-[0.3em] drop-shadow-md">SECTOR_BLOQUEADO</span>
           </div>
-        </div>
-      </div>
-
-      {/* ─── CAPA 4: FOOTER (Botón táctico rectangular) ─── */}
-      {!isLocked ? (
-        <div className={`p-3 md:p-4 bg-(--bg-hover)/50 border-t border-(--border-muted-color) flex items-center justify-between transition-colors duration-500
-            ${completed ? 'group-hover:bg-(--green-base)/10' : 'group-hover:bg-(--amber)/5'}
-        `}>
-          <div className="flex flex-col">
-            <span className="text-[8px] text-(--text-muted) uppercase tracking-widest mb-0.5">ACCIÓN REQUERIDA</span>
-            <span className={`text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em]
-                ${completed ? 'text-(--green-base)' : 'text-(--text-primary)'}
-             `}>
-              {completed ? 'REVISAR ARCHIVOS' : 'INICIAR COMPILACIÓN'}
-            </span>
-          </div>
-
-          {/* Botón rectangular en lugar de redondo */}
-          <div className={`px-3 py-1.5 rounded-sm border flex items-center justify-center transition-all duration-300 group-hover:scale-105
-            ${completed ? 'border-(--green-base) bg-(--green-base)/10' : 'border-(--amber) bg-(--amber)/10'}
-          `}>
-            <span className={`text-[9px] font-black tracking-widest mr-1 ${completed ? 'text-(--green-base)' : 'text-(--amber)'}`}>
-              {completed ? 'LOGS' : 'EXEC'}
-            </span>
-            <ChevronRightIcon className={`w-3.5 h-3.5 ${completed ? 'text-(--green-base)' : 'text-(--amber)'}`} />
-          </div>
-        </div>
-      ) : (
-        <div className="p-4 bg-(--bg-surface) border-t border-(--border-muted-color) flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-[8px] text-(--text-ghost) uppercase tracking-widest mb-0.5">ESTADO ACTUAL</span>
-            <span className="text-[11px] text-(--text-ghost) font-black uppercase tracking-[0.2em]">SISTEMA BLOQUEADO</span>
-          </div>
-        </div>
-      )}
-    </>
+        )}
+      </footer >
+    </article >
   )
 
   if (isLocked) {
     return (
-      <div className={`${baseStyles} ${lockedStyles}`}>
+      <div className={baseStyles}>
         {content}
       </div>
     )
   }
 
   return (
-    <Link href={`/game/${number}`} className={`${baseStyles} ${lockedStyles}`} onClick={onClick}>
+    <Link href={`/game/${number}`} className={baseStyles} onClick={onClick}>
       {content}
     </Link>
   )

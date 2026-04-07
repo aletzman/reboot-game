@@ -1,6 +1,7 @@
 "use client"
 
 import { Activity, Zap } from 'lucide-react'
+import { ContainerHeader } from '../ui/ContainerHeader'
 
 interface SectorStatsProps {
   totalStars: number
@@ -11,7 +12,7 @@ interface SectorStatsProps {
 
 export function SectorStats({ totalStars, maxStars, integrity, isLoading }: SectorStatsProps) {
   return (
-    <div className={`flex bg-[#0a0f16]/80 shrink-0 border-t md:border-t-0 md:border-l border-[#1a2636]/60 transition-opacity duration-700 ${isLoading ? 'opacity-40 animate-pulse' : 'opacity-100 animate-in fade-in'}`}>
+    <ContainerHeader className={`flex shrink-0 border-t md:border-t-0 md:border-l border-[#1a2636]/60 transition-opacity duration-700 ${isLoading ? 'opacity-40 animate-pulse' : 'opacity-100 animate-in fade-in'}`}>
       {/* Rendimiento */}
       <div className="px-6 py-4 flex flex-col justify-center min-w-[140px] relative group/stat border-r border-[#1a2636]/40 md:border-r-0">
         <div className="absolute inset-0 bg-(--amber)/5 opacity-0 transition-opacity" />
@@ -49,8 +50,8 @@ export function SectorStats({ totalStars, maxStars, integrity, isLoading }: Sect
             >
               <div
                 className={`absolute inset-0 transition-all duration-700 ${(i / 10) * 100 < integrity
-                    ? 'bg-(--green-base)'
-                    : 'bg-transparent'
+                  ? 'bg-(--green-base)'
+                  : 'bg-transparent'
                   }`}
                 style={{ transitionDelay: `${i * 30}ms` }}
               />
@@ -58,6 +59,6 @@ export function SectorStats({ totalStars, maxStars, integrity, isLoading }: Sect
           ))}
         </div>
       </div>
-    </div>
+    </ContainerHeader>
   )
 }
