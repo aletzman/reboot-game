@@ -1,6 +1,7 @@
 'use client'
 
 import { LanguageOption } from './types'
+import { Screw } from '@/components/ui/Screw'
 
 interface TerminalItemProps {
     lang: LanguageOption
@@ -24,110 +25,87 @@ export default function TerminalItem({
     const isActive = lang.status === 'active'
     const actuallyConfirmed = isConfirmed && isSelected
 
+    // Design tokens based on status
+    const statusLight = isActive ? 'var(--green-light)' : 'var(--red)'
+
     return (
         <div
-            onClick={() => onSelect(lang.id)}
+            onClick={() => isActive && onSelect(lang.id)}
             onMouseEnter={() => onMouseEnter(lang.id)}
             onMouseLeave={onMouseLeave}
-            style={{
-                background: actuallyConfirmed
-                    ? 'var(--green-darkest)'
-                    : isSelected
-                        ? '#0d1f00'
-                        : 'var(--bg-surface)',
-                border: `${isSelected ? '2px' : '1px'} solid ${actuallyConfirmed ? 'var(--green-light)'
-                    : isSelected ? 'var(--green-base)'
-                        : isActive ? 'var(--green-dark)'
-                            : 'var(--bg-hover)'
-                    }`,
-                borderRadius: '10px',
-                padding: '1.25rem 1rem',
-                cursor: isActive && !disabled ? 'pointer' : 'default',
-                opacity: !isActive ? 0.45 : 1,
-                transition: 'all .2s',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '.625rem',
-                position: 'relative',
-                overflow: 'hidden',
-            }}
+            className={`relative flex flex-col min-h-[180px] transition-all duration-300 font-mono group rounded-md p-1 border border-black shadow-[inset_0_4px_12px_rgba(0,0,0,0.9),inset_0_-4px_12px_rgba(0,0,0,0.9)] 
+                ${isActive && !disabled ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}
+            `}
         >
-            {/* Status indicator */}
-            <div style={{
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
-                width: '7px',
-                height: '7px',
-                borderRadius: '50%',
-                background: isActive ? 'var(--green-light)' : 'var(--red)',
-                animation: isActive ? 'termPulse 2s ease-in-out infinite' : 'none',
-            }} />
+            {/* THE UNIT (Plunger) */}
+            <article className={`relative flex flex-col h-full rounded-sm overflow-hidden bg-[linear-gradient(180deg,#161b22,#0a0d11)] transition-all duration-300 ease-out z-10 border-2
+                ${actuallyConfirmed
+                    ? 'border-(--green-light) bg-(--green-darkest) shadow-[0_0_20px_rgba(126,213,38,0.3)]'
+                    : isSelected
+                        ? 'border-(--green-base) bg-[#0d1f00] -translate-y-1 shadow-[0_12px_28px_rgba(45,120,0,0.4)]'
+                        : isActive
+                            ? 'border-[#1c2229] hover:border-(--green-base)/40 hover:-translate-y-1 shadow-[0_6px_12px_rgba(0,0,0,0.6)]'
+                            : 'border-[#1a2026] grayscale'
+                }
+            `}>
+                {/* Metallic Header */}
+                <header className="h-[36px] border-b border-black bg-[linear-gradient(90deg,#0a0d11,#161C23,#0a0d11)] flex items-center justify-between px-3 shrink-0 relative shadow-[0_2px_4px_rgba(0,0,0,0.4)]">
+                    <div className="opacity-20"><Screw size="md" /></div>
 
-            {/* Nombre del lenguaje */}
-            <div style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '16px',
-                fontWeight: 500,
-                color: isActive ? (isSelected ? 'var(--green-light)' : 'var(--text-primary)') : 'var(--text-ghost)',
-                letterSpacing: '.06em',
-            }}>
-                {lang.name}
-            </div>
+                    <div className="flex items-center gap-3">
+                        <div className={`w-2 h-4 rounded-[1px] shadow-[0_0_5px_currentColor] transition-colors duration-500
+                            ${actuallyConfirmed ? 'bg-(--green-light) text-(--green-light)' : isActive ? 'bg-(--green-base) text-(--green-base)' : 'bg-(--red-muted) text-(--red-muted)'}
+                         `} />
+                        <span className="text-[12px] font-black tracking-widest text-(--text-muted) uppercase">UNIDAD_{lang.id.toUpperCase()}</span>
+                    </div>
 
-            {/* Año */}
-            <div style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '9px',
-                color: isActive ? 'var(--green-base)' : 'var(--text-ghost)',
-                letterSpacing: '.1em',
-            }}>
-                {lang.year}
-            </div>
+                    <div className="opacity-20"><Screw size="md" /></div>
+                </header>
 
-            {/* Estado */}
-            <div style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '10px',
-                color: isActive ? 'var(--green-light)' : 'var(--red)',
-                letterSpacing: '.1em',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px',
-            }}>
-                {isActive ? '▶ OPERATIVO' : '✗ DAÑADO'}
-            </div>
+                {/* Content Area (Inset) */}
+                <div className="flex-1 p-5 bg-black/40 shadow-[inset_0_2px_8px_rgba(0,0,0,0.8)] flex flex-col relative overflow-hidden">
+                    {/* Background Noise */}
+                    <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[repeating-linear-gradient(90deg,transparent,transparent_2px,#fff_2px,#fff_4px)]" />
 
-            {/* Líneas decorativas de "terminal" */}
-            <div style={{
-                borderTop: '1px solid',
-                borderColor: isActive ? 'var(--green-darkest)' : 'var(--bg-hover)',
-                paddingTop: '.5rem',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '9px',
-                color: 'var(--text-ghost)',
-                lineHeight: 1.5,
-            }}>
-                {lang.detail}
-            </div>
+                    <div className="relative z-10">
+                        <div className="text-[20px] font-black tracking-tight text-white leading-tight mb-1 uppercase">
+                            {lang.name}
+                        </div>
+                        <div className="text-[11px] text-(--text-muted) tracking-widest uppercase font-bold">
+                            VERSIÓN {lang.year} // REV.0{lang.id.slice(-1)}
+                        </div>
+                    </div>
 
-            {/* Overlay de confirmación */}
-            {actuallyConfirmed && (
-                <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: 'rgba(13,31,0,.85)',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '12px',
-                    color: 'var(--green-light)',
-                    letterSpacing: '.14em',
-                }}>
-                    seleccionado ✓
+                    <div className="mt-auto flex justify-between items-end relative z-10 pt-6">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] text-(--text-ghost) font-black uppercase tracking-tighter mb-0.5">Estado del Módulo</span>
+                            <span className={`text-[13px] font-black uppercase tracking-widest ${isActive ? 'text-(--green-light)' : 'text-(--red)'}`}>
+                                {isActive ? '► OPERATIVO' : '✗ DAÑADO'}
+                            </span>
+                        </div>
+
+                        {/* Status Light */}
+                        <div className={`w-3 h-3 rounded-full shadow-[0_0_10px_currentColor] ${isActive && 'animate-pulse'}`}
+                            style={{ backgroundColor: statusLight, color: statusLight }} />
+                    </div>
                 </div>
-            )}
+
+                {/* Footer Strip */}
+                <footer className="h-[32px] border-t border-black bg-black/60 flex items-center px-4 font-bold">
+                    <span className="text-[10px] text-(--text-ghost) truncate uppercase tracking-widest">
+                        {lang.detail}
+                    </span>
+                </footer>
+
+                {/* SELECTION OVERLAY */}
+                {actuallyConfirmed && (
+                    <div className="absolute inset-0 z-30 bg-(--green-darkest)/80 flex items-center justify-center">
+                        <div className="px-5 py-2 border-2 border-(--green-light) bg-black rounded-sm shadow-[0_0_20px_var(--green-light)]">
+                            <span className="text-[14px] font-black text-(--green-light) tracking-[.25em] uppercase">MÓDULO MONTADO</span>
+                        </div>
+                    </div>
+                )}
+            </article>
         </div>
     )
 }
