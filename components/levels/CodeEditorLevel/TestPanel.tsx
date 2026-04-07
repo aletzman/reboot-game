@@ -1,6 +1,9 @@
-'use client'
+"use client"
 
 import { TestCase, Level } from '@/types/game'
+import { motion, AnimatePresence } from 'motion/react'
+import { AlertTriangle, CheckCircle2, Cpu } from 'lucide-react'
+import { Screw } from '@/components/ui/Screw'
 
 interface TestPanelProps {
     tests: TestCase[]
@@ -9,73 +12,98 @@ interface TestPanelProps {
 
 export function TestPanel({ tests, level }: TestPanelProps) {
     return (
-        <div className="flex-1 p-5 flex flex-col gap-4 overflow-y-auto">
-            <div className="flex flex-col gap-2">
-                <div className="font-mono text-[9px] text-(--text-ghost) tracking-[0.2em] uppercase flex items-center gap-2">
-                    <span className="w-4 h-px bg-(--bg-hover)" />
-                    System Verifications
-                </div>
-                
-                <div className="flex flex-col gap-1.5">
-                    {tests.map(test => (
-                        <div key={test.id} 
-                            className={`flex items-start gap-3 p-3 border transition-all relative overflow-hidden group ${
-                                test.passed === true ? 'bg-(--green-darkest)/30 border-(--green-dark)/50 shadow-[inset_0_0_10px_rgba(45,120,0,0.05)]' :
-                                test.passed === false ? 'bg-(--red)/5 border-(--red)/30 shadow-[inset_0_0_10px_rgba(226,75,74,0.05)] animate-pulse' :
-                                'bg-(--bg-elevated) border-(--bg-hover)'
-                            }`}
-                        >
-                            {/* Decorative line */}
-                            <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${
-                                test.passed === true ? 'bg-(--green-base)' :
-                                test.passed === false ? 'bg-(--red)' :
-                                'bg-transparent'
-                            }`} />
+        <div className="flex-1 flex flex-col min-h-0 bg-[#080a0c] border-l border-black relative">
+            {/* ─── MAIN TEST LIST ─── */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-2 flex flex-col gap-3 bg-(--bg-void) shadow-[inset_0_0_60px_rgba(0,0,0,0.8)]">
+                <AnimatePresence mode='popLayout'>
+                    {tests.map((test, index) => {
+                        const status = test.passed === true ? 'success' : test.passed === false ? 'failed' : 'idle';
 
-                            <div className={`mt-0.5 shrink-0 w-4 h-4 rounded-sm flex items-center justify-center font-bold text-[10px] ${
-                                test.passed === true ? 'bg-(--green-base) text-(--bg-void)' :
-                                test.passed === false ? 'bg-(--red) text-(--bg-void)' :
-                                'bg-(--bg-hover) text-(--text-ghost)'
-                            }`}>
-                                {test.passed === true ? '✓' : test.passed === false ? '!' : '?'}
-                            </div>
+                        return (
+                            <motion.div
+                                key={test.id || index}
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.04 }}
+                                className={`
+                                    relative border transition-all duration-300
+                                    ${status === 'success' ? 'bg-(--bg-deep) border-(--green-base)/30' :
+                                        status === 'failed' ? 'bg-(--bg-deep) border-red-900/40' :
+                                            'bg-(--bg-deep) border-white/5'}
+                                `}
+                            >
+                                {/* Indicador lateral minimalista */}
+                                <div className={`absolute left-0 top-0 bottom-0 w-1
+                                    ${status === 'success' ? 'bg-(--green-base)' :
+                                        status === 'failed' ? 'bg-red-600' :
+                                            'bg-zinc-800'}`}
+                                />
 
-                            <div className="flex flex-col gap-0.5">
-                                <span className={`font-mono text-[11px] leading-tight ${
-                                    test.passed === true ? 'text-(--green-muted)' :
-                                    test.passed === false ? 'text-(--red)' :
-                                    'text-(--text-muted)'
-                                }`}>
-                                    {test.description}
-                                </span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                                <div className="p-4 pl-6 relative">
+                                    <div className="flex items-center gap-4">
+                                        {/* Icono de estado limpio */}
+                                        <div className={`shrink-0
+                                            ${status === 'success' ? 'text-(--green-base)' :
+                                                status === 'failed' ? 'text-red-500' :
+                                                    'text-zinc-700'}
+                                        `}>
+                                            {status === 'success' ? <CheckCircle2 size={18} /> :
+                                                status === 'failed' ? <AlertTriangle size={18} /> :
+                                                    <Cpu size={18} />}
+                                        </div>
+
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center justify-between mb-1">
+                                                <span className={`text-[9px] font-mono font-black tracking-widest uppercase opacity-70
+                                                    ${status === 'success' ? 'text-(--green-light)' : 'text-cyan-500'}`}>
+                                                    TEST_{Number(index + 1).toString().padStart(2, '0')}
+                                                </span>
+                                                {status === 'failed' && (
+                                                    <span className="text-[8px] font-mono font-black text-red-500 uppercase tracking-widest">
+                                                        PROTOCOL_VIOLATION
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            <h3 className={`text-[12px] font-mono font-bold leading-tight uppercase tracking-wide
+                                                ${status === 'success' ? 'text-white' : status === 'failed' ? 'text-red-100' : 'text-zinc-400'}`}>
+                                                {test.description}
+                                            </h3>
+                                        </div>
+                                    </div>
+
+                                    {/* Data Dump Simplificado */}
+                                    {status === 'failed' && (
+                                        <motion.div
+                                            initial={{ height: 0, opacity: 0 }}
+                                            animate={{ height: 'auto', opacity: 1 }}
+                                            className="mt-4 border-t border-red-900/20 pt-3"
+                                        >
+                                            <div className="grid grid-rows-2 gap-4">
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="text-[9px] text-zinc-200 uppercase tracking-widest">Required</span>
+                                                    <div className="text-[11px] font-mono text-(--green-muted) truncate bg-black/40 p-2 border border-white/5">
+                                                        {test.expected !== undefined ? JSON.stringify(test.expected) : 'TRUE'}
+                                                    </div>
+                                                </div>
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="text-[9px] font-black text-zinc-200 uppercase tracking-widest">Received</span>
+                                                    <div className="text-[11px] font-mono text-red-400 truncate bg-black/40 p-2 border border-red-500/20 font-black">
+                                                        {test.received !== undefined ? JSON.stringify(test.received) : 'NULL'}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </div>
+                            </motion.div>
+                        )
+                    })}
+                </AnimatePresence>
             </div>
 
-            <div className="h-px bg-(--bg-hover) my-2" />
-
-            <div className="flex flex-col gap-3">
-                <div className="font-mono text-[9px] text-(--text-ghost) tracking-[0.2em] uppercase flex items-center gap-2">
-                    <span className="w-4 h-px bg-(--bg-hover)" />
-                    Mission Logs
-                </div>
-                
-                <div className="p-4 bg-(--bg-deep) border border-(--bg-hover) rounded-sm font-sans text-[11px] text-(--text-muted) leading-relaxed relative">
-                    {/* Decorative corner */}
-                    <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-(--green-dark)/30" />
-                    <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-(--green-dark)/30" />
-                    
-                    {level.description}
-
-                    {level.codeExample && (
-                        <div className="mt-4 p-3 bg-black/40 border-l-2 border-(--green-dark) font-mono text-[11px] text-(--green-muted) leading-[1.6] whitespace-pre overflow-x-auto italic">
-                            {level.codeExample}
-                        </div>
-                    )}
-                </div>
-            </div>
+            {/* ─── FOOTER BAR (Línea de cierre técnica) ─── */}
+            <div className="h-2 bg-black border-t border-white/5" />
         </div>
     )
 }

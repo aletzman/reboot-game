@@ -12,6 +12,11 @@ import { TestPanel } from './TestPanel'
 import { OutputPanel } from './OutputPanel'
 import { DirectivesPanel } from '@/components/ui/DirectivesPanel'
 import { useUIStore } from '@/lib/store/useUIStore'
+import { LevelHeader } from '../LevelHeader'
+import { MissionStatusMonitor } from '../NodeRoutineLevel/MissionStatusMonitor'
+import { Button } from '@/components/ui/Button'
+import { Panel } from '@/components/ui/Panel'
+import SectionHeader from '@/components/ui/SectionHeader'
 
 // Monaco se importa dinámicamente — nunca SSR
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false })
@@ -119,13 +124,22 @@ export default function CodeEditorLevel({
     return (
         <div className="flex-1 flex flex-col bg-(--bg-void) min-h-[70vh] h-full overflow-hidden border border-(--bg-hover) rounded-xl shadow-2xl">
 
-            <EditorHeader
+            <LevelHeader
                 level={level}
-                robotAPI={data.robotAPI}
-                running={editorState.running}
-                phase={phase}
-                onRun={handleRun}
-            />
+                isRunning={editorState.running}
+                status={phase === 'passed' ? 'success' : phase === 'running' ? 'playing' : 'idle'}
+            >
+                <div className='min-w-[348px]'>
+                    <DirectivesPanel
+                        infoText={level.fragHint}
+                        missionText={level.description}
+                    />
+                </div>
+                <MissionStatusMonitor
+                    className="min-w-[398px]"
+                    status={phase === 'passed' ? 'success' : phase === 'running' ? 'playing' : phase === 'failed' ? 'failed' : 'idle'}
+                />
+            </LevelHeader>
 
             <div className="flex-1 flex min-h-0 overflow-hidden">
                 {/* Editor + Console Column */}
@@ -133,7 +147,7 @@ export default function CodeEditorLevel({
                     <div className="flex-1 relative group overflow-hidden">
                         {/* Industrial Border Accent */}
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-(--green-dark) via-transparent to-(--green-darkest) opacity-30 z-10" />
-                        
+
                         <MonacoEditor
                             height="100%"
                             defaultLanguage="javascript"
@@ -187,30 +201,38 @@ export default function CodeEditorLevel({
                 </div>
 
                 {/* Right Panel — Tests Only or Context */}
-                <div className="w-[340px] bg-(--bg-surface) border-l border-(--bg-hover) flex flex-col relative overflow-hidden shrink-0">
-                    <div className="px-4 py-3 bg-(--bg-deep) border-b border-(--bg-hover) flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-(--green-light)">Pruebas de Sistema</span>
-                        </div>
-                        <div className={`text-[9px] px-2 py-0.5 rounded-full font-mono ${
-                            editorState.allTestsPassed ? 'bg-(--green-darkest) text-(--green-light)' : 'bg-(--bg-hover) text-(--text-ghost)'
-                        }`}>
+                <Panel typePanel='main' className="w-[400px] flex flex-col relative overflow-hidden shrink-0">
+                    <SectionHeader title='Pruebas de Sistema' ></SectionHeader>
+
+                    <div className={`flex items-center gap-2.5 px-3 py-2 border transition-all duration-500 rounded-[2px] ${editorState.allTestsPassed
+                        ? 'bg-[#0d1510] border-(--green-base)/30 text-(--green-light) shadow-[0_0_15px_rgba(34,197,94,0.1)]'
+                        : 'bg-black/40 border-white/5 text-zinc-200'}`}>
+                        {/* Status LED Dot */}
+                        <div className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${editorState.allTestsPassed
+                            ? 'bg-(--green-base) shadow-[0_0_8px_var(--green-base)] animate-pulse'
+                            : 'bg-zinc-800'
+                            }`} />
+
+                        <span className="text-sm font-mono font-black uppercase leading-none">
                             {editorState.tests.filter(t => t.passed).length}/{editorState.tests.length} VERIFICADO
-                        </div>
+                        </span>
+
+                        {/* Micro decoración de cierre */}
+                        <div className="w-px h-3 bg-white/5 ml-1" />
                     </div>
-                    
-                    <div className="flex-1 overflow-y-auto custom-scrollbar relative z-0 flex flex-col">
-                        <div className="p-3">
-                            <DirectivesPanel
-                                infoText={level.fragHint}
-                                missionText={level.description}
-                            />
-                        </div>
-                        <div className="mt-2 flex-1">
-                            <TestPanel tests={editorState.tests} level={level} />
-                        </div>
+
+                    <div className="flex-1 overflow-y-auto custom-scrollbar h-[calc(100svh-292px)] relative z-0 flex flex-col p-1">
+                        <TestPanel tests={editorState.tests} level={level} />
                     </div>
-                </div>
+
+                    <Button
+                        onClick={handleRun}
+                        disabled={editorState.running}
+                        className='w-full'
+                    >
+                        Transmitir
+                    </Button>
+                </Panel>
             </div>
 
             <EditorFooter

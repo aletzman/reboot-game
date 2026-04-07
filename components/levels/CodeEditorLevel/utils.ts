@@ -3,14 +3,37 @@ import { EDITOR_DATA } from './constants'
 
 export function runTests(code: string, tests: Omit<TestCase, 'passed'>[], levelId: string): TestCase[] {
     const patterns: Record<string, (c: string) => boolean> = {
-        // 4-02: console.log
-        '4-02-t1': c => (c.match(/console\.log/g) || []).length >= 2,
-        '4-02-t2': c => /console\.log\s*\(/.test(c),
+
+        // PRUEBA 1: Validar que el primer console.log tenga UN nombre (cualquier texto que no sea el mensaje del paso 2)
+        '4-02-t1': c => {
+            const matches = [...c.matchAll(/console\.log\s*\(\s*(['"`])(.*?)\1\s*\)/g)];
+            // Buscamos un log que NO sea 'Sistema Activo' y que tenga contenido
+            return matches.some(m =>
+                m[2].toLowerCase() !== 'sistema activo' &&
+                m[2].trim().length > 0
+            );
+        },
+
+        // PRUEBA 2: Validar específicamente el mensaje 'Sistema Activo'
+        '4-02-t2': c => /console\.log\s*\(\s*(['"`])Sistema Activo\1\s*\)/i.test(c),
 
         // 4-03: let/const
-        '4-03-t1': c => /\bconst\s+BUNKER\b/.test(c),
-        '4-03-t2': c => /\blet\s+energia\b/.test(c),
-        '4-03-t3': c => /energia\s*=\s*95/.test(c),
+        // 1. Constante BUNKER con valor 'Alpha'
+        // Verifica: const + nombre + asignación + 'Alpha' (soporta comillas simples, dobles o backticks)
+        '4-03-t1': c => /\bconst\s+BUNKER\s*=\s*(['"`])Alpha\1/.test(c),
+
+        // 2. Variable energia con valor inicial 100
+        // Verifica: let + nombre + asignación + 100
+        '4-03-t2': c => /\blet\s+energia\s*=\s*100\b/.test(c),
+
+        // 3. Reasignación de energia a 95
+        // Verifica: que energia cambie a 95 (sin usar let/const de nuevo)
+        '4-03-t3': c => {
+            // Buscamos la reasignación específica energia = 95
+            // Asegurándonos de que no lleve 'let' antes para que sea reasignación real
+            const reasignacion = /(?<!let\s+)energia\s*=\s*95\b/.test(c);
+            return reasignacion;
+        },
 
         // 4-06: Hoisting/TDZ
         '4-06-t1': c => {
