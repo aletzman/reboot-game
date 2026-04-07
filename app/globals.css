@@ -968,16 +968,16 @@ body {
 /* Cuadricula */
 
 .bg-grid {
-  background-image: linear-gradient(to right, var(--border-muted-color) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--border-muted-color) 1px, transparent 1px);
+  background-image: linear-gradient(to right, var(--bg-deep) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--bg-deep) 1px, transparent 1px);
   background-size: 32px 32px;
-  opacity: 0.25;
+  opacity: 1;
 
 }
 
 .bg-diagonal-lines {
   background-color: var(--bg-void);
-  opacity: 0.8;
+  opacity: 1;
   background-size: 10px 10px;
   background-image: repeating-linear-gradient(45deg, var(--bg-deep) 0, var(--bg-deep) 1px, var(--bg-void) 0, var(--bg-void) 50%);
 }
