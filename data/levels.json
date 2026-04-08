@@ -913,11 +913,17 @@
       "id": "3-01",
       "act": 3,
       "actName": "El Laboratorio de Lenguajes",
-      "type": "cinematic",
-      "title": "El laboratorio de lenguajes",
-      "description": "Una instalación entera dedicada a preservar lenguajes de programación. Terminales con nombres que no reconoces. La mayoría están apagadas.",
-      "narrative": "FRAG: 'Los científicos guardaron varios lenguajes. Solo uno sobrevivió El Silencio sin daños.'",
-      "fragAvailable": false,
+      "type": "puzzle-match",
+      "title": "Señales Familiares",
+      "description": "Entras al Laboratorio de Lenguajes. Las terminales muestran símbolos extraños, pero FRAG detecta algo: esos símbolos representan cosas que ya conoces. Empieza por las más básicas.",
+      "narrative": "FRAG: 'Operador, mira esas pantallas. No son nuevas — son los mismos conceptos que usaste con mis bloques, pero escritos en otro dialecto. Veamos si reconoces los dos primeros.'",
+      "mechanic": "Se muestran 2 pares lado a lado: bloque conocido a la izquierda, código JS equivalente a la derecha. El jugador arrastra para conectarlos. Solo variable y loop.",
+      "concept": "primera exposición a variable y loop en sintaxis JS",
+      "fragAvailable": true,
+      "fragHint": [
+        "El bloque ASIGNAR y la palabra 'let' hacen exactamente lo mismo: guardar un valor en una caja con nombre.",
+        "REPETIR y 'for' son la misma idea — repetir algo un número fijo de veces."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -929,18 +935,24 @@
         "mapa_laboratorio"
       ],
       "rewardCards": [],
-      "failRedirectTo": null
+      "failRedirectTo": null,
+      "maxStars": 2
     },
     {
       "id": "3-02",
       "act": 3,
       "actName": "El Laboratorio de Lenguajes",
-      "type": "decision",
-      "title": "Elige tu lenguaje",
-      "description": "Cinco terminales. Cuatro apagadas. Una en verde: JavaScript. Es lo único que queda operativo.",
-      "narrative": "FRAG: 'JavaScript sobrevivió porque estaba en el sistema más aislado. Es suficiente. Más que suficiente.'",
-      "mechanic": "Pantalla de selección. JavaScript activo. Python, C#, Rust, Go: bloqueados.",
-      "fragAvailable": false,
+      "type": "puzzle-match",
+      "title": "Los Pilares Lógicos",
+      "description": "Ya reconociste las variables y los bucles. Ahora FRAG activa dos terminales más: la que decide y la que agrupa. Condicionales y funciones en su forma real.",
+      "narrative": "FRAG: 'Dos de los pilares que sostienen cualquier programa: la capacidad de decidir y la capacidad de reutilizar. Los bloques SI y FUNCIÓN tienen equivalentes directos. Encuéntralos.'",
+      "mechanic": "Se muestran 2 pares lado a lado: bloque SI con if, bloque FUNCIÓN con function. El jugador arrastra para conectarlos.",
+      "concept": "exposición a condicional y función en sintaxis JS",
+      "fragAvailable": true,
+      "fragHint": [
+        "El bloque SI y la palabra 'if' hacen lo mismo: ejecutar código solo si una condición es verdadera.",
+        "FUNCIÓN y 'function' son idénticos: empaquetas una serie de pasos bajo un nombre para reutilizarlos."
+      ],
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -948,23 +960,22 @@
         "mapa_laboratorio"
       ],
       "rewardObjects": [],
-      "rewardCards": [
-        "card-013"
-      ],
-      "failRedirectTo": null
+      "rewardCards": [],
+      "failRedirectTo": "3-01",
+      "maxStars": 2
     },
     {
       "id": "3-03",
       "act": 3,
       "actName": "El Laboratorio de Lenguajes",
       "type": "puzzle-match",
-      "title": "El puente visual",
-      "description": "Antes de ver código real, FRAG muestra que todo lo que ya sabes tiene una forma visual equivalente. Sin texto de código — solo íconos y bloques conocidos.",
-      "narrative": "FRAG: 'Todo lo que aprendiste con bloques existe en JavaScript. Solo tiene una forma diferente. Te mostraré cómo se ven.'",
-      "mechanic": "Empareja íconos de acciones (flecha, bucle, rombo) con bloques LogicAssembly ya conocidos. Cero código.",
-      "concept": "reconocimiento visual de conceptos",
+      "title": "La primera mirada",
+      "description": "Por primera vez ves código JavaScript real. No tienes que escribirlo — solo reconocer lo que ya sabes detrás de una forma diferente.",
+      "narrative": "FRAG: 'Esto es JavaScript. Puede verse intimidante al principio. Pero mira — ya conoces todo lo que hace. Solo tiene una forma diferente de escribirse.'",
+      "mechanic": "Se muestran pares lado a lado: bloque Scratch conocido a la izquierda, código JS equivalente a la derecha. El jugador arrastra para conectarlos. Lee el código pero no lo escribe.",
+      "concept": "primera exposición pasiva a sintaxis JS",
       "fragAvailable": true,
-      "fragHint": "Ya conoces todos estos conceptos. Solo busca la imagen que represente lo mismo que el bloque.",
+      "fragHint": "No te fijes en los símbolos todavía. Pregúntate: ¿qué hace este código? Ya lo conoces con otro nombre.",
       "optional": false,
       "isReview": false,
       "reviewOf": [],
@@ -972,29 +983,77 @@
       "rewardObjects": [
         "plano_sintaxis_js"
       ],
+      "rewardCards": [],
+      "failRedirectTo": null,
+      "maxStars": 2
+    },
+    {
+      "id": "3-04",
+      "act": 3,
+      "actName": "El Laboratorio de Lenguajes",
+      "type": "puzzle-match",
+      "title": "Más Allá de los Bloques",
+      "description": "Los bloques cubrían lo esencial, pero JavaScript tiene herramientas que no existían en tus flechas ni en tus cajas. Es hora de conocer las nuevas.",
+      "narrative": "FRAG: 'Ahora entramos en territorio nuevo. Estas herramientas no las tenías antes: imprimir mensajes en pantalla, textos con comillas, comparaciones exactas y notas para tu yo del futuro. Son el puente hacia el código real.'",
+      "mechanic": "Se muestran 4 pares: IMPRIMIR→console.log, TEXTO→string, COMPARAR→===, NOTA→//. Conceptos que no tenían bloque directo en los actos anteriores.",
+      "concept": "herramientas JS sin equivalente directo en bloques",
+      "fragAvailable": true,
+      "fragHint": [
+        "console.log es como un bloque IMPRIMIR que nunca tuviste: te permite ver lo que pasa dentro del código.",
+        "Las comillas convierten cualquier cosa en texto puro. Sin comillas, la máquina intenta ejecutarlo como orden.",
+        "El triple igual (===) es más estricto que el doble (==). En este búnker, la precisión salva vidas."
+      ],
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
       "rewardCards": [
         "card-014"
       ],
-      "failRedirectTo": null,
+      "failRedirectTo": "3-03",
       "maxStars": 2
+    },
+    {
+      "id": "3-05",
+      "act": 3,
+      "actName": "El Laboratorio de Lenguajes",
+      "type": "decision",
+      "title": "Elige tu lenguaje",
+      "description": "Ya tradujiste bloques a código real. Ya viste cómo se ve JavaScript. Ya descubriste herramientas nuevas. Ahora elige cuál lenguaje aprenderás para reconstruir el mundo.",
+      "narrative": "FRAG: 'Has cruzado el puente. Los bloques eran tu entrenamiento. Ahora necesitas un lenguaje real para operar estas máquinas. Cinco terminales — cuatro dañadas por El Silencio. Solo JavaScript sigue operativo. ¿Confirmas tu elección?'",
+      "mechanic": "Pantalla de selección. JavaScript activo. Python, C#, Rust, Go: bloqueados con mensaje narrativo.",
+      "concept": "elección de lenguaje de programación",
+      "fragAvailable": false,
+      "optional": false,
+      "isReview": false,
+      "reviewOf": [],
+      "requiredObjects": [],
+      "rewardObjects": [],
+      "rewardCards": [
+        "card-013"
+      ],
+      "failRedirectTo": null
     },
     {
       "id": "3-R",
       "act": 3,
       "actName": "El Laboratorio de Lenguajes",
       "type": "review",
-      "title": "Calibración del sistema — Acto III",
-      "description": "El sistema del laboratorio requiere calibración antes de darte acceso al compilador de JavaScript. Verifica que entiendes la conexión entre pseudocódigo y código real.",
-      "narrative": "FRAG: 'Antes de escribir tu primera línea de JavaScript, el sistema requiere confirmar que la transición fue exitosa.'",
-      "mechanic": "3 fases: (1) quiz sobre la diferencia entre pseudocódigo y código real, (2) puzzle-match avanzado conectando bloques con conceptos JS, (3) mini ejercicio de traducción pseudocódigo → descripción JS.",
-      "concept": "repaso Acto III — transición pseudocódigo a JS",
+      "title": "Calibración del Traductor — Acto III",
+      "description": "Antes de escribir tu primera línea de JavaScript, el sistema verifica que la traducción de bloques a código real fue exitosa. Demuestra que reconoces cada concepto.",
+      "narrative": "FRAG: 'Si puedes traducir lo que ya sabes al nuevo idioma, estás listo para el siguiente paso. El sistema necesita confirmación antes de darte acceso al compilador.'",
+      "mechanic": "3 fases: (1) quiz sobre la diferencia entre pseudocódigo y código real, (2) puzzle-match con un par adicional no visto antes (while loop), (3) puzzle-match combinando todos los conceptos del acto.",
+      "concept": "repaso Acto III — transición de bloques a JavaScript",
       "fragAvailable": false,
       "optional": false,
       "isReview": true,
       "reviewOf": [
         "3-01",
         "3-02",
-        "3-03"
+        "3-03",
+        "3-04",
+        "3-05"
       ],
       "requiredObjects": [],
       "rewardObjects": [
@@ -1003,7 +1062,10 @@
       "rewardCards": [],
       "failRedirectTo": null,
       "reviewFailRedirect": {
-        "pseudocodigo_a_js": "3-03"
+        "variable_loop": "3-01",
+        "condicional_funcion": "3-02",
+        "sintaxis_completa": "3-03",
+        "herramientas_js": "3-04"
       },
       "maxStars": 3,
       "note": "El objeto 'referencia_lenguajes' solo se otorga con 3 estrellas."
