@@ -164,6 +164,7 @@ export function MatchPuzzle({ level, state, data, onComplete }: PuzzleLevelProps
                                 isHinted={isHinted}
                                 onClick={() => handleLeftClick(item.id)}
                                 relationColor={relationColor}
+                                isCode={item.isCode}
                             />
                         )
                     })}
@@ -191,6 +192,7 @@ export function MatchPuzzle({ level, state, data, onComplete }: PuzzleLevelProps
                                 isHinted={isHinted}
                                 onClick={() => handleRightClick(item.id)}
                                 relationColor={relationColor}
+                                isCode={item.isCode ?? data.isCode}
                             />
                         )
                     })}

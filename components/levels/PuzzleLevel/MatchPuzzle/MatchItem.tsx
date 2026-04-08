@@ -11,13 +11,14 @@ interface MatchItemProps {
     isWrong?: boolean;
     isRight?: boolean;
     isHinted?: boolean;
+    isCode?: boolean;
     selectedLeft?: boolean;
     relationColor?: string | null;
     onClick: () => void;
 }
 
 export function MatchItem(props: MatchItemProps) {
-    const { id, text, isSelected, isConnected, isCorrect, isWrong, onClick, isRight, selectedLeft, isConnectedTo, relationColor, isHinted } = props;
+    const { id, text, isSelected, isConnected, isCorrect, isWrong, isCode, onClick, isRight, selectedLeft, isConnectedTo, relationColor, isHinted } = props;
     const [isHovered, setIsHovered] = useState(false);
 
     // Estado consolidado para las funciones de ayuda
@@ -31,13 +32,37 @@ export function MatchItem(props: MatchItemProps) {
             onMouseLeave={() => setIsHovered(false)}
             className={getItemClasses(itemState)}
         >
+            {/* Decoración Code Editor (Solo si es código) */}
+            {isCode && (
+                <>
+                    <div className="absolute top-0 left-0 right-0 h-4 bg-black/40 flex items-center px-2 gap-1 border-b border-white/5 z-20">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#ff5f56] opacity-80" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#ffbd2e] opacity-80" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#27c93f] opacity-80" />
+                        <span className="ml-2 text-[8px] font-mono text-white/20 uppercase tracking-widest">script.js</span>
+                    </div>
+                    {/* Line numbers gutter */}
+                    <div className="absolute left-0 top-4 bottom-0 w-8 bg-black/20 border-r border-white/5 flex flex-col items-center pt-2 text-[9px] text-white/10 font-mono select-none z-10">
+                        <span>{id.split('-').pop()}</span>
+                    </div>
+                </>
+            )}
+
             {/* Capas de Feedback Visual */}
             {isHinted && <div className="absolute inset-0 bg-(--purple)/10 animate-pulse pointer-events-none" />}
             {isSelected && <div className="absolute inset-0 bg-(--bg-hover) opacity-10 animate-pulse pointer-events-none" />}
 
-            <span className={`relative z-10 w-full text-[13px] font-sans tracking-tight ${isRight ? 'text-right pr-8' : 'pl-8'}`}>
-                {text}
-            </span>
+            {isCode ? (
+                <div className={`relative z-10 w-full text-[13px] font-mono tracking-tight pt-3 ${isRight ? 'text-right pr-6' : 'pl-10'}`}>
+                    <code className="text-[#a6e22e] drop-shadow-[0_0_2px_rgba(166,226,46,0.3)]">
+                        {text}
+                    </code>
+                </div>
+            ) : (
+                <span className={`relative z-10 w-full text-[13px] font-sans tracking-tight leading-tight ${isRight ? 'text-right pr-10' : 'pl-10'}`}>
+                    {text}
+                </span>
+            )}
 
             {/* El LED de hardware (Punto de conexión) */}
             <HardwareLed colors={getLedColors(itemState)} isRight={isRight} />
@@ -51,9 +76,9 @@ export function MatchItem(props: MatchItemProps) {
 
 // --- LÓGICA DE ESTILOS (Tailwind) ---
 const getItemClasses = (state: any) => {
-    const { isCorrect, isSelected, isHinted, isWrong, isConnected, isConnectedTo, isRight, selectedLeft } = state;
+    const { isCorrect, isSelected, isHinted, isWrong, isConnected, isConnectedTo, isRight, selectedLeft, isCode } = state;
 
-    const base = "group rounded-sm px-4 py-3 flex items-center justify-between gap-3 transition-all duration-200 select-none border relative overflow-hidden h-12";
+    const base = "group rounded-sm px-4 py-3 flex items-center justify-between gap-3 transition-all duration-200 select-none border relative overflow-hidden h-14";
 
     // Cursor y Opacidad según contexto
     const interactive = (isRight && !selectedLeft && !isConnectedTo)
@@ -61,7 +86,9 @@ const getItemClasses = (state: any) => {
         : 'cursor-pointer active:scale-[0.98]';
 
     // Temas de Color
-    let theme = 'border-[#1a1f26] bg-(--bg-deep) text-(--text-muted) hover:bg-(--bg-hover) hover:text-(--text-primary)';
+    let theme = isCode 
+        ? 'border-white/5 bg-[#1e1e1e] text-(--text-muted) hover:bg-[#252525]' 
+        : 'border-[#1a1f26] bg-(--bg-deep) text-(--text-muted) hover:bg-(--bg-hover) hover:text-(--text-primary)';
 
     if (isCorrect) theme = 'bg-(--green-darkest)/50 border-(--green-base) text-(--green-light) shadow-[0_0_15px_rgba(45,120,0,0.1)]';
     else if (isWrong) theme = 'bg-red-950/30 border-(--red) text-(--red)';
