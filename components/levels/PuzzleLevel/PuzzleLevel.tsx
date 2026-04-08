@@ -4,7 +4,7 @@ import { PuzzleLevelProps, PUZZLE_DATA } from './types'
 import { SortPuzzle } from './SortPuzzle'
 import { FillPuzzle } from './FillPuzzle'
 import { BugPuzzle } from './BugPuzzle'
-import { MatchPuzzle } from './MatchPuzzle'
+import { MatchPuzzle } from './MatchPuzzle/MatchPuzzle'
 
 export default function PuzzleLevel(props: PuzzleLevelProps) {
     let data = PUZZLE_DATA[props.level.id]

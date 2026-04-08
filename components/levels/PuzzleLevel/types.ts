@@ -280,10 +280,10 @@ export const MATCH_RIGHT: Record<string, { id: string; text: string }[]> = {
 }
 
 export const CONNECTION_COLORS = [
-    'var(--cyan)',
-    'var(--purple)',
-    'var(--amber)',
-    'var(--blue)',
+    'var(--block-girar)',
+    'var(--block-activar)',
+    'var(--block-llamar)',
+    'var(--block-repetir)',
     '#55e200', // green-light
     '#E24B4A'  // red
 ]
