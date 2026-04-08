@@ -182,7 +182,7 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                     <div className="flex items-center gap-4">
                         {!isFirst && (
                             <TheoryButton
-                                variant="secondary"
+                                color="secondary"
                                 size="md"
                                 onClick={prev}
                                 icon={ChevronLeft}
@@ -192,7 +192,7 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                         )}
 
                         <TheoryButton
-                            variant={isLast ? 'success' : 'primary'}
+                            color={isLast ? 'success' : 'primary'}
                             size="md"
                             onClick={next}
                             icon={isLast ? CheckCircle2 : ChevronRight}

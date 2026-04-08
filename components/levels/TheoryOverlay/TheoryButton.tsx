@@ -2,10 +2,12 @@ import { ElementType, ReactNode } from "react";
 import { motion, HTMLMotionProps } from "motion/react";
 import { LucideIcon } from "lucide-react";
 
-type TheoryButtonVariant = 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info';
+type TheoryButtonColor = 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info';
+type TheoryButtonVariant = 'solid' | 'ghost' | 'outline' | 'text';
 type TheoryButtonSize = 'sm' | 'md' | 'lg';
 
 interface TheoryButtonProps extends Omit<HTMLMotionProps<"button">, 'children'> {
+    color?: TheoryButtonColor;
     variant?: TheoryButtonVariant;
     size?: TheoryButtonSize;
     icon?: LucideIcon | ElementType;
@@ -16,7 +18,8 @@ interface TheoryButtonProps extends Omit<HTMLMotionProps<"button">, 'children'> 
 
 
 export function TheoryButton({
-    variant = 'primary',
+    color = 'primary',
+    variant = 'solid',
     size = 'md',
     icon: Icon,
     iconPosition = 'left',
@@ -27,40 +30,65 @@ export function TheoryButton({
     ...props
 }: TheoryButtonProps) {
     // Colors configuration (using variables from AGENTS.md)
-    const variantConfig: Record<TheoryButtonVariant, { base: string, text: string, shadow: string }> = {
+    const colorConfig: Record<TheoryButtonColor, { bg: string, text: string, onBg: string, border: string, shadow: string, sweep: string }> = {
         primary: {
-            base: 'bg-(--purple)',
-            text: 'text-(--bg-deep)',
+            bg: 'bg-(--purple)',
+            text: 'text-(--purple)',
+            onBg: 'text-(--bg-deep)',
+            border: 'border-(--purple)',
+            sweep: 'bg-(--bg-deep)/10',
             shadow: 'rgba(127, 119, 221, 0.4)'
         },
         secondary: {
-            base: 'bg-(--bg-hover)',
+            bg: 'bg-(--bg-hover)',
             text: 'text-(--text-muted)',
+            onBg: 'text-(--text-primary)',
+            border: 'border-(--bg-hover)',
+            sweep: 'bg-white/5',
             shadow: 'rgba(0, 0, 0, 0.2)'
         },
         danger: {
-            base: 'bg-(--red)',
-            text: 'text-(--text-primary)',
+            bg: 'bg-(--red)',
+            text: 'text-(--red)',
+            onBg: 'text-(--text-primary)',
+            border: 'border-(--red)',
+            sweep: 'bg-black/10',
             shadow: 'rgba(226, 75, 74, 0.4)'
         },
         success: {
-            base: 'bg-(--green-light)/90',
-            text: 'text-(--green-darkest)',
+            bg: 'bg-(--green-light)',
+            text: 'text-(--green-light)',
+            onBg: 'text-(--green-darkest)',
+            border: 'border-(--green-light)',
+            sweep: 'bg-black/10',
             shadow: 'rgba(126, 213, 38, 0.4)'
         },
         warning: {
-            base: 'bg-(--amber)',
-            text: 'text-(--bg-void)',
+            bg: 'bg-(--amber)',
+            text: 'text-(--amber)',
+            onBg: 'text-(--bg-void)',
+            border: 'border-(--amber)',
+            sweep: 'bg-black/10',
             shadow: 'rgba(239, 159, 39, 0.4)'
         },
         info: {
-            base: 'bg-(--cyan)',
-            text: 'text-(--bg-void)',
+            bg: 'bg-(--cyan)',
+            text: 'text-(--cyan)',
+            onBg: 'text-(--bg-void)',
+            border: 'border-(--cyan)',
+            sweep: 'bg-black/10',
             shadow: 'rgba(25, 200, 212, 0.4)'
         }
     };
 
-    const config = variantConfig[variant];
+    const config = colorConfig[color];
+
+    const variantClasses = {
+        solid: `${config.bg} ${config.onBg} ${config.border} hover:brightness-110`,
+        outline: `bg-transparent ${config.text} ${config.border} ${config.bg.replace('bg-', 'hover:bg-')}/10`,
+        ghost: `${config.bg}/5 ${config.text} border-transparent ${config.bg.replace('bg-', 'hover:bg-')}/15`,
+        text: `bg-transparent ${config.text} border-transparent px-2 ${config.bg.replace('bg-', 'hover:bg-')}/10`
+    }[variant];
 
     const sizeClasses = {
         sm: 'px-3 py-1.5 text-[10px] gap-1.5',
@@ -77,37 +105,25 @@ export function TheoryButton({
     return (
         <motion.button
             whileHover={!disabled && !isLoading ? {
-                x: 4,
                 filter: 'brightness(1.1) contrast(1.1)',
-                transition: { type: 'spring', stiffness: 400, damping: 10 }
+                transition: { duration: 0.2 }
             } : {}}
-            whileTap={!disabled && !isLoading ? { x: 1, filter: 'brightness(0.9)' } : {}}
+            whileTap={!disabled && !isLoading ? { scale: 0.98, filter: 'brightness(0.9)' } : {}}
             className={`
                 relative group flex items-center justify-center font-mono font-bold uppercase tracking-widest transition-all duration-200
                 border rounded-xs overflow-hidden
                 ${sizeClasses[size]}
                 ${disabled || isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                ${variantStylesToClasses(variantClasses)}
+                ${variant === 'solid' ? 'shadow-[0_4px_15px_-5px_var(--accent-color)]' : ''}
                 ${className}
-                ${variant === 'secondary' ? 'bg-(--bg-hover)' : config.base}
-                border-(--bg-hover)
-                ${variant === 'secondary' ? 'text-(--text-primary)' : config.text}
-                shadow-[0_4px_15px_-5px_var(--accent-color)]
             `}
             style={{
-                "--accent-color": config.base,
+                "--accent-color": config.shadow,
             } as any}
             disabled={disabled || isLoading}
             {...props}
         >
-            {/* Digital Scanline Effect (Only on Hover) */}
-            <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-20 transition-opacity">
-                <div className="absolute inset-0 bg-linear-to-b from-transparent via-white/40 to-transparent h-4 -top-4 group-hover:animate-[scanline_2s_linear_infinite]" />
-            </div>
-
-            {/* Left accent bar that expands on hover */}
-            <div
-                className={`absolute left-0 top-0 bottom-0 w-0 group-hover:w-1 transition-all duration-200 ${config.text}`}
-            />
 
             {/* Content orientation */}
             <div className="relative z-10 flex items-center gap-2">
@@ -127,4 +143,9 @@ export function TheoryButton({
             </div>
         </motion.button>
     );
+}
+
+// Helper to keep the JSX cleaner
+function variantStylesToClasses(classes: string) {
+    return classes;
 }

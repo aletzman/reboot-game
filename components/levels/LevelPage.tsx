@@ -286,18 +286,18 @@ export default function LevelPage({
     const reviewHint = getReviewHint(levelId, allLevels)
     const fragHint = level.fragAvailable && levelState.status === 'failed' ? fragHintToDisplay : ""
 
-    if (showingTheory && level.theory) {
-        return (
-            <TheoryOverlay theory={level.theory} onComplete={() => setShowingTheory(false)} />
-        )
-    }
+    /* if (showingTheory && level.theory) {
+         return (
+             <TheoryOverlay theory={level.theory} onComplete={() => setShowingTheory(false)} />
+         )
+     }*/
 
 
     return (
         <div className="flex flex-col h-[calc(100svh-var(--header-height))] bg-(--bg-void)">
-            {/*showingTheory && level.theory && (
+            {showingTheory && level.theory && (
                 <TheoryOverlay theory={level.theory} onComplete={() => setShowingTheory(false)} />
-            )*/}
+            )}
 
             <main key={resetKey} className="flex-1 flex flex-col">
                 {renderLevelComponent(level, levelState, handleComplete, handleFragUse, handleStatusChange)}

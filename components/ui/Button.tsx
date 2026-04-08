@@ -179,15 +179,6 @@ export function Button({
             {/* Brillo industrial superior */}
             <div className="absolute inset-0 pointer-events-none opacity-[0.25] bg-[linear-gradient(rgba(255,255,255,0.2)_0%,rgba(0,0,0,0.3)_100%)]" />
 
-            {/* Luz de estado lateral */}
-            {(variant !== 'ghost' && variant !== 'text' && variant !== 'outline') && (
-                <div
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[55%] rounded-r-full transition-all duration-300 opacity-60 group-hover:opacity-100 group-hover:scale-y-110"
-                    style={{ backgroundColor: accentColor, boxShadow: `0 0 8px ${accentColor}` }}
-                />
-            )}
-
-
             <span className={`relative z-10 flex items-center w-full ${Icon ? "justify-center" : "justify-center"} gap-2`}>
                 {Icon && iconPosition === "left" && <span className='flex items-center justify-center pl-1.5'><Icon size={iconSize} className="shrink-0" /></span>}
                 <span className="pt-[2px]">{children}</span>
