@@ -12,6 +12,7 @@ import type {
 } from '@/types/game'
 import * as access from '@/lib/game/access'
 import { isDemoModeActive } from '@/lib/store/useDemoStore'
+import { isDebugModeActive } from '@/lib/store/useDebugStore'
 
 // ------------------------------------------------------------
 // CONSTANTES
@@ -206,11 +207,11 @@ export function getObjects(): string[] {
 // ------------------------------------------------------------
 
 export function canAccessLevel(levelId: string, levels: Level[]): LevelAccessResult {
-  return access.canAccessLevel(levelId, getSave(), levels, isDemoModeActive())
+  return access.canAccessLevel(levelId, getSave(), levels, isDemoModeActive(), isDebugModeActive())
 }
 
 export function requiresLogin(levelId: string): boolean {
-  if (isDemoModeActive()) return false
+  if (isDemoModeActive() || isDebugModeActive()) return false
   return access.requiresLogin(levelId)
 }
 
@@ -249,7 +250,7 @@ export function getActSummary(actNumber: ActNumber, levels: Level[]): ActSummary
 }
 
 export function isActUnlocked(actNumber: number, levels: Level[]): boolean {
-  return access.isActUnlocked(actNumber, getSave(), levels, isDemoModeActive())
+  return access.isActUnlocked(actNumber, getSave(), levels, isDemoModeActive(), isDebugModeActive())
 }
 
 export function getCurrentAct(): ActNumber {

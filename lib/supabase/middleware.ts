@@ -35,6 +35,10 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
   const demoMode = request.cookies.get('reboot_demo_mode')?.value === 'true'
+  const debugMode = request.cookies.get('reboot_debug_mode')?.value === 'true'
+
+  // Si estamos en modo debug, permitimos todo
+  if (debugMode) return supabaseResponse
 
   // Lógica de protección de rutas de Juego
   const gamePathRegex = /^\/game\/(\d+)(?:\/level\/([^\/]+))?/
@@ -90,13 +94,13 @@ export async function updateSession(request: NextRequest) {
         }
 
         if (levelId) {
-          const access = canAccessLevel(levelId, save, levels)
+          const access = canAccessLevel(levelId, save, levels, demoMode, debugMode)
           if (!access.allowed) {
             console.log(`[MIDDLEWARE] Bloqueando acceso a nivel ${levelId}`)
             return NextResponse.redirect(new URL(`/game/${actId}`, request.url))
           }
         } else {
-          if (!isActUnlocked(actId, save, levels)) {
+          if (!isActUnlocked(actId, save, levels, demoMode, debugMode)) {
             console.log(`[MIDDLEWARE] Bloqueando acceso a Acto ${actId}`)
             return NextResponse.redirect(new URL('/game', request.url))
           }

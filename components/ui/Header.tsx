@@ -9,6 +9,8 @@ import { getSave, getTotalStars } from "@/lib/gameState";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useDemoStore } from "@/lib/store/useDemoStore";
+import { useDebugStore } from "@/lib/store/useDebugStore";
+import { Terminal } from "lucide-react";
 
 interface HeaderProps {
     viewMenu?: boolean;
@@ -18,9 +20,17 @@ interface HeaderProps {
 export function Header({ viewMenu, showStats }: HeaderProps) {
     const [stats, setStats] = useState<{ name: string; stars: number } | null>(null);
     const { demoMode, toggleDemoMode: _toggleDemoMode } = useDemoStore();
+    const { debugMode, toggleDebugMode: _toggleDebugMode } = useDebugStore();
 
     const toggleDemoMode = () => {
         _toggleDemoMode();
+        if (typeof window !== 'undefined') {
+            window.location.reload();
+        }
+    }
+
+    const toggleDebugMode = () => {
+        _toggleDebugMode();
         if (typeof window !== 'undefined') {
             window.location.reload();
         }
@@ -86,6 +96,28 @@ export function Header({ viewMenu, showStats }: HeaderProps) {
                         {demoMode ? "DEMO_MODE_ON" : "DEMO_MODE_OFF"}
                     </span>
                 </button>
+
+                {/* Botón DEBUG (Solo en DEV) */}
+                {process.env.NODE_ENV === 'development' && (
+                    <button
+                        onClick={toggleDebugMode}
+                        className={`group relative flex items-center gap-2 cursor-pointer px-3 py-1 border transition-all duration-300 overflow-hidden rounded-sm ${debugMode
+                            ? "bg-(--cyan) border-(--cyan) text-black shadow-[0_0_15px_rgba(25,200,212,0.2)]"
+                            : "bg-black/40 border-(--border-color) text-(--text-ghost) hover:border-(--cyan)/50 hover:text-(--cyan)"
+                            }`}
+                        title="DEBUG_MODE: Acceso total al sistema"
+                    >
+                        {debugMode ? (
+                            <Terminal size={12} className="relative z-10" />
+                        ) : (
+                            <div className="w-1 h-1 rounded-full bg-(--text-ghost) relative z-10" />
+                        )}
+
+                        <span className="text-[12px] font-mono font-semibold uppercase relative z-10 hidden sm:block">
+                            {debugMode ? "DEBUG_ON" : "DEBUG_OFF"}
+                        </span>
+                    </button>
+                )}
 
                 {/* Navegación Táctica */}
                 {viewMenu && (

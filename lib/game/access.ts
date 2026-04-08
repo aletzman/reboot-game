@@ -8,8 +8,11 @@ export function canAccessLevel(
   levelId: string,
   save: GameSave | null,
   levels: Level[],
-  demoMode = false
+  demoMode = false,
+  debugMode = false
 ): LevelAccessResult {
+  if (debugMode) return { allowed: true }
+
   // Demo mode limits: 6 sectors, 4 levels per sector
   if (demoMode) {
     const level = levels.find(l => l.id === levelId);
@@ -51,7 +54,7 @@ export function canAccessLevel(
   }
 
   // Verificar que el acto esté desbloqueado
-  if (!isActUnlocked(level.act, save, levels, demoMode)) {
+  if (!isActUnlocked(level.act, save, levels, demoMode, debugMode)) {
     return { allowed: false, reason: 'locked', requiredAct: level.act }
   }
 
@@ -83,8 +86,10 @@ export function isActUnlocked(
   actNumber: number,
   save: GameSave | null,
   levels: Level[],
-  demoMode = false
+  demoMode = false,
+  debugMode = false
 ): boolean {
+  if (debugMode) return true;
   if (demoMode) return actNumber <= 4;
   if (actNumber <= 0) return true
   if (!save) return false
