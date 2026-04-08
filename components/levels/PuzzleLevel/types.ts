@@ -12,9 +12,10 @@ export interface PuzzleData {
     type: 'sort' | 'fill' | 'bug' | 'match'
     items: PuzzleItem[]
     pairs?: MatchPair[]      // solo para match
-    rightItems?: { id: string; text: string }[] // nuevo: para match dinámico
+    rightItems?: PuzzleItem[] // nuevo: para match dinámico
     bugLineIndex?: number    // solo para bug
     fillAnswers?: string[]   // respuestas correctas para fill
+    isCode?: boolean
 }
 
 export interface PuzzleItem {
@@ -93,14 +94,50 @@ export const PUZZLE_DATA: Record<string, PuzzleData> = {
         ],
     },
 
-    // MATCH — emparejar conceptos
+    // MATCH — nivel 3-01: variable y loop (antes PuzzleReveal)
+    '3-01': {
+        type: 'match',
+        items: [
+            { id: 'l1', text: 'ASIGNAR: energía = 100', isCode: false },
+            { id: 'l2', text: 'REPETIR(4) { MOVER }', isCode: false },
+        ],
+        pairs: [
+            { leftId: 'l1', rightId: 'r1' },
+            { leftId: 'l2', rightId: 'r2' },
+        ],
+        rightItems: [
+            { id: 'r1', text: 'let energia = 100;' },
+            { id: 'r2', text: 'for(let i=0; i<4; i++) { robot.move(); }' },
+        ],
+        isCode: true,
+    },
+
+    // MATCH — nivel 3-02: condicional y función (antes PuzzleReveal)
+    '3-02': {
+        type: 'match',
+        items: [
+            { id: 'l1', text: "SI sensor==ROJO { GIRAR }", isCode: false },
+            { id: 'l2', text: 'FUNCIÓN escanear() { ACTIVAR }', isCode: false },
+        ],
+        pairs: [
+            { leftId: 'l1', rightId: 'r1' },
+            { leftId: 'l2', rightId: 'r2' },
+        ],
+        rightItems: [
+            { id: 'r1', text: "if(sensor === 'rojo') { robot.turn('left'); }" },
+            { id: 'r2', text: 'function escanear() { robot.activate(); }' },
+        ],
+        isCode: true,
+    },
+
+    // MATCH — nivel 3-03: todos los conceptos juntos
     '3-03': {
         type: 'match',
         items: [
-            { id: 'l1', text: '→ avanzar', isCode: false },
-            { id: 'l2', text: '↻ repetir 3 veces', isCode: false },
-            { id: 'l3', text: '◇ si condición', isCode: false },
-            { id: 'l4', text: 'ƒ función guardar', isCode: false },
+            { id: 'l1', text: 'VARIABLE: nombre = 5', isCode: false },
+            { id: 'l2', text: 'REPETIR(3) { MOVER }', isCode: false },
+            { id: 'l3', text: "SI panel==VERDE { ACTIVAR }", isCode: false },
+            { id: 'l4', text: 'FUNCIÓN mover(n) { MOVER(n) }', isCode: false },
         ],
         pairs: [
             { leftId: 'l1', rightId: 'r1' },
@@ -108,6 +145,37 @@ export const PUZZLE_DATA: Record<string, PuzzleData> = {
             { leftId: 'l3', rightId: 'r3' },
             { leftId: 'l4', rightId: 'r4' },
         ],
+        rightItems: [
+            { id: 'r1', text: 'let nombre = 5;' },
+            { id: 'r2', text: 'for(let i=0; i<3; i++) { robot.move(); }' },
+            { id: 'r3', text: "if(panel === 'verde') { robot.activate(); }" },
+            { id: 'r4', text: 'function mover(n) { robot.move(n); }' },
+        ],
+        isCode: true,
+    },
+
+    // MATCH — nivel 3-04: conceptos avanzados (antes PuzzleReveal)
+    '3-04': {
+        type: 'match',
+        items: [
+            { id: 'l1', text: 'IMPRIMIR "estado: OK"', isCode: false },
+            { id: 'l2', text: 'TEXTO: "Sector 7"', isCode: false },
+            { id: 'l3', text: 'energía ES_IGUAL 0', isCode: false },
+            { id: 'l4', text: 'NOTA: // esto es una nota', isCode: false },
+        ],
+        pairs: [
+            { leftId: 'l1', rightId: 'r1' },
+            { leftId: 'l2', rightId: 'r2' },
+            { leftId: 'l3', rightId: 'r3' },
+            { leftId: 'l4', rightId: 'r4' },
+        ],
+        rightItems: [
+            { id: 'r1', text: "console.log('estado: OK');" },
+            { id: 'r2', text: "let zona = 'Sector 7';" },
+            { id: 'r3', text: 'if(energia === 0) { /* sin energía */ }' },
+            { id: 'r4', text: '// esto es un comentario' },
+        ],
+        isCode: true,
     },
 
     // BUG con JS — nivel 4-02
@@ -258,18 +326,12 @@ export const PUZZLE_DATA: Record<string, PuzzleData> = {
     },
 }
 
-export const MATCH_RIGHT: Record<string, { id: string; text: string }[]> = {
+export const MATCH_RIGHT: Record<string, PuzzleItem[]> = {
     'P-01': [
         { id: 'r1', text: '4' },
         { id: 'r2', text: 'B' },
         { id: 'r3', text: '□' },
         { id: 'r4', text: 'OOOO' },
-    ],
-    '3-03': [
-        { id: 'r1', text: 'secuencia' },
-        { id: 'r2', text: 'loop / repetición' },
-        { id: 'r3', text: 'condicional' },
-        { id: 'r4', text: 'función' },
     ],
     '1-05': [
         { id: 'r1', text: 'avanzar' },
