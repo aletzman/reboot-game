@@ -877,7 +877,7 @@
       "type": "review",
       "title": "Protocolo de verificación — Acto II",
       "description": "Antes de acceder al Laboratorio de Lenguajes, el sistema verifica que dominas el pseudocódigo completo.",
-      "narrative": "FRAG: 'El laboratorio de lenguajes requiere verificación avanzada. Pseudocódigo, funciones, variables, debugging — todo.'",
+      "narrative": "FRAG: 'Los Cimientos del Sistema requiere verificación avanzada. Pseudocódigo, funciones, variables, debugging — todo.'",
       "mechanic": "3 fases: (1) quiz sobre conceptos del acto, (2) puzzle-fill + puzzle-bug combinados, (3) mini-logicassembly que construye un programa completo desde cero.",
       "concept": "repaso Acto II — pseudocódigo, función, variable, debugging",
       "fragAvailable": false,
@@ -912,163 +912,206 @@
     {
       "id": "3-01",
       "act": 3,
-      "actName": "El Laboratorio de Lenguajes",
-      "type": "puzzle-match",
-      "title": "Señales Familiares",
-      "description": "Entras al Laboratorio de Lenguajes. Las terminales muestran símbolos extraños, pero FRAG detecta algo: esos símbolos representan cosas que ya conoces. Empieza por las más básicas.",
-      "narrative": "FRAG: 'Operador, mira esas pantallas. No son nuevas — son los mismos conceptos que usaste con mis bloques, pero escritos en otro dialecto. Veamos si reconoces los dos primeros.'",
-      "mechanic": "Se muestran 2 pares lado a lado: bloque conocido a la izquierda, código JS equivalente a la derecha. El jugador arrastra para conectarlos. Solo variable y loop.",
-      "concept": "primera exposición a variable y loop en sintaxis JS",
+      "actName": "Los Cimientos del Sistema",
+      "type": "concept-trial",
+      "title": "El Orden del Caos",
+      "description": "Te encuentras frente a un Bot Barista averiado del viejo mundo. FRAG dice que no está roto… solo está siguiendo instrucciones en el orden equivocado.",
+      "narrative": "'Las máquinas no entienden intenciones. Solo siguen órdenes… en el orden exacto en que se las das. Cambia el orden… y cambias el resultado.'",
+      "mechanic": "Ordenar 5 bloques de acciones: Tomar foto, Abrir cámara, Desbloquear celular, Apuntar al objeto, Encender celular",
+      "concept": "Entender que el orden de los pasos importa.",
       "fragAvailable": true,
       "fragHint": [
-        "El bloque ASIGNAR y la palabra 'let' hacen exactamente lo mismo: guardar un valor en una caja con nombre.",
-        "REPETIR y 'for' son la misma idea — repetir algo un número fijo de veces."
+        "No puedes tomar una foto si el celular está apagado.",
+        "Algunas cosas tienen que pasar antes que otras."
       ],
       "optional": false,
       "isReview": false,
-      "reviewOf": [],
-      "requiredObjects": [
-        "coordenadas_laboratorio",
-        "tarjeta_acceso_laboratorio"
-      ],
-      "rewardObjects": [
-        "mapa_laboratorio"
-      ],
+      "maxStars": 2,
       "rewardCards": [],
-      "failRedirectTo": null,
-      "maxStars": 2
+      "rewardObjects": [],
+      "theory": [
+        {
+          "step": 1,
+          "title": "Las máquinas siguen pasos",
+          "content": "Una máquina no piensa como tú. No adivina, no interpreta. Solo sigue los pasos exactamente como se los das.",
+          "explanation": ""
+        },
+        {
+          "step": 2,
+          "title": "El orden cambia todo",
+          "content": "Si haces los pasos en el orden incorrecto, nada funciona. Es como intentar tomar una foto con el celular apagado.",
+          "explanation": "Ordena los pasos correctamente:"
+        },
+        {
+          "step": 3,
+          "title": "Un nombre para esto",
+          "content": "A esta forma de resolver cosas paso a paso se le llama 'algoritmo'. No te preocupes por el nombre… lo importante es entender el orden.",
+          "explanation": ""
+        }
+      ]
     },
     {
       "id": "3-02",
       "act": 3,
-      "actName": "El Laboratorio de Lenguajes",
-      "type": "puzzle-match",
-      "title": "Los Pilares Lógicos",
-      "description": "Ya reconociste las variables y los bucles. Ahora FRAG activa dos terminales más: la que decide y la que agrupa. Condicionales y funciones en su forma real.",
-      "narrative": "FRAG: 'Dos de los pilares que sostienen cualquier programa: la capacidad de decidir y la capacidad de reutilizar. Los bloques SI y FUNCIÓN tienen equivalentes directos. Encuéntralos.'",
-      "mechanic": "Se muestran 2 pares lado a lado: bloque SI con if, bloque FUNCIÓN con function. El jugador arrastra para conectarlos.",
-      "concept": "exposición a condicional y función en sintaxis JS",
+      "actName": "Los Cimientos del Sistema",
+      "type": "concept-trial",
+      "title": "El Almacén de Datos",
+      "description": "Las terminales de este sector han perdido sus etiquetas. Sin nombres, la información se mezcla y el sistema no sabe qué es cada cosa.",
+      "narrative": "'Guardar información sin orden es como tener cajas sin etiquetas. Sabes que algo está ahí… pero no sabes qué es ni dónde está.'",
+      "mechanic": "Arrastrar datos a cajas con nombre. Cajas: Nombre, Energía, Mascota. Datos: Arturo, 100, Firulais.",
+      "concept": "Entender que podemos guardar información usando nombres.",
       "fragAvailable": true,
       "fragHint": [
-        "El bloque SI y la palabra 'if' hacen lo mismo: ejecutar código solo si una condición es verdadera.",
-        "FUNCIÓN y 'function' son idénticos: empaquetas una serie de pasos bajo un nombre para reutilizarlos."
+        "Cada dato debe ir en la caja que mejor lo describa.",
+        "Piensa: ¿qué tipo de información es cada elemento?"
       ],
       "optional": false,
       "isReview": false,
-      "reviewOf": [],
-      "requiredObjects": [
-        "mapa_laboratorio"
-      ],
-      "rewardObjects": [],
+      "maxStars": 2,
       "rewardCards": [],
-      "failRedirectTo": "3-01",
-      "maxStars": 2
+      "rewardObjects": [],
+      "theory": [
+        {
+          "step": 1,
+          "title": "Guardar información",
+          "content": "Las máquinas necesitan guardar información para poder usarla después. Por ejemplo: un nombre, una cantidad o cualquier dato importante.",
+          "explanation": ""
+        },
+        {
+          "step": 2,
+          "title": "Las cajas con nombre",
+          "content": "Para no perder la información, usamos 'cajas' con nombre. Así sabemos exactamente dónde está cada cosa.",
+          "explanation": "Arrastra cada dato a la caja correcta."
+        },
+        {
+          "step": 3,
+          "title": "Un nombre para esto",
+          "content": "A estas cajas con nombre se les llama 'variables'. No te preocupes por el término… lo importante es entender que sirven para guardar información.",
+          "explanation": ""
+        }
+      ]
     },
     {
       "id": "3-03",
       "act": 3,
-      "actName": "El Laboratorio de Lenguajes",
-      "type": "puzzle-match",
-      "title": "La primera mirada",
-      "description": "Por primera vez ves código JavaScript real. No tienes que escribirlo — solo reconocer lo que ya sabes detrás de una forma diferente.",
-      "narrative": "FRAG: 'Esto es JavaScript. Puede verse intimidante al principio. Pero mira — ya conoces todo lo que hace. Solo tiene una forma diferente de escribirse.'",
-      "mechanic": "Se muestran pares lado a lado: bloque Scratch conocido a la izquierda, código JS equivalente a la derecha. El jugador arrastra para conectarlos. Lee el código pero no lo escribe.",
-      "concept": "primera exposición pasiva a sintaxis JS",
+      "actName": "Los Cimientos del Sistema",
+      "type": "concept-trial",
+      "title": "La Puerta del Destino",
+      "description": "Un guardián digital bloquea el acceso. Solo te dejará pasar si cumples con su condición.",
+      "narrative": "'No todo en un sistema es una secuencia. A veces, hay que decidir. Y una mala decisión… cambia todo el resultado.'",
+      "mechanic": "Completar una decisión: SI tienes suficientes monedas → Pasar puente / SI NO → Pelear con el Troll.",
+      "concept": "Entender que un programa puede tomar decisiones.",
       "fragAvailable": true,
-      "fragHint": "No te fijes en los símbolos todavía. Pregúntate: ¿qué hace este código? Ya lo conoces con otro nombre.",
+      "fragHint": [
+        "Primero piensa: ¿qué tiene que pasar para poder cruzar?",
+        "Si no se cumple la condición, ocurrirá la otra acción."
+      ],
       "optional": false,
       "isReview": false,
-      "reviewOf": [],
-      "requiredObjects": [],
-      "rewardObjects": [
-        "plano_sintaxis_js"
-      ],
+      "maxStars": 2,
       "rewardCards": [],
-      "failRedirectTo": null,
-      "maxStars": 2
+      "rewardObjects": [],
+      "theory": [
+        {
+          "step": 1,
+          "title": "Tomar decisiones",
+          "content": "Un programa no siempre hace lo mismo. Puede reaccionar dependiendo de lo que ocurra.",
+          "explanation": ""
+        },
+        {
+          "step": 2,
+          "title": "Si pasa algo…",
+          "content": "Podemos decirle a la máquina: 'Si pasa algo, haz esto. Si no, haz otra cosa.'",
+          "explanation": "Completa la decisión correctamente:"
+        },
+        {
+          "step": 3,
+          "title": "Un nombre para esto",
+          "content": "A esto se le llama una 'condición'. Es la forma en que el programa decide qué hacer.",
+          "explanation": ""
+        }
+      ]
     },
     {
       "id": "3-04",
       "act": 3,
-      "actName": "El Laboratorio de Lenguajes",
-      "type": "puzzle-match",
-      "title": "Más Allá de los Bloques",
-      "description": "Los bloques cubrían lo esencial, pero JavaScript tiene herramientas que no existían en tus flechas ni en tus cajas. Es hora de conocer las nuevas.",
-      "narrative": "FRAG: 'Ahora entramos en territorio nuevo. Estas herramientas no las tenías antes: imprimir mensajes en pantalla, textos con comillas, comparaciones exactas y notas para tu yo del futuro. Son el puente hacia el código real.'",
-      "mechanic": "Se muestran 4 pares: IMPRIMIR→console.log, TEXTO→string, COMPARAR→===, NOTA→//. Conceptos que no tenían bloque directo en los actos anteriores.",
-      "concept": "herramientas JS sin equivalente directo en bloques",
+      "actName": "Los Cimientos del Sistema",
+      "type": "concept-trial",
+      "title": "El Clonador Infinito",
+      "description": "Hay que restaurar el suministro agrícola de este sector. Plantar a mano nos tomaría ciclos enteros; necesitamos automatización.",
+      "narrative": "FRAG: 'Imagina que tienes que pintar una barda de 1 kilómetro. En programación, si quieres que algo se repita, no lo escribes mil veces. Usas un ejército invisible.'",
+      "mechanic": "Usar un bloque REPETIR (100) y colocar dentro la acción 'Plantar Semilla'.",
+      "concept": "Repetición de tareas y optimización de procesos.",
       "fragAvailable": true,
       "fragHint": [
-        "console.log es como un bloque IMPRIMIR que nunca tuviste: te permite ver lo que pasa dentro del código.",
-        "Las comillas convierten cualquier cosa en texto puro. Sin comillas, la máquina intenta ejecutarlo como orden.",
-        "El triple igual (===) es más estricto que el doble (==). En este búnker, la precisión salva vidas."
+        "No necesitas 100 bloques de semillas, solo un bloque que le diga a la máquina cuántas veces trabajar.",
+        "Todo lo que pongas dentro del bloque repetir se ejecutará una y otra vez."
       ],
       "optional": false,
       "isReview": false,
-      "reviewOf": [],
-      "requiredObjects": [],
-      "rewardObjects": [],
-      "rewardCards": [
-        "card-014"
-      ],
-      "failRedirectTo": "3-03",
-      "maxStars": 2
+      "maxStars": 2,
+      "theory": [
+        {
+          "step": 1,
+          "title": "Bucles (Loops)",
+          "content": "Es una orden que le das a la computadora para que repita una acción hasta que la tarea esté terminada.",
+          "explanation": "Es la herramienta definitiva para ahorrar tiempo y evitar errores manuales."
+        }
+      ]
     },
     {
       "id": "3-05",
       "act": 3,
-      "actName": "El Laboratorio de Lenguajes",
-      "type": "decision",
-      "title": "Elige tu lenguaje",
-      "description": "Ya tradujiste bloques a código real. Ya viste cómo se ve JavaScript. Ya descubriste herramientas nuevas. Ahora elige cuál lenguaje aprenderás para reconstruir el mundo.",
-      "narrative": "FRAG: 'Has cruzado el puente. Los bloques eran tu entrenamiento. Ahora necesitas un lenguaje real para operar estas máquinas. Cinco terminales — cuatro dañadas por El Silencio. Solo JavaScript sigue operativo. ¿Confirmas tu elección?'",
-      "mechanic": "Pantalla de selección. JavaScript activo. Python, C#, Rust, Go: bloqueados con mensaje narrativo.",
-      "concept": "elección de lenguaje de programación",
-      "fragAvailable": false,
+      "actName": "Los Cimientos del Sistema",
+      "type": "concept-trial",
+      "title": "El Botón Maestro",
+      "description": "Tu avatar de combate necesita un ataque especial. Si dictamos cada paso durante la pelea, seremos demasiado lentos.",
+      "narrative": "FRAG: 'A medida que tu programa crece, se vuelve difícil de leer. Crearemos un botón nuevo en tu tablero que resume muchas acciones en una sola palabra.'",
+      "mechanic": "Crear la función Torbellino() agrupando: Girar, Saltar y Golpear. Luego usar el bloque Torbellino() en combate.",
+      "concept": "Encapsulamiento y reutilización de código.",
+      "fragAvailable": true,
+      "fragHint": [
+        "Primero define qué hace el 'Torbellino' metiendo los pasos dentro del contenedor.",
+        "Una vez definida, puedes llamar a la función cuantas veces quieras con un solo bloque."
+      ],
       "optional": false,
       "isReview": false,
-      "reviewOf": [],
-      "requiredObjects": [],
-      "rewardObjects": [],
-      "rewardCards": [
-        "card-013"
-      ],
-      "failRedirectTo": null
+      "maxStars": 2,
+      "theory": [
+        {
+          "step": 1,
+          "title": "Funciones",
+          "content": "Es como crear un comando personalizado que resume una secuencia de pasos en una sola instrucción.",
+          "explanation": "Hacen que el código sea limpio, organizado y fácil de volver a usar."
+        }
+      ]
     },
     {
-      "id": "3-R",
+      "id": "3-06",
       "act": 3,
-      "actName": "El Laboratorio de Lenguajes",
-      "type": "review",
-      "title": "Calibración del Traductor — Acto III",
-      "description": "Antes de escribir tu primera línea de JavaScript, el sistema verifica que la traducción de bloques a código real fue exitosa. Demuestra que reconoces cada concepto.",
-      "narrative": "FRAG: 'Si puedes traducir lo que ya sabes al nuevo idioma, estás listo para el siguiente paso. El sistema necesita confirmación antes de darte acceso al compilador.'",
-      "mechanic": "3 fases: (1) quiz sobre la diferencia entre pseudocódigo y código real, (2) puzzle-match con un par adicional no visto antes (while loop), (3) puzzle-match combinando todos los conceptos del acto.",
-      "concept": "repaso Acto III — transición de bloques a JavaScript",
-      "fragAvailable": false,
+      "actName": "Los Cimientos del Sistema",
+      "type": "concept-trial",
+      "title": "La Mochila de Aventurero",
+      "description": "Has recolectado demasiados suministros. Si creamos una variable para cada uno, el sistema colapsará por el desorden.",
+      "narrative": "FRAG: '¿Qué pasa cuando tienes 50 ítems en tu mochila? Para eso existen los estantes numerados. Pero ten cuidado: las máquinas cuentan de forma distinta.'",
+      "mechanic": "Dada la lista [Poción, Hierba, Cristal], elegir el objeto en la posición 1 (Hierba).",
+      "concept": "Estructuras de datos indexadas.",
+      "fragAvailable": true,
+      "fragHint": [
+        "El primer objeto siempre está en la posición 0. No lo olvides.",
+        "Si el alquimista pide la posición 1, está buscando el segundo elemento de la lista."
+      ],
       "optional": false,
-      "isReview": true,
-      "reviewOf": [
-        "3-01",
-        "3-02",
-        "3-03",
-        "3-04",
-        "3-05"
-      ],
-      "requiredObjects": [],
-      "rewardObjects": [
-        "referencia_lenguajes"
-      ],
-      "rewardCards": [],
-      "failRedirectTo": null,
-      "reviewFailRedirect": {
-        "variable_loop": "3-01",
-        "condicional_funcion": "3-02",
-        "sintaxis_completa": "3-03",
-        "herramientas_js": "3-04"
-      },
-      "maxStars": 3,
-      "note": "El objeto 'referencia_lenguajes' solo se otorga con 3 estrellas."
+      "isReview": false,
+      "maxStars": 2,
+      "theory": [
+        {
+          "step": 1,
+          "title": "Arrays (Arreglos)",
+          "content": "Es como un estante de supermercado donde cada producto tiene un número de posición llamado índice.",
+          "explanation": "Es la forma más inteligente de manejar grandes listas de información sin volverse loco. ¡Y siempre empezamos desde el Cero!"
+        }
+      ]
     },
     {
       "id": "4-01",
