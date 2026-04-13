@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { Screw } from "./Screw";
 
 import { useUIStore } from "@/lib/store/useUIStore";
+import { FragLogo } from "../frag/FragLogo";
 
 interface DirectivesPanelProps {
     missionText: React.ReactNode;
@@ -117,16 +118,7 @@ export function DirectivesPanel({ missionText, infoText }: DirectivesPanelProps)
                                         {/* Header de la IA */}
                                         <div className="flex items-start gap-4 mb-3 border-b border-(--purple)/20 pb-3 relative z-10">
                                             {/* Visor Táctico */}
-                                            <div className="relative w-12 h-12 bg-black/80 border border-(--purple)/30 p-1 shrink-0">
-                                                <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-(--purple)" />
-                                                <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-(--purple)" />
-
-                                                <img
-                                                    src="/assets/frag_logo.png"
-                                                    alt="FRAG AI"
-                                                    className="w-full h-full object-contain opacity-90 animate-[pulse_3s_infinite] mix-blend-screen"
-                                                />
-                                            </div>
+                                            <FragLogo size={60} />
 
                                             {/* Datos Sistema */}
                                             <div className="flex flex-col justify-center h-12">

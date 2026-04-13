@@ -187,7 +187,7 @@ export default function TheoryOverlay({ theory, onComplete }: TheoryOverlayProps
                                 onClick={prev}
                                 icon={ChevronLeft}
                             >
-                                BACK
+                                ANTERIOR
                             </TheoryButton>
                         )}
 

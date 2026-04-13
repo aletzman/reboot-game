@@ -95,39 +95,37 @@ export const PUZZLE_DATA: Record<string, PuzzleData> = {
     },
 
     // MATCH — nivel 3-01: variable y loop (antes PuzzleReveal)
+    /* Moler granos, Abrir cámara, Desbloquear celular, Apuntar al objeto, Encender celular. Desordenados*/
     '3-01': {
-        type: 'match',
+        type: 'sort',
         items: [
-            { id: 'l1', text: 'ASIGNAR: energía = 100', isCode: false },
-            { id: 'l2', text: 'REPETIR(4) { MOVER }', isCode: false },
+            { id: 'l1', text: 'Tomar foto' },
+            { id: 'l2', text: 'Abrir cámara' },
+            { id: 'l3', text: 'Desbloquear celular' },
+            { id: 'l4', text: 'Apuntar al objeto' },
+            { id: 'l5', text: 'Encender celular' },
         ],
-        pairs: [
-            { leftId: 'l1', rightId: 'r1' },
-            { leftId: 'l2', rightId: 'r2' },
-        ],
-        rightItems: [
-            { id: 'r1', text: 'let energia = 100;' },
-            { id: 'r2', text: 'for(let i=0; i<4; i++) { robot.move(); }' },
-        ],
-        isCode: true,
     },
 
     // MATCH — nivel 3-02: condicional y función (antes PuzzleReveal)
     '3-02': {
         type: 'match',
         items: [
-            { id: 'l1', text: "SI sensor==ROJO { GIRAR }", isCode: false },
-            { id: 'l2', text: 'FUNCIÓN escanear() { ACTIVAR }', isCode: false },
+            { id: 'l1', text: "Nombre" },
+            { id: 'l2', text: 'Energía' },
+            { id: 'l3', text: 'Poder' },
         ],
         pairs: [
             { leftId: 'l1', rightId: 'r1' },
             { leftId: 'l2', rightId: 'r2' },
+            { leftId: 'l3', rightId: 'r3' },
         ],
         rightItems: [
-            { id: 'r1', text: "if(sensor === 'rojo') { robot.turn('left'); }" },
-            { id: 'r2', text: 'function escanear() { robot.activate(); }' },
+            { id: 'r1', text: "Carlos" },
+            { id: 'r2', text: '100' },
+            { id: 'r3', text: 'Activo' },
         ],
-        isCode: true,
+        isCode: false,
     },
 
     // MATCH — nivel 3-03: todos los conceptos juntos

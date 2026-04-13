@@ -27,6 +27,7 @@ const SpeedTypingLevel = dynamic(() => import('@/components/levels/SpeedTypingLe
 const CodeEditorLevel = dynamic(() => import('@/components/levels/CodeEditorLevel/CodeEditorLevel'), { ssr: false })
 const DecisionLevel = dynamic(() => import('@/components/levels/DecisionLevel/DecisionLevel'), { ssr: false })
 const ReviewLevel = dynamic(() => import('@/components/levels/ReviewLevel'), { ssr: false })
+const ConceptTrialLevel = dynamic(() => import('@/components/levels/ConceptTrialLevel/ConceptTrialLevel'), { ssr: false })
 const TheoryOverlay = dynamic(() => import('@/components/levels/TheoryOverlay/TheoryOverlay'), { ssr: false })
 
 // ------------------------------------------------------------
@@ -295,7 +296,7 @@ export default function LevelPage({
 
     return (
         <div className="flex flex-col h-[calc(100svh-var(--header-height))] bg-(--bg-void)">
-            {showingTheory && level.theory && (
+            {showingTheory && level.theory && level.type !== 'concept-trial' && (
                 <TheoryOverlay theory={level.theory} onComplete={() => setShowingTheory(false)} />
             )}
 
@@ -343,6 +344,7 @@ function renderLevelComponent(
         case 'codeeditor': return <CodeEditorLevel  {...commonProps} />
         case 'decision': return <DecisionLevel    {...commonProps} />
         case 'review': return <ReviewLevel      {...commonProps} />
+        case 'concept-trial': return <ConceptTrialLevel {...commonProps} />
         default: return <ErrorScreen message={`Tipo de nivel desconocido: ${level.type}`} />
     }
 }

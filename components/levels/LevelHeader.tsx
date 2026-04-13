@@ -18,7 +18,7 @@ export function LevelHeader({ level, status, isRunning, children }: LevelHeaderP
     const statusColor = status === 'success' ? 'var(--green-base)' : status === 'failed' ? 'var(--red)' : isRunning ? 'var(--amber)' : 'var(--text-primary)';
 
     return (
-        <div className="flex flex-col md:flex-row items-stretch border-b border-(--border-color) bg-(--bg-void) relative z-20 ">
+        <div className="flex flex-row items-stretch border-b border-(--border-color) bg-(--bg-void) relative z-20 ">
 
 
             {/* ─── COMPARTIMENTO 01: RETORNO (Hundido) ─── */}
@@ -43,7 +43,7 @@ export function LevelHeader({ level, status, isRunning, children }: LevelHeaderP
             </Link>
 
             {/* ─── COMPARTIMENTO 02: PLACA DE IDENTIFICACIÓN (Efecto Fresado) ─── */}
-            <div className="relative flex-1 flex flex-col justify-center px-8 py-3 border-b md:border-b-0 md:border-r border-(--border-color) bg-(--bg-surface) overflow-hidden">
+            <div className="relative flex-1 flex flex-col justify-center px-4 md:px-8 py-3 border-b md:border-b-0 md:border-r border-(--border-color) bg-(--bg-surface) overflow-hidden">
 
                 {/* ESTRUCTURA DE PANEL (EL BISEL - Identidad SectionHeader) */}
                 <div className="absolute inset-[4px] border border-black/60 rounded-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_0_rgba(255,255,255,0.02)] pointer-events-none" />
@@ -63,11 +63,11 @@ export function LevelHeader({ level, status, isRunning, children }: LevelHeaderP
                     <div className="flex items-center gap-2">
                         {/* Indicador LED de Acto */}
                         <div className="w-1 h-3 bg-(--green-base) shadow-[0_0_10px_var(--green-base)] rounded-sm opacity-60" />
-                        <span className="text-[10px] font-mono text-(--text-muted) uppercase tracking-[0.3em] font-bold">
+                        <span className="text-[9px] md:text-[11px] font-mono text-(--text-muted) uppercase tracking-[0.3em] font-bold">
                             {level.actName}
                         </span>
                     </div>
-                    <h1 id="level-title" className="text-2xl md:text-[30px] font-(family-name:font-title) font-black text-white leading-none uppercase tracking-tighter drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+                    <h1 id="level-title" className="text-xl md:text-[30px] font-(family-name:font-title) font-black text-white leading-none uppercase tracking-tighter drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
                         {level.title}
                     </h1>
                 </div>
