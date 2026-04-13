@@ -3,14 +3,11 @@
 import React, { useState, useEffect, useMemo, memo } from 'react'
 import type { Card, GameObject } from '@/types/game'
 import { Button } from './Button'
-import { Panel } from './Panel'
 import { TacticalSection } from './TacticalSection'
 import SectionHeader from './SectionHeader'
 import { RotateCcwIcon, HardDriveIcon, ChevronsRightIcon, DatabaseIcon, CpuIcon, ActivityIcon, MapIcon } from 'lucide-react'
 import { RARITY_STYLES } from '@/components/cards/DataCartridge'
 import { CardDetailModal } from '@/components/cards/CardDetailModal'
-import { Screw } from './Screw'
-
 interface ReviewHint {
     shouldShow: boolean
     levelId: string | null
@@ -99,6 +96,12 @@ export default function LevelComplete({
                 2: { title: 'BIEN ARMADO', desc: 'El sistema funciona, aunque algunas piezas están un poco apretadas.', frag: 'Nodo activo. Se nota que entiendes cómo fluye la energía por aquí.' },
                 1: { title: 'CONEXIÓN DÉBIL', desc: 'Lograste que funcione, pero el armado es un poco confuso.', frag: 'La señal es un poco inestable. Intenta ordenar mejor las piezas lógicas.' },
                 0: { title: 'CIRCUITO ROTO', desc: 'Las piezas no están conectadas correctamente.', frag: 'No hay flujo de datos. Revisa las conexiones de cada bloque.' }
+            },
+            "concept-trial": {
+                3: { title: 'CONCEPTO DOMINADO', desc: '¡Excelente! Entendiste perfectamente el concepto y lo aplicaste correctamente.', frag: 'Has demostrado dominio total del tema. Sigue así.' },
+                2: { title: 'BUEN ENTENDIMIENTO', desc: 'Entendiste el concepto, aunque podrías mejorar en algunos detalles.', frag: 'Bien hecho. Con un poco más de práctica dominarás el tema por completo.' },
+                1: { title: 'CONCEPTO CONFUSO', desc: 'Tuviste dificultades para aplicar el concepto correctamente.', frag: 'No te preocupes, el aprendizaje lleva tiempo. Revisa el material teórico y vuelve a intentarlo.' },
+                0: { title: 'ERROR DE CONCEPTO', desc: 'No lograste aplicar correctamente el concepto en esta ocasión.', frag: 'Es normal cometer errores. Analiza qué salió mal y no te rindas.' }
             }
         };
 
@@ -141,29 +144,36 @@ export default function LevelComplete({
                             {/* COLUMNA IZQUIERDA: CONSUMO Y RESULTADOS */}
                             <div className="w-full md:w-[320px] flex flex-col gap-5">
                                 <TacticalSection title="CONSUMO_DE_ENERGÍA" variant="elevated" isActived={true}>
-                                    <div className="flex justify-center items-center gap-5 h-28 p-2 relative z-10">
+                                    <div className="flex justify-center items-center gap-5 h-32 p-2 pt-5 pb-3  relative z-10">
                                         {[1, 2, 3].map(n => {
                                             const isActive = n <= visibleStars;
                                             return (
-                                                <div key={n} className="relative w-16 h-full border-x border-y border-[#1c2229]/50 bg-[#020304] flex flex-col justify-end p-1 shadow-[inset_0_6px_15px_rgba(0,0,0,1)] rounded-sm overflow-hidden">
-                                                    {/* Contacto metálico superior de la batería */}
-                                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-[#2d3641] shadow-[0_1px_2px_rgba(0,0,0,0.8)]" />
+                                                <div key={n} className="relative w-16 h-full">
+                                                    {/* Terminal superior */}
+                                                    <div className="absolute -top-[6px] left-1/2 -translate-x-1/2 w-8 h-[10px] rounded-sm bg-(--bg-elevated) border border-(--border-color) shadow-[0_3px_10px_rgba(0,0,0,0.9)]" />
 
-                                                    {/* Celda LED de la batería */}
-                                                    <div
-                                                        className={`w-full transition-all duration-700 rounded-xs relative overflow-hidden
-                                                             ${isActive
-                                                                ? 'h-full bg-(--green-base) border-t-2 border-(--green-light) shadow-[0_0_20px_var(--green-light)]'
-                                                                : 'h-2 bg-[#0c1218] border-t border-black'
-                                                            }
-                                                         `}
-                                                    >
-                                                        {isActive && (
-                                                            <>
-                                                                <div className="w-full h-full opacity-30 bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,rgba(0,0,0,0.5)_4px,rgba(0,0,0,0.5)_8px)]" />
-                                                                <div className="absolute top-0 left-0 right-0 h-1/2 bg-[linear-gradient(180deg,rgba(255,255,255,0.2)_0%,transparent_100%)]" />
-                                                            </>
-                                                        )}
+                                                    {/* Cuerpo de la batería */}
+                                                    <div className="relative h-full w-full rounded-md bg-(--bg-void) border-2 border-(--border-color) shadow-[inset_0_8px_18px_rgba(0,0,0,1)] overflow-hidden p-[6px]">
+                                                        <div className="absolute inset-0 opacity-[0.03] bg-[repeating-linear-gradient(0deg,transparent,transparent_3px,#fff_3px,#fff_6px)] pointer-events-none" />
+
+                                                        {/* Cavidad */}
+                                                        <div className="relative h-full w-full rounded-sm bg-(--bg-deep) border border-(--border-muted-color) overflow-hidden flex items-end">
+                                                            <div
+                                                                className={`w-full transition-all duration-700 ease-out relative overflow-hidden
+                                                                    ${isActive
+                                                                        ? 'h-full bg-(--green-base) shadow-[0_0_18px_var(--green-light)]'
+                                                                        : 'h-[18%] bg-(--bg-surface)'}
+                                                                `}
+                                                            >
+                                                                {isActive && (
+                                                                    <>
+                                                                        <div className="absolute inset-0 opacity-25 bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,rgba(0,0,0,0.55)_4px,rgba(0,0,0,0.55)_8px)]" />
+                                                                        <div className="absolute top-0 left-0 right-0 h-1/2 bg-[linear-gradient(180deg,rgba(255,255,255,0.18)_0%,transparent_100%)]" />
+                                                                        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-(--green-light) opacity-80" />
+                                                                    </>
+                                                                )}
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             );
@@ -177,8 +187,6 @@ export default function LevelComplete({
                                     accentColor={visibleStars === 3 ? 'var(--green-light)' : visibleStars === 2 ? 'var(--amber)' : 'var(--red-light)'}
                                 >
                                     <div className="p-4 bg-[#05070a] border border-(--bg-void) shadow-[inset_0_4px_12px_rgba(0,0,0,1)] overflow-hidden relative min-h-[90px] flex flex-col justify-center">
-                                        {/* Reflejo CRT */}
-                                        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.02)_0%,transparent_50%)] pointer-events-none" />
 
                                         <div className={`text-[13px] font-black uppercase tracking-widest mb-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] ${visibleStars === 3 ? 'text-(--green-light)' : visibleStars === 2 ? 'text-amber-400' : 'text-red-400'}`}>
                                             {feedback.title}
@@ -194,8 +202,6 @@ export default function LevelComplete({
                             <div className="flex-1 h-full flex flex-col">
                                 <TacticalSection title="ANÁLISIS_FRAG_OS" accentColor="var(--purple)" variant="inset">
                                     <div className="p-5 h-full min-h-[240px] flex flex-col justify-between relative overflow-hidden bg-[#020304] border border-(--bg-void) shadow-[inset_0_8px_20px_rgba(0,0,0,1)]">
-                                        {/* Reflejo CRT Violeta */}
-                                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(127,119,221,0.05),transparent_60%)] pointer-events-none" />
 
                                         {/* Rejilla de circuito muy sutil de fondo */}
                                         <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(127,119,221,1)_1px,transparent_1px),linear-gradient(90deg,rgba(127,119,221,1)_1px,transparent_1px)] bg-size-[15px_15px] pointer-events-none z-0" />
@@ -308,16 +314,28 @@ export default function LevelComplete({
                     <div className="shrink-0 relative bg-[linear-gradient(180deg,#12161A_0%,#090B0D_100%)] border-t-2 border-black z-20 shadow-[0_-8px_20px_rgba(0,0,0,0.6),inset_0_1px_2px_rgba(255,255,255,0.05)]">
                         <div className="flex flex-wrap items-center justify-between gap-4 p-5 py-6">
                             <div className="flex gap-4">
-                                <Button onClick={onRetry} variant="outline" icon={RotateCcwIcon} size="md" className="min-w-[140px]">
+                                <Button
+                                    onClick={onRetry}
+                                    variant="amber"
+                                    icon={RotateCcwIcon}
+                                    size="sm"
+                                    className="min-w-[140px]"
+                                >
                                     REINTENTAR
                                 </Button>
-                                <Button onClick={onMap} variant="cyan" icon={MapIcon} size="md" className="min-w-[120px]">
-                                    MAPA_SECT
+                                <Button
+                                    onClick={onMap}
+                                    variant="cyan"
+                                    icon={MapIcon}
+                                    size="sm"
+                                    className="min-w-[120px]"
+                                >
+                                    MAPA_SECTOR
                                 </Button>
                             </div>
                             <Button
                                 onClick={onNext}
-                                size="md"
+                                size="sm"
                                 variant="green"
                                 icon={reviewHint?.shouldShow ? RotateCcwIcon : ChevronsRightIcon}
                                 iconPosition="right"
