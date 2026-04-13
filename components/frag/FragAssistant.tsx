@@ -127,7 +127,7 @@ export default function FragAssistant({ hint, onUse, feedback, autoOpen = false 
 
                             <div className="relative w-7 h-7 rounded-lg border border-(--purple)/50 overflow-hidden shadow-[0_0_12px_rgba(127,119,221,0.4)] bg-black/80 p-0.5 group-hover:border-(--purple) transition-colors">
                                 <img
-                                    src="/assets/frag_logo.png"
+                                    src="/assets/frag_logo.webp"
                                     alt="FRAG AI"
                                     className="w-full h-full object-contain animate-[glitch_5s_infinite] opacity-90 group-hover:scale-110 transition-transform duration-500"
                                 />
@@ -143,9 +143,9 @@ export default function FragAssistant({ hint, onUse, feedback, autoOpen = false 
                             </div>
                         </div>
                     </div>
-                    <CloseButton 
-                        size="sm" 
-                        onClick={() => { setFragState('idle'); setIsDismissed(true); }} 
+                    <CloseButton
+                        size="sm"
+                        onClick={() => { setFragState('idle'); setIsDismissed(true); }}
                     />
                 </div>
 
