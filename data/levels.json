@@ -940,7 +940,8 @@
           "step": 2,
           "title": "El orden cambia todo",
           "content": "Si haces los pasos en el orden incorrecto, nada funciona. Es como intentar tomar una foto con el celular apagado.",
-          "explanation": "Ordena los pasos correctamente:"
+          "explanation": "Ordena los pasos correctamente:",
+          "interactive": true
         },
         {
           "step": 3,
@@ -981,7 +982,8 @@
           "step": 2,
           "title": "Las cajas con nombre",
           "content": "Para no perder la información, usamos 'cajas' con nombre. Así sabemos exactamente dónde está cada cosa.",
-          "explanation": "Arrastra cada dato a la caja correcta."
+          "explanation": "Arrastra cada dato a la caja correcta.",
+          "interactive": true
         },
         {
           "step": 3,
@@ -1022,7 +1024,8 @@
           "step": 2,
           "title": "Si pasa algo…",
           "content": "Podemos decirle a la máquina: 'Si pasa algo, haz esto. Si no, haz otra cosa.'",
-          "explanation": "Completa la decisión correctamente:"
+          "explanation": "Completa la decisión correctamente:",
+          "interactive": true
         },
         {
           "step": 3,
@@ -1037,25 +1040,47 @@
       "act": 3,
       "actName": "Los Cimientos del Sistema",
       "type": "concept-trial",
-      "title": "El Clonador Infinito",
-      "description": "Hay que restaurar el suministro agrícola de este sector. Plantar a mano nos tomaría ciclos enteros; necesitamos automatización.",
-      "narrative": "FRAG: 'Imagina que tienes que pintar una barda de 1 kilómetro. En programación, si quieres que algo se repita, no lo escribes mil veces. Usas un ejército invisible.'",
-      "mechanic": "Usar un bloque REPETIR (100) y colocar dentro la acción 'Plantar Semilla'.",
-      "concept": "Repetición de tareas y optimización de procesos.",
+      "title": "Repetir sin parar",
+      "description": "Tienes que realizar la misma acción muchas veces. Hacerlo una por una sería lento.",
+      "narrative": "'Si tienes que hacer lo mismo muchas veces… no lo haces manualmente. Le dices al sistema que lo repita por ti.'",
+      "mechanic": "Usar un bloque REPETIR (100) y colocar dentro la acción 'Plantar semilla'.",
+      "concept": "Entender que una acción se puede repetir automáticamente.",
       "fragAvailable": true,
       "fragHint": [
-        "No necesitas 100 bloques de semillas, solo un bloque que le diga a la máquina cuántas veces trabajar.",
-        "Todo lo que pongas dentro del bloque repetir se ejecutará una y otra vez."
+        "No necesitas repetir la acción manualmente.",
+        "Todo lo que pongas dentro del bloque se repetirá varias veces."
       ],
       "optional": false,
       "isReview": false,
+      "rewardCards": [],
+      "rewardObjects": [],
       "maxStars": 2,
       "theory": [
         {
           "step": 1,
-          "title": "Bucles (Loops)",
-          "content": "Es una orden que le das a la computadora para que repita una acción hasta que la tarea esté terminada.",
-          "explanation": "Es la herramienta definitiva para ahorrar tiempo y evitar errores manuales."
+          "title": "Repetir acciones",
+          "content": "A veces necesitamos hacer la misma acción muchas veces.",
+          "explanation": ""
+        },
+        {
+          "step": 2,
+          "title": "Se vuelve repetitivo",
+          "content": "Hacer la misma acción muchas veces puede ser lento y cansado.",
+          "explanation": "Intenta hacerlo varias veces:",
+          "interactive": true
+        },
+        {
+          "step": 3,
+          "title": "No hacerlo manualmente",
+          "content": "En lugar de repetir la acción una por una, podemos decirle al sistema que lo haga automáticamente.",
+          "explanation": "Realiza las acciones:",
+          "interactive": true
+        },
+        {
+          "step": 4,
+          "title": "Un nombre para esto",
+          "content": "A esto se le llama bucle o ciclo. Es una forma de hacer lo mismo varias veces sin escribirlo muchas veces.",
+          "explanation": ""
         }
       ]
     },

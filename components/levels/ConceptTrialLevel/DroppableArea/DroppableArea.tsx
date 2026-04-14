@@ -95,8 +95,8 @@ export function DroppableArea({ items, boxes, pairs, originLabel = 'Origen', onV
                     variant="solid"
                     color={isCorrect === null ? "secondary" : isCorrect ? "success" : "danger"}
                     icon={isCorrect === null ? ScanLine : isCorrect ? Check : X}
-                    onClick={validateResponse}
                     disabled={isCorrect !== null}
+                    onClick={validateResponse}
                 >
                     {isCorrect === null ? "Validar" : isCorrect ? "Correcto" : "Incorrecto"}
                 </TheoryButton>

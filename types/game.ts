@@ -28,6 +28,7 @@ export interface TheorySlide {
   explanation?: string
   highlightLines?: number[]
   avoidSyntax?: string[]
+  interactive?: boolean
 }
 
 export interface Challenge {

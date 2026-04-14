@@ -99,11 +99,11 @@ export const PUZZLE_DATA: Record<string, PuzzleData> = {
     '3-01': {
         type: 'sort',
         items: [
-            { id: 'l1', text: 'Tomar foto' },
-            { id: 'l2', text: 'Abrir cámara' },
-            { id: 'l3', text: 'Desbloquear celular' },
+            { id: 'l5', text: 'Tomar foto' },
+            { id: 'l3', text: 'Abrir cámara' },
+            { id: 'l2', text: 'Desbloquear celular' },
             { id: 'l4', text: 'Apuntar al objeto' },
-            { id: 'l5', text: 'Encender celular' },
+            { id: 'l1', text: 'Encender celular' },
         ],
     },
 
@@ -128,28 +128,15 @@ export const PUZZLE_DATA: Record<string, PuzzleData> = {
         isCode: false,
     },
 
-    // MATCH — nivel 3-03: todos los conceptos juntos
+    // MATCH — nivel 3-03: Condicionales ecplicar una situacion condicional y ordenarla (Carro y Gasolina hechar gasolina)
     '3-03': {
-        type: 'match',
+        type: 'sort',
         items: [
-            { id: 'l1', text: 'VARIABLE: nombre = 5', isCode: false },
-            { id: 'l2', text: 'REPETIR(3) { MOVER }', isCode: false },
-            { id: 'l3', text: "SI panel==VERDE { ACTIVAR }", isCode: false },
-            { id: 'l4', text: 'FUNCIÓN mover(n) { MOVER(n) }', isCode: false },
+            { id: 'l4', text: 'Hechar gasolina al carro' },
+            { id: 'l3', text: 'Si no' },
+            { id: 'l2', text: 'El carro puede avanzar' },
+            { id: 'l1', text: 'Si el carro tiene gasolina' },
         ],
-        pairs: [
-            { leftId: 'l1', rightId: 'r1' },
-            { leftId: 'l2', rightId: 'r2' },
-            { leftId: 'l3', rightId: 'r3' },
-            { leftId: 'l4', rightId: 'r4' },
-        ],
-        rightItems: [
-            { id: 'r1', text: 'let nombre = 5;' },
-            { id: 'r2', text: 'for(let i=0; i<3; i++) { robot.move(); }' },
-            { id: 'r3', text: "if(panel === 'verde') { robot.activate(); }" },
-            { id: 'r4', text: 'function mover(n) { robot.move(n); }' },
-        ],
-        isCode: true,
     },
 
     // MATCH — nivel 3-04: conceptos avanzados (antes PuzzleReveal)
