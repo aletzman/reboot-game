@@ -1,5 +1,5 @@
 import { useSortable } from "@dnd-kit/react/sortable";
-import { PuzzleItem } from "../PuzzleLevel/types";
+import { PuzzleItem } from "../../PuzzleLevel/types";
 import { GripVertical } from "lucide-react";
 
 interface SortableItemProps {
