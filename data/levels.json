@@ -1089,25 +1089,47 @@
       "act": 3,
       "actName": "Los Cimientos del Sistema",
       "type": "concept-trial",
-      "title": "El Botón Maestro",
-      "description": "Tu avatar de combate necesita un ataque especial. Si dictamos cada paso durante la pelea, seremos demasiado lentos.",
-      "narrative": "FRAG: 'A medida que tu programa crece, se vuelve difícil de leer. Crearemos un botón nuevo en tu tablero que resume muchas acciones en una sola palabra.'",
-      "mechanic": "Crear la función Torbellino() agrupando: Girar, Saltar y Golpear. Luego usar el bloque Torbellino() en combate.",
-      "concept": "Encapsulamiento y reutilización de código.",
+      "title": "Una Caja de Pasos",
+      "description": "El robot repite siempre el mismo recorrido. ¿Y si pudieras guardar esos pasos en un solo bloque y usarlo cuando quieras?",
+      "narrative": "'Cuando algo se repite… no lo escribas dos veces. Ponle un nombre y llámalo.'",
+      "mechanic": "Identificar una secuencia repetitiva, agruparla dentro de un bloque con nombre, y usarlo como una sola instrucción.",
+      "concept": "Agrupar acciones para reutilizarlas fácilmente.",
       "fragAvailable": true,
       "fragHint": [
-        "Primero define qué hace el 'Torbellino' metiendo los pasos dentro del contenedor.",
-        "Una vez definida, puedes llamar a la función cuantas veces quieras con un solo bloque."
+        "¿Ves algún patrón que se repite en los movimientos del robot?",
+        "Agrupa esos pasos dentro de un bloque, ponle un nombre, y úsalo cada vez que lo necesites."
       ],
       "optional": false,
       "isReview": false,
+      "rewardCards": [],
+      "rewardObjects": [],
       "maxStars": 2,
       "theory": [
         {
           "step": 1,
-          "title": "Funciones",
-          "content": "Es como crear un comando personalizado que resume una secuencia de pasos en una sola instrucción.",
-          "explanation": "Hacen que el código sea limpio, organizado y fácil de volver a usar."
+          "title": "Repetir lo mismo, una y otra vez",
+          "content": "Imagina que le das instrucciones a un robot. Si necesita hacer el mismo recorrido varias veces, ¿tendrías que escribir los pasos una y otra vez? Hay una forma mejor.",
+          "explanation": ""
+        },
+        {
+          "step": 2,
+          "title": "El problema de repetir",
+          "content": "Mira cuántos pasos necesita el robot para llegar a la meta. Cada movimiento es una instrucción separada — y si quisieras repetir el recorrido, tendrías que escribirlos todos de nuevo.",
+          "explanation": "Observa la secuencia completa:",
+          "interactive": true
+        },
+        {
+          "step": 3,
+          "title": "Agrupa y reutiliza",
+          "content": "Ahora esos mismos pasos están guardados dentro de un bloque llamado 'escalera', y dentro de él se repiten los mismos pasos (RIGHT, DOWN). En lugar de escribir cada movimiento, solo llamas al bloque — y él hace todo el trabajo por ti.",
+          "explanation": "El robot llega al mismo lugar, con menos instrucciones:",
+          "interactive": true
+        },
+        {
+          "step": 4,
+          "title": "Esto tiene nombre: función",
+          "content": "Lo que acabas de ver se llama función. Es una caja donde guardas un grupo de pasos, le pones un nombre, y la usas cuantas veces quieras. Los programadores la usan todo el tiempo para no repetirse.",
+          "explanation": ""
         }
       ]
     },
@@ -1116,25 +1138,40 @@
       "act": 3,
       "actName": "Los Cimientos del Sistema",
       "type": "concept-trial",
-      "title": "La Mochila de Aventurero",
-      "description": "Has recolectado demasiados suministros. Si creamos una variable para cada uno, el sistema colapsará por el desorden.",
-      "narrative": "FRAG: '¿Qué pasa cuando tienes 50 ítems en tu mochila? Para eso existen los estantes numerados. Pero ten cuidado: las máquinas cuentan de forma distinta.'",
-      "mechanic": "Dada la lista [Poción, Hierba, Cristal], elegir el objeto en la posición 1 (Hierba).",
-      "concept": "Estructuras de datos indexadas.",
+      "title": "Todo en su Lugar",
+      "description": "Tienes muchos objetos y necesitas organizarlos. En lugar de guardar cada uno por separado, ¿qué tal si los pones todos en orden dentro de una sola lista?",
+      "narrative": "FRAG: 'Una lista ordenada vale más que cien cajones sueltos. Solo recuerda: yo siempre empiezo a contar desde cero.'",
+      "mechanic": "Dada la lista [Poción, Hierba, Cristal], identificar que la posición 0 es Poción, la posición 1 es Hierba y la posición 2 es Cristal — luego elegir el objeto en la posición correcta.",
+      "concept": "Entender que los datos pueden organizarse en listas.",
       "fragAvailable": true,
       "fragHint": [
-        "El primer objeto siempre está en la posición 0. No lo olvides.",
-        "Si el alquimista pide la posición 1, está buscando el segundo elemento de la lista."
+        "Las listas no empiezan en 1 como estás acostumbrado — empiezan en 0. El primer elemento siempre es la posición 0.",
+        "Si te piden la posición 1, es el segundo elemento. Cuenta desde cero y llegarás al correcto."
       ],
       "optional": false,
       "isReview": false,
+      "rewardCards": [],
+      "rewardObjects": [],
       "maxStars": 2,
       "theory": [
         {
           "step": 1,
-          "title": "Arrays (Arreglos)",
-          "content": "Es como un estante de supermercado donde cada producto tiene un número de posición llamado índice.",
-          "explanation": "Es la forma más inteligente de manejar grandes listas de información sin volverse loco. ¡Y siempre empezamos desde el Cero!"
+          "title": "Demasiadas cosas sueltas",
+          "content": "Imagina que tienes una Poción, una Hierba y un Cristal guardados cada uno en un lugar diferente. Cada vez que necesitas algo, tienes que recordar exactamente dónde lo dejaste. Cuantos más objetos tienes, más difícil se vuelve.",
+          "explanation": "¿Y si hubiera una forma de tenerlos todos juntos, en orden, para encontrar cualquiera de un solo vistazo?"
+        },
+        {
+          "step": 2,
+          "title": "¿En qué posición está?",
+          "content": "Ahora los tres objetos están en una lista: Poción, Hierba, Cristal. Cada uno tiene un número que indica su lugar — pero hay un detalle: la lista no empieza en 1, empieza en 0.",
+          "explanation": "",
+          "interactive": true
+        },
+        {
+          "step": 3,
+          "title": "Esto se llama lista",
+          "content": "Lo que acabas de usar se llama lista, o array. Es una de las herramientas más usadas en programación. Sirve para guardar varios elementos en orden dentro de un solo lugar, y acceder a cualquiera de ellos con su número de posición.",
+          "explanation": "La regla más importante: siempre se empieza a contar desde cero. El primer elemento es la posición 0, el segundo es la posición 1, y así."
         }
       ]
     },
