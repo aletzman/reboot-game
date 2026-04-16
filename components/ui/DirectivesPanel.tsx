@@ -156,6 +156,8 @@ export function DirectivesPanel({ missionText, infoText }: DirectivesPanelProps)
                 {/* BOTÓN: OBJETIVO */}
                 <div className="flex-1 h-14 relative bg-black/60 rounded-[2px] shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)] p-[2px]">
                     <button
+                        id="mission-objective"
+                        aria-checked={activePanel === 'mission'}
                         onClick={() => togglePanel('mission')}
                         className={`relative w-full h-full flex items-center px-4 transition-all duration-200 cursor-pointer rounded-sm
                                 ${activePanel === 'mission'
@@ -178,6 +180,8 @@ export function DirectivesPanel({ missionText, infoText }: DirectivesPanelProps)
                 {/* BOTÓN: AYUDA */}
                 <div className="flex-1 h-14 relative bg-black/60 rounded-[2px] shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)] p-[2px]">
                     <button
+                        id="mission-help"
+                        aria-checked={activePanel === 'info'}
                         onClick={() => togglePanel('info')}
                         className={`relative w-full h-full flex items-center px-4 transition-all duration-200 cursor-pointer rounded-sm
                                     ${activePanel === 'info'

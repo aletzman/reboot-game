@@ -9,8 +9,8 @@ import { PUZZLE_DATA } from '../PuzzleLevel/types'
 import { DroppableArea } from './DroppableArea/DroppableArea'
 import { SortableArea } from './SortableArea/SortableArea'
 import { CounterArea } from './CounterArea/CounterArea'
-import FunctionPuzzle from '../FunctionPuzzle/FunctionPuzzle'
-import ListIndexArea from './ListIndexArea/ListIndexArea'
+import { ListIndexArea } from './ListIndexArea/ListIndexArea'
+import { FunctionPuzzle } from './FunctionPuzzle/FunctionPuzzle'
 
 export default function ConceptTrialLevel({ level, state, onComplete, onFragUse, onStatusChange }: ConceptTrialLevelProps) {
     const [currentStep, setCurrentStep] = useState(0)

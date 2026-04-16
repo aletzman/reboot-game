@@ -18,7 +18,7 @@ interface ListIndexAreaProps {
     onValidate: (isCorrect: boolean) => void;
 }
 
-export default function ListIndexArea({
+export function ListIndexArea({
     items,
     targetIndex,
     question,
