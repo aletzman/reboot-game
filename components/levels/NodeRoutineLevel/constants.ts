@@ -48,7 +48,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         allowF1: true,
         allowF2: true,
         uiLimitMain: 6,
-        allowedCommands: ['move', 'activate', 'turn-left', 'turn-right', 'jump', 'repeat', 'call-f1', 'call-f2'],
+        allowedCommands: ['move', 'activate'],
     },
     '1-03': {
         map: [
@@ -365,7 +365,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
         robotStart: { x: 1, y: 1, direction: 'north' },
         targets: [{ x: 1, y: 0 }, { x: 2, y: 1 }, { x: 1, y: 2 }, { x: 0, y: 1 }],
         allowF1: true,
-        maxCommands: 10,
+        maxCommands: 8,
         uiLimitMain: 10,
         uiLimitF1: 10,
         allowedCommands: ['move', 'turn-right', 'activate', 'call-f1', 'repeat', "jump", 'turn-left'],
