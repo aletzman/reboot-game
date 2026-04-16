@@ -550,6 +550,7 @@ export function IsometricCanvas({ mapData, robot, activatedTiles, status, isScan
 
     return (
         <canvas
+            id="game-canvas"
             ref={canvasRef}
             className="rounded-lg "
             style={{

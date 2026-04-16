@@ -6,7 +6,23 @@ import { DriveStep } from "driver.js";
  */
 export const NODE_ROUTINE_TUTORIAL: DriveStep[] = [
     {
+        element: '#game-canvas',
+        popover: {
+            title: 'VISTA DEL MUNDO',
+            description: 'Este es el lugar donde está el robot. Tu meta es llevarlo hasta la casilla objetivo y activarla.',
+            side: "bottom",
+            align: 'center'
+        }
+    },
+    {
         element: '#mission-objective',
+        onHighlighted: () => {
+            // Focus on the mission-objective element
+            const missionObjective = document.getElementById('mission-objective');
+            if (missionObjective) {
+                missionObjective.click();
+            }
+        },
         popover: {
             title: '¿QUÉ HAY QUE HACER?',
             description: 'Aquí verás el objetivo actual. Lee con atención: te dirá a dónde debe llegar el robot para avanzar.',
@@ -15,16 +31,14 @@ export const NODE_ROUTINE_TUTORIAL: DriveStep[] = [
         }
     },
     {
-        element: '#game-canvas-container',
-        popover: {
-            title: 'VISTA DEL MUNDO',
-            description: 'Este es el lugar donde está el robot. Tu meta es llevarlo hasta las baldosas que brillan para encenderlas.',
-            side: "right",
-            align: 'center'
-        }
-    },
-    {
         element: '#command-bank',
+        onHighlighted: () => {
+            // Focus on the mission-objective element
+            const missionObjective = document.getElementById('mission-objective') as HTMLButtonElement;
+            if (missionObjective && missionObjective.getAttribute('aria-checked') === 'true') {
+                missionObjective.click();
+            }
+        },
         popover: {
             title: 'TUS TARJETAS',
             description: 'Estas son las acciones que el robot puede hacer. Haz clic en una para ponerla en tu lista.',
