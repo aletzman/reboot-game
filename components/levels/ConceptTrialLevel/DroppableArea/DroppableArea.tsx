@@ -44,6 +44,9 @@ export function DroppableArea({ items, boxes, pairs, originLabel = 'Origen', onV
         }
     };
 
+    console.log('boxes', boxes);
+    console.log('parents', parents);
+
     return (
         <DragDropProvider
             onDragEnd={(event) => {

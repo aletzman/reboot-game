@@ -9,6 +9,8 @@ import { PUZZLE_DATA } from '../PuzzleLevel/types'
 import { DroppableArea } from './DroppableArea/DroppableArea'
 import { SortableArea } from './SortableArea/SortableArea'
 import { CounterArea } from './CounterArea/CounterArea'
+import FunctionPuzzle from '../FunctionPuzzle/FunctionPuzzle'
+import ListIndexArea from './ListIndexArea/ListIndexArea'
 
 export default function ConceptTrialLevel({ level, state, onComplete, onFragUse, onStatusChange }: ConceptTrialLevelProps) {
     const [currentStep, setCurrentStep] = useState(0)
@@ -19,8 +21,6 @@ export default function ConceptTrialLevel({ level, state, onComplete, onFragUse,
     const totalSteps = level.theory?.length || 0
 
     const randomOrder = useMemo(() => {
-        if (data?.type !== 'sort' || !data?.items) return [];
-
         const originalItems = data.items;
         const originalIds = originalItems.map(item => item.id).join(',');
 
@@ -42,7 +42,7 @@ export default function ConceptTrialLevel({ level, state, onComplete, onFragUse,
         }
 
         return shuffled;
-    }, [data]);
+    }, [data, currentStep]);
 
     const randomOrderRight = useMemo(() => {
         if (!data?.rightItems) return [];
@@ -69,16 +69,20 @@ export default function ConceptTrialLevel({ level, state, onComplete, onFragUse,
         }
 
         return shuffled;
-    }, [data]);
+    }, [data, currentStep]);
 
     const handleValidate = (isCorrect: boolean) => {
         setIsCorrect(isCorrect)
         if (isCorrect) {
             onStatusChange('success')
-            onComplete(3, state.fragUsed)
+            setNextStepAvailable(true)
         }
-
     }
+
+    console.log('randomOrder', randomOrder)
+    console.log('randomOrderRight', randomOrderRight)
+    console.log('data', data)
+
 
     return (
         <div>
@@ -142,8 +146,34 @@ export default function ConceptTrialLevel({ level, state, onComplete, onFragUse,
                                             onComplete={() => setNextStepAvailable(true)} />}
                                         {currentStep === 2 && <CounterArea
                                             type="auto"
-                                            onComplete={() => setNextStepAvailable(true)} />}
+                                            onComplete={() => {
+                                                setIsCorrect(true)
+                                                setNextStepAvailable(true)
+                                            }} />}
                                     </>
+                                )}
+                                {level.id === '3-05' && (
+                                    <>
+                                        {currentStep === 1 && <FunctionPuzzle mode="sequence" onComplete={(correct) => {
+
+                                            setNextStepAvailable(correct)
+                                        }} />}
+                                        {currentStep === 2 && <FunctionPuzzle mode="function" onComplete={(correct) => {
+                                            setIsCorrect(correct)
+                                            setNextStepAvailable(correct)
+                                        }} />}
+                                    </>
+                                )}
+                                {level.id === '3-06' && currentStep === 1 && (
+                                    <ListIndexArea
+                                        items={data?.items || []}
+                                        targetIndex={data?.targetIndex ?? 0}
+                                        question={data?.question || '¿Qué objeto está en la posición 0?'}
+                                        onValidate={(correct) => {
+                                            setIsCorrect(correct)
+                                            setNextStepAvailable(correct)
+                                        }}
+                                    />
                                 )}
                             </div>
                         </>
@@ -196,6 +226,7 @@ export default function ConceptTrialLevel({ level, state, onComplete, onFragUse,
                                     color='success'
                                     icon={Check}
                                     iconPosition='right'
+                                    disabled={!isCorrect}
                                     onClick={() => onComplete(3, state.fragUsed)}>
                                     Completar
                                 </TheoryButton>
