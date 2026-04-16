@@ -9,22 +9,26 @@ export interface PuzzleLevelProps {
 }
 
 export interface PuzzleData {
-    type: 'sort' | 'fill' | 'bug' | 'match'
+    type: 'sort' | 'fill' | 'bug' | 'match' | 'list-index'
     items: PuzzleItem[]
     pairs?: MatchPair[]      // solo para match
     rightItems?: PuzzleItem[] // nuevo: para match dinámico
     bugLineIndex?: number    // solo para bug
     fillAnswers?: string[]   // respuestas correctas para fill
     isCode?: boolean
+    targetIndex?: number     // solo para list-index
+    question?: string        // solo para list-index
 }
 
 export interface PuzzleItem {
     id: string
-    text: string
+    text?: string
     isCode?: boolean
     hasBug?: boolean
     blank?: string           // texto del hueco para fill
     answer?: string          // respuesta correcta para fill
+    name?: string            // para list-index
+    icon?: string            // para list-index
 }
 
 export interface MatchPair {
@@ -162,7 +166,39 @@ export const PUZZLE_DATA: Record<string, PuzzleData> = {
         ],
         isCode: true,
     },
-
+    // MATCH — nivel 3-04: conceptos avanzados (antes PuzzleReveal)
+    '3-05': {
+        type: 'match',
+        items: [
+            { id: 'l1', text: 'IMPRIMIR "estado: OK"', isCode: false },
+            { id: 'l2', text: 'TEXTO: "Sector 7"', isCode: false },
+            { id: 'l3', text: 'energía ES_IGUAL 0', isCode: false },
+            { id: 'l4', text: 'NOTA: // esto es una nota', isCode: false },
+        ],
+        pairs: [
+            { leftId: 'l1', rightId: 'r1' },
+            { leftId: 'l2', rightId: 'r2' },
+            { leftId: 'l3', rightId: 'r3' },
+            { leftId: 'l4', rightId: 'r4' },
+        ],
+        rightItems: [
+            { id: 'r1', text: "console.log('estado: OK');" },
+            { id: 'r2', text: "let zona = 'Sector 7';" },
+            { id: 'r3', text: 'if(energia === 0) { /* sin energía */ }' },
+            { id: 'r4', text: '// esto es un comentario' },
+        ],
+        isCode: true,
+    },
+    '3-06': {
+        type: 'list-index',
+        items: [
+            { id: 'l0', name: 'Poción', icon: '🧪' },
+            { id: 'l1', name: 'Hierba', icon: '🌿' },
+            { id: 'l2', name: 'Cristal', icon: '💎' },
+        ],
+        targetIndex: 1,
+        question: '¿Qué objeto está en la posición 1 de la lista?',
+    },
     // BUG con JS — nivel 4-02
     '4-02': {
         type: 'bug',
