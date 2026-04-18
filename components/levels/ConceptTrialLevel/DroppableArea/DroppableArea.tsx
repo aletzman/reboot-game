@@ -24,13 +24,11 @@ export function DroppableArea({ items, boxes, pairs, originLabel = 'Origen', onV
     const validateResponse = () => {
         let correct = 0;
         pairs.forEach(pair => {
-            //debugger;
             const item = items.find(item => item.id === pair.rightId);
             const box = boxes.find(box => box.id === pair.leftId);
-            if (!item || !box) return;
-            const currentParent = Object.entries(parents).find(([key, value]) => key === item.text);
-            if (!currentParent) return;
-            if (currentParent[0] === item.text && currentParent[1] === box.text) correct++;
+            if (!item?.text || !box?.text) return;
+            const currentBoxId = parents[item.text];
+            if (currentBoxId === box.text) correct++;
         });
         const isCorrectCurrent = correct === pairs.length;
         setIsCorrect(isCorrectCurrent);
@@ -43,9 +41,6 @@ export function DroppableArea({ items, boxes, pairs, originLabel = 'Origen', onV
             onValidate(isCorrectCurrent);
         }
     };
-
-    console.log('boxes', boxes);
-    console.log('parents', parents);
 
     return (
         <DragDropProvider
@@ -75,8 +70,8 @@ export function DroppableArea({ items, boxes, pairs, originLabel = 'Origen', onV
                 {/* Zona de items sin asignar */}
                 <div className="relative flex flex-row gap-2 p-3 border border-dashed border-gray-300/25 h-20">
                     <Droppable id={originLabel} occupied={false} isOrigin={true}>
-                        {items.filter((item) => !parents[item.text]).map((item) => (
-                            <Draggable key={item.id} id={item.text} />
+                        {items.filter((item) => item.text && !parents[item.text]).map((item) => (
+                            <Draggable key={item.id} id={item.text || ''} />
                         ))}
                     </Droppable>
                 </div>
@@ -84,11 +79,11 @@ export function DroppableArea({ items, boxes, pairs, originLabel = 'Origen', onV
                 <div className="grid grid-cols-3 gap-2 h-20">
                     {/* 3 cajas destino */}
                     {boxes.map((box) => {
-                        const occupied = items.some((item) => parents[item.text] === box.text);
+                        const occupied = items.some((item) => item.text && parents[item.text] === box.text);
                         return (
-                            <Droppable key={box.text} id={box.text} occupied={occupied}>
-                                {items.filter((item) => parents[item.text] === box.text).map((item) => (
-                                    <Draggable key={item.text} id={item.text} />
+                            <Droppable key={box.id} id={box.text || ''} occupied={occupied}>
+                                {items.filter((item) => item.text && parents[item.text] === box.text).map((item) => (
+                                    <Draggable key={item.id} id={item.text || ''} />
                                 ))}
                             </Droppable>
                         );
