@@ -494,7 +494,8 @@
       "concept": "funciones de estado neutro",
       "fragAvailable": true,
       "fragHint": [
-        "Tu función F1 debe incluir una media vuelta (dos giros) y un avance de regreso para que el dron vuelva al pasillo principal después de activar la terminal lateral."
+        "La secuencia importa: primero la lámpara, luego la luz amarilla. Diseña tu función pensando en qué debe hacer el dron después de regresar.",
+        "Para que la secuencia principal pueda continuar después de usar F1, el dron debe volver al punto de inicio apuntando en la dirección original. La vuelta es tan importante como la ida."
       ],
       "isReview": false,
       "reviewOf": [],
