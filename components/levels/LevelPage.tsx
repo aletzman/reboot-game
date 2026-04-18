@@ -175,6 +175,9 @@ export default function LevelPage({
             }
             case 'timeout':
                 return "¡Vaya! El robot ha tardado demasiado tiempo en terminar su tarea. Puede que la lista de órdenes sea demasiado larga o que se haya quedado esperando algo que no sucede."
+            case 'sequence-violation':
+                return "¡Cuidado! Tu secuencia de órdenes no sigue el orden correcto. El robot necesita completar ciertas tareas antes de hacer el check de finalización."
+
             default:
                 return null
         }

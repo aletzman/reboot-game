@@ -155,7 +155,6 @@ export function FlatSimulator({
 
     async function runSimulation(id: number) {
         const queue = flatInstructions(blocks, blocks)
-        console.log("queue", queue)
         let cx = map.start.x
         let cy = map.start.y
         let cd = map.start.dir as Direction
@@ -163,7 +162,6 @@ export function FlatSimulator({
         const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
 
         for (let i = 0; i < queue.length; i++) {
-            console.log(queue[i])
 
             setCurrentFlatInstruction(queue[i])
             if (id !== executionRef.current || !isExecuting) return

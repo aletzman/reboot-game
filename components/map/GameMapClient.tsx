@@ -80,7 +80,6 @@ export default function GameMapClient({ levels }: GameMapClientProps) {
     return <Loading message="CARGANDO_MAPA_SISTEMA..." icon="network" />
   }
 
-  console.log(acts)
 
   return (
     <div className="flex-1 flex flex-col bg-(--bg-void) ">

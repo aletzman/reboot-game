@@ -42,7 +42,6 @@ export function SortableArea({ items, randomOrder, onValidate }: SortableAreaPro
         onValidate(isCorrect === items.length);
     };
 
-    console.log('isCorrect', isCorrect);
     return (
         <DragDropProvider
             onDragEnd={handleDragEnd}

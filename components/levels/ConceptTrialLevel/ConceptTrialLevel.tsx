@@ -79,10 +79,6 @@ export default function ConceptTrialLevel({ level, state, onComplete, onFragUse,
         }
     }
 
-    console.log('randomOrder', randomOrder)
-    console.log('randomOrderRight', randomOrderRight)
-    console.log('data', data)
-
 
     return (
         <div>
