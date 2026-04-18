@@ -132,7 +132,12 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
 
         let currentRobot: ExtendedRobotState = { ...mapData.robotStart, isMoving: false, isJumping: false, height: mapData.robotStart.height || 0 }
         const activated = new Set<string>()
+        //EL CheckPosition es la ultima posicion de mapData.targets
+        const checkPosition = (x: number, y: number) => {
+            return mapData.targets.at(-1)?.x === x && mapData.targets.at(-1)?.y === y
+        }
         let won = false
+        let reasonFailed: LevelState['failReason'] = 'generic'
 
         for (let i = 0; i < flat.length; i++) {
             const currentItem = flat[i]
@@ -192,6 +197,13 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
 
                 currentRobot = { ...currentRobot, isActivating: false }
                 setRobot({ ...currentRobot })
+                if (checkPosition(currentRobot.x, currentRobot.y)) {
+                    addLog('FALLO: OBJETIVOS_RESTANTES', 'err')
+                    setStatus('failed')
+                    onStatusChange('failed', 'sequence-violation')
+                    setIsRunning(false)
+                    return
+                }
             }
             const allTargetsReached = mapData.targets.every(t => activated.has(`${t.x},${t.y}`))
             if (allTargetsReached) {
@@ -199,11 +211,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
                 const lastTarget = mapData.targets[mapData.targets.length - 1]
                 //Last item from activated
                 const lastActivated = Array.from(activated).pop()
-                console.log('lastTarget', lastTarget)
-                console.log('lastActivated', lastActivated)
-                console.log('activated', activated)
-                console.log('targets', mapData.targets)
-                console.log('allTargetsReached', allTargetsReached)
+                reasonFailed = 'sequence-violation'
                 if (lastTarget && lastActivated && lastTarget.x === parseInt(lastActivated.split(',')[0]) && lastTarget.y === parseInt(lastActivated.split(',')[1])) {
                     won = true
                 }
@@ -221,7 +229,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
         } else {
             addLog('FALLO: OBJETIVOS_RESTANTES', 'err')
             setStatus('failed')
-            onStatusChange('failed', 'timeout')
+            onStatusChange('failed', reasonFailed)
         }
         setIsRunning(false)
     }, [commands, commandsF1, commandsF2, isRunning, mapData, state.fragUsed, onComplete, addLog, onStatusChange])

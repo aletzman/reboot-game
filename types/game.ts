@@ -150,7 +150,7 @@ export interface LevelFailContext {
 export interface LevelState {
   level: Level
   status: 'idle' | 'playing' | 'success' | 'failed' | 'reviewing'
-  failReason?: 'generic' | 'timeout' | 'crash' | 'infinite-loop' | 'out-of-bounds'
+  failReason?: 'generic' | 'timeout' | 'crash' | 'infinite-loop' | 'out-of-bounds' | 'sequence-violation'
   failContext?: LevelFailContext
   stars: 0 | 1 | 2 | 3
   fragUsed: boolean
