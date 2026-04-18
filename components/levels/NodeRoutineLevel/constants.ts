@@ -363,7 +363,7 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
             ]
         ],
         robotStart: { x: 1, y: 1, direction: 'north' },
-        targets: [{ x: 1, y: 0 }, { x: 2, y: 1 }, { x: 1, y: 2 }, { x: 0, y: 1 }],
+        targets: [{ x: 1, y: 0 }, { x: 2, y: 1 }, { x: 0, y: 1 }, { x: 1, y: 2 }],
         allowF1: true,
         maxCommands: 8,
         uiLimitMain: 10,

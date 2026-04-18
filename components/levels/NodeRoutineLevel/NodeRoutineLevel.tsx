@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import type { LevelState, Command, CommandType } from '@/types/game'
-import { ShieldAlert, Share2, RotateCcwIcon, Play, Minus, Plus } from 'lucide-react'
+import { RotateCcwIcon, Play, Minus, Plus } from 'lucide-react'
 import { useAudioStore } from '@/store/audio.store'
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
@@ -193,10 +193,20 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
                 currentRobot = { ...currentRobot, isActivating: false }
                 setRobot({ ...currentRobot })
             }
-
             const allTargetsReached = mapData.targets.every(t => activated.has(`${t.x},${t.y}`))
             if (allTargetsReached) {
-                won = true
+                //Last item from mapData
+                const lastTarget = mapData.targets[mapData.targets.length - 1]
+                //Last item from activated
+                const lastActivated = Array.from(activated).pop()
+                console.log('lastTarget', lastTarget)
+                console.log('lastActivated', lastActivated)
+                console.log('activated', activated)
+                console.log('targets', mapData.targets)
+                console.log('allTargetsReached', allTargetsReached)
+                if (lastTarget && lastActivated && lastTarget.x === parseInt(lastActivated.split(',')[0]) && lastTarget.y === parseInt(lastActivated.split(',')[1])) {
+                    won = true
+                }
                 break
             }
         }
@@ -211,7 +221,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
         } else {
             addLog('FALLO: OBJETIVOS_RESTANTES', 'err')
             setStatus('failed')
-            onStatusChange('failed')
+            onStatusChange('failed', 'timeout')
         }
         setIsRunning(false)
     }, [commands, commandsF1, commandsF2, isRunning, mapData, state.fragUsed, onComplete, addLog, onStatusChange])
