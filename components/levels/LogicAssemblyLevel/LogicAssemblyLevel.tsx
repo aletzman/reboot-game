@@ -169,7 +169,6 @@ export default function LogicAssemblyLevel({
         }
 
         if (isExecuting || !activeBlockRef.current) return;
-        //console.log('source.id:', source?.id, '| target.id:', target?.id, '| target.index:', target?.index)
 
         // Evitar trabajo si el target y el index son idénticos al anterior
         if (
@@ -209,8 +208,6 @@ export default function LogicAssemblyLevel({
 
     const handleDragEnd = useCallback((event: any) => {
         const { target } = event.operation;
-        //console.log('programRef.current al soltar:', JSON.stringify(programSnapshotRef.current, null, 2))
-        //console.log('lastTargetRef:', lastTargetRef.current)
         // Limpiar throttle pendiente
         if (throttleRef.current) {
             clearTimeout(throttleRef.current);
