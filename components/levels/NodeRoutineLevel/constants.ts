@@ -593,19 +593,72 @@ export const NODEROUTINE_MAPS: Record<string, NodeRoutineLevelData> = {
     // ==========================================
     // FASE 5: EL EXAMEN FINAL DEL SECTOR 1
     // ==========================================
-    '1-R': {
+    '1-25': {
         map: [
-            [{ type: 'floor', x: 0, y: 0, height: 0 }, { type: 'floor', x: 1, y: 0, height: 1 }, { type: 'floor', x: 2, y: 0, height: 2 }, { type: 'target', x: 3, y: 0, height: 2 }],
-            [{ type: 'empty', x: 0, y: 1 }, { type: 'empty', x: 1, y: 1 }, { type: 'empty', x: 2, y: 1 }, { type: 'floor', x: 3, y: 1, height: 2 }],
-            [{ type: 'target', x: 0, y: 2, height: 2 }, { type: 'floor', x: 1, y: 2, height: 2 }, { type: 'floor', x: 2, y: 2, height: 2 }, { type: 'floor', x: 3, y: 2, height: 2 }]
+            [
+                { type: 'floor', x: 0, y: 0, height: 1 },
+                { type: 'floor', x: 1, y: 0 },
+                { type: 'generator', x: 2, y: 0, height: 1 },
+                { type: 'floor', x: 3, y: 0 },
+                { type: 'generator', x: 4, y: 0, height: 1 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 1, height: 1 },
+                { type: 'floor', x: 1, y: 1 },
+                { type: 'generator', x: 2, y: 1, height: 1 },
+                { type: 'floor', x: 3, y: 1 },
+                { type: 'generator', x: 4, y: 1, height: 1 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 2, height: 1 },
+                { type: 'floor', x: 1, y: 2 },
+                { type: 'generator', x: 2, y: 2, height: 1 },
+                { type: 'floor', x: 3, y: 2 },
+                { type: 'generator', x: 4, y: 2, height: 1 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 3, height: 1 },
+                { type: 'floor', x: 1, y: 3 },
+                { type: 'generator', x: 2, y: 3, height: 1 },
+                { type: 'floor', x: 3, y: 3 },
+                { type: 'generator', x: 4, y: 3, height: 1 },
+            ],
+            [
+                { type: 'floor', x: 0, y: 4, height: 1 },
+                { type: 'floor', x: 1, y: 4 },
+                { type: 'generator', x: 2, y: 4, height: 1 },
+                { type: 'floor', x: 3, y: 4 },
+                { type: 'generator', x: 4, y: 4, height: 1 },
+            ],
+            [
+                { type: 'target', x: 0, y: 5, height: 1 },
+                { type: 'floor', x: 1, y: 5 },
+                { type: 'generator', x: 2, y: 5, height: 1 },
+                { type: 'floor', x: 3, y: 5 },
+                { type: 'generator', x: 4, y: 5, height: 1 },
+            ]
         ],
-        robotStart: { x: 0, y: 0, direction: 'east' },
-        targets: [{ x: 3, y: 0 }, { x: 0, y: 2 }],
+        robotStart: { x: 0, y: 0, direction: 'east', height: 1 },
+        targets: [
+            { x: 2, y: 0, height: 1 },
+            { x: 4, y: 0, height: 1 },
+            { x: 0, y: 2, height: 1 },
+            { x: 2, y: 2, height: 1 },
+            { x: 4, y: 2, height: 1 },
+            { x: 0, y: 4, height: 1 },
+            { x: 2, y: 4, height: 1 },
+            { x: 4, y: 4, height: 1 },
+            { x: 2, y: 5, height: 1 },
+            { x: 4, y: 5, height: 1 },
+            { x: 0, y: 5, height: 1 },
+        ],
         allowF1: true,
-        maxCommands: 5,
-        uiLimitMain: 5, // UI súper restrictiva.
-        uiLimitF1: 5,
-        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'call-f1', 'repeat'],
+        allowF2: true,
+        maxCommands: 15,
+        uiLimitMain: 8,
+        uiLimitF1: 8,
+        uiLimitF2: 8,
+        allowedCommands: ['move', 'turn-left', 'turn-right', 'jump', 'activate', 'call-f1', 'repeat', 'call-f2'],
     }
 };
 export const DEFAULT_MAP: NodeRoutineLevelData = {

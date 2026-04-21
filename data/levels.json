@@ -597,10 +597,10 @@
       "maxStars": 3
     },
     {
-      "id": "1-R",
+      "id": "1-25",
       "act": 1,
       "actName": "La primera orden",
-      "type": "review",
+      "type": "noderoutine",
       "title": "Protocolo de Seguridad: NÚCLEO ZERO",
       "description": "Para activar la puerta al Sector Sur, debes reiniciar el Núcleo Zero usando la máxima eficiencia energética posible. Tienes cero margen de error.",
       "narrative": "FRAG: \"Acceso denegado. Protocolo de revisión activado. El Sector 2 requiere operadores verificados. Ejecuta la sintaxis perfecta en este laberinto y te abriré las puertas.\"",

@@ -197,7 +197,7 @@ export default function NodeRoutineLevel({ level, state, onComplete, onFragUse, 
 
                 currentRobot = { ...currentRobot, isActivating: false }
                 setRobot({ ...currentRobot })
-                if (checkPosition(currentRobot.x, currentRobot.y)) {
+                if (checkPosition(currentRobot.x, currentRobot.y) && i < commands.length - 1) {
                     addLog('FALLO: OBJETIVOS_RESTANTES', 'err')
                     setStatus('failed')
                     onStatusChange('failed', 'sequence-violation')
