@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { DragDropProvider, useDroppable, DragOverlay } from '@dnd-kit/react'
-import { Play, RefreshCcw } from 'lucide-react'
+import { Play, RefreshCcw, RotateCcw } from 'lucide-react'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
 import type { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
@@ -28,6 +28,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useLogicAssemblyData } from '@/lib/store/useLogicAssemblyData'
 import { SpeedSelector } from '../../ui/SpeedSelector'
 import { useUIStore } from '@/lib/store/useUIStore'
+import { useResetStore } from './store'
 
 export default function LogicAssemblyLevel({
     level,
@@ -42,17 +43,14 @@ export default function LogicAssemblyLevel({
         [data.availableBlocks]
     )
 
-    //const [program, setProgram] = useState<LogicAssemblyBlock[]>([])
-    // Estado de preview separado: solo existe durante un drag activo.
-    // El workspace renderiza dragPreview ?? program, así el estado "real"
-    // no se toca en cada mousemove y BlockItem no re-renderiza innecesariamente.
     const [dragPreview, setDragPreviewState] = useState<LogicAssemblyBlock[] | null>(null)
 
     const [feedback, setFeedback] = useState<'idle' | 'correct' | 'wrong'>('idle')
     const [attempts, setAttempts] = useState(0)
-    //const [isExecuting, setIsExecuting] = useState(false)
     const [activeId, setActiveId] = useState<string | null>(null);
     const [activeBlock, setActiveBlock] = useState<LogicAssemblyBlock | null>(null);
+    const [isReady, setIsReady] = useState(true)
+
 
     // Refs para evitar closures stale y throttle sin re-renders
     const activeBlockRef = useRef<LogicAssemblyBlock | null>(null);
@@ -69,6 +67,7 @@ export default function LogicAssemblyLevel({
     const setProgram = useLogicAssemblyData((state) => state.setProgram)
     const isExecuting = useLogicAssemblyData((state) => state.isExecuting)
     const setIsExecuting = useLogicAssemblyData((state) => state.setIsExecuting)
+    const resetSimulation = useResetStore((state) => state.reset)
 
     // Lo que el workspace muestra: preview durante drag, estado real en reposo
     const displayProgram = dragPreview ?? program
@@ -235,6 +234,7 @@ export default function LogicAssemblyLevel({
 
     function handleCheck() {
         if (program.length === 0 || isExecuting || feedback !== 'idle') return
+        setIsReady(false)
         closeDirectives()
         setAttempts(a => a + 1)
         setIsExecuting(true)
@@ -378,7 +378,7 @@ export default function LogicAssemblyLevel({
                                     <div id="logic-execute-button" className="flex-1 flex items-center justify-center gap-2 min-w-0">
                                         <Button
                                             onClick={handleCheck}
-                                            disabled={isInteractionDisabled}
+                                            disabled={isInteractionDisabled || !isReady}
                                             variant={'green'}
                                             icon={Play}
                                             iconPosition="right"
@@ -387,17 +387,38 @@ export default function LogicAssemblyLevel({
                                         >
                                             INICIAR
                                         </Button>
-                                        <Button
-                                            onClick={() => setProgram([])}
-                                            disabled={isInteractionDisabled}
-                                            variant={'red'}
-                                            icon={RefreshCcw}
-                                            iconPosition="right"
-                                            size="lg"
-                                            className='w-full'
-                                        >
-                                            BORRAR
-                                        </Button>
+                                        <div className="flex flex-col gap-2">
+                                            <Button
+                                                onClick={() => {
+                                                    resetSimulation();
+                                                    setIsReady(true);
+                                                }}
+                                                disabled={isInteractionDisabled}
+
+                                                variant={'amber'}
+                                                size="sm"
+                                                className='w-full'
+                                                icon={RotateCcw}
+                                                iconPosition="right"
+                                            >
+                                                RESET
+                                            </Button>
+                                            <Button
+                                                onClick={() => {
+                                                    setProgram([]);
+                                                    setIsReady(true);
+                                                    resetSimulation();
+                                                }}
+                                                disabled={isInteractionDisabled}
+                                                variant={'red'}
+                                                icon={RefreshCcw}
+                                                iconPosition="right"
+                                                size="sm"
+                                                className='w-full'
+                                            >
+                                                BORRAR
+                                            </Button>
+                                        </div>
                                     </div>
                                     <div className="flex-0.5 not-first:flex items-start h-full justify-center min-w-0">
                                         <SpeedSelector />

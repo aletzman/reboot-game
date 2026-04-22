@@ -5,6 +5,7 @@ import { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
 import { MapData } from './types'
 import { useLogicAssemblyData } from '@/lib/store/useLogicAssemblyData'
 import { useSettingsStore } from '@/store/settings.store'
+import { useResetStore } from './store'
 
 interface FlatSimulatorProps {
     blocks: LogicAssemblyBlock[]
@@ -50,6 +51,8 @@ export function FlatSimulator({
     const setCurrentStep = useLogicAssemblyData((state) => state.setCurrentStep)
     const setCurrentFlatInstruction = useLogicAssemblyData((state) => state.setCurrentFlatInstruction)
     const simulationSpeed = useSettingsStore((state) => state.simulationSpeed)
+
+    const setResetCallback = useResetStore((state) => state.setResetCallback);
 
     // ─── requestAnimationFrame loop for smooth interpolation ───
     useEffect(() => {
@@ -97,6 +100,11 @@ export function FlatSimulator({
             rafIdRef.current = requestAnimationFrame(animate)
         }
 
+        // Registramos la función que queremos que ocurra al resetear
+        setResetCallback(() => {
+            resetSimulation();
+        });
+
         rafIdRef.current = requestAnimationFrame(animate)
         return () => cancelAnimationFrame(rafIdRef.current)
     }, [])
@@ -107,23 +115,41 @@ export function FlatSimulator({
         animRotTargetRef.current = DIR_TO_DEG[robot.dir]
     }, [robot.x, robot.y, robot.dir])
 
+
+    const resetSimulation = () => {
+        executionRef.current++
+        const startPos = { x: map.start.x, y: map.start.y }
+        const startDir = map.start.dir as Direction
+        setRobot({ ...startPos, dir: startDir })
+        // Snap visual position immediately on reset
+        animCurrentRef.current = { ...startPos }
+        animTargetRef.current = { ...startPos }
+        animRotCurrentRef.current = DIR_TO_DEG[startDir]
+        animRotTargetRef.current = DIR_TO_DEG[startDir]
+        setVisualPos(startPos)
+        setVisualRotation(DIR_TO_DEG[startDir])
+        setActivated([])
+        setCurrentStep(-1)
+        setError(null)
+    }
+
     // Reset simulation when logic starts/stops
     useEffect(() => {
         if (!isExecuting) {
-            executionRef.current++
-            const startPos = { x: map.start.x, y: map.start.y }
-            const startDir = map.start.dir as Direction
-            setRobot({ ...startPos, dir: startDir })
-            // Snap visual position immediately on reset
-            animCurrentRef.current = { ...startPos }
-            animTargetRef.current = { ...startPos }
-            animRotCurrentRef.current = DIR_TO_DEG[startDir]
-            animRotTargetRef.current = DIR_TO_DEG[startDir]
-            setVisualPos(startPos)
-            setVisualRotation(DIR_TO_DEG[startDir])
-            setActivated([])
-            setCurrentStep(-1)
-            setError(null)
+            /* executionRef.current++
+             const startPos = { x: map.start.x, y: map.start.y }
+             const startDir = map.start.dir as Direction
+             setRobot({ ...startPos, dir: startDir })
+             // Snap visual position immediately on reset
+             animCurrentRef.current = { ...startPos }
+             animTargetRef.current = { ...startPos }
+             animRotCurrentRef.current = DIR_TO_DEG[startDir]
+             animRotTargetRef.current = DIR_TO_DEG[startDir]
+             setVisualPos(startPos)
+             setVisualRotation(DIR_TO_DEG[startDir])
+             setActivated([])
+             setCurrentStep(-1)
+             setError(null)*/
         } else {
             const execId = ++executionRef.current
             runSimulation(execId)
