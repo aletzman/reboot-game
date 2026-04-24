@@ -9,7 +9,7 @@ import type { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
 import { LOGIC_ASSEMBLY_TUTORIAL, LOGIC_TUTORIAL_CONFIG } from './tutorialSteps'
 import { LogicAssemblyLevelProps } from './types'
 import { BLOCK_DEFS, LOGICASSEMBLY_DATA, DEFAULT_LOGICASSEMBLY } from './constants'
-import { flatBlocks, makeBlock, updateBlockValueInTree, removeBlockFromTree, addChildToTree, moveBlockInTree, moveNodeInTree } from './utils'
+import { flatBlocks, makeBlock, updateBlockValueInTree, removeBlockFromTree, addChildToTree, moveBlockInTree, moveNodeInTree, calculateStars } from './utils'
 import { BlockItem } from './BlockItem'
 import { PseudocodeSummary } from './PseudocodeSummary'
 import { FlatSimulator } from './FlatSimulator'
@@ -20,10 +20,7 @@ import { TacticalSection } from '@/components/ui/TacticalSection'
 import { DirectivesPanel } from '@/components/ui/DirectivesPanel'
 import { SequenceMemory } from '@/components/ui/MemorySequence'
 import { Panel } from '@/components/ui/Panel'
-import { directionBiased } from '@dnd-kit/collision'
-import { Screw } from '@/components/ui/Screw'
 import { Button } from '@/components/ui/Button'
-import { StopButton } from '@/components/ui/StopButton'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLogicAssemblyData } from '@/lib/store/useLogicAssemblyData'
 import { SpeedSelector } from '../../ui/SpeedSelector'
@@ -71,6 +68,26 @@ export default function LogicAssemblyLevel({
 
     // Lo que el workspace muestra: preview durante drag, estado real en reposo
     const displayProgram = dragPreview ?? program
+
+    // ------------------------------------------------------------
+    // TUTORIAL (DRIVER.JS)
+    // ------------------------------------------------------------
+    useEffect(() => {
+        resetSimulation()
+        setIsReady(true)
+        if (level.id !== '2-01') return
+
+        const timer = setTimeout(() => {
+            const driverObj = driver({
+                ...LOGIC_TUTORIAL_CONFIG,
+                steps: LOGIC_ASSEMBLY_TUTORIAL
+            })
+
+            driverObj.drive()
+        }, 1000)
+
+        return () => clearTimeout(timer)
+    }, [level.id])
 
     const availableFunctions = useMemo(
         () => Array.from(new Set(
@@ -245,8 +262,8 @@ export default function LogicAssemblyLevel({
         setIsExecuting(false)
         if (success) {
             setFeedback('correct')
-            const stars = attempts === 0 ? 3 : attempts <= 2 ? 2 : 1
-            setTimeout(() => onComplete(stars as 1 | 2 | 3, state.fragUsed), 1000)
+            const stars = calculateStars(data.limitBlocks || 0, program.length)
+            setTimeout(() => onComplete(stars, state.fragUsed), 1000)
         } else {
             setFeedback('wrong')
             onStatusChange('failed')
@@ -259,23 +276,7 @@ export default function LogicAssemblyLevel({
 
     const isInteractionDisabled = isExecuting || feedback !== 'idle'
 
-    // ------------------------------------------------------------
-    // TUTORIAL (DRIVER.JS)
-    // ------------------------------------------------------------
-    useEffect(() => {
-        if (level.id !== '2-01') return
 
-        const timer = setTimeout(() => {
-            const driverObj = driver({
-                ...LOGIC_TUTORIAL_CONFIG,
-                steps: LOGIC_ASSEMBLY_TUTORIAL
-            })
-
-            driverObj.drive()
-        }, 1000)
-
-        return () => clearTimeout(timer)
-    }, [level.id])
 
     return (
         <DragDropProvider
