@@ -166,3 +166,8 @@ export function moveBlockInTree(id: string, direction: 'up' | 'down', blocks: Lo
         return b
     })
 }
+
+export function calculateStars(limitBlocks: number, currentBlocks: number): 1 | 2 | 3 {
+    return currentBlocks <= limitBlocks ? 3 : currentBlocks <= limitBlocks + 2 ? 2 : 1
+}
+

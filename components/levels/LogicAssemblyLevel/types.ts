@@ -28,6 +28,7 @@ export interface MapData {
 
 export interface LogicAssemblyLevelData {
     availableBlocks: LogicAssemblyBlockType[]
+    limitBlocks?: number
     maxBlocks: number
     hint: string
     validateFn: (blocks: LogicAssemblyBlock[]) => boolean

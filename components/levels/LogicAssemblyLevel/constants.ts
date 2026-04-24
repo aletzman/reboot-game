@@ -106,17 +106,18 @@ export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
 
     '2-01': {
         availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR'],
-        maxBlocks: 5,
+        limitBlocks: 2,
+        maxBlocks: 8,
         hint: 'Muévete hasta el nodo y actívalo. Sin paredes, aprende el movimiento básico.',
         map: {
             grid: [
-                [3, 0, 0, 0],
+                [3, 0, 0, 2],
                 [0, 0, 0, 0],
                 [0, 0, 0, 0],
-                [0, 0, 0, 2],
+                [0, 0, 0, 0],
             ],
             start: { x: 0, y: 0, dir: 'right' },
-            objective: [{ x: 3, y: 3 }],
+            objective: [{ x: 3, y: 0 }],
         },
         validateFn: (blocks) => {
             const flat = flatBlocksLocal(blocks)
@@ -126,13 +127,14 @@ export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
 
     '2-02': {
         availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR'],
-        maxBlocks: 7,
+        limitBlocks: 4,
+        maxBlocks: 8,
         hint: 'Hay una pared en el medio. Rodéala.',
         map: {
             grid: [
                 [3, 0, 0, 0],
-                [0, 0, 1, 0],
-                [0, 0, 1, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
                 [0, 0, 0, 2],
             ],
             start: { x: 0, y: 0, dir: 'right' },
@@ -146,7 +148,8 @@ export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
 
     '2-03': {
         availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR'],
-        maxBlocks: 9,
+        limitBlocks: 4,
+        maxBlocks: 8,
         hint: 'Las paredes bloquean el camino directo. Encuentra la ruta libre.',
         map: {
             grid: [
@@ -166,6 +169,7 @@ export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
 
     '2-04': {
         availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR'],
+        limitBlocks: 6,
         maxBlocks: 12,
         hint: 'Dos nodos separados por paredes. Necesitas activar ambos.',
         map: {
