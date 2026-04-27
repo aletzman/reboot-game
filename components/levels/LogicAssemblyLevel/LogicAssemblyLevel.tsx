@@ -6,7 +6,7 @@ import { Play, RefreshCcw, RotateCcw } from 'lucide-react'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
 import type { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
-import { LOGIC_ASSEMBLY_TUTORIAL, LOGIC_TUTORIAL_CONFIG } from './tutorialSteps'
+import { LOGIC_ASSEMBLY_ASSIGN_AND_SI_BLOCK, LOGIC_ASSEMBLY_REPEAT_BLOCK, LOGIC_ASSEMBLY_SI_NO_BLOCK, LOGIC_ASSEMBLY_TUTORIAL, LOGIC_TUTORIAL_CONFIG } from './tutorialSteps'
 import { LogicAssemblyLevelProps } from './types'
 import { BLOCK_DEFS, LOGICASSEMBLY_DATA, DEFAULT_LOGICASSEMBLY } from './constants'
 import { flatBlocks, makeBlock, updateBlockValueInTree, removeBlockFromTree, addChildToTree, moveBlockInTree, moveNodeInTree, calculateStars } from './utils'
@@ -47,6 +47,7 @@ export default function LogicAssemblyLevel({
     const [activeId, setActiveId] = useState<string | null>(null);
     const [activeBlock, setActiveBlock] = useState<LogicAssemblyBlock | null>(null);
     const [isReady, setIsReady] = useState(true)
+    const [cellStates, setCellStates] = useState<Record<string, string>>({})
 
 
     // Refs para evitar closures stale y throttle sin re-renders
@@ -75,12 +76,26 @@ export default function LogicAssemblyLevel({
     useEffect(() => {
         resetSimulation()
         setIsReady(true)
-        if (level.id !== '2-01') return
+        setProgram([]);
+
+        const tutorialSteps = {
+            '2-01': LOGIC_ASSEMBLY_TUTORIAL,
+            '2-06': LOGIC_ASSEMBLY_REPEAT_BLOCK,
+            '2-11': LOGIC_ASSEMBLY_ASSIGN_AND_SI_BLOCK,
+            '2-16': LOGIC_ASSEMBLY_SI_NO_BLOCK,
+        }[level.id]
+
+        if (!tutorialSteps) return
 
         const timer = setTimeout(() => {
             const driverObj = driver({
                 ...LOGIC_TUTORIAL_CONFIG,
-                steps: LOGIC_ASSEMBLY_TUTORIAL
+                steps: tutorialSteps,
+                onCloseClick: () => {
+                    // Limpiar el tutorial cuando se cierra
+                    driverObj.destroy();
+                    setProgram([]);
+                }
             })
 
             driverObj.drive()
@@ -260,9 +275,10 @@ export default function LogicAssemblyLevel({
 
     function handleSimulationFinish(success: boolean) {
         setIsExecuting(false)
+        setCellStates({})
         if (success) {
             setFeedback('correct')
-            const stars = calculateStars(data.limitBlocks || 0, program.length)
+            const stars = calculateStars(data.limitBlocks || 0, flatBlocks(displayProgram).length)
             setTimeout(() => onComplete(stars, state.fragUsed), 1000)
         } else {
             setFeedback('wrong')
@@ -313,7 +329,7 @@ export default function LogicAssemblyLevel({
 
                             <div className="flex flex-col gap-1 p-4 h-[calc(100svh-177px)]">
                                 {availableDefs.map(def => (
-                                    <div key={def.type} className="relative z-10">
+                                    <div key={def.type} className="relative z-10" id={`palette-block-${def.type}`}>
                                         <DraggablePaletteBlock
                                             def={def}
                                             onClick={() => handleAddBlock(def.type)}
@@ -405,6 +421,7 @@ export default function LogicAssemblyLevel({
                                                 RESET
                                             </Button>
                                             <Button
+                                                id="logic-clear-button"
                                                 onClick={() => {
                                                     setProgram([]);
                                                     setIsReady(true);
@@ -455,6 +472,8 @@ export default function LogicAssemblyLevel({
                                             map={data.map}
                                             isExecuting={isExecuting}
                                             onFinish={handleSimulationFinish}
+                                            onVariablesChange={setCellStates}
+                                            marks={data.marks}
                                         />
                                     </div>
                                 )}
@@ -484,15 +503,15 @@ export default function LogicAssemblyLevel({
                                     </div>
                                 </div>
 
-                                {/* 3. ÁREA DE CÓDIGO (Siempre legible) */}
+                                {/* 3. ÁREA DE CÓDIGO */}
                                 <div className="h-[calc(100%-55px)] p-1 relative">
-                                    <div className="relative z-10 flex gap-4 h-full">
+                                    <div className="relative z-10 h-full">
                                         {/* Contenido de la secuencia */}
-                                        <div className={`flex-1 font-mono text-[11px] h-full leading-tight antialiased transition-colors duration-500 ${isExecuting ? 'text-(--amber) [text-shadow:0_0_5px_rgba(239,159,39,0.3)]' : 'text-(--green-light) [text-shadow:0_0_5px_rgba(126,213,38,0.2)]'}`}>
+                                        <div className={`font-mono text-[11px] h-full leading-tight antialiased transition-colors duration-500 ${isExecuting ? 'text-(--amber) [text-shadow:0_0_5px_rgba(239,159,39,0.3)]' : 'text-(--green-light) [text-shadow:0_0_5px_rgba(126,213,38,0.2)]'}`}>
                                             <PseudocodeSummary blocks={program} />
                                         </div>
                                     </div>
-                                </div>
+                                </div>"
 
                                 {/* 4. FOOTER TÉCNICO */}
                                 <div className="absolute bottom-0 left-0 right-0 h-4 bg-black/40 border-t border-white/5 px-2 flex items-center justify-between z-30">
