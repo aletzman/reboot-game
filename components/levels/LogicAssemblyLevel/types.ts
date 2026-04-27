@@ -33,4 +33,5 @@ export interface LogicAssemblyLevelData {
     hint: string
     validateFn: (blocks: LogicAssemblyBlock[]) => boolean
     map?: MapData
+    marks?: { x: number; y: number; color: string }[] // Celdas que deben estar marcadas con ASIGNAR
 }
