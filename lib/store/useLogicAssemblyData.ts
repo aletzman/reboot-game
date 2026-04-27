@@ -6,6 +6,9 @@ interface FlatInstruction {
     value?: string | number
     id: string
     stack?: string[]
+    vars?: Record<string, number | string>
+    condition?: string
+    children?: any[]
 }
 
 interface LogicAssemblyDataState {
