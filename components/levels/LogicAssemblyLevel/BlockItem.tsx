@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, memo } from 'react'
+import React, { useState, memo, useMemo } from 'react'
 import { useDroppable } from '@dnd-kit/react'
 import { useSortable } from '@dnd-kit/react/sortable'
 import { PackageOpen, ChevronDown, Plus, Minus, ArrowDownToLine } from 'lucide-react'
@@ -116,7 +116,11 @@ function BlockItemInner({
         data: { ...block, depth, isWorkspace: true, parentId }
     })
 
-    const def = availableDefs.find(d => d.type === block.type)!
+    const def = useMemo(() => availableDefs.find(d => d.type === block.type), [availableDefs, block.type])
+
+    if (!def) {
+        return null
+    }
 
     const currentIsPhantom = isPhantom || (activeBlockId === block.id);
 
@@ -146,7 +150,7 @@ function BlockItemInner({
                 <div
 
                     className="w-[6px] h-[50px] border-r border-[#050608] shadow-[inset_-2px_0_4px_rgba(0,0,0,0.4)]"
-                    style={{ backgroundColor: def.border }}
+                    style={{ backgroundColor: def?.border ? def.border : 'transparent' }}
                 />
 
                 <div className="absolute inset-px border border-(--bg-elevated)/60 rounded-[1px] pointer-events-none shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]" />
@@ -170,7 +174,7 @@ function BlockItemInner({
                     <div className="flex flex-col justify-center items-center relative z-10 min-w-18 h-full rounded-xs label-panel">
                         <span
                             className="text-[11px] uppercase label-text"
-                            style={{ color: def.border }}
+                            style={{ color: def?.border ? def.border : 'white' }}
                         >
                             {def.label}
                         </span>
