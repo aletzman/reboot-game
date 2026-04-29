@@ -13,6 +13,8 @@ export const getLevels = unstable_cache(
       query = query.eq('type', filters.type)
     }
 
+    query = query.order('id', { ascending: true })
+
     const { data, error } = await query
     if (error) throw new Error(`Error al obtener niveles: ${error.message}`)
 
