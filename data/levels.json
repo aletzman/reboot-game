@@ -634,7 +634,7 @@
     },
     {
       "id": "2-01",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Primera Instrucción",
@@ -655,7 +655,7 @@
     },
     {
       "id": "2-02",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Cambio de Rumbo",
@@ -676,7 +676,7 @@
     },
     {
       "id": "2-03",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Ruta en Zigzag",
@@ -697,7 +697,7 @@
     },
     {
       "id": "2-04",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Dos Nodos Activos",
@@ -718,7 +718,7 @@
     },
     {
       "id": "2-05",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Red de Tres Nodos",
@@ -739,7 +739,7 @@
     },
     {
       "id": "2-06",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "El Bloque que se Repite",
@@ -760,7 +760,7 @@
     },
     {
       "id": "2-07",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Patrón en el Circuito",
@@ -781,7 +781,7 @@
     },
     {
       "id": "2-08",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Más de uno adentro",
@@ -802,7 +802,7 @@
     },
     {
       "id": "2-09",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Dos Nodos, Un Patrón",
@@ -823,7 +823,7 @@
     },
     {
       "id": "2-10",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Bucle dentro de Bucle",
@@ -844,7 +844,7 @@
     },
     {
       "id": "2-11",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Solo si es Verde",
@@ -865,7 +865,7 @@
     },
     {
       "id": "2-12",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Condición en el Camino",
@@ -886,7 +886,7 @@
     },
     {
       "id": "2-13",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Revisar en Cada Vuelta",
@@ -907,7 +907,7 @@
     },
     {
       "id": "2-14",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Nodos con Requisitos",
@@ -928,7 +928,7 @@
     },
     {
       "id": "2-15",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "La Cuadrícula Condicional",
@@ -949,7 +949,7 @@
     },
     {
       "id": "2-16",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Dos Caminos",
@@ -970,7 +970,7 @@
     },
     {
       "id": "2-17",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Bifurcación en el Bucle",
@@ -991,7 +991,7 @@
     },
     {
       "id": "2-18",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Sistema Complejo",
@@ -1012,7 +1012,7 @@
     },
     {
       "id": "2-19",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Dale un Nombre",
@@ -1033,7 +1033,7 @@
     },
     {
       "id": "2-20",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Una Función, Tres Usos",
@@ -1054,7 +1054,7 @@
     },
     {
       "id": "2-21",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Función con Condición",
@@ -1075,7 +1075,7 @@
     },
     {
       "id": "2-22",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Dos Funciones, Una Decisión",
@@ -1096,7 +1096,7 @@
     },
     {
       "id": "2-23",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Guardar el Estado",
@@ -1117,7 +1117,7 @@
     },
     {
       "id": "2-24",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "Decidir con Variables",
@@ -1138,7 +1138,7 @@
     },
     {
       "id": "2-25",
-      "act": 3,
+      "act": 2,
       "actName": "El Bus de Datos",
       "type": "logicassembly",
       "title": "El Sistema Completo",
