@@ -324,7 +324,7 @@ function BlockItemInner({
                                 </span>
                                 <div className="flex flex-wrap gap-2">
                                     {availableDefs
-                                        .filter(d => !d.hasChildren)
+                                        .filter(d => d.type !== 'FUNCION' && d.type !== 'LLAMAR')
                                         .map(d => (
                                             <button
                                                 key={d.type}

@@ -33,6 +33,12 @@ export const BLOCK_DEFS: BlockDef[] = [
         valueOptions: ['izquierda', 'derecha'],
     },
     {
+        type: 'ACTIVAR',
+        label: 'ACTIVAR',
+        color: 'var(--block-activar-dark)',
+        border: 'var(--block-activar)',
+    },
+    {
         type: 'REPETIR',
         label: 'REPETIR',
         color: 'var(--block-repetir-dark)',
@@ -41,6 +47,15 @@ export const BLOCK_DEFS: BlockDef[] = [
         valueType: 'number',
         valueDefault: 2,
         hasChildren: true,
+    },
+    {
+        type: 'ASIGNAR',
+        label: 'ASIGNAR',
+        color: 'var(--block-asignar-dark)',
+        border: 'var(--block-asignar)',
+        hasValue: true,
+        valueType: 'text',
+        valueDefault: 'x = 1',
     },
     {
         type: 'SI',
@@ -78,21 +93,7 @@ export const BLOCK_DEFS: BlockDef[] = [
         valueType: 'text',
         valueDefault: 'miFuncion',
     },
-    {
-        type: 'ACTIVAR',
-        label: 'ACTIVAR',
-        color: 'var(--block-activar-dark)',
-        border: 'var(--block-activar)',
-    },
-    {
-        type: 'ASIGNAR',
-        label: 'ASIGNAR',
-        color: 'var(--block-asignar-dark)',
-        border: 'var(--block-asignar)',
-        hasValue: true,
-        valueType: 'text',
-        valueDefault: 'x = 1',
-    },
+
 ]
 
 export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
@@ -542,7 +543,7 @@ export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
     // ─────────────────────────────────────────────
 
     '2-19': {
-        availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR', 'REPETIR', 'ASIGNAR', 'LLAMAR'],
+        availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR', 'REPETIR', 'ASIGNAR', 'SI', 'SI_NO'],
         limitBlocks: 15,
         maxBlocks: 25,
         hint: 'Las paredes crean el mismo pasillo tres veces. Define la ruta como función y llámala.',
@@ -574,26 +575,35 @@ export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
     },
 
     '2-20': {
-        availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR', 'REPETIR', 'FUNCION', 'LLAMAR'],
-        maxBlocks: 13,
+        availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR', 'REPETIR', 'ASIGNAR', 'SI', 'SI_NO'],
+        limitBlocks: 23,
+        maxBlocks: 30,
         hint: 'Las paredes separan cuatro zonas idénticas. Una función para todas.',
         map: {
             grid: [
-                [3, 0, 2, 1, 0, 2, 1, 0],
-                [0, 0, 0, 1, 0, 0, 1, 0],
-                [1, 1, 1, 1, 1, 1, 1, 0],
-                [0, 0, 0, 1, 0, 0, 1, 0],
-                [0, 0, 2, 1, 0, 2, 1, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 2, 1, 1, 0, 0, 2],
+                [0, 0, 0, 1, 1, 0, 0, 0],
+                [3, 0, 0, 0, 0, 0, 0, 0],
+                [1, 1, 1, 1, 0, 1, 1, 1],
+                [1, 1, 1, 1, 0, 1, 1, 1],
+                [0, 0, 1, 1, 0, 0, 0, 0],
+                [0, 0, 1, 1, 1, 1, 1, 0],
+                [0, 2, 0, 2, 0, 2, 0, 2],
             ],
-            start: { x: 0, y: 0, dir: 'right' },
+            start: { x: 0, y: 2, dir: 'right' },
             objective: [
-                { x: 2, y: 0 }, { x: 5, y: 0 },
-                { x: 2, y: 4 }, { x: 5, y: 4 },
+                { x: 2, y: 0 },
+                { x: 7, y: 0 },
+                { x: 7, y: 7 },
+                { x: 5, y: 7 },
+                { x: 3, y: 7 },
+                { x: 1, y: 7 },
             ],
         },
+        marks: [
+            { x: 0, y: 0, color: 'AZUL' },
+            { x: 5, y: 0, color: 'AZUL' },
+        ],
         validateFn: (blocks) => {
             const flat = flatBlocksLocal(blocks)
             return flat.some(b => b.type === 'FUNCION') &&
@@ -602,23 +612,38 @@ export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
     },
 
     '2-21': {
-        availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR', 'REPETIR', 'SI', 'FUNCION', 'LLAMAR'],
-        maxBlocks: 15,
+        availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR', 'REPETIR', 'SI', 'SI_NO', 'FUNCION', 'LLAMAR', 'ASIGNAR'],
+        limitBlocks: 14,
+        maxBlocks: 30,
         hint: 'Las paredes crean un laberinto con bifurcaciones. Usa funciones para los tramos repetidos y SI para las decisiones.',
         map: {
             grid: [
-                [3, 0, 0, 1, 0, 0, 0, 0],
-                [0, 1, 0, 1, 0, 1, 0, 0],
-                [0, 1, 0, 0, 0, 1, 0, 0],
-                [0, 1, 1, 1, 0, 1, 1, 0],
-                [0, 0, 0, 0, 0, 0, 0, 2],
-                [0, 1, 0, 1, 0, 1, 0, 0],
-                [0, 1, 2, 1, 0, 1, 2, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0],
+                [3, 0, 2, 0, 2, 0, 2, 0, 2],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 2],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 2],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [2, 0, 2, 0, 2, 0, 2, 0, 0]
             ],
-            start: { x: 0, y: 0, dir: 'down' },
-            objective: [{ x: 7, y: 4 }, { x: 2, y: 6 }, { x: 6, y: 6 }],
+            start: { x: 0, y: 0, dir: 'right' },
+            objective: [
+                { x: 2, y: 0 },
+                { x: 4, y: 0 },
+                { x: 6, y: 0 },
+                { x: 2, y: 8 },
+                { x: 4, y: 8 },
+                { x: 6, y: 8 },
+                { x: 8, y: 6 },
+                { x: 8, y: 3 },
+            ],
         },
+        marks: [
+            { x: 8, y: 0, color: 'AZUL' },
+            { x: 0, y: 8, color: 'AZUL' },
+        ],
         validateFn: (blocks) => {
             const flat = flatBlocksLocal(blocks)
             return (
@@ -631,21 +656,30 @@ export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
 
     '2-22': {
         availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR', 'REPETIR', 'SI', 'SI_NO', 'FUNCION', 'LLAMAR'],
-        maxBlocks: 17,
+        limitBlocks: 14,
+        maxBlocks: 35,
         hint: 'Dos laberintos espejo separados por una pared central. Dos funciones, una decisión.',
         map: {
             grid: [
-                [3, 0, 0, 1, 0, 0, 0, 0],
-                [0, 1, 0, 1, 0, 1, 0, 0],
-                [0, 1, 0, 1, 0, 1, 0, 0],
-                [0, 0, 0, 1, 0, 0, 0, 0],
-                [1, 1, 0, 1, 0, 1, 1, 0],
-                [0, 0, 0, 1, 0, 0, 0, 0],
-                [0, 2, 0, 1, 0, 2, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0],
+                [3, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 1, 1, 0, 1, 0, 1, 1, 0],
+                [0, 1, 1, 0, 1, 0, 1, 1, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                [2, 1, 1, 0, 1, 2, 1, 1, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                [2, 0, 0, 2, 1, 2, 0, 0, 2],
             ],
             start: { x: 0, y: 0, dir: 'down' },
-            objective: [{ x: 1, y: 6 }, { x: 5, y: 6 }],
+            objective: [
+                { x: 0, y: 4 },
+                { x: 5, y: 4 },
+                { x: 0, y: 8 },
+                { x: 3, y: 8 },
+                { x: 5, y: 8 },
+                { x: 8, y: 8 },
+            ],
         },
         validateFn: (blocks) => {
             const funciones = blocks.filter(b => b.type === 'FUNCION')
@@ -660,24 +694,33 @@ export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
 
     '2-23': {
         availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR', 'REPETIR', 'SI', 'SI_NO', 'FUNCION', 'LLAMAR', 'ASIGNAR'],
-        maxBlocks: 18,
+        limitBlocks: 25,
+        maxBlocks: 40,
         hint: 'Marca la celda 4 como VERDE. Activa nodo en 2 solo cuando celda == VERDE.',
         map: {
             grid: [
-                [3, 2, 2, 2, 2, 2, 2, 2, 2],
+                [2, 0, 0, 2, 1, 2, 0, 0, 2],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                [0, 0, 0, 2, 1, 2, 0, 0, 0],
+                [0, 1, 1, 1, 1, 1, 1, 1, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 3, 0, 0, 0, 0],
             ],
-            start: { x: 0, y: 0, dir: 'right' },
-            objective: [{ x: 2, y: 0 }],
+            start: { x: 4, y: 8, dir: 'up' },
+            objective: [
+                { x: 0, y: 0 },
+                { x: 3, y: 0 },
+                { x: 5, y: 0 },
+                { x: 8, y: 0 },
+            ],
         },
-        marks: [{ x: 4, y: 0, color: 'VERDE' }],
+        marks: [
+            { x: 3, y: 3, color: 'VERDE' },
+            { x: 5, y: 3, color: 'AZUL' },
+        ],
         validateFn: (blocks) => {
             const flat = flatBlocksLocal(blocks)
             return flat.some(b => b.type === 'ASIGNAR') && flat.some(b => b.type === 'SI')
@@ -686,24 +729,38 @@ export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
 
     '2-24': {
         availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR', 'REPETIR', 'SI', 'SI_NO', 'FUNCION', 'LLAMAR', 'ASIGNAR'],
-        maxBlocks: 20,
+        limitBlocks: 14,
+        maxBlocks: 40,
         hint: 'Marca celdas 1, 2 como VERDE. Activa nodos en 6, 7 solo cuando celda == VERDE.',
         map: {
             grid: [
-                [3, 2, 2, 2, 2, 2, 2, 2, 2],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [3, 0, 0, 2, 0, 0, 0, 0, 2],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                [2, 0, 0, 2, 1, 2, 0, 0, 2],
+                [0, 1, 1, 1, 1, 1, 1, 1, 0],
+                [0, 0, 0, 2, 1, 0, 0, 0, 2],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                [2, 0, 0, 2, 0, 2, 0, 0, 2],
             ],
             start: { x: 0, y: 0, dir: 'right' },
-            objective: [{ x: 6, y: 0 }, { x: 7, y: 0 }],
+            objective: [
+                { x: 0, y: 3 },
+                { x: 3, y: 3 },
+                { x: 3, y: 0 },
+                { x: 0, y: 8 },
+                { x: 3, y: 8 },
+                { x: 3, y: 5 },
+                { x: 3, y: 3 },
+                { x: 8, y: 0 },
+                { x: 8, y: 3 },
+                { x: 5, y: 3 },
+                { x: 8, y: 5 },
+                { x: 8, y: 8 },
+                { x: 5, y: 8 },
+            ],
         },
-        marks: [{ x: 1, y: 0, color: 'VERDE' }, { x: 2, y: 0, color: 'VERDE' }],
         validateFn: (blocks) => {
             const flat = flatBlocksLocal(blocks)
             return (
@@ -716,26 +773,45 @@ export const LOGICASSEMBLY_DATA: Record<string, LogicAssemblyLevelData> = {
 
     '2-25': {
         availableBlocks: ['MOVER', 'GIRAR', 'ACTIVAR', 'REPETIR', 'SI', 'SI_NO', 'FUNCION', 'LLAMAR', 'ASIGNAR'],
-        maxBlocks: 25,
+        limitBlocks: 42,
+        maxBlocks: 80,
         hint: 'El sistema final. Marca celdas 2, 4, 6 como VERDE. Activa nodo en 8 solo cuando celda == VERDE.',
         map: {
             grid: [
-                [3, 2, 2, 2, 2, 2, 2, 2, 2],
-                [2, 2, 2, 2, 2, 2, 2, 2, 2],
-                [2, 2, 2, 2, 2, 2, 2, 2, 2],
-                [2, 2, 2, 2, 2, 2, 2, 2, 2],
-                [2, 2, 2, 2, 2, 2, 2, 2, 2],
-                [2, 2, 2, 2, 2, 2, 2, 2, 2],
-                [2, 2, 2, 2, 2, 2, 2, 2, 2],
-                [2, 2, 2, 2, 2, 2, 2, 2, 2],
-                [2, 2, 2, 2, 2, 2, 2, 2, 2],
+                [3, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 1, 1, 1, 1, 1, 1, 1, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 1, 1, 1, 1, 1, 1, 1, 1],
+                [0, 1, 0, 0, 0, 0, 0, 1, 0],
+                [0, 1, 0, 1, 0, 1, 0, 1, 0],
+                [0, 1, 0, 1, 0, 1, 0, 1, 0],
+                [0, 1, 0, 1, 0, 1, 0, 1, 0],
+                [0, 0, 0, 1, 2, 1, 0, 0, 0],
             ],
             start: { x: 0, y: 0, dir: 'right' },
-            objective: [{ x: 8, y: 0 }],
+            objective: [
+                { x: 4, y: 8 }
+            ],
         },
         marks: [
-            { x: 2, y: 0, color: 'VERDE' }, { x: 4, y: 0, color: 'VERDE' }, { x: 6, y: 0, color: 'VERDE' },
-            { x: 0, y: 2, color: 'VERDE' }, { x: 2, y: 2, color: 'VERDE' }, { x: 4, y: 2, color: 'VERDE' }, { x: 6, y: 2, color: 'VERDE' }, { x: 8, y: 2, color: 'VERDE' },
+            { x: 2, y: 0, color: 'VERDE' },
+            { x: 4, y: 0, color: 'VERDE' },
+            { x: 6, y: 0, color: 'VERDE' },
+            { x: 8, y: 0, color: 'VERDE' },
+            { x: 6, y: 2, color: 'VERDE' },
+            { x: 4, y: 2, color: 'VERDE' },
+            { x: 2, y: 2, color: 'VERDE' },
+            { x: 0, y: 2, color: 'VERDE' },
+            { x: 0, y: 6, color: 'AZUL' },
+            { x: 0, y: 8, color: 'AZUL' },
+            { x: 2, y: 4, color: 'AZUL' },
+            { x: 2, y: 6, color: 'AZUL' },
+            { x: 4, y: 4, color: 'VERDE' },
+            { x: 4, y: 6, color: 'VERDE' },
+            { x: 6, y: 6, color: 'ROJO' },
+            { x: 6, y: 8, color: 'ROJO' },
+            { x: 8, y: 4, color: 'ROJO' },
+            { x: 8, y: 6, color: 'ROJO' },
         ],
         validateFn: (blocks) => {
             const flat = flatBlocksLocal(blocks)

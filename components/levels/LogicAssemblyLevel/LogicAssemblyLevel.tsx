@@ -6,7 +6,7 @@ import { Play, RefreshCcw, RotateCcw } from 'lucide-react'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
 import type { LogicAssemblyBlock, LogicAssemblyBlockType } from '@/types/game'
-import { LOGIC_ASSEMBLY_ASSIGN_AND_SI_BLOCK, LOGIC_ASSEMBLY_REPEAT_BLOCK, LOGIC_ASSEMBLY_SI_NO_BLOCK, LOGIC_ASSEMBLY_TUTORIAL, LOGIC_TUTORIAL_CONFIG } from './tutorialSteps'
+import { LOGIC_ASSEMBLY_ASSIGN_AND_SI_BLOCK, LOGIC_ASSEMBLY_FUNCION_LLAMAR_BLOCK, LOGIC_ASSEMBLY_REPEAT_BLOCK, LOGIC_ASSEMBLY_SI_NO_BLOCK, LOGIC_ASSEMBLY_TUTORIAL, LOGIC_TUTORIAL_CONFIG } from './tutorialSteps'
 import { LogicAssemblyLevelProps } from './types'
 import { BLOCK_DEFS, LOGICASSEMBLY_DATA, DEFAULT_LOGICASSEMBLY } from './constants'
 import { flatBlocks, makeBlock, updateBlockValueInTree, removeBlockFromTree, addChildToTree, moveBlockInTree, moveNodeInTree, calculateStars } from './utils'
@@ -83,6 +83,7 @@ export default function LogicAssemblyLevel({
             '2-06': LOGIC_ASSEMBLY_REPEAT_BLOCK,
             '2-11': LOGIC_ASSEMBLY_ASSIGN_AND_SI_BLOCK,
             '2-16': LOGIC_ASSEMBLY_SI_NO_BLOCK,
+            '2-21': LOGIC_ASSEMBLY_FUNCION_LLAMAR_BLOCK,
         }[level.id]
 
         if (!tutorialSteps) return

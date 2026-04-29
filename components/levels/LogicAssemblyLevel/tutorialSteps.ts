@@ -241,6 +241,84 @@ export const LOGIC_ASSEMBLY_SI_NO_BLOCK: DriveStep[] = [
     },
 ];
 
+export const LOGIC_ASSEMBLY_FUNCION_LLAMAR_BLOCK: DriveStep[] = [
+    {
+        element: '#palette-block-FUNCION',
+        popover: {
+            title: 'CREAR UNA RECETA',
+            description: 'Este bloque es como escribir una receta de cocina. Le pones un nombre y guardas adentro varias órdenes que el robot sabrá hacer después.',
+            side: "right",
+            align: 'center'
+        },
+        onDeselected: () => {
+            const paletteBlock = document.getElementById('palette-block-FUNCION');
+            if (paletteBlock) {
+                (paletteBlock.children[0] as HTMLElement).click();
+            }
+        }
+    },
+    {
+        element: '#root-workspace',
+        popover: {
+            title: 'GUARDAR LAS ORDENES',
+            description: 'Cuando arrastras un bloque FUNCIÓN al área de trabajo, puedes ponerle un nombre como "girarDerecha" o "subirEscalera". Dentro de él guardas las órdenes que quieres que se hagan juntas.',
+            side: "top",
+            align: 'center'
+        },
+        onDeselected: () => {
+            const clearButton = document.getElementById('logic-clear-button');
+            if (clearButton) {
+                clearButton.click();
+            }
+        }
+    },
+    {
+        element: '#palette-block-LLAMAR',
+        popover: {
+            title: 'USAR LA RECETA',
+            description: 'Este bloque es como decir "haz lo que te enseñé antes". Escribes el mismo nombre que le pusiste a tu FUNCIÓN y el robot hará todas las órdenes guardadas ahí.',
+            side: "right",
+            align: 'center'
+        },
+        onDeselected: () => {
+            const paletteBlock = document.getElementById('palette-block-LLAMAR');
+            if (paletteBlock) {
+                (paletteBlock.children[0] as HTMLElement).click();
+            }
+        }
+    },
+    {
+        element: '#root-workspace',
+        popover: {
+            title: 'NOMBRES IGUALES',
+            description: 'El truco es usar el mismo nombre en FUNCIÓN y en LLAMAR. Si tu receta se llama "cruzarPuente", tu bloque LLAMAR también debe decir "cruzarPuente". Así el robot sabe qué receta seguir.',
+            side: "top",
+            align: 'center'
+        },
+        onDeselected: () => {
+            const clearButton = document.getElementById('logic-clear-button');
+            if (clearButton) {
+                clearButton.click();
+            }
+        }
+    },
+    {
+        element: '#root-workspace',
+        popover: {
+            title: 'MUCHAS VECES SIN REPETIR',
+            description: 'La magia de las funciones es que puedes usar LLAMAR muchas veces sin escribir todas las órdenes de nuevo. Creas la receta una vez y la usas donde quieras.',
+            side: "top",
+            align: 'center'
+        },
+        onDeselected: () => {
+            const clearButton = document.getElementById('logic-clear-button');
+            if (clearButton) {
+                clearButton.click();
+            }
+        }
+    },
+];
+
 export const LOGIC_TUTORIAL_CONFIG = {
     showProgress: true,
     animate: true,
