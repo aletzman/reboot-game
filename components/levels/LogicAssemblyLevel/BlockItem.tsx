@@ -126,6 +126,7 @@ function BlockItemInner({
 
     return (
         <div
+            id={`block-${block.type}`}
             ref={isOverlay ? undefined : nodeRef}
             //{...containerProps}
             className={`relative z-10 transition-all duration-200 
@@ -215,6 +216,7 @@ function BlockItemInner({
                             {(def.valueType === 'direction' || (def.valueType === 'text' && block.type === 'LLAMAR')) && (
                                 <div className="relative flex group/lcd">
                                     <select
+                                        id="block-select"
                                         value={block.value as string}
                                         onChange={e => onValueChange(block.id, e.target.value)}
                                         disabled={disabled}
@@ -239,13 +241,14 @@ function BlockItemInner({
                                         <ChevronDown size={12} strokeWidth={4} />
                                     </div>
 
-                                    <div className="absolute inset-0 pointer-events-none rounded-sm bg-linear-to-tr from-transparent via-(--green-light)/2 to-white/5" />
+
                                 </div>
                             )}
 
                             {def.valueType === 'text' && block.type !== 'LLAMAR' && (
                                 <div className="relative flex">
                                     <input
+                                        id={`block-field-text`}
                                         type="text"
                                         value={block.value as string}
                                         onChange={e => onValueChange(block.id, e.target.value)}
@@ -304,6 +307,7 @@ function BlockItemInner({
                     <div className="relative pt-1 z-10">
                         {!showChildPicker ? (
                             <button
+                                id="add-child-button"
                                 onClick={() => setShowChildPicker(true)}
                                 disabled={disabled}
                                 className={`
@@ -327,6 +331,7 @@ function BlockItemInner({
                                         .filter(d => d.type !== 'FUNCION' && d.type !== 'LLAMAR')
                                         .map(d => (
                                             <button
+                                                id={`add-child-button-${d.type}`}
                                                 key={d.type}
                                                 onClick={() => { onAddChild(block.id, d.type); setShowChildPicker(false) }}
                                                 className="px-3 py-1.5 border border-(--border-color) bg-(--bg-surface) hover:bg-(--bg-hover) transition-all cursor-pointer font-mono text-[9px] font-bold uppercase tracking-widest shadow-sm hover:shadow-md"
