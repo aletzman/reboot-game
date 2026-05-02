@@ -110,11 +110,7 @@ export default function CodeEditorLevel({
 
         if (allPassed) {
             setPhase('passed')
-            const lines = code.split('\n').filter(l => l.trim()).length
-            const max = data.maxLines ?? 10
-            const stars = attempts === 0
-                ? lines <= max * 0.6 ? 3 : 2
-                : attempts <= 2 ? 2 : 1
+            const stars = 3
             setTimeout(() => onComplete(stars as 1 | 2 | 3, state.fragUsed), 800)
         } else {
             setPhase('failed')
