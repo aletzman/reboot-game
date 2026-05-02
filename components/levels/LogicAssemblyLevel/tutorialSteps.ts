@@ -124,6 +124,13 @@ export const LOGIC_ASSEMBLY_ASSIGN_AND_SI_BLOCK: DriveStep[] = [
             side: "top",
             align: 'center'
         },
+        onHighlighted: () => {
+            const textField = document.getElementById('block-field-text') as HTMLInputElement;
+            if (textField) {
+                textField.focus();
+                textField.value = 'celda = verde';
+            }
+        },
         onDeselected: () => {
             const clearButton = document.getElementById('logic-clear-button');
             if (clearButton) {
@@ -154,6 +161,13 @@ export const LOGIC_ASSEMBLY_ASSIGN_AND_SI_BLOCK: DriveStep[] = [
             side: "top",
             align: 'center'
         },
+        onHighlighted: () => {
+            const textField = document.getElementById('block-field-text') as HTMLInputElement;
+            if (textField) {
+                textField.focus();
+                textField.value = 'x == 4';
+            }
+        },
         onDeselected: () => {
             const clearButton = document.getElementById('logic-clear-button');
             if (clearButton) {
@@ -169,6 +183,13 @@ export const LOGIC_ASSEMBLY_ASSIGN_AND_SI_BLOCK: DriveStep[] = [
             side: "top",
             align: 'center'
         },
+        onHighlighted: () => {
+            const textField = document.getElementById('block-field-text') as HTMLInputElement;
+            if (textField) {
+                textField.focus();
+                textField.value = 'celda == verde';
+            }
+        },
         onDeselected: () => {
             const clearButton = document.getElementById('logic-clear-button');
             if (clearButton) {
@@ -183,6 +204,13 @@ export const LOGIC_ASSEMBLY_ASSIGN_AND_SI_BLOCK: DriveStep[] = [
             description: "También puedes usar en condiciones las variables que creaste con ASIGNAR. Por ejemplo: SI contador > 3 usa el valor que guardaste en la variable contador.",
             side: "top",
             align: 'center'
+        },
+        onHighlighted: () => {
+            const textField = document.getElementById('block-field-text') as HTMLInputElement;
+            if (textField) {
+                textField.focus();
+                textField.value = 'contador > 3';
+            }
         },
         onDeselected: () => {
             const clearButton = document.getElementById('logic-clear-button');
@@ -203,7 +231,13 @@ export const LOGIC_ASSEMBLY_SI_NO_BLOCK: DriveStep[] = [
             align: 'center'
         },
         onDeselected: () => {
+            const paletteBlockSI = document.getElementById('palette-block-SI');
             const paletteBlock = document.getElementById('palette-block-SI_NO');
+
+
+            if (paletteBlockSI) {
+                (paletteBlockSI.children[0] as HTMLElement).click();
+            }
             if (paletteBlock) {
                 (paletteBlock.children[0] as HTMLElement).click();
             }
@@ -232,13 +266,51 @@ export const LOGIC_ASSEMBLY_SI_NO_BLOCK: DriveStep[] = [
             side: "top",
             align: 'center'
         },
+        onHighlightStarted: () => {
+            const addBlockButtons = document.querySelectorAll('#add-child-button');
+            if (addBlockButtons.length > 0) {
+                (addBlockButtons[0] as HTMLElement).click();
+                (addBlockButtons[1] as HTMLElement).click();
+
+
+            }
+        },
+        onHighlighted: () => {
+
+            const asignButton = document.querySelectorAll('#add-child-button-ASIGNAR');
+
+            if (asignButton.length > 0) {
+                (asignButton[0] as HTMLElement).click();
+                (asignButton[1] as HTMLElement).click();
+
+                setTimeout(() => {
+                    const textField = document.querySelectorAll('#block-ASIGNAR input');
+                    if (textField.length > 0) {
+                        (textField[0] as HTMLInputElement).value = 'celda = verde';
+                        (textField[1] as HTMLInputElement).value = 'celda = azul';
+                    }
+                }, 100);
+
+
+
+            }
+        }
+    },
+    {
+        element: '#root-workspace',
+        popover: {
+            title: 'CONDICIONAL CON POSICIÓN',
+            description: "Ejemplo: SI el robot está en una posición en la que x es menor que 4, el robot pinta la celda de verde. SI NO, el robot pinta la celda de azul.",
+            side: "left",
+            align: 'center'
+        },
         onDeselected: () => {
             const clearButton = document.getElementById('logic-clear-button');
             if (clearButton) {
                 clearButton.click();
             }
         }
-    },
+    }
 ];
 
 export const LOGIC_ASSEMBLY_FUNCION_LLAMAR_BLOCK: DriveStep[] = [
@@ -249,21 +321,27 @@ export const LOGIC_ASSEMBLY_FUNCION_LLAMAR_BLOCK: DriveStep[] = [
             description: 'Este bloque es como escribir una receta de cocina. Le pones un nombre y guardas adentro varias órdenes que el robot sabrá hacer después.',
             side: "right",
             align: 'center'
-        },
-        onDeselected: () => {
-            const paletteBlock = document.getElementById('palette-block-FUNCION');
-            if (paletteBlock) {
-                (paletteBlock.children[0] as HTMLElement).click();
-            }
         }
     },
     {
         element: '#root-workspace',
         popover: {
             title: 'GUARDAR LAS ORDENES',
-            description: 'Cuando arrastras un bloque FUNCIÓN al área de trabajo, puedes ponerle un nombre como "girarDerecha" o "subirEscalera". Dentro de él guardas las órdenes que quieres que se hagan juntas.',
+            description: 'Cuando arrastras un bloque FUNCIÓN al área de trabajo, puedes ponerle un nombre como "girarDerecha" o "cruzarPuente". Dentro de él guardas las órdenes que quieres que se hagan juntas.',
             side: "top",
             align: 'center'
+        },
+        onHighlightStarted: () => {
+            const paletteBlock = document.getElementById('palette-block-FUNCION');
+            if (paletteBlock) {
+                (paletteBlock.children[0] as HTMLElement).click();
+            }
+        },
+        onHighlighted: () => {
+            const functionNameInput = document.querySelectorAll('#block-FUNCION input');
+            if (functionNameInput.length > 0) {
+                (functionNameInput[0] as HTMLInputElement).value = 'cruzarPuente';
+            }
         },
         onDeselected: () => {
             const clearButton = document.getElementById('logic-clear-button');
@@ -281,9 +359,9 @@ export const LOGIC_ASSEMBLY_FUNCION_LLAMAR_BLOCK: DriveStep[] = [
             align: 'center'
         },
         onDeselected: () => {
-            const paletteBlock = document.getElementById('palette-block-LLAMAR');
-            if (paletteBlock) {
-                (paletteBlock.children[0] as HTMLElement).click();
+            const clearButton = document.getElementById('logic-clear-button');
+            if (clearButton) {
+                clearButton.click();
             }
         }
     },
@@ -294,6 +372,34 @@ export const LOGIC_ASSEMBLY_FUNCION_LLAMAR_BLOCK: DriveStep[] = [
             description: 'El truco es usar el mismo nombre en FUNCIÓN y en LLAMAR. Si tu receta se llama "cruzarPuente", tu bloque LLAMAR también debe decir "cruzarPuente". Así el robot sabe qué receta seguir.',
             side: "top",
             align: 'center'
+        },
+        onHighlightStarted: () => {
+            // Ensure the function block is selected
+            const blockFunction = document.getElementById('palette-block-FUNCION');
+            const blockCall = document.getElementById('palette-block-LLAMAR');
+            if (blockFunction) {
+                (blockFunction.children[0] as HTMLElement).click();
+                (blockFunction.children[0] as HTMLElement).querySelector('input')?.focus();
+                const input = (blockFunction.children[0] as HTMLElement).querySelector('input');
+                if (input) {
+                    input.value = 'cruzarPuente';
+                }
+                if (blockCall) {
+                    (blockCall.children[0] as HTMLElement).click();
+                }
+            }
+            /* const functionNameInput = document.getElementById('block-field-text') as HTMLInputElement;
+             if (functionNameInput) {
+                 functionNameInput.value = 'cruzarPuente';
+             }*/
+        },
+        onHighlighted: () => {
+
+            const functionSelect = document.getElementById('block-select') as HTMLSelectElement;
+
+            if (functionSelect) {
+                functionSelect.selectedIndex = 1; // Select "cruzarPuente" option
+            }
         },
         onDeselected: () => {
             const clearButton = document.getElementById('logic-clear-button');
