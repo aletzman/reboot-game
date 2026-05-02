@@ -64,7 +64,7 @@ export const BLOCK_DEFS: BlockDef[] = [
         border: 'var(--block-si)',
         hasValue: true,
         valueType: 'text',
-        valueDefault: 'panel == VERDE',
+        valueDefault: 'x < 4',
         hasChildren: true,
     },
     {
