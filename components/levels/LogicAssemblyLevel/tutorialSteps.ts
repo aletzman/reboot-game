@@ -374,24 +374,22 @@ export const LOGIC_ASSEMBLY_FUNCION_LLAMAR_BLOCK: DriveStep[] = [
             align: 'center'
         },
         onHighlightStarted: () => {
-            // Ensure the function block is selected
             const blockFunction = document.getElementById('palette-block-FUNCION');
             const blockCall = document.getElementById('palette-block-LLAMAR');
             if (blockFunction) {
                 (blockFunction.children[0] as HTMLElement).click();
-                (blockFunction.children[0] as HTMLElement).querySelector('input')?.focus();
-                const input = (blockFunction.children[0] as HTMLElement).querySelector('input');
-                if (input) {
-                    input.value = 'cruzarPuente';
-                }
                 if (blockCall) {
                     (blockCall.children[0] as HTMLElement).click();
                 }
             }
-            /* const functionNameInput = document.getElementById('block-field-text') as HTMLInputElement;
-             if (functionNameInput) {
-                 functionNameInput.value = 'cruzarPuente';
-             }*/
+            setTimeout(() => {
+                const functionNameInput = document.getElementById('block-field-text') as HTMLInputElement;
+
+                if (functionNameInput) {
+                    functionNameInput.value = 'cruzarPuente';
+                    functionNameInput.focus();
+                }
+            }, 50);
         },
         onHighlighted: () => {
 
@@ -415,6 +413,23 @@ export const LOGIC_ASSEMBLY_FUNCION_LLAMAR_BLOCK: DriveStep[] = [
             description: 'La magia de las funciones es que puedes usar LLAMAR muchas veces sin escribir todas las órdenes de nuevo. Creas la receta una vez y la usas donde quieras.',
             side: "top",
             align: 'center'
+        },
+        onHighlightStarted: () => {
+            const blockCall = document.getElementById('palette-block-LLAMAR');
+            if (blockCall) {
+                (blockCall.children[0] as HTMLElement).click();
+            }
+
+        },
+        onHighlighted: () => {
+
+            const functionSelect = document.querySelectorAll('#block-select') as NodeListOf<HTMLSelectElement>;
+
+
+            if (functionSelect.length > 0) {
+                functionSelect[0].selectedIndex = 1;
+                functionSelect[1].selectedIndex = 1;
+            }
         },
         onDeselected: () => {
             const clearButton = document.getElementById('logic-clear-button');
