@@ -251,6 +251,7 @@ function BlockItemInner({
                                         id={`block-field-text`}
                                         type="text"
                                         value={block.value as string}
+                                        onFocus={e => onValueChange(block.id, e.target.value)}
                                         onChange={e => onValueChange(block.id, e.target.value)}
                                         disabled={disabled}
                                         placeholder={block.type === 'FUNCION' ? 'nombre_función' : 'expresión'}
