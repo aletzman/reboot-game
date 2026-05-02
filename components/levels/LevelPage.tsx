@@ -14,6 +14,8 @@ import { requiresLogin, getSave } from '@/lib/gameState'
 import LevelComplete from '@/components/ui/LevelComplete'
 import { Loading } from '@/components/ui/Loading'
 import { useUIStore } from '@/lib/store/useUIStore'
+import { Button } from '../ui/Button'
+import { ChevronLeft } from 'lucide-react'
 
 // ------------------------------------------------------------
 // IMPORTS DINÁMICOS — cada componente solo carga cuando se necesita
@@ -379,11 +381,11 @@ function BlockedScreen({ title, message, items, onBack, onInventory, onLogin }: 
     title: string; message: string; items?: string[]; onBack: () => void; onInventory?: () => void; onLogin?: () => void;
 }) {
     return (
-        <div className="flex flex-col items-center justify-center bg-(--bg-void) font-mono gap-4 p-8 text-center">
-            <div className="text-(--red) text-[11px] tracking-[.14em] uppercase font-bold text-center">
-                // {title}
+        <div className="flex flex-col items-center justify-center bg-(--bg-void) h-full gap-4 p-8 text-center">
+            <div className="text-(--red) text-lg tracking-[.14em] uppercase font-semibold font-(family-name:--font-title) text-center">
+                {title}
             </div>
-            <div className="text-(--text-muted) text-[13px] max-w-md mx-auto">
+            <div className="text-(--text-muted) text-md max-w-md mx-auto">
                 {message}
             </div>
             {items && items.length > 0 && (
@@ -396,18 +398,18 @@ function BlockedScreen({ title, message, items, onBack, onInventory, onLogin }: 
                 </div>
             )}
             <div className="flex gap-3 mt-4 flex-wrap justify-center">
-                <button onClick={onBack} className="bg-(--bg-surface) border border-(--bg-hover) rounded-md py-2 px-5 text-[12px] text-(--text-muted) hover:bg-(--bg-hover) transition-all">
-                    ← VOLVER AL MAPA
-                </button>
+                <Button onClick={onBack} icon={ChevronLeft} variant='cyan' size='sm'>
+                    VOLVER AL MAPA
+                </Button>
                 {onInventory && (
-                    <button onClick={onInventory} className="bg-(--bg-surface) border border-(--green-base) rounded-md py-2 px-5 text-[12px] text-(--green-light) hover:bg-(--green-dark) transition-all">
+                    <Button onClick={onInventory} variant='cyan' size='sm'>
                         VER INVENTARIO
-                    </button>
+                    </Button>
                 )}
                 {onLogin && (
-                    <button onClick={onLogin} className="bg-(--green-dark) border border-(--green-base) rounded-md py-2 px-5 text-[12px] text-(--green-light) hover:bg-(--green-base) transition-all">
+                    <Button onClick={onLogin} variant='cyan' size='sm'>
                         IDENTIFICARSE
-                    </button>
+                    </Button>
                 )}
             </div>
         </div>
