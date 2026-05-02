@@ -9,7 +9,6 @@ export default async function ActMapPage({ params }: { params: Promise<{ actId: 
 
   const levels = await getLevelsByAct(actNum)
   const actName = levels.find(level => level.act === actNum)?.actName || 'ACT_ERROR'
-  console.log("levels", levels)
 
   return (
     <div className="container mx-auto px-4 pb-8 flex flex-col gap-4 bg-(--bg-void)">
