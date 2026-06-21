@@ -64,6 +64,9 @@ export const metadata: Metadata = {
   icons: {
     icon: "/logo.svg",
   },
+};
+
+export const viewport = {
   themeColor: "#05070a",
   colorScheme: "dark",
 };
