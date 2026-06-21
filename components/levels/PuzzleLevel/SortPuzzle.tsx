@@ -39,7 +39,7 @@ function SortableItem({ item, idx, feedback, isHinted = false }: { item: PuzzleI
             </div>
 
             <div className="flex-1 py-3 px-4 bg-linear-to-r from-transparent to-(--bg-deep)/30 flex items-center">
-                <SyntaxHighlighter text={item.text.trimStart()} />
+                <SyntaxHighlighter text={item.text?.trimStart() || ''} />
             </div>
 
             <div className="w-1 bg-(--green-light) opacity-0 group-hover:opacity-20 transition-opacity" />

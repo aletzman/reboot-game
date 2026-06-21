@@ -20,6 +20,7 @@ import {
 
 // Mapeo de type → nombre del componente a importar dinámicamente
 export const LEVEL_COMPONENT_MAP: Record<LevelType, string> = {
+  'concept-trial': 'ConceptTrialLevel',
   'cinematic':     'CinematicLevel',
   'noderoutine':      'NodeRoutineLevel',
   'logicassembly':       'LogicAssemblyLevel',
