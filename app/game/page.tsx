@@ -6,6 +6,8 @@ export const metadata = {
   description: 'Explora los sectores fragmentados y restaura la red global.',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function GameMapPage() {
   const levels = await getLevels()
 

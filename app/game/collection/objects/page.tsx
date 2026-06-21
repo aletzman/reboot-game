@@ -6,6 +6,8 @@ export const metadata = {
   description: 'Consulta las herramientas, credenciales y fragmentos arquitectónicos recuperados del refugio.',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function ObjectsArchivePage() {
   const objects = await getObjects()
 

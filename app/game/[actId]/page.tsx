@@ -3,6 +3,8 @@ import { getLevelsByAct } from '@/services/levelsService'
 import { SectorHeader } from '@/components/map/SectorHeader'
 import SectorHeaderClient from '@/components/map/SectorHeaderClient'
 
+export const dynamic = 'force-dynamic'
+
 export default async function ActMapPage({ params }: { params: Promise<{ actId: string }> }) {
   const { actId } = await params
   const actNum = parseInt(actId, 10)
