@@ -75,6 +75,7 @@ export function Header({ viewMenu, showStats }: HeaderProps) {
                 <div className="w-px h-1/2 bg-(--border-color)" />
 
                 {/* Botón Override (Demo Mode) */}
+                {/* 
                 <button
                     onClick={toggleDemoMode}
                     className={`group relative flex items-center gap-2 cursor-pointer px-3 py-1 border transition-all duration-300 overflow-hidden rounded-sm ${demoMode
@@ -83,7 +84,6 @@ export function Header({ viewMenu, showStats }: HeaderProps) {
                         }`}
                     title="OVERRIDE: Bypass de seguridad activado"
                 >
-                    {/* Cinta de peligro si está activo */}
                     {demoMode && <div className="absolute inset-0 opacity-[0.15] bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,#000_4px,#000_8px)] pointer-events-none" />}
 
                     {demoMode ? (
@@ -96,6 +96,7 @@ export function Header({ viewMenu, showStats }: HeaderProps) {
                         {demoMode ? "DEMO_MODE_ON" : "DEMO_MODE_OFF"}
                     </span>
                 </button>
+                */}
 
                 {/* Botón DEBUG (Solo en DEV) */}
                 {process.env.NODE_ENV === 'development' && (

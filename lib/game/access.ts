@@ -115,14 +115,6 @@ export function isActUnlocked(
 }
 
 export function requiresLogin(levelId: string): boolean {
-  return (
-    levelId.startsWith('4-') ||
-    levelId.startsWith('5-') ||
-    levelId.startsWith('6-') ||
-    levelId.startsWith('7-') ||
-    levelId === '4-R' ||
-    levelId === '5-R' ||
-    levelId === '6-R' ||
-    levelId === '7-R'
-  )
+  const freeLevels = ['P-00', 'P-01', '1-01', '1-02'];
+  return !freeLevels.includes(levelId);
 }

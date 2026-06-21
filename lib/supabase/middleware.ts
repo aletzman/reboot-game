@@ -72,7 +72,7 @@ export async function updateSession(request: NextRequest) {
     if (levelId && requiresLogin(levelId) && !user) {
       return NextResponse.redirect(new URL('/', request.url))
     }
-    if (actId >= 4 && !user) {
+    if (!levelId && actId > 1 && !user) {
       return NextResponse.redirect(new URL('/', request.url))
     }
 
