@@ -156,7 +156,7 @@ export function MatchPuzzle({ level, state, data, onComplete }: PuzzleLevelProps
                             <MatchItem
                                 key={item.id}
                                 id={item.id}
-                                text={item.text}
+                                text={item.text as string}
                                 isSelected={selectedLeft === item.id}
                                 isConnected={isConnected}
                                 isCorrect={feedback === 'correct' && isConnected}
@@ -185,7 +185,7 @@ export function MatchPuzzle({ level, state, data, onComplete }: PuzzleLevelProps
                                 id={item.id}
                                 isRight
                                 selectedLeft={!!selectedLeft}
-                                text={item.text}
+                                text={item.text as string}
                                 isConnectedTo={isConnectedTo}
                                 isCorrect={feedback === 'correct' && isConnectedTo}
                                 isWrong={false}
